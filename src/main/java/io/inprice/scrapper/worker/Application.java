@@ -1,10 +1,12 @@
 package io.inprice.scrapper.worker;
 
-import io.inprice.scrapper.common.config.Config;
-import io.inprice.scrapper.common.helpers.RabbitMQ;
 import io.inprice.scrapper.common.logging.Logger;
-import io.inprice.scrapper.worker.consumer.NewLinkConsumer;
+import io.inprice.scrapper.worker.config.Config;
+import io.inprice.scrapper.worker.consumer.ActiveLinksConsumer;
+import io.inprice.scrapper.worker.consumer.FailedLinksConsumer;
+import io.inprice.scrapper.worker.consumer.NewLinksConsumer;
 import io.inprice.scrapper.worker.helpers.Global;
+import io.inprice.scrapper.worker.helpers.RabbitMQ;
 import io.inprice.scrapper.worker.helpers.ThreadPools;
 
 import java.io.IOException;
@@ -24,7 +26,9 @@ public class Application {
 	public static void main(String[] args) {
 		new Thread(() -> {
 			Global.isRunning = true;
-			NewLinkConsumer.start();
+			new NewLinksConsumer().start();
+			new ActiveLinksConsumer().start();
+			new FailedLinksConsumer().start();
 		}, "task-processor").start();
 
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {

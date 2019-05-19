@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.helpers;
 
-import io.inprice.scrapper.common.config.Config;
+import io.inprice.scrapper.worker.config.Config;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;

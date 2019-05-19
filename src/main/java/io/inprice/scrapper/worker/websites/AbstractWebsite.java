@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites;
 
 import io.inprice.scrapper.common.logging.Logger;
-import io.inprice.scrapper.common.meta.LinkStatus;
+import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.UserAgents;
 import org.jsoup.Connection;
@@ -21,42 +21,24 @@ public abstract class AbstractWebsite implements Website {
     public void check(Link link) {
         createDoc(link);
 
-        if (LinkStatus.NEW.equals(link.getStatus()) || LinkStatus.ACTIVE.equals(link.getStatus())) {
-            if (LinkStatus.NEW.equals(link.getStatus())) {
-                link.setStatus(LinkStatus.ACTIVE);
-                link.setTitle(getTitle());
-                link.setCode(getCode());
-                link.setSeller(getSeller());
-                link.setShipment(getShipment());
-                link.setBrand(getBrand());
-                link.setSpecList(getSpecList());
-            }
-
-            if (isAvailable()) {
-                BigDecimal price = getPrice();
-                if (!price.equals(link.getPrice())) {
-                    sendAPriceChangeMessage(link, price);
-                    link.setPrice(getPrice());
-                }
-
-                log.debug("Price : %f, Seller: %s, Shipment: %s, Brand: %s", link.getPrice(), link.getSeller(), link.getShipment(), link.getBrand());
-            } else {
-                link.setStatus(LinkStatus.UNAVAILABLE);
-                log.debug("This product is now unavailable!");
-            }
-
-        } else {
-            sendAStatusChangeMessage(link);
-            log.warn("URL Problem [%s] - %s", link.getStatus().name(), link.getUrl());
+        if (Status.NEW.equals(link.getStatus()) || link.getTitle() == null) {
+            link.setTitle(getTitle());
+            link.setCode(getCode());
+            link.setSeller(getSeller());
+            link.setShipment(getShipment());
+            link.setBrand(getBrand());
+            link.setSpecList(getSpecList());
         }
-    }
 
-    private void sendAPriceChangeMessage(Link link, BigDecimal newPrice) {
-
-    }
-
-    private void sendAStatusChangeMessage(Link link) {
-
+        if (isAvailable()) {
+            link.setStatus(Status.ACTIVE);
+            BigDecimal price = getPrice();
+            if (! price.equals(link.getPrice())) link.setPrice(price);
+            log.debug("Price : %f, Seller: %s, Shipment: %s, Brand: %s", link.getPrice(), link.getSeller(), link.getShipment(), link.getBrand());
+        } else {
+            link.setStatus(Status.UNAVAILABLE);
+            log.debug("This product is now unavailable!");
+        }
     }
 
     protected String cleanPrice(String price) {
@@ -67,9 +49,9 @@ public abstract class AbstractWebsite implements Website {
         int httpStatus = openDocument(link.getUrl());
 
         if (httpStatus == 0) {
-            link.setStatus(LinkStatus.SOCKET_ERROR);
+            link.setStatus(Status.SOCKET_ERROR);
         } if (httpStatus > 399) {
-            link.setStatus(LinkStatus.NETWORK_ERROR);
+            link.setStatus(Status.NETWORK_ERROR);
             link.setHttpStatus(httpStatus);
         }
     }
