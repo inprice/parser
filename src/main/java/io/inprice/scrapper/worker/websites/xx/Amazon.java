@@ -17,43 +17,51 @@ public class Amazon extends AbstractWebsite {
     @Override
     public boolean isAvailable() {
         Element inStock = doc.selectFirst("div#availability span.a-size-medium.a-color-success");
-        if (inStock != null) {
-            return true;
-        }
-        return false;
+        return (inStock != null);
     }
 
     @Override
-    public String getCode() {
-        String val = null;
-        Element code = doc.getElementById("ASIN");
-        if (code != null) {
-            val = code.val().trim();
+    public String getDeliveryMessage() {
+        Element deliveryMessage = doc.selectFirst("div#ddmDeliveryMessage span");
+        if (deliveryMessage != null) {
+            return deliveryMessage.text().trim();
         }
-        return val;
+        return super.getDeliveryMessage();
     }
 
     @Override
-    public String getTitle() {
-        String val = null;
-        Element title = doc.getElementById("productTitle");
-        if (title != null) {
-            val = title.text().trim();
+    public String getSku() {
+        Element sku = doc.getElementById("ASIN");
+        if (sku != null) {
+            return sku.val().trim();
         }
-        return val;
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        Element name = doc.getElementById("productTitle");
+        if (name != null) {
+            return name.text().trim();
+        }
+        return null;
     }
 
     @Override
     public BigDecimal getPrice() {
         String strPrice = null;
 
-        Element price = doc.select("#cerberus-data-metrics").first();
-        if (price != null) strPrice = price.attr("data-asin-price");
+        Element price = doc.getElementById("priceblock_dealprice");
+        if (price != null) {
+            strPrice = price.text();
+        } else {
+            price = doc.getElementById("cerberus-data-metrics");
+            if (price != null) strPrice = price.attr("data-asin-price");
+        }
 
         if (strPrice == null || strPrice.isEmpty()) {
             price = doc.select(".header-price").first();
-            if (price == null) price = doc.select("#olp-new .a-color-price").first();
-            if (price == null) price = doc.select("#priceblock_dealprice").first();
+            if (price == null) price = doc.select("span.a-color-price").first();
             if (price == null) price = doc.select(".a-size-medium.a-color-price.offer-price.a-text-normal").first();
 
             if (price != null) {
@@ -85,7 +93,7 @@ public class Amazon extends AbstractWebsite {
             }
         }
 
-        if (strPrice == null)
+        if (strPrice == null || strPrice.isEmpty())
             return BigDecimal.ZERO;
         else
             return new BigDecimal(cleanPrice(strPrice));
@@ -99,8 +107,8 @@ public class Amazon extends AbstractWebsite {
     @Override
     public String getShipment() {
         String val = null;
-        Element shipment = doc.select("#price-shipping-message").first();
-        if (shipment == null) shipment = doc.select("#ddmDeliveryMessage span").first();
+        Element shipment = doc.getElementById("price-shipping-message");
+        if (shipment == null) shipment = doc.getElementById("ddmDeliveryMessage span");
         if (shipment == null) shipment = doc.select(".shipping3P").first();
 
         if (shipment != null) {
@@ -111,7 +119,7 @@ public class Amazon extends AbstractWebsite {
 
     @Override
     public String getBrand() {
-        String val = null;
+        String val;
 
         Element brand = doc.selectFirst("span.ac-keyword-link a");
         if (brand == null) brand = doc.getElementById("bylineInfo");
@@ -130,8 +138,8 @@ public class Amazon extends AbstractWebsite {
         Elements specs = doc.select("#feature-bullets li:not(.aok-hidden)");
         if (specs != null && specs.size() > 0) {
             specList = new ArrayList<>();
-            for (int i = 0; i < specs.size(); i++) {
-                specList.add(new LinkSpec("", specs.get(i).text().trim()));
+            for (Element spec : specs) {
+                specList.add(new LinkSpec("", spec.text().trim()));
             }
         }
         return specList;

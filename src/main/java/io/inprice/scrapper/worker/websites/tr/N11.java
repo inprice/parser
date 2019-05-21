@@ -24,24 +24,22 @@ public class N11 extends AbstractWebsite {
     }
 
     @Override
-    public String getCode() {
-        String val = null;
-        Element code = doc.selectFirst("input[class='productId']");
-        if (code != null) {
-            val = code.val().trim();
+    public String getSku() {
+        Element sku = doc.selectFirst("input[class='productId']");
+        if (sku != null) {
+            return sku.val().trim();
         }
-        return val;
+        return null;
     }
 
     @Override
-    public String getTitle() {
-        String val = null;
-        Element title = doc.selectFirst("h1.proName");
-        if (title == null) title = doc.selectFirst("h1.pro-title_main");
-        if (title != null) {
-            val = title.text().trim();
+    public String getName() {
+        Element name = doc.selectFirst("h1.proName");
+        if (name == null) name = doc.selectFirst("h1.pro-title_main");
+        if (name != null) {
+            return name.text().trim();
         }
-        return val;
+        return null;
     }
 
     @Override
@@ -77,19 +75,18 @@ public class N11 extends AbstractWebsite {
 
     @Override
     public String getShipment() {
-        String val = null;
         Element shipment = doc.selectFirst(".shipment-detail-container .cargoType");
         if (shipment == null) shipment = doc.selectFirst(".delivery-info_shipment span");
 
         if (shipment != null) {
-            val = shipment.text().replaceAll(":", "").trim();
+            return shipment.text().replaceAll(":", "").trim();
         }
-        return val;
+        return null;
     }
 
     @Override
     public String getBrand() {
-        String[] titleChunks = getTitle().split("\\s");
+        String[] titleChunks = getName().split("\\s");
         if (titleChunks.length > 1) return titleChunks[0].trim();
         return null;
     }

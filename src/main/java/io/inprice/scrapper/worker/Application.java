@@ -34,13 +34,9 @@ public class Application {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			Global.isRunning = false;
 
-			try {
-				log.info("RabbitMQ connection is closing...");
-				RabbitMQ.getChannel().abort();
-				log.info("RabbitMQ is closed.");
-			} catch (IOException e) {
-				log.info("Rabbit abortion is interrupted.");
-			}
+			log.info("RabbitMQ connection is closing...");
+			RabbitMQ.closeChannel();
+			log.info("RabbitMQ is closed.");
 
 			try {
 				log.info("Thread pool is shutting down...");

@@ -12,38 +12,30 @@ import java.util.List;
 public class Argos extends AbstractWebsite {
 
     @Override
-    public boolean isAvailable() {
-        return super.isAvailable();
+    public String getSku() {
+        Element sku = doc.selectFirst("[itemProp='sku']");
+        if (sku != null) {
+            return sku.attr("content").trim();
+        }
+        return null;
     }
 
     @Override
-    public String getCode() {
-        String val = null;
-        Element code = doc.selectFirst("[itemProp='sku']");
-        if (code != null) {
-            val = code.attr("content").trim();
+    public String getName() {
+        Element name = doc.selectFirst("span.product-title");
+        if (name != null) {
+            return name.text().trim();
         }
-        return val;
-    }
-
-    @Override
-    public String getTitle() {
-        String val = null;
-        Element title = doc.selectFirst("span.product-title");
-        if (title != null) {
-            val = title.text().trim();
-        }
-        return val;
+        return null;
     }
 
     @Override
     public BigDecimal getPrice() {
-        BigDecimal val = null;
         Element price = doc.selectFirst(".product-price-primary");
         if (price != null) {
-            val = new BigDecimal(price.attr("content").trim());
+            return new BigDecimal(price.attr("content").trim());
         }
-        return val;
+        return BigDecimal.ZERO;
     }
 
     @Override
@@ -58,12 +50,11 @@ public class Argos extends AbstractWebsite {
 
     @Override
     public String getBrand() {
-        String val = null;
         Element seller = doc.selectFirst(".product-brand a");
         if (seller != null) {
-            val = seller.text().trim();
+            return seller.text().trim();
         }
-        return val;
+        return null;
     }
 
     @Override

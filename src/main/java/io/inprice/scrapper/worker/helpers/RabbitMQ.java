@@ -3,10 +3,15 @@ package io.inprice.scrapper.worker.helpers;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import io.inprice.scrapper.common.helpers.Converter;
+import io.inprice.scrapper.common.info.PriceChange;
+import io.inprice.scrapper.common.info.StatusChange;
 import io.inprice.scrapper.common.logging.Logger;
+import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.worker.config.Config;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.concurrent.TimeoutException;
 
 public class RabbitMQ {
@@ -61,6 +66,18 @@ public class RabbitMQ {
 			}
 		} catch (IOException | TimeoutException e) {
 			log.error("Error while RabbitMQ.channel is closed.", e);
+		}
+	}
+
+	public static void publish(String queue, Serializable message) {
+		publish(Config.RABBITMQ_LINK_EXCHANGE, queue, message);
+	}
+
+	public static void publish(String exchange, String queue, Serializable message) {
+		try {
+			channel.basicPublish(exchange, queue, null, Converter.fromObject(message));
+		} catch (IOException e) {
+			log.error("Failed to send a message to queue", e);
 		}
 	}
 

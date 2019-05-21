@@ -24,7 +24,6 @@ public class Ebay extends AbstractWebsite {
             String number = cleanPrice(stock.html().trim());
             try {
                 int amount = new Integer(number.trim());
-                System.out.println("amount : " + amount);
                 return (amount > 0);
             } catch (Exception e) { }
         }
@@ -32,25 +31,24 @@ public class Ebay extends AbstractWebsite {
     }
 
     @Override
-    public String getCode() {
-        String val = null;
-        Element code = doc.selectFirst("a[data-itemid]");
-        if (code != null) {
-            val = code.attr("data-itemid").trim();
+    public String getSku() {
+        Element sku = doc.selectFirst("a[data-itemid]");
+        if (sku != null) {
+            return sku.attr("data-itemid").trim();
         }
-        return val;
+        return null;
     }
 
     @Override
-    public String getTitle() {
+    public String getName() {
         String val = null;
-        Element title = doc.selectFirst("h1.product-title");
-        if (title != null) {
-            val = title.text().trim();
+        Element name = doc.selectFirst("h1.product-title");
+        if (name != null) {
+            val = name.text().trim();
         } else {
-            title = doc.selectFirst("a[data-itemid]");
-            if (title != null) {
-                val = title.attr("etafsharetitle").trim();
+            name = doc.selectFirst("a[data-itemid]");
+            if (name != null) {
+                val = name.attr("etafsharetitle").trim();
             }
         }
         return val;
@@ -85,6 +83,7 @@ public class Ebay extends AbstractWebsite {
     public String getSeller() {
         String val = null;
         Element seller = doc.getElementById("mbgLink");
+
         if (seller != null) {
             String[] sellerChunks = seller.attr("aria-label").split(":");
             if (sellerChunks.length > 1) {
@@ -92,6 +91,8 @@ public class Ebay extends AbstractWebsite {
             }
         } else {
             seller = doc.selectFirst("div.seller-persona a");
+            if (seller == null) seller = doc.selectFirst("span.mbg-nw");
+
             if (seller != null) {
                 val = seller.text().trim();
             }
@@ -114,7 +115,7 @@ public class Ebay extends AbstractWebsite {
 
     @Override
     public String getBrand() {
-        String[] titleChunks = getTitle().split("\\s");
+        String[] titleChunks = getName().split("\\s");
         if (titleChunks.length > 1) return titleChunks[0].trim();
         return null;
     }

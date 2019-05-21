@@ -12,9 +12,9 @@ public interface Website {
 
     boolean isAvailable();
 
-    String getCode();
+    String getSku();
 
-    String getTitle();
+    String getName();
 
     BigDecimal getPrice();
 

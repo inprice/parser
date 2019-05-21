@@ -18,23 +18,21 @@ public class HepsiBurada extends AbstractWebsite {
     }
 
     @Override
-    public String getCode() {
-        String val = null;
-        Element code = doc.selectFirst("#addToCartForm input[name='sku']");
-        if (code != null) {
-            val = code.val().trim();
+    public String getSku() {
+        Element sku = doc.selectFirst("#addToCartForm input[name='sku']");
+        if (sku != null) {
+            return sku.val().trim();
         }
-        return val;
+        return null;
     }
 
     @Override
-    public String getTitle() {
-        String val = null;
-        Element title = doc.getElementById("product-name");
-        if (title != null) {
-            val = title.text().trim();
+    public String getName() {
+        Element name = doc.getElementById("product-name");
+        if (name != null) {
+            return name.text().trim();
         }
-        return val;
+        return null;
     }
 
     @Override
@@ -54,12 +52,11 @@ public class HepsiBurada extends AbstractWebsite {
 
     @Override
     public String getSeller() {
-        String val = null;
         Element seller = doc.selectFirst("input[name='merchantId']");
         if (seller != null) {
-            val = seller.val().trim();
+            return seller.val().trim();
         }
-        return val;
+        return null;
     }
 
     @Override
@@ -69,12 +66,11 @@ public class HepsiBurada extends AbstractWebsite {
 
     @Override
     public String getBrand() {
-        String val = null;
         Element brand = doc.selectFirst(".brand-name a");
         if (brand != null) {
-            val = brand.text().trim();
+            return brand.text().trim();
         }
-        return val;
+        return null;
     }
 
     @Override

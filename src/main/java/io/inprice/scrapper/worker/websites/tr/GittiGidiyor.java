@@ -24,24 +24,23 @@ public class GittiGidiyor extends AbstractWebsite {
     }
 
     @Override
-    public String getCode() {
-        String val = null;
-        Element code = doc.getElementById("productId");
-        if (code != null) {
-            val = code.val().trim();
+    public String getSku() {
+        Element sku = doc.getElementById("productId");
+        if (sku != null) {
+            return sku.val().trim();
         }
-        return val;
+        return null;
     }
 
     @Override
-    public String getTitle() {
-        String val = null;
-        Element title = doc.getElementById("productTitle");
-        if (title == null) title = doc.selectFirst("span.title");
-        if (title != null) {
-            val = title.text().trim();
+    public String getName() {
+        Element name = doc.getElementById("productTitle");
+        if (name == null) name = doc.selectFirst("span.title");
+
+        if (name != null) {
+            return name.text().trim();
         }
-        return val;
+        return null;
     }
 
     @Override
@@ -61,32 +60,29 @@ public class GittiGidiyor extends AbstractWebsite {
 
     @Override
     public String getSeller() {
-        String val = null;
         Element seller = doc.selectFirst(".member-name a strong");
         if (seller != null) {
-            val = seller.text().trim();
+            return seller.text().trim();
         }
-        return val;
+        return null;
     }
 
     @Override
     public String getShipment() {
-        String val = null;
         Element shipment = doc.selectFirst(".CargoInfos .color-black");
         if (shipment != null) {
-            val = shipment.text().trim();
+            return shipment.text().trim();
         }
-        return val;
+        return null;
     }
 
     @Override
     public String getBrand() {
-        String val = null;
         Element brand = doc.selectFirst(".mr10.gt-product-brand-0 a");
         if (brand != null) {
-            val = brand.text().trim();
+            return brand.text().trim();
         }
-        return val;
+        return null;
     }
 
     @Override

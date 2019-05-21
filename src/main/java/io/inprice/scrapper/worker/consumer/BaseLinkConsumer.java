@@ -64,23 +64,19 @@ class BaseLinkConsumer {
     }
 
     private void sendToQueue(Link oldState, Link newState) {
-        try {
-            //becomes active
-            if (! newState.getActivated() && newState.getStatus().equals(Status.ACTIVE)) {
-                RabbitMQ.getChannel().basicPublish(Config.RABBITMQ_LINK_EXCHANGE, Config.RABBITMQ_ACTIVATED_LINKS_QUEUE, null, Converter.fromObject(newState));
+        //make active
+        if (! newState.getActivated() && newState.getStatus().equals(Status.ACTIVE)) {
+            RabbitMQ.publish(Config.RABBITMQ_ACTIVATED_LINKS_QUEUE, Converter.fromObject(newState));
 
-            //changes status
-            } else if (! oldState.getStatus().equals(newState.getStatus())) {
-                StatusChange change = new StatusChange(newState, newState.getStatus());
-                RabbitMQ.getChannel().basicPublish(Config.RABBITMQ_LINK_EXCHANGE, Config.RABBITMQ_STATUS_CHANGE_QUEUE, null, Converter.fromObject(change));
+        //change status
+        } else if (! oldState.getStatus().equals(newState.getStatus())) {
+            StatusChange change = new StatusChange(newState, newState.getStatus());
+            RabbitMQ.publish(Config.RABBITMQ_CHANGE_EXCHANGE, Config.RABBITMQ_STATUS_CHANGE_QUEUE, Converter.fromObject(change));
 
-            //changes price
-            } else if (! oldState.getPrice().equals(newState.getPrice())) {
-                PriceChange change = new PriceChange(newState.getId(), newState.getProductId(), newState.getPrice());
-                RabbitMQ.getChannel().basicPublish(Config.RABBITMQ_LINK_EXCHANGE, Config.RABBITMQ_PRICE_CHANGE_QUEUE, null, Converter.fromObject(change));
-            }
-        } catch (IOException e) {
-            log.error("Failed to send a message to queue", e);
+        //change price
+        } else if (! oldState.getPrice().equals(newState.getPrice())) {
+            PriceChange change = new PriceChange(newState.getId(), newState.getProductId(), newState.getPrice());
+            RabbitMQ.publish(Config.RABBITMQ_CHANGE_EXCHANGE, Config.RABBITMQ_PRICE_CHANGE_QUEUE, Converter.fromObject(change));
         }
     }
 
