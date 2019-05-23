@@ -2,6 +2,13 @@ import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.websites.Website;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class deneme {
 
     private static final Logger log = new Logger(deneme.class);
@@ -126,9 +133,91 @@ public class deneme {
             "https://www.debenhams.com/webapp/wcs/stores/servlet/prod_10701_10001_161010418163_-1"
         };
 
-        for (String url: zavvi_uk_URLs) {
+        String[] mediamarkt_de_URLs = {
+            "https://www.mediamarkt.de/de/product/_beats-solo-3-wireless-2178424.html",
+            "https://www.mediamarkt.de/de/product/_braun-silk%C2%B7expert-pro-5-pl5137-2514623.html",
+            "https://www.mediamarkt.de/de/product/_zhiyun-smooth-4-3-achsen-2487706.html",
+            "https://www.mediamarkt.de/de/product/_panasonic-kx-tg-6622-gb-1385157.html",
+            "https://www.mediamarkt.de/de/product/_iconbit-kick-scooter-ttv2-2438683.html"
+        };
+
+        String[] mediamarkt_tr_URLs = {
+            "https://www.mediamarkt.com.tr/tr/product/_n%C4%B1ntendo-1-2-switch-nintende-switch-oyun-1181774.html#teknik-bilgiler",
+            "https://www.mediamarkt.com.tr/tr/product/_sand%C4%B1sk-128gb-m%C4%B1cro-sd-extreme-sand%C4%B1sk-sdsqxa1-128g-gn6ma-adp-160mb-s-rescue-pro-deluxe-1192375.html",
+            "https://www.mediamarkt.com.tr/tr/product/_sand%C4%B1sk-128gb-sd-kart-95mb-s-ext-pro-c10-sdsdxxg-064g-gn4%C4%B1n-1177291.html",
+            "https://www.mediamarkt.com.tr/tr/product/_axen-ax40dab0937-40-102-ekran-uydu-al%C4%B1c%C4%B1l%C4%B1-led-tv-1180602.html",
+            "https://www.mediamarkt.com.tr/tr/product/_ttec-2kmm11p-r%C4%B1o-kumandal%C4%B1-ve-mikrofonlu-kulaki%C3%A7i-kulakl%C4%B1k-pembe-1177578.html"
+        };
+
+        String[] mediamarkt_nl_URLs = {
+            "https://www.mediamarkt.nl/nl/product/_samsung-dual-layer-cover-voor-samsung-galaxy-j7-2017-blauw-1518591.html",
+            "https://www.mediamarkt.nl/nl/product/_lenco-tcd-2600-music-center-zwart-1601875.html",
+            "https://www.mediamarkt.nl/nl/product/_vogels-wall-3205-1543523.html",
+            "https://www.mediamarkt.nl/nl/product/_sonos-play-1-zwart-1289431.html",
+            "https://www.mediamarkt.nl/nl/product/_koenic-keb350-rvs-1291396.html"
+        };
+
+        String[] mediamarkt_es_URLs = {
+            "https://www.mediamarkt.es/es/product/_microscopio-celestron-digital-de-iniciaci%C3%B3n-1136733.html",
+            "https://www.mediamarkt.es/es/product/_alejandro-fern%C3%A1ndez-15-a%C3%B1os-de-%C3%A9xitos-cd-dvd-9216526.html",
+            "https://www.mediamarkt.es/es/product/_irrigador-solac-id7840-aqua-smile-dep%C3%B3sito-170-ml-3-modos-40-minutos-de-autonom%C3%ADa-1435039.html",
+            "https://www.mediamarkt.es/es/product/_afeitadora-braun-mgk3980-estuche-9-en-1-para-barba-y-pelo-1430907.html"
+        };
+
+        String[] teknosa_tr_URLs = {
+            "https://www.teknosa.com/goldmaster-enjoy-60-radyolu-turuncu-bluetooth-speaker-p-110300637",
+            "https://www.teknosa.com/philips-gc932420-perfectcare-aqua-pro-tionic-taban-buhar-kazanli-utu-p-120170416",
+            "https://www.teknosa.com/mickey-clubhouse-havlu-p-176000129",
+            "https://www.teknosa.com/jwin-jf01-blok-flut-p-135040422"
+        };
+
+        String[] trendyol_tr_URLs = {
+            "https://www.trendyol.com/eurostar/bio-filter-ring-beyaz-500-ml-p-3300773?boutiqueId=314378&merchantId=107634",
+            "https://www.trendyol.com/natracare/intim-mendil-12-li-p-2429648?boutiqueId=314714&merchantId=106679",
+            "https://www.trendyol.com/samsung/samsung-860-evo-2-5-sata-3-0-ssd-disk-500gb-mz-76e500bw-p-2517007?boutiqueId=304398&merchantId=107174",
+            "https://www.trendyol.com/u-s-polo-assn/siyah-antrasit-lacivert-erkek-3-lu-boxer-us-01-80097-p-1783349?boutiqueId=314756&merchantId=1235",
+        };
+
+        String[] otto_de_URLs = {
+            "https://www.otto.de/p/tom-tailor-sandalette-mit-farbigen-akzenten-716340078/#variationId=716342300",
+            "https://www.otto.de/p/jockenhoefer-gruppe-ecksofa-mit-2-separaten-liegeflaechen-766962708/#variationId=759331063",
+            "https://www.otto.de/p/lascana-7-8-jeggings-687489144/#variationId=631752997",
+            "https://www.otto.de/p/siemens-kaffeevollautomat-kaffeevollautomat-eq-9-s300-ti923509de-individualcoffee-system-persoenliches-getraenke-menue-fuer-bis-zu-6-profile-759657618/#variationId=759658888"
+        };
+
+        String[] zalando_uk_URLs = {
+            "https://www.zalando.co.uk/adidas-performance-leggings-blackwhite-ad541e0ww-q11.html",
+            "https://www.zalando.co.uk/g-h-bass-co-larkin-slip-ons-gh112c005-o11.html",
+            "https://www.zalando.co.uk/erase-paisley-scarf-fedora-hat-brown-er752q00d-o11.html",
+            "https://www.zalando.co.uk/adidas-performance-condivo-18-tracksuit-bottoms-grey-ad543e0lz-c11.html",
+            "https://www.zalando.de/resteroeds-resort-shirt-terry-hemd-r6222d00k-a11.html"
+        };
+
+        String[] notebooksbilliger_de_URLs = {
+            "https://www.notebooksbilliger.de/netzwerk/powerlines+netzwerk/devolo+magic+2+wifi+starter+kit",
+            "https://www.notebooksbilliger.de/hp+mailights/pc+systeme+hp+mailights/omen/omen+by+hp+desktop+pc+880+172ng",
+            "https://www.notebooksbilliger.de/beamer/alle+hersteller+beamer/panasonic/products_id/463911",
+            "https://www.notebooksbilliger.de/pc+hardware/ssd+wd+black+sn750+nvme+ssd/wd+black+sn750+nvme+ssd+250gb+m2+2280+pcie+30+x4"
+        };
+
+        String[] lidl_xx_URLs = {
+            "https://www.lidl.co.uk/en/Offers.htm?articleId=19337",
+            "https://www.lidl.de/de/topmove-kameratasche/p255537",
+            "https://www.lidl.co.uk/en/MiddleofLidl.htm?articleId=22936",
+            "https://www.lidl.de/de/schildkroet-fitness-springseil-speed-rope-pro/p296902",
+            "https://www.lidl.de/de/florabest-hochlehner-polsterauflage-120-x-50-x-4-cm/p269476?fromRecommendation=true&scenario=top_selling"
+        };
+
+        String[] bonprix_xx_URLs = {
+            "https://www.bonprix.de/produkt/stretchjeans-im-used-look-blue-bleached-used-975346/#image",
+            "https://www.bonprix.co.uk/products/brutting-rip-tape-trainers/_/A-920026_8?PFM_rsn=browse&PFM_ref=false&PFM_psp=own&PFM_pge=1&PFM_lpn=8",
+            "https://www.bonprix.de/produkt/strandtunika-weiss-gold-metallic-956531/#image",
+            "https://www.bonprix.co.uk/products/super-stretchy-capri-jeans/_/A-905945_10?cs_ev=crossSell-_-recentlyViewed-_-carousel4-_-SuperStretchyCapriJeans&cs_pr=productlist-_-bottom-_-ListPage-_-RecentlyViewed-_-clicked-_-4"
+        };
+
+        for (String url: bonprix_xx_URLs) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.uk.Zavvi");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.xx.Bonprix");
             try {
                 Class<Website> resolverClass = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Website website = resolverClass.newInstance();
@@ -150,6 +239,33 @@ public class deneme {
             link.getSpecList().forEach(spec -> {
                 log.debug("  > " + spec.getKey() + " - " + spec.getValue());
             });
+        }
+    }
+
+    private static void download(String strUrl) {
+        URL url;
+        InputStream is = null;
+        BufferedReader br;
+        String line;
+
+        try {
+            url = new URL(strUrl);
+            is = url.openStream();  // throws an IOException
+            br = new BufferedReader(new InputStreamReader(is));
+
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (MalformedURLException mue) {
+            mue.printStackTrace();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } finally {
+            try {
+                if (is != null) is.close();
+            } catch (IOException ioe) {
+                // nothing to see here
+            }
         }
     }
 

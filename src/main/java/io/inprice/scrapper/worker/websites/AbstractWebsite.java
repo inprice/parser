@@ -3,7 +3,6 @@ package io.inprice.scrapper.worker.websites;
 import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.worker.helpers.Global;
 import io.inprice.scrapper.worker.helpers.UserAgents;
 import org.json.JSONObject;
 import org.jsoup.Connection;
@@ -20,12 +19,14 @@ public abstract class AbstractWebsite implements Website {
 
     protected Document doc;
     protected JSONObject json;
+    protected String url;
 
     @Override
     public void check(Link link) {
         createDoc(link);
 
         json = getJsonData();
+        this.url = link.getUrl();
 
         if (Status.NEW.equals(link.getStatus()) || Status.RENEW.equals(link.getStatus()) || link.getName() == null) {
             link.setSku(getSku());
@@ -46,7 +47,7 @@ public abstract class AbstractWebsite implements Website {
             String deliveryMessage = getDeliveryMessage();
             if (deliveryMessage != null) link.setShipment(deliveryMessage);
             link.setStatus(Status.UNAVAILABLE);
-            log.debug("This product is now unavailable!");
+            log.debug("This product is not available!");
         }
     }
 
@@ -59,7 +60,11 @@ public abstract class AbstractWebsite implements Website {
     }
 
     protected String cleanPrice(String price) {
-        String trimmed = price.trim();
+        StringBuilder sb = new StringBuilder();
+        for (Character ch: price.toCharArray()) {
+            if ((ch >= '0' && ch <= '9') || ch == ',' || ch == '.') sb.append(ch);
+        }
+        String trimmed = sb.toString();
         boolean commaDecimal =  (trimmed.length() > 3 && trimmed.charAt(trimmed.length() - 3) == ',');
 
         String pure = trimmed.replaceAll("[^\\d.]", "").trim();
@@ -89,7 +94,7 @@ public abstract class AbstractWebsite implements Website {
                 Jsoup.connect(url)
                     .userAgent(UserAgents.findARandomUA())
                     .referrer(UserAgents.findARandomReferer())
-                    .timeout(5000)
+                    .timeout(10000)
                     .ignoreContentType(true)
                     .followRedirects(true)
                 .execute();

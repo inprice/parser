@@ -6,7 +6,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 
