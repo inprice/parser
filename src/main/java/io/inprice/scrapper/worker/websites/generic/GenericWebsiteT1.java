@@ -41,9 +41,14 @@ public class GenericWebsiteT1 extends AbstractWebsite {
 
     @Override
     public String getSku() {
-        if (json != null && json.has("@id")) {
-            String id = json.getString("@id");
-            if (id != null) return cleanPrice(id);
+        if (json != null) {
+            if (json.has("sku")) {
+                return json.getString("sku");
+            }
+            if (json.has("@id")) {
+                String id = json.getString("@id");
+                if (id != null) return cleanPrice(id);
+            }
         }
 
         Element sku = doc.selectFirst("span.item-number-value");
@@ -51,7 +56,7 @@ public class GenericWebsiteT1 extends AbstractWebsite {
             return sku.text().trim();
         }
 
-        return null;
+        return "NA";
     }
 
     @Override
@@ -116,8 +121,12 @@ public class GenericWebsiteT1 extends AbstractWebsite {
 
     @Override
     public List<LinkSpec> getSpecList() {
+        return getSpecList("div.pw-dangerous-html li");
+    }
+
+    protected List<LinkSpec> getSpecList(String selector) {
         List<LinkSpec> specList = null;
-        Elements specs = doc.select("div.pw-dangerous-html li");
+        Elements specs = doc.select(selector);
         if (specs != null && specs.size() > 0) {
             specList = new ArrayList<>();
             for (Element spec : specs) {
@@ -126,4 +135,5 @@ public class GenericWebsiteT1 extends AbstractWebsite {
         }
         return specList;
     }
+
 }

@@ -9,22 +9,37 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public abstract class AbstractWebsite implements Website {
 
-    private static final Logger log = new Logger(AbstractWebsite.class);
+    protected static final Logger log = new Logger(AbstractWebsite.class);
 
     protected Document doc;
     protected JSONObject json;
     protected String url;
 
     @Override
+    public void test(String fileName, Link link) {
+        try {
+            File input = new File(fileName);
+            doc = Jsoup.parse(input, "UTF-8");
+            read(link);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void check(Link link) {
         createDoc(link);
+        read(link);
+    }
 
+    private void read(Link link) {
         json = getJsonData();
         this.url = link.getUrl();
 
@@ -94,6 +109,7 @@ public abstract class AbstractWebsite implements Website {
                 Jsoup.connect(url)
                     .userAgent(UserAgents.findARandomUA())
                     .referrer(UserAgents.findARandomReferer())
+                    .maxBodySize(0)
                     .timeout(10000)
                     .ignoreContentType(true)
                     .followRedirects(true)

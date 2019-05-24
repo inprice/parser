@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface Website {
 
+    void test(String fileName, Link link);
+
     void check(Link link);
 
     boolean isAvailable();

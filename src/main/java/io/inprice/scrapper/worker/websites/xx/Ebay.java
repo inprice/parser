@@ -21,7 +21,9 @@ public class Ebay extends AbstractWebsite {
 
         stock = doc.selectFirst("#qtySubTxt span");
         if (stock != null) {
-            String number = cleanPrice(stock.html().trim());
+            if (stock.text().contains("available")) return true;
+
+            String number = cleanPrice(stock.text().trim());
             try {
                 int amount = new Integer(number.trim());
                 return (amount > 0);
@@ -32,26 +34,34 @@ public class Ebay extends AbstractWebsite {
 
     @Override
     public String getSku() {
-        Element sku = doc.selectFirst("a[data-itemid]");
+        Element sku = doc.getElementById("descItemNumber");
+        if (sku != null) {
+            return sku.text().trim();
+        }
+
+        sku = doc.selectFirst("a[data-itemid]");
         if (sku != null) {
             return sku.attr("data-itemid").trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
     public String getName() {
-        String val = null;
-        Element name = doc.selectFirst("h1.product-title");
+        Element name = doc.selectFirst("title");
+        if (name != null) return name.text().trim();
+
+        name = doc.getElementById("itemTitle");
+        if (name != null) return name.text().trim();
+
+        name = doc.selectFirst("h1.product-title");
+        if (name != null) return name.text().trim();
+
+        name = doc.selectFirst("a[data-itemid]");
         if (name != null) {
-            val = name.text().trim();
-        } else {
-            name = doc.selectFirst("a[data-itemid]");
-            if (name != null) {
-                val = name.attr("etafsharetitle").trim();
-            }
+            return name.attr("etafsharetitle").trim();
         }
-        return val;
+        return "NA";
     }
 
     @Override
