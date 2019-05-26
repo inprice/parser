@@ -1,5 +1,6 @@
 import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.Website;
 
 import java.io.BufferedReader;
@@ -8,6 +9,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class deneme {
 
@@ -245,6 +248,11 @@ public class deneme {
             "https://www.bestbuy.ca/en-ca/product/anki-cozmo-carrying-case/11471285"
         };
 
+        String[] walmart_ca = {
+            //"https://www.walmart.ca/en/ip/sharp-50-4k-smart-tv-n6003/6000198871514"
+            "https://www.walmart.ca/en/ip/ViscoLogic-Series-THRILL-Gaming-Racing-Style-Swivel-Office-Chair/5P82E6OC9V42"
+        };
+
         final String path = "/home/mdpinar/java/workspace/inprice/html/";
 
         String[] fileNames = {
@@ -254,19 +262,31 @@ public class deneme {
             //"ca/walmart/"
         };
 
-        for (String fileName: fileNames) {
-            Link link = new Link();
+        for (String url: walmart_ca) {
+            Link link = new Link(url);
             link.setWebsiteClassName("io.inprice.scrapper.worker.websites.ca.Walmart");
             try {
                 Class<Website> resolverClass = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Website website = resolverClass.newInstance();
-                website.test(path + fileName, link);
+                website.check(link);
+                //website.test(path + fileName, link);
                 printOut(link);
             } catch (Exception e) {
                 log.error("Error in converting message from byte array to Link", e);
             }
         }
     }
+
+    public static void getSpecList(String body) {
+        final String indicator = "maxOrderQuantity";
+
+        int start = body.indexOf(indicator) + indicator.length() + 2;
+        int end = body.indexOf(",", start);
+
+        String maxOrder = body.substring(start, end);
+        System.out.println(maxOrder.trim());
+    }
+
 
     private static void printOut(Link link) {
         log.debug("--------------------------------------------------------------------------------------------------");

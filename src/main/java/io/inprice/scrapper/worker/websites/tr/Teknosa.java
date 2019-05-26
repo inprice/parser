@@ -13,44 +13,26 @@ import java.util.List;
 
 public class Teknosa extends GenericWebsiteT1 {
 
+    private JSONObject offers;
+
     public Teknosa() {
         super("Teknosa");
     }
 
     @Override
-    public String getSku() {
-        if (json != null && json.has("sku")) {
-            return json.getString("sku");
-        }
-        return super.getSku();
-    }
-
-    @Override
-    public boolean isAvailable() {
-        if (json != null && json.has("offers")) {
-            JSONObject offers = json.getJSONObject("offers");
-            if (! offers.isEmpty() && offers.has("offers")) {
+    public JSONObject getJsonData() {
+        Element dataEL = doc.selectFirst("script[type='application/ld+json']");
+        if (dataEL != null) {
+            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
+            if (data.has("offers")) {
                 JSONArray offersArray = offers.getJSONArray("offers");
-                if (! offersArray.isEmpty() && ! offersArray.isEmpty()) {
-                    String status = offersArray.getJSONObject(0).getString("availability");
-                    return status.endsWith("InStock");
+                if (! offersArray.isEmpty()) {
+                    offers = offersArray.getJSONObject(0);
                 }
             }
+            return data;
         }
-        return super.isAvailable();
-    }
-
-    @Override
-    public BigDecimal getPrice() {
-        if (json != null && json.has("offers")) {
-            JSONObject offers = json.getJSONObject("offers");
-            if (! offers.isEmpty() && offers.has("lowPrice")) {
-                return offers.getBigDecimal("lowPrice");
-            } else if (! offers.isEmpty() && offers.has("price")) {
-                return offers.getBigDecimal("price");
-            }
-        }
-        return super.getPrice();
+        return super.getJsonData();
     }
 
     @Override

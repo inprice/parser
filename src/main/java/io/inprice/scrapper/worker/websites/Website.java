@@ -28,4 +28,6 @@ public interface Website {
 
     List<LinkSpec> getSpecList();
 
+    String getJSBasedPageCaller();
+
 }

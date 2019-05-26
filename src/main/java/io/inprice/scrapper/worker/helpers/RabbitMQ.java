@@ -4,10 +4,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import io.inprice.scrapper.common.helpers.Converter;
-import io.inprice.scrapper.common.info.PriceChange;
-import io.inprice.scrapper.common.info.StatusChange;
 import io.inprice.scrapper.common.logging.Logger;
-import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.worker.config.Config;
 
 import java.io.IOException;

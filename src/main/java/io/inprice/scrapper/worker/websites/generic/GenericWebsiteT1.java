@@ -13,6 +13,7 @@ import java.util.List;
 public class GenericWebsiteT1 extends AbstractWebsite {
 
     private final String websiteName;
+    private JSONObject offers;
 
     protected GenericWebsiteT1(String websiteName) {
         this.websiteName = websiteName;
@@ -20,21 +21,22 @@ public class GenericWebsiteT1 extends AbstractWebsite {
 
     @Override
     public JSONObject getJsonData() {
-        Element data = doc.selectFirst("script[type='application/ld+json']");
-        if (data != null) {
-            return new JSONObject(data.dataNodes().get(0).getWholeData().trim());
+        Element dataEL = doc.selectFirst("script[type='application/ld+json']");
+        if (dataEL != null) {
+            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
+            if (data.has("offers")) {
+                offers = json.getJSONObject("offers");
+            }
+            return data;
         }
         return super.getJsonData();
     }
 
     @Override
     public boolean isAvailable() {
-        if (json != null && json.has("offers")) {
-            JSONObject offers = json.getJSONObject("offers");
-            if (! offers.isEmpty() && offers.has("availability")) {
-                String status = offers.getString("availability");
-                return status.endsWith("InStock");
-            }
+        if (offers != null && offers.has("availability")) {
+            String status = offers.getString("availability");
+            return status.endsWith("InStock");
         }
         return super.isAvailable();
     }
@@ -75,9 +77,10 @@ public class GenericWebsiteT1 extends AbstractWebsite {
 
     @Override
     public BigDecimal getPrice() {
-        if (json != null && json.has("offers")) {
-            JSONObject offers = json.getJSONObject("offers");
-            if (! offers.isEmpty() && offers.has("price")) {
+        if (offers != null) {
+            if (! offers.isEmpty() && offers.has("lowPrice")) {
+                return offers.getBigDecimal("lowPrice");
+            } else if (! offers.isEmpty() && offers.has("price")) {
                 return offers.getBigDecimal("price");
             }
         }

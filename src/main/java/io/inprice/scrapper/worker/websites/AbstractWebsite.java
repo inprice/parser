@@ -3,6 +3,7 @@ package io.inprice.scrapper.worker.websites;
 import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.worker.helpers.Browser;
 import io.inprice.scrapper.worker.helpers.UserAgents;
 import org.json.JSONObject;
 import org.jsoup.Connection;
@@ -43,7 +44,7 @@ public abstract class AbstractWebsite implements Website {
         json = getJsonData();
         this.url = link.getUrl();
 
-        if (Status.NEW.equals(link.getStatus()) || Status.RENEW.equals(link.getStatus()) || link.getName() == null) {
+        if (Status.NEW.equals(link.getStatus()) || Status.RENEWED.equals(link.getStatus()) || link.getName() == null) {
             link.setSku(getSku());
             link.setName(getName());
             link.setSeller(getSeller());
@@ -93,7 +94,19 @@ public abstract class AbstractWebsite implements Website {
     }
 
     private void createDoc(Link link) {
-        int httpStatus = openDocument(link.getUrl());
+        int httpStatus = 200;
+        final String jsPageCaller = getJSBasedPageCaller();
+
+        if (jsPageCaller == null) {
+            httpStatus = openDocument(link.getUrl());
+        } else {
+            final String html = Browser.getHtmlWithJS(jsPageCaller, link.getUrl());
+            if (html.equals(Browser.EMPTY_RESPONSE)) {
+                httpStatus = 0;
+            } else {
+                doc = Jsoup.parse(html);
+            }
+        }
 
         if (httpStatus == 0) {
             link.setStatus(Status.SOCKET_ERROR);
@@ -125,5 +138,10 @@ public abstract class AbstractWebsite implements Website {
     @Override
     public boolean isAvailable() {
         return true;
+    }
+
+    @Override
+    public String getJSBasedPageCaller() {
+        return null;
     }
 }
