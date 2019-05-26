@@ -5,6 +5,7 @@ import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.Browser;
 import io.inprice.scrapper.worker.helpers.UserAgents;
+import io.inprice.scrapper.worker.info.HtmlResponse;
 import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -37,7 +38,7 @@ public abstract class AbstractWebsite implements Website {
     @Override
     public void check(Link link) {
         createDoc(link);
-        read(link);
+        if (link.getHttpStatus() == null || link.getHttpStatus() == 200) read(link);
     }
 
     private void read(Link link) {
@@ -100,13 +101,14 @@ public abstract class AbstractWebsite implements Website {
         if (jsPageCaller == null) {
             httpStatus = openDocument(link.getUrl());
         } else {
-            final String html = Browser.getHtmlWithJS(jsPageCaller, link.getUrl());
-            if (html.equals(Browser.EMPTY_RESPONSE)) {
-                httpStatus = 0;
-            } else {
-                doc = Jsoup.parse(html);
+            final HtmlResponse response = Browser.getHtmlWithJS(jsPageCaller, link.getUrl());
+            httpStatus = response.getStatus();
+            if (httpStatus == 200) {
+                doc = Jsoup.parse(response.getHtml());
             }
         }
+
+        if (httpStatus != 200) link.setHttpStatus(httpStatus);
 
         if (httpStatus == 0) {
             link.setStatus(Status.SOCKET_ERROR);

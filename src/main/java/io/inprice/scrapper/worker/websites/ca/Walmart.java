@@ -22,6 +22,8 @@ public class Walmart extends AbstractWebsite {
 
     @Override
     public JSONObject getJsonData() {
+        if (doc == null) return null;
+
         Element dataEL = doc.selectFirst("div.js-content script[type='application/ld+json']");
         if (dataEL != null) {
             JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
@@ -35,6 +37,8 @@ public class Walmart extends AbstractWebsite {
 
     @Override
     public boolean isAvailable() {
+        if (doc == null) return false;
+
         final String body = doc.body().html();
         final String indicator = "maxOrderQuantity";
 
@@ -109,6 +113,8 @@ public class Walmart extends AbstractWebsite {
 
     @Override
     public List<LinkSpec> getSpecList() {
+        if (doc == null) return null;
+
         final String body = doc.body().html();
         final String indicator = "featuresSpecifications";
 

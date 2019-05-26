@@ -1,10 +1,14 @@
 package io.inprice.scrapper.worker.helpers;
 
 import io.inprice.scrapper.common.logging.Logger;
+import io.inprice.scrapper.worker.info.HtmlResponse;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,14 +68,32 @@ public class Browser {
         driver = new ChromeDriver(options);
     }
 
-    public static synchronized String getHtmlWithJS(String caller, String url) {
+    public static synchronized HtmlResponse getHtmlWithJS(String caller, String url) {
+        int httpStatus = checkFirst(url);
+        if (httpStatus != 200) return new HtmlResponse(httpStatus);
+
         long start = new Date().getTime();
         driver.get(url);
         long end = new Date().getTime();
         log.info("Caller: %s, Time: %d", caller, (end-start));
         final String result = driver.getPageSource();
         driver.close();
-        return result;
+
+        return new HtmlResponse(200, result);
+    }
+
+    private static int checkFirst(String path) {
+        try {
+            HttpURLConnection.setFollowRedirects(false);
+            URL url = new URL(path);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            return http.getResponseCode();
+        } catch (UnknownHostException e1) {
+            return 404;
+        } catch (Exception e) {
+            log.error(e);
+            return 0;
+        }
     }
 
     public static void close() {

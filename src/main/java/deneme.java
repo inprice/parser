@@ -249,8 +249,14 @@ public class deneme {
         };
 
         String[] walmart_ca = {
-            //"https://www.walmart.ca/en/ip/sharp-50-4k-smart-tv-n6003/6000198871514"
+            "https://www.walmart.ca/en/ip/sharp-50-4k-smart-tv-n6003/6000198871514",
             "https://www.walmart.ca/en/ip/ViscoLogic-Series-THRILL-Gaming-Racing-Style-Swivel-Office-Chair/5P82E6OC9V42"
+        };
+
+        String[] walmart_us = {
+            //"https://www.walmart.com/ip/PAW-Patrol-PAW-Patroller-Rescue-Transport-Vehicle/45300865",
+            //"https://www.walmart.com/ip/Daisy-Youth-Line-1938-Red-Ryder-Air-Rifle/19341879",
+            "https://www.walmart.com/ip/Oculus-Go-Standalone-Virtual-Reality-Headset-32GB-Oculus-VR/296029684",
         };
 
         final String path = "/home/mdpinar/java/workspace/inprice/html/";
@@ -262,9 +268,9 @@ public class deneme {
             //"ca/walmart/"
         };
 
-        for (String url: walmart_ca) {
+        for (String url: walmart_us) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.ca.Walmart");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.us.Walmart");
             try {
                 Class<Website> resolverClass = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Website website = resolverClass.newInstance();
@@ -292,6 +298,8 @@ public class deneme {
         log.debug("--------------------------------------------------------------------------------------------------");
         log.debug("SKU   : " + link.getSku());
         log.debug("Name  : " + link.getName());
+        log.debug("Status: " + link.getStatus());
+        log.debug("Http  : " + link.getHttpStatus());
         log.debug("Price : %f, Seller: %s, Shipment: %s, Brand: %s", link.getPrice(), link.getSeller(), link.getShipment(), link.getBrand());
         if (link.getSpecList() != null && link.getSpecList().size() > 0) {
             link.getSpecList().forEach(spec -> {
