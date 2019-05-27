@@ -30,7 +30,7 @@ public class MediaMarkt extends AbstractWebsite {
         if (sku != null) {
             return sku.text().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -39,7 +39,7 @@ public class MediaMarkt extends AbstractWebsite {
         if (name != null) {
             return name.attr("content").trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override

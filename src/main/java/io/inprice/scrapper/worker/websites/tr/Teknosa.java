@@ -36,6 +36,16 @@ public class Teknosa extends GenericWebsiteT1 {
     }
 
     @Override
+    public boolean isAvailable() {
+        Element availablity = doc.selectFirst("div.stock-status.in-stock");
+        if (availablity != null) {
+            return availablity.text().contains("Stokta var");
+        }
+
+        return super.isAvailable();
+    }
+
+    @Override
     public List<LinkSpec> getSpecList() {
         List<LinkSpec> specList = null;
 

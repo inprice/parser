@@ -21,11 +21,11 @@ public class GenericWebsiteT1 extends AbstractWebsite {
 
     @Override
     public JSONObject getJsonData() {
-        Element dataEL = doc.selectFirst("script[type='application/ld+json']");
+        Element dataEL = doc.getElementsByTag("title").next("script[type='application/ld+json']").first();
         if (dataEL != null) {
             JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
             if (data.has("offers")) {
-                offers = json.getJSONObject("offers");
+                offers = data.getJSONObject("offers");
             }
             return data;
         }
@@ -34,9 +34,9 @@ public class GenericWebsiteT1 extends AbstractWebsite {
 
     @Override
     public boolean isAvailable() {
-        if (offers != null && offers.has("availability")) {
-            String status = offers.getString("availability");
-            return status.endsWith("InStock");
+        Element availability = doc.selectFirst("meta[name='twitter:data2']");
+        if (availability != null) {
+            return "In Stock".equals(availability.attr("content"));
         }
         return super.isAvailable();
     }
@@ -112,11 +112,11 @@ public class GenericWebsiteT1 extends AbstractWebsite {
     @Override
     public String getBrand() {
         if (json != null) {
-            if (json.has("schema:brand")) {
-                return json.getString("schema:brand");
-            }
             if (json.has("brand")) {
                 return json.getJSONObject("brand").getString("name");
+            }
+            if (json.has("schema:brand")) {
+                return json.getString("schema:brand");
             }
         }
         return null;

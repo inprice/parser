@@ -254,23 +254,33 @@ public class deneme {
         };
 
         String[] walmart_us = {
-            //"https://www.walmart.com/ip/PAW-Patrol-PAW-Patroller-Rescue-Transport-Vehicle/45300865",
-            //"https://www.walmart.com/ip/Daisy-Youth-Line-1938-Red-Ryder-Air-Rifle/19341879",
+            "https://www.walmart.com/ip/PAW-Patrol-PAW-Patroller-Rescue-Transport-Vehicle/45300865",
+            "https://www.walmart.com/ip/Daisy-Youth-Line-1938-Red-Ryder-Air-Rifle/19341879",
             "https://www.walmart.com/ip/Oculus-Go-Standalone-Virtual-Reality-Headset-32GB-Oculus-VR/296029684",
         };
 
-        final String path = "/home/mdpinar/java/workspace/inprice/html/";
-
-        String[] fileNames = {
-            "ca/walmart/bestek.html",
-            //"ca/walmart/",
-            //"ca/walmart/",
-            //"ca/walmart/"
+        String[] asda_uk = {
+            "https://direct.asda.com/george/outdoor-garden/jakarta/jakarta-linen-corner-group-garden-dining-set/BUN636,default,pd.html?cgid=D33M09G01C05",
+            "https://direct.asda.com/george/home/towels-bath-mats/grey-sausage-dog-cotton-towel-range/GEM658079,default,pd.html?cgid=D26M07G07C09",
+            "https://direct.asda.com/george/women/shoes/light-brown-snake-print-heeled-chelsea-boots/GEM687876,default,pd.html?cgid=D1M1G20C20&cmpid=otc-good-_-geor-_-6-animal-print-accessories-weve-gone-wild-for-_-fashion-tips-_-section",
         };
 
-        for (String url: walmart_us) {
+        String[] etsy_us = {
+            "https://www.etsy.com/listing/477969731/the-spamp-guitar-practice-amplifier-and?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sr_gallery-1-5&cns=1",
+            "https://www.etsy.com/listing/693195462/jack-daniels-vinyl-wall-clock-large-jack?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sc_gallery-1-3&plkey=4f0b7348bf0c89cf89355a3471585dfe98ae5b77%3A693195462&pro=1&frs=1",
+            "https://www.etsy.com/listing/498796241/custom-skirt-circle-skirt-midi-skirt?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sr_gallery-1-5&bes=1&col=1",
+            "https://www.etsy.com/listing/253465953/plug-in-wall-sconce-lamp?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sc_gallery-1-4&plkey=b2e990a66028190194e6b8ae7e8455212c131ef0%3A253465953&pro=1&col=1"
+        };
+
+        String[] pixmaina_es = {
+            "https://www.pixmania.es/p/knipex-slipjoint-gripping-pliers-125-mm-1054557?offerId=22687062",
+            //"https://www.pixmania.es/p/navroad-x5-navegador-127-cm-5-pantalla-tactil-lcd-fijo-negro-184-g-7395496?offerId=22685200",
+            //"https://www.pixmania.es/p/air-rise-paquete-hoverboard-65-azul-hoverkart-negro-bluetooth-bolsa-y-su-mando-5962449?offerId=20221680",
+        };
+
+        for (String url: pixmaina_es) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.us.Walmart");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.es.Pixmania");
             try {
                 Class<Website> resolverClass = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Website website = resolverClass.newInstance();
