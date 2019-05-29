@@ -94,6 +94,27 @@ public class Lidl extends AbstractWebsite {
                 String value = spec.text().trim();
                 specList.add(new LinkSpec("", value));
             }
+
+            return specList;
+        }
+
+        specs = doc.select("div.attributebox__keyfacts li");
+        if (specs != null && specs.size() > 0) {
+            specList = new ArrayList<>();
+            for (Element spec : specs) {
+                String strSpec = spec.text().trim();
+                String key = "";
+                String value = strSpec.trim();
+
+                if (strSpec.contains(":")) {
+                    String[] specChunks = strSpec.split(":");
+                    if (specChunks.length > 1) {
+                        key = specChunks[0].trim();
+                        value = specChunks[1].trim();
+                    }
+                }
+                specList.add(new LinkSpec(key, value));
+            }
         }
         return specList;
     }

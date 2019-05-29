@@ -184,9 +184,9 @@ public class deneme {
 
         String[] otto_de = {
             "https://www.otto.de/p/tom-tailor-sandalette-mit-farbigen-akzenten-716340078/#variationId=716342300",
-            "https://www.otto.de/p/jockenhoefer-gruppe-ecksofa-mit-2-separaten-liegeflaechen-766962708/#variationId=759331063",
-            "https://www.otto.de/p/lascana-7-8-jeggings-687489144/#variationId=631752997",
-            "https://www.otto.de/p/siemens-kaffeevollautomat-kaffeevollautomat-eq-9-s300-ti923509de-individualcoffee-system-persoenliches-getraenke-menue-fuer-bis-zu-6-profile-759657618/#variationId=759658888"
+            //"https://www.otto.de/p/jockenhoefer-gruppe-ecksofa-mit-2-separaten-liegeflaechen-766962708/#variationId=759331063",
+            //"https://www.otto.de/p/lascana-7-8-jeggings-687489144/#variationId=631752997",
+            //"https://www.otto.de/p/siemens-kaffeevollautomat-kaffeevollautomat-eq-9-s300-ti923509de-individualcoffee-system-persoenliches-getraenke-menue-fuer-bis-zu-6-profile-759657618/#variationId=759658888"
         };
 
         String[] zalando_uk = {
@@ -212,12 +212,12 @@ public class deneme {
 
         String[] lidl_uk = {
             "https://www.lidl.co.uk/en/Offers.htm?articleId=19337",
-            "https://www.lidl.co.uk/en/MiddleofLidl.htm?articleId=22936",
+            //"https://www.lidl.co.uk/en/MiddleofLidl.htm?articleId=22936",
         };
 
         String[] bonprix_de = {
             "https://www.bonprix.de/produkt/stretchjeans-im-used-look-blue-bleached-used-975346/#image",
-            "https://www.bonprix.de/produkt/strandtunika-weiss-gold-metallic-956531/#image"
+            //"https://www.bonprix.de/produkt/strandtunika-weiss-gold-metallic-956531/#image"
         };
 
         String[] bonprix_uk = {
@@ -250,7 +250,7 @@ public class deneme {
 
         String[] walmart_ca = {
             "https://www.walmart.ca/en/ip/sharp-50-4k-smart-tv-n6003/6000198871514",
-            "https://www.walmart.ca/en/ip/ViscoLogic-Series-THRILL-Gaming-Racing-Style-Swivel-Office-Chair/5P82E6OC9V42"
+            //"https://www.walmart.ca/en/ip/ViscoLogic-Series-THRILL-Gaming-Racing-Style-Swivel-Office-Chair/5P82E6OC9V42"
         };
 
         String[] walmart_us = {
@@ -273,9 +273,9 @@ public class deneme {
         };
 
         String[] pixmaina_es = {
-            "https://www.pixmania.es/p/knipex-slipjoint-gripping-pliers-125-mm-1054557?offerId=22687062",
+            //"https://www.pixmania.es/p/knipex-slipjoint-gripping-pliers-125-mm-1054557?offerId=22687062",
             //"https://www.pixmania.es/p/navroad-x5-navegador-127-cm-5-pantalla-tactil-lcd-fijo-negro-184-g-7395496?offerId=22685200",
-            //"https://www.pixmania.es/p/air-rise-paquete-hoverboard-65-azul-hoverkart-negro-bluetooth-bolsa-y-su-mando-5962449?offerId=20221680",
+            "https://www.pixmania.es/p/air-rise-paquete-hoverboard-65-azul-hoverkart-negro-bluetooth-bolsa-y-su-mando-5962449?offerId=20221680",
         };
 
         for (String url: pixmaina_es) {
@@ -293,8 +293,17 @@ public class deneme {
         }
     }
 
+    private static String findProductId(String url) {
+        final String[] urlChunks = url.split("\\?");
+        final String[] partChunks = urlChunks[0].split("-");
+        if (partChunks.length > 0) {
+            return partChunks[partChunks.length-1];
+        }
+        return null;
+    }
+
     public static void getSpecList(String body) {
-        final String indicator = "maxOrderQuantity";
+            final String indicator = "maxOrderQuantity";
 
         int start = body.indexOf(indicator) + indicator.length() + 2;
         int end = body.indexOf(",", start);

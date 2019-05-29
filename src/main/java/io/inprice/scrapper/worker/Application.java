@@ -5,12 +5,10 @@ import io.inprice.scrapper.worker.config.Config;
 import io.inprice.scrapper.worker.consumer.ActiveLinksConsumer;
 import io.inprice.scrapper.worker.consumer.FailedLinksConsumer;
 import io.inprice.scrapper.worker.consumer.NewLinksConsumer;
-import io.inprice.scrapper.worker.helpers.Browser;
 import io.inprice.scrapper.worker.helpers.Global;
 import io.inprice.scrapper.worker.helpers.RabbitMQ;
 import io.inprice.scrapper.worker.helpers.ThreadPools;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -34,10 +32,6 @@ public class Application {
 
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			Global.isRunning = false;
-
-			log.info("Web browser is closing...");
-			Browser.close();
-			log.info("Web browser is closed.");
 
 			log.info("RabbitMQ connection is closing...");
 			RabbitMQ.closeChannel();

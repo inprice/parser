@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface Website {
 
-    void test(String fileName, Link link);
+    //void test(String fileName, Link link);
 
     void check(Link link);
 
@@ -27,7 +27,5 @@ public interface Website {
     String getBrand();
 
     List<LinkSpec> getSpecList();
-
-    String getJSBasedPageCaller();
 
 }

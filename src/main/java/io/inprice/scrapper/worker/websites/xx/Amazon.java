@@ -19,7 +19,7 @@ public class Amazon extends AbstractWebsite {
         Element inStock = doc.selectFirst("div#availability span.a-size-medium.a-color-success");
         return (inStock != null);
     }
-
+/*
     @Override
     public String getDeliveryMessage() {
         Element deliveryMessage = doc.selectFirst("div#ddmDeliveryMessage span");
@@ -28,7 +28,7 @@ public class Amazon extends AbstractWebsite {
         }
         return super.getDeliveryMessage();
     }
-
+*/
     @Override
     public String getSku() {
         Element sku = doc.getElementById("ASIN");

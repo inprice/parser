@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Browser {
+class Browser {
 
     public static final String EMPTY_RESPONSE = "<html><head></head><body></body></html>";
 
@@ -74,6 +74,14 @@ public class Browser {
 
         long start = new Date().getTime();
         driver.get(url);
+
+        try {
+            String html = driver.findElementByCssSelector(".pix-price").getAttribute("innerHTML");
+            System.out.println("-----------------------------------------------------------------" + html);
+        } catch (Exception e) {
+            ;
+        }
+
         long end = new Date().getTime();
         log.info("Caller: %s, Time: %d", caller, (end-start));
         final String result = driver.getPageSource();
@@ -87,6 +95,7 @@ public class Browser {
             HttpURLConnection.setFollowRedirects(false);
             URL url = new URL(path);
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
+
             return http.getResponseCode();
         } catch (UnknownHostException e1) {
             return 404;
