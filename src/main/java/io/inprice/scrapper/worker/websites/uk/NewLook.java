@@ -1,18 +1,22 @@
 package io.inprice.scrapper.worker.websites.uk;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 public class NewLook extends AbstractWebsite {
 
+    public NewLook(Link link) {
+        super(link);
+    }
+
     @Override
     public boolean isAvailable() {
+        dsamfdasdflşsadfşl
         Element inStock = doc.selectFirst("meta[itemprop='availability']");
         if (inStock != null) {
             return inStock.attr("content").trim().equals("inStock");
@@ -26,7 +30,7 @@ public class NewLook extends AbstractWebsite {
         if (code != null) {
             return code.attr("content").trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -35,7 +39,7 @@ public class NewLook extends AbstractWebsite {
         if (title != null) {
             return title.text().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -58,7 +62,7 @@ public class NewLook extends AbstractWebsite {
         if (shipment != null) {
             return shipment.text().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -67,20 +71,11 @@ public class NewLook extends AbstractWebsite {
         if (brand != null) {
             return brand.attr("content").trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
     public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-        Elements specs = doc.select("div.product-details--description.cms p");
-        if (specs != null) {
-            String[] chunks = specs.text().split("\\-");
-            specList = new ArrayList<>();
-            for (String spec : chunks) {
-                specList.add(new LinkSpec("", spec.trim()));
-            }
-        }
-        return specList;
+        return getValueOnlySpecList(doc.select("div.product-details--description.cms p"));
     }
 }

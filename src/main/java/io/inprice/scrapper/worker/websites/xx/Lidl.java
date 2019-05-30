@@ -1,5 +1,6 @@
 package io.inprice.scrapper.worker.websites.xx;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
@@ -9,9 +10,12 @@ import org.jsoup.select.Elements;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class Lidl extends AbstractWebsite {
+
+    public Lidl(Link link) {
+        super(link);
+    }
 
     @Override
     public JSONObject getJsonData() {
@@ -23,7 +27,7 @@ public class Lidl extends AbstractWebsite {
             String pureData = rawData.replaceAll("var dynamic_tm_data = ", "").trim();
             return new JSONObject(pureData);
         }
-        return super.getJsonData();
+        return null;
     }
 
     @Override

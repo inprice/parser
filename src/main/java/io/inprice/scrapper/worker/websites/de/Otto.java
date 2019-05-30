@@ -1,22 +1,41 @@
 package io.inprice.scrapper.worker.websites.de;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+/**
+ * Parser for Otto Deutschland
+ *
+ * The parsing steps:
+ *
+ * Three types of data is used for extracting all the info:
+ *      a) html body (specList)
+ *      b) json object extracted from html body in a script tag (brand)
+ *      c) product object set in getJsonData() by using json object in step b
+ *
+ *  - the html body of link's url contains data (in json format) we need
+ *  - in getJsonData(), we get that json data placed in a specific script tag
+ *  - this data is named as product which is hold on a class-level variable
+ *
+ * @author mdpinar
+ */
 public class Otto extends AbstractWebsite {
 
-    private JSONObject variation = null;
+    /*
+     * the main data provider derived from json placed in html
+     */
+    private JSONObject product;
+
+    public Otto(Link link) {
+        super(link);
+    }
 
     @Override
     public JSONObject getJsonData() {
@@ -27,7 +46,7 @@ public class Otto extends AbstractWebsite {
                 JSONObject variations = result.getJSONObject("variations");
                 Set<String> keySet = variations.keySet();
                 if (keySet != null && keySet.size() > 0) {
-                    variation = variations.getJSONObject(keySet.iterator().next());
+                    product = variations.getJSONObject(keySet.iterator().next());
                 }
             }
             return result;
@@ -37,9 +56,9 @@ public class Otto extends AbstractWebsite {
 
     @Override
     public boolean isAvailable() {
-        if (json != null && variation != null) {
-            JSONObject var = variation.getJSONObject("availability");
-            if (! var.isEmpty()) {
+        if (product != null && product.has("availability")) {
+            JSONObject var = product.getJSONObject("availability");
+            if (var.has("status")) {
                 return "available".equals(var.getString("status"));
             }
         }
@@ -56,17 +75,17 @@ public class Otto extends AbstractWebsite {
 
     @Override
     public String getName() {
-        if (json != null && variation != null) {
-            return variation.getString("name");
+        if (product != null && product.has("name")) {
+            return product.getString("name");
         }
         return "NA";
     }
 
     @Override
     public BigDecimal getPrice() {
-        if (json != null && variation != null) {
-            JSONObject var = variation.getJSONObject("displayPrice");
-            if (! var.isEmpty()) {
+        if (product != null && product.has("displayPrice")) {
+            JSONObject var = product.getJSONObject("displayPrice");
+            if (var.has("techPriceAmount")) {
                 return var.getBigDecimal("techPriceAmount");
             }
         }
@@ -88,9 +107,9 @@ public class Otto extends AbstractWebsite {
 
     @Override
     public String getShipment() {
-        if (json != null && variation != null) {
-            JSONObject var = variation.getJSONObject("availability");
-            if (! var.isEmpty()) {
+        if (product != null && product.has("availability")) {
+            JSONObject var = product.getJSONObject("availability");
+            if (var.has("displayName")) {
                 return var.getString("displayName");
             }
         }
@@ -107,16 +126,7 @@ public class Otto extends AbstractWebsite {
 
     @Override
     public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-        Elements specs = doc.select("ul.prd_unorderedList li");
-        if (specs != null && specs.size() > 0) {
-            specList = new ArrayList<>();
-            for (Element spec : specs) {
-                String val = spec.text().trim();
-                if (! val.isEmpty()) specList.add(new LinkSpec("", val));
-            }
-        }
-        return specList;
+        return getValueOnlySpecList(doc.select("ul.prd_unorderedList li"));
     }
 
 }

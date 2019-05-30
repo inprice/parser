@@ -1,5 +1,6 @@
 package io.inprice.scrapper.worker.websites.xx;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
@@ -11,14 +12,18 @@ import java.util.List;
 
 public class MediaMarkt extends AbstractWebsite {
 
+    public MediaMarkt(Link link) {
+        super(link);
+    }
+
     @Override
     public boolean isAvailable() {
-        Element inStock = doc.selectFirst(".online-nostock");
-        if (inStock != null) return false;
+        Element available = doc.selectFirst(".online-nostock");
+        if (available != null) return false;
 
-        inStock = doc.selectFirst("meta[property='og:availability']");
-        if (inStock != null) {
-            return ! inStock.attr("content").trim().equals("out of stock");
+        available = doc.selectFirst("meta[property='og:availability']");
+        if (available != null) {
+            return ! available.attr("content").trim().equals("out of stock");
         }
 
         return super.isAvailable();
@@ -83,7 +88,7 @@ public class MediaMarkt extends AbstractWebsite {
         if (brand != null) {
             return brand.attr("content").trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override

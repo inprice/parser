@@ -1,8 +1,9 @@
 package io.inprice.scrapper.worker.websites.es;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.HttpClient;
-import io.inprice.scrapper.worker.websites.AbstractSPAsite;
+import io.inprice.scrapper.worker.websites.AbstractSpasite;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
@@ -11,12 +12,55 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Pixmania extends AbstractSPAsite {
+/**
+ * Parser for Pixmania Spain
+ *
+ * Please note that: link's url (aka main url) is never used for data pulling
+ *
+ * This is a very special case. Pixmania actually provides nothing in html form.
+ * So, we need to make two different request to collect all the data we need.
+ *      a) The first is for token info pulled by product-id, whose steps are explained below
+ *      b) The second is for the essential data
+ * Besides, in order to make the first request we also need to get product-id, which is in place the main url
+ *
+ * Product-id
+ *  - is derived from url by splitting it up by dash -
+ *  - the last part of url is the product-id
+ *
+ *  - in getJsonData(), the data is pulled with the payload whose steps are explained above
+ *  - all data is built by using bestOffer and json object. the two are set in getJsonData()
+ *
+ * @author mdpinar
+ */
+public class Pixmania extends AbstractSpasite {
 
+    /*
+     * the main data derived from json gotten server via getSubUrl()
+     */
     private JSONObject bestOffer;
 
+    public Pixmania(Link link) {
+        super(link);
+    }
+
+    /**
+     * This url is substitute for link's original url
+     * Since Pixmania provides nothing in html form
+     *
+     * @return String - the reference url
+     */
+    @Override
+    public String getSubUrl() {
+        return "https://www.pixmania.es/api/ecrm/session";
+    }
+
+    /**
+     * Returns product-id which is extracted from main url by splitting it up by dash (the last part we are looking for)
+     *
+     * @return String - product-id
+     */
     private String findProductId() {
-        final String[] urlChunks = url.split("\\?");
+        final String[] urlChunks = getMainUrl().split("\\?");
         if (urlChunks.length > 0) {
             final String[] partChunks = urlChunks[0].split("-");
             if (partChunks.length > 0) {
@@ -26,10 +70,14 @@ public class Pixmania extends AbstractSPAsite {
         return null;
     }
 
-    private String findTokenData() {
-        String body = HttpClient.get("https://www.pixmania.es/api/ecrm/session");
-        if (! body.trim().isEmpty()) {
-            JSONObject tokenData = new JSONObject(body.trim());
+    /**
+     * Returns token taken place in html body as json format
+     *
+     * @return String - token derived from html body
+     */
+    private String getToken() {
+        if (doc != null) {
+            JSONObject tokenData = new JSONObject(doc.body().text().trim());
             if (tokenData.has("session")) {
                 return tokenData.getJSONObject("session").getString("token");
             }
@@ -37,27 +85,47 @@ public class Pixmania extends AbstractSPAsite {
         return null;
     }
 
+    /**
+     * Returns payload as key value maps
+     *
+     * @return Map - payload required for having the essential data
+     */
+    private Map<String, String> getPayload() {
+        String token = getToken();
+        if (token != null) {
+            Map<String, String> payload = new HashMap<>();
+            payload.put("Authorization", "Bearer " + token);
+            payload.put("Language", "es-ES");
+            return payload;
+        }
+        return null;
+    }
+
+    /**
+     * Request the data with a constant url with product-id and payload.
+     * Besides, data handles best-offer which holds some important data
+     *
+     * @return JSONObject - json
+     */
     @Override
     public JSONObject getJsonData() {
         final String productId = findProductId();
-        if (productId == null || productId.isEmpty()) return null;
+        if (productId != null) {
 
-        final String token = findTokenData();
-        if (token == null || token.trim().isEmpty()) return null;
+            final Map<String, String> payload = getPayload();
+            if (payload != null) {
 
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", "Bearer " + token);
-        headers.put("Language", "es-ES");
-
-        String body = HttpClient.get(String.format("https://www.pixmania.es/api/pcm/products/%s", productId), headers);
-        if (body != null && ! body.trim().isEmpty()) {
-            JSONObject data = new JSONObject(body.trim());
-            if (data.has("product")) {
-                JSONObject product = data.getJSONObject("product");
-                if (product.has("best_offer")) {
-                    bestOffer = product.getJSONObject("best_offer");
+                String body = HttpClient.get(String.format("https://www.pixmania.es/api/pcm/products/%s", productId), payload);
+                if (body != null && ! body.trim().isEmpty()) {
+                    JSONObject data = new JSONObject(body.trim());
+                    if (data.has("product")) {
+                        JSONObject productEL = data.getJSONObject("product");
+                        if (productEL.has("best_offer")) {
+                            bestOffer = productEL.getJSONObject("best_offer");
+                        }
+                        return productEL;
+                    }
                 }
-                return product;
             }
         }
         return null;
@@ -81,8 +149,8 @@ public class Pixmania extends AbstractSPAsite {
 
     @Override
     public String getName() {
-        if (bestOffer != null && bestOffer.has("name")) {
-            return bestOffer.getString("name");
+        if (json != null && json.has("name")) {
+            return json.getString("name");
         }
         return "NA";
     }
@@ -131,11 +199,11 @@ public class Pixmania extends AbstractSPAsite {
 
         if (json != null && json.has("description")) {
             final String description = json.getString("description");
-            final String[] descChunks = description.split("\\\\n");
+            final String[] descChunks = description.split("-");
             if (descChunks.length > 0) {
                 specList = new ArrayList<>();
                 for (String desc: descChunks) {
-                    specList.add(new LinkSpec("", desc));
+                    specList.add(new LinkSpec("", desc.trim()));
                 }
             }
         }

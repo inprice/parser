@@ -1,15 +1,26 @@
 package io.inprice.scrapper.worker.websites.de;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Parser for NotebooksBilliger Deutschland
+ *
+ * Contains standard data, all is extracted by css selectors
+ *
+ * @author mdpinar
+ */
 public class NotebooksBilliger extends AbstractWebsite {
+
+    public NotebooksBilliger(Link link) {
+        super(link);
+    }
 
     @Override
     public boolean isAvailable() {
@@ -26,7 +37,7 @@ public class NotebooksBilliger extends AbstractWebsite {
         if (sku != null) {
             return sku.attr("data-products-number").trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -35,22 +46,17 @@ public class NotebooksBilliger extends AbstractWebsite {
         if (name != null) {
             return name.attr("content").trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
     public BigDecimal getPrice() {
-        String strPrice = null;
-
         Element price = doc.getElementById("product_detail_price");
         if (price != null) {
-            strPrice = price.attr("content").trim();
+            return new BigDecimal(cleanPrice(price.attr("content").trim()));
         }
 
-        if (strPrice == null)
-            return BigDecimal.ZERO;
-        else
-            return new BigDecimal(cleanPrice(strPrice));
+        return BigDecimal.ZERO;
     }
 
     @Override
@@ -81,15 +87,6 @@ public class NotebooksBilliger extends AbstractWebsite {
 
     @Override
     public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-        Elements specs = doc.select("div#section_info li span");
-        if (specs != null && specs.size() > 0) {
-            specList = new ArrayList<>();
-            for (Element spec : specs) {
-                String value = spec.text().trim();
-                specList.add(new LinkSpec("", value));
-            }
-        }
-        return specList;
+        return getValueOnlySpecList(doc.select("div#section_info li span"));
     }
 }

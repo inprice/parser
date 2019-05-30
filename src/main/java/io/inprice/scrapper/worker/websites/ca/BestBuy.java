@@ -1,32 +1,53 @@
 package io.inprice.scrapper.worker.websites.ca;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parser for Bestbuy Canada
+ *
+ * The parsing steps:
+ *
+ *  - the html body of link's url contains data (in json format) we need
+ *  - in getJsonData(), we get that json data by using substring() method of String class
+ *  - this data is named as product which is hold on a class-level variable
+ *  - each data (except for availability and specList) can be gathered using product variable
+ *
+ * @author mdpinar
+ */
 public class BestBuy extends AbstractWebsite {
 
+    /*
+     * the main data provider derived from json placed in html
+     */
     private JSONObject product;
 
+    public BestBuy(Link link) {
+        super(link);
+    }
+
+    /**
+     * The data we looking for is in html body.
+     * So, we get it by using String manipulations
+     */
     @Override
     public JSONObject getJsonData() {
-        int start = doc.data().indexOf("\"product\":{") + 10;
+        final String indicator = "\"product\":{";
+
+        int start = doc.data().indexOf(indicator) + indicator.length()-1;
         int end   = doc.data().indexOf(",\"productSellers\":{");
 
-        if (start > 10 && end > start) {
-            //System.out.println(doc.data().substring(start, end));
+        if (start > indicator.length() && end > start) {
             JSONObject data = new JSONObject(doc.data().substring(start, end));
             if (data.has("product")) product = data.getJSONObject("product");
             return data;
         }
-
         return null;
     }
 
@@ -88,17 +109,8 @@ public class BestBuy extends AbstractWebsite {
 
     @Override
     public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-
         Elements specs = doc.select("div#MoreInformation li");
         if (specs == null || specs.isEmpty()) specs = doc.select("div#MoreInformation p");
-
-        if (specs != null && specs.size() > 0) {
-            specList = new ArrayList<>();
-            for (Element spec : specs) {
-                specList.add(new LinkSpec("", spec.text().trim()));
-            }
-        }
-        return specList;
+        return getValueOnlySpecList(specs);
     }
 }

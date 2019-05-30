@@ -1,5 +1,6 @@
 package io.inprice.scrapper.worker.websites.xx;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
@@ -10,6 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Zalando extends AbstractWebsite {
+
+    public Zalando(Link link) {
+        super(link);
+    }
 
     @Override
     public String getSku() {
@@ -33,7 +38,7 @@ public class Zalando extends AbstractWebsite {
         if (name != null) {
             return name.attr("content").trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override

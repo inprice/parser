@@ -1,5 +1,6 @@
 package io.inprice.scrapper.worker.websites.tr;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.generic.GenericWebsiteT1;
 import org.json.JSONArray;
@@ -7,16 +8,21 @@ import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parser for Teknosa Turkiye
+ *
+ * Contains standard data, all is extracted by css selectors
+ * Please refer GenericWebsiteT1 for extra information
+ *
+ * @author mdpinar
+ */
 public class Teknosa extends GenericWebsiteT1 {
 
-    private JSONObject offers;
-
-    public Teknosa() {
-        super("Teknosa");
+    public Teknosa(Link link) {
+        super(link,"Teknosa");
     }
 
     @Override
@@ -37,11 +43,10 @@ public class Teknosa extends GenericWebsiteT1 {
 
     @Override
     public boolean isAvailable() {
-        Element availablity = doc.selectFirst("div.stock-status.in-stock");
-        if (availablity != null) {
-            return availablity.text().contains("Stokta var");
+        Element availability = doc.selectFirst("div.stock-status.in-stock");
+        if (availability != null) {
+            return availability.text().contains("Stokta var");
         }
-
         return super.isAvailable();
     }
 

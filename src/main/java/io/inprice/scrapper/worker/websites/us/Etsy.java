@@ -1,15 +1,19 @@
 package io.inprice.scrapper.worker.websites.us;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Etsy extends AbstractWebsite {
+
+    public Etsy(Link link) {
+        super(link);
+    }
 
     @Override
     public boolean isAvailable() {
@@ -88,17 +92,7 @@ public class Etsy extends AbstractWebsite {
 
     @Override
     public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-
-        Elements specs = doc.select("div.listing-page-overview-component.bg-white div p");
-        if (specs != null && specs.size() > 0) {
-            specList = new ArrayList<>();
-            for (Element spec : specs) {
-                specList.add(new LinkSpec("", spec.text().trim()));
-            }
-        }
-
-        return specList;
+        return getValueOnlySpecList(doc.select("div.listing-page-overview-component.bg-white div p"));
     }
 
 }

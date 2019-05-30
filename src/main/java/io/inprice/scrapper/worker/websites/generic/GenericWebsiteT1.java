@@ -1,21 +1,35 @@
 package io.inprice.scrapper.worker.websites.generic;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This is a generic website type 1 class.
+ *
+ * Used by websites containing standard data, almost all data can be extracted by css selectors
+ *
+ * @author mdpinar
+ */
 public class GenericWebsiteT1 extends AbstractWebsite {
 
-    private final String websiteName;
-    private JSONObject offers;
+    /*
+     * holds price info set in getJsonData()
+     */
+    protected JSONObject offers;
 
-    protected GenericWebsiteT1(String websiteName) {
+    /*
+     * used to distinguish who is the seller
+     */
+    private final String websiteName;
+
+    protected GenericWebsiteT1(Link link, String websiteName) {
+        super(link);
         this.websiteName = websiteName;
     }
 
@@ -72,7 +86,7 @@ public class GenericWebsiteT1 extends AbstractWebsite {
             return name.text().trim();
         }
 
-        return null;
+        return "NA";
     }
 
     @Override
@@ -106,7 +120,7 @@ public class GenericWebsiteT1 extends AbstractWebsite {
         if (shipment != null) {
             return shipment.text().trim();
         }
-        return "Delivery in store";
+        return "In-store pickup";
     }
 
     @Override
@@ -119,7 +133,7 @@ public class GenericWebsiteT1 extends AbstractWebsite {
                 return json.getString("schema:brand");
             }
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -128,15 +142,7 @@ public class GenericWebsiteT1 extends AbstractWebsite {
     }
 
     protected List<LinkSpec> getSpecList(String selector) {
-        List<LinkSpec> specList = null;
-        Elements specs = doc.select(selector);
-        if (specs != null && specs.size() > 0) {
-            specList = new ArrayList<>();
-            for (Element spec : specs) {
-                specList.add(new LinkSpec("", spec.text().trim()));
-            }
-        }
-        return specList;
+        return getValueOnlySpecList(doc.select(selector));
     }
 
 }

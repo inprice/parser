@@ -16,6 +16,8 @@ import io.inprice.scrapper.worker.helpers.ThreadPools;
 import io.inprice.scrapper.worker.websites.Website;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 class BaseLinkConsumer {
 
@@ -41,10 +43,11 @@ class BaseLinkConsumer {
                         Link newState = Converter.toObject(body);
 
                         try {
-                            Class<Website> resolverClass = (Class<Website>) Class.forName(newState.getWebsiteClassName());
-                            Website website = resolverClass.newInstance();
-                            website.check(newState);
-                        } catch (ClassCastException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
+                            Class<Website> clazz = (Class<Website>) Class.forName(newState.getWebsiteClassName());
+                            Constructor<Website> ctor = clazz.getConstructor(Link.class);
+                            Website website = ctor.newInstance(oldState);
+                            website.check();
+                        } catch (ClassCastException | IllegalAccessException | InstantiationException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException e) {
                             log.error(e);
                             newState.setStatus(Status.CLASS_PROBLEM);
                         }

@@ -1,5 +1,6 @@
 package io.inprice.scrapper.worker.websites.de;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
@@ -9,20 +10,31 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parser for MediaMarkt Deutschland
+ *
+ * Contains standard data, all is extracted by css selectors
+ *
+ * @author mdpinar
+ */
 public class MediaMarkt extends AbstractWebsite {
+
+    public MediaMarkt(Link link) {
+        super(link);
+    }
 
     @Override
     public boolean isAvailable() {
         Element inStock = doc.selectFirst("div.mms-availability__description--headline p span");
         if (inStock != null) {
-            return inStock.text().trim().equals("Online auf Lager");
+            return inStock.text().trim().contains("Online auf Lager");
         }
-        return false;
+        return super.isAvailable();
     }
 
     @Override
     public String getSku() {
-        String[] urlChunks = this.url.split("-");
+        String[] urlChunks = getMainUrl().split("-");
         String raw = urlChunks[urlChunks.length-1];
         return raw.substring(0, raw.indexOf('.'));
     }
@@ -33,7 +45,7 @@ public class MediaMarkt extends AbstractWebsite {
         if (name != null) {
             return name.attr("content").trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -65,7 +77,7 @@ public class MediaMarkt extends AbstractWebsite {
         if (brand != null) {
             return brand.attr("title").trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -76,7 +88,7 @@ public class MediaMarkt extends AbstractWebsite {
         if (specKeys != null && specKeys.size() > 0) {
             specList = new ArrayList<>();
             for (Element key : specKeys) {
-                specList.add(new LinkSpec(key.text().replaceAll("\\:","").trim(), ""));
+                specList.add(new LinkSpec(key.text().replaceAll(":","").trim(), ""));
             }
         }
 

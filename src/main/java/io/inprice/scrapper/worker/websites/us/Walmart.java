@@ -1,15 +1,18 @@
 package io.inprice.scrapper.worker.websites.us;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Walmart extends AbstractWebsite {
+
+    public Walmart(Link link) {
+        super(link);
+    }
 
     @Override
     public boolean isAvailable() {
@@ -31,7 +34,7 @@ public class Walmart extends AbstractWebsite {
         if (name != null) {
             return name.attr("content").trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -74,14 +77,6 @@ public class Walmart extends AbstractWebsite {
 
     @Override
     public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-        Elements specs = doc.select("div#product-about li");
-        if (specs != null && specs.size() > 0) {
-            specList = new ArrayList<>();
-            for (Element spec : specs) {
-                specList.add(new LinkSpec("", spec.text().trim()));
-            }
-        }
-        return specList;
+        return getValueOnlySpecList(doc.select("div#product-about li"));
     }
 }

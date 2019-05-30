@@ -1,23 +1,36 @@
 package io.inprice.scrapper.worker.websites.uk;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parser for Asos UK
+ *
+ * Contains standard data, all is extracted by css selectors
+ *
+ * @author mdpinar
+ */
 public class Asos extends AbstractWebsite {
+
+    public Asos(Link link) {
+        super(link);
+    }
 
     @Override
     public boolean isAvailable() {
-        Element inStock = doc.selectFirst("link[itemprop='availability']");
-        if (inStock != null) {
-            return inStock.attr("href").contains("InStock");
-        }
-        return false;
+        final String html = doc.html();
+        final String indicator = "\"isInStock\":";
+
+        int start = html.indexOf(indicator) + indicator.length();
+        int end = html.indexOf(",", start);
+
+        final String result = html.substring(start, end);
+        return "true".equalsIgnoreCase(result);
     }
 
     @Override
@@ -26,7 +39,7 @@ public class Asos extends AbstractWebsite {
         if (sku != null) {
             return sku.text().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -35,7 +48,7 @@ public class Asos extends AbstractWebsite {
         if (name != null) {
             return name.text().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -56,12 +69,15 @@ public class Asos extends AbstractWebsite {
         if (seller != null) {
             return seller.text().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
     public String getShipment() {
         String val = null;
+
+        //TODO: this logic is completely false!
+        //      It must be fixed. json data fetched from the server provides better projections for this kind of operations!
 
         Element shipment = doc.selectFirst("#shipping-restrictions .shipping-restrictions");
         if (shipment != null) {
@@ -81,19 +97,11 @@ public class Asos extends AbstractWebsite {
         if (brand != null) {
             return brand.text().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
     public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-        Elements specs = doc.select("div.product-description li");
-        if (specs != null && specs.size() > 0) {
-            specList = new ArrayList<>();
-            for (Element spec : specs) {
-                specList.add(new LinkSpec("", spec.text().trim()));
-            }
-        }
-        return specList;
+        return getValueOnlySpecList(doc.select("div.product-description li"));
     }
 }

@@ -1,22 +1,35 @@
 package io.inprice.scrapper.worker.websites.uk;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parser for Asda UK
+ *
+ * Contains json data placed in html. So, all data is extracted from json
+ *
+ * @author mdpinar
+ */
 public class Asda extends AbstractWebsite {
-
-    private String brand = "NA";
-    private List<LinkSpec> specList;
 
     private JSONObject product;
 
+    public Asda(Link link) {
+        super(link);
+    }
+
+    /**
+     * Retruns json object which holds all the necessity data
+     *
+     * @return json - product data
+     */
     @Override
     public JSONObject getJsonData() {
         final String html = doc.html();
@@ -26,32 +39,13 @@ public class Asda extends AbstractWebsite {
         final int end = html.indexOf("};", start) + 1;
 
         if (start > 0 && end > start) {
-            json = new JSONObject(html.substring(start, end));
-        }
-
-        if (json != null) {
-            if (json.has("product")) {
-                product = json.getJSONObject("product");
-
-                if (product.has("attributes")) {
-                    JSONArray attributes = product.getJSONArray("attributes");
-                    if (! attributes.isEmpty()) {
-                        specList = new ArrayList<>();
-                        for (int i = 0; i < attributes.length(); i++) {
-                            JSONObject attr = attributes.getJSONObject(i);
-                            String key = null;
-                            String value = null;
-                            if (attr.has("key")) key = attr.getString("key");
-                            if (attr.has("value")) value = attr.getString("value");
-                            if ("Brand".equals(key)) brand = value;
-                            specList.add(new LinkSpec(key, value));
-                        }
-                    }
-                }
+            JSONObject data = new JSONObject(html.substring(start, end));
+            if (data.has("product")) {
+                product = data.getJSONObject("product");
             }
-            return json;
+            return data;
         }
-        return super.getJsonData();
+        return null;
     }
 
     @Override
@@ -115,16 +109,39 @@ public class Asda extends AbstractWebsite {
 
     @Override
     public String getShipment() {
-        return "NA";
+        return "In-store pickup";
     }
 
     @Override
     public String getBrand() {
-        return brand;
+        List<LinkSpec> specList = getSpecList();
+        if (specList != null) {
+            for (LinkSpec spec: specList) {
+                if ("Brand".equals(spec.getKey())) return spec.getValue();
+            }
+        }
+        return "NA";
     }
 
     @Override
     public List<LinkSpec> getSpecList() {
+        List<LinkSpec> specList = null;
+
+        if (product != null && product.has("attributes")) {
+            JSONArray attributes = product.getJSONArray("attributes");
+            if (! attributes.isEmpty()) {
+                specList = new ArrayList<>();
+                for (int i = 0; i < attributes.length(); i++) {
+                    JSONObject attr = attributes.getJSONObject(i);
+                    String key = null;
+                    String value = null;
+                    if (attr.has("key")) key = attr.getString("key");
+                    if (attr.has("value")) value = attr.getString("value");
+                    specList.add(new LinkSpec(key, value));
+                }
+            }
+        }
+
         return specList;
     }
 

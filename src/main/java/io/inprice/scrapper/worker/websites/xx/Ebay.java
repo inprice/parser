@@ -1,5 +1,6 @@
 package io.inprice.scrapper.worker.websites.xx;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
@@ -14,6 +15,10 @@ import java.util.List;
  */
 public class Ebay extends AbstractWebsite {
 
+    public Ebay(Link link) {
+        super(link);
+    }
+
     @Override
     public boolean isAvailable() {
         Element stock = doc.getElementById("vi-quantity__select-box");
@@ -27,9 +32,11 @@ public class Ebay extends AbstractWebsite {
             try {
                 int amount = new Integer(number.trim());
                 return (amount > 0);
-            } catch (Exception e) { }
+            } catch (Exception e) {
+                //
+            }
         }
-        return false;
+        return super.isAvailable();
     }
 
     @Override
@@ -49,12 +56,8 @@ public class Ebay extends AbstractWebsite {
     @Override
     public String getName() {
         Element name = doc.selectFirst("title");
-        if (name != null) return name.text().trim();
-
-        name = doc.getElementById("itemTitle");
-        if (name != null) return name.text().trim();
-
-        name = doc.selectFirst("h1.product-title");
+        if (name == null) name = doc.getElementById("itemTitle");
+        if (name == null) name = doc.selectFirst("h1.product-title");
         if (name != null) return name.text().trim();
 
         name = doc.selectFirst("a[data-itemid]");
@@ -74,7 +77,7 @@ public class Ebay extends AbstractWebsite {
         if (price != null) {
             strPrice = price.attr("content").trim();
         } else {
-            price = doc.select("#mm-saleDscPrc").first();
+            price = doc.getElementById("mm-saleDscPrc");
             if (price != null) strPrice = price.text().trim();
         }
 
@@ -91,43 +94,43 @@ public class Ebay extends AbstractWebsite {
 
     @Override
     public String getSeller() {
-        String val = null;
+        String value = null;
         Element seller = doc.getElementById("mbgLink");
 
         if (seller != null) {
             String[] sellerChunks = seller.attr("aria-label").split(":");
             if (sellerChunks.length > 1) {
-                val = sellerChunks[1].trim();
+                value = sellerChunks[1].trim();
             }
         } else {
             seller = doc.selectFirst("div.seller-persona a");
             if (seller == null) seller = doc.selectFirst("span.mbg-nw");
 
             if (seller != null) {
-                val = seller.text().trim();
+                value = seller.text().trim();
             }
         }
-        return val;
+        return value;
     }
 
     @Override
     public String getShipment() {
-        String val = null;
+        String value = null;
         Element shipment = doc.selectFirst("#shSummary span");
         if (shipment == null) shipment = doc.selectFirst("span.logistics-cost");
 
         if (shipment != null) {
-            val = shipment.text().trim();
+            value = shipment.text().trim();
         }
 
-        return val;
+        return value;
     }
 
     @Override
     public String getBrand() {
         String[] titleChunks = getName().split("\\s");
         if (titleChunks.length > 1) return titleChunks[0].trim();
-        return null;
+        return "NA";
     }
 
     @Override

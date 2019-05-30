@@ -1,23 +1,23 @@
 package io.inprice.scrapper.worker.websites.us;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
-import io.inprice.scrapper.worker.websites.generic.GenericWebsiteT1;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 public class BestBuy extends AbstractWebsite {
 
+    public BestBuy(Link link) {
+        super(link);
+    }
+
     @Override
     public boolean isAvailable() {
         Element availability = doc.selectFirst("p.inactive-product-message");
-        return availability == null;
+        return (availability == null);
     }
 
     @Override
@@ -76,15 +76,7 @@ public class BestBuy extends AbstractWebsite {
 
     @Override
     public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-        Elements specs = doc.select("li.bullet");
-        if (specs != null && specs.size() > 0) {
-            specList = new ArrayList<>();
-            for (Element spec : specs) {
-                specList.add(new LinkSpec("", spec.text().trim()));
-            }
-        }
-        return specList;
+        return getValueOnlySpecList(doc.select("li.bullet"));
     }
 
 }

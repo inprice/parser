@@ -1,5 +1,6 @@
 package io.inprice.scrapper.worker.websites.uk;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -13,11 +14,28 @@ import java.util.List;
 
 public class Zavvi extends AbstractWebsite {
 
+    private JSONObject offers;
+
+    public Zavvi(Link link) {
+        super(link);
+    }
+
     @Override
     public JSONObject getJsonData() {
-        Element data = doc.selectFirst("script[type='application/ld+json']");
-        if (data != null) {
-            return new JSONObject(data.dataNodes().get(0).getWholeData().trim());
+        Element dataEL = doc.selectFirst("script[type='application/ld+json']");
+        if (dataEL != null) {
+            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
+
+            if (data.has("offers")) {
+                JSONArray offersArray = data.getJSONArray("offers");
+                if (! offersArray.isEmpty()) {
+                    if (offersArray.getJSONObject(0).has("sku")) {
+                        offers = offersArray.getJSONObject(0);
+                    }
+                }
+            }
+
+            return data;
         }
         return super.getJsonData();
     }
@@ -33,15 +51,10 @@ public class Zavvi extends AbstractWebsite {
 
     @Override
     public String getSku() {
-        if (json != null && json.has("offers")) {
-            JSONArray offers = json.getJSONArray("offers");
-            if (! offers.isEmpty()) {
-                if (offers.getJSONObject(0).has("sku")) {
-                    return offers.getJSONObject(0).getString("sku");
-                }
-            }
+        if (offers != null && offers.has("offers")) {
+            return offers.getString("sku");
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -54,13 +67,8 @@ public class Zavvi extends AbstractWebsite {
 
     @Override
     public BigDecimal getPrice() {
-        if (json != null && json.has("offers")) {
-            JSONArray offers = json.getJSONArray("offers");
-            if (! offers.isEmpty()) {
-                if (offers.getJSONObject(0).has("price")) {
-                    return offers.getJSONObject(0).getBigDecimal("price");
-                }
-            }
+        if (offers != null && offers.has("price")) {
+            return offers.getBigDecimal("price");
         }
         return BigDecimal.ZERO;
     }
@@ -76,7 +84,7 @@ public class Zavvi extends AbstractWebsite {
         if (shipment != null) {
             return shipment.text().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -84,7 +92,7 @@ public class Zavvi extends AbstractWebsite {
         if (json != null && json.has("brand")) {
             return json.getJSONObject("brand").getString("name");
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -101,7 +109,7 @@ public class Zavvi extends AbstractWebsite {
                 String strValue= null;
 
                 if (key != null) {
-                    strKey = key.text().replaceAll("\\:", "").trim();
+                    strKey = key.text().replaceAll(":", "").trim();
                 }
                 if (value != null) strValue = value.text().trim();
 

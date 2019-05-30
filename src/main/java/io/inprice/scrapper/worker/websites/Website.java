@@ -1,6 +1,5 @@
 package io.inprice.scrapper.worker.websites;
 
-import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 
 import java.math.BigDecimal;
@@ -8,9 +7,7 @@ import java.util.List;
 
 public interface Website {
 
-    //void test(String fileName, Link link);
-
-    void check(Link link);
+    void check();
 
     boolean isAvailable();
 
@@ -27,5 +24,11 @@ public interface Website {
     String getBrand();
 
     List<LinkSpec> getSpecList();
+
+    String getMainUrl();
+
+    String getSubUrl();
+
+    boolean willHtmlBeDownloaded();
 
 }

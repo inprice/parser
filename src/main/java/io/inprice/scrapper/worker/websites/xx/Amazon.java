@@ -1,12 +1,11 @@
 package io.inprice.scrapper.worker.websites.xx;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,28 +13,23 @@ import java.util.List;
  */
 public class Amazon extends AbstractWebsite {
 
+    public Amazon(Link link) {
+        super(link);
+    }
+
     @Override
     public boolean isAvailable() {
-        Element inStock = doc.selectFirst("div#availability span.a-size-medium.a-color-success");
-        return (inStock != null);
+        Element available = doc.selectFirst("div#availability span");
+        return (available != null && available.text().contains("In Stock"));
     }
-/*
-    @Override
-    public String getDeliveryMessage() {
-        Element deliveryMessage = doc.selectFirst("div#ddmDeliveryMessage span");
-        if (deliveryMessage != null) {
-            return deliveryMessage.text().trim();
-        }
-        return super.getDeliveryMessage();
-    }
-*/
+
     @Override
     public String getSku() {
         Element sku = doc.getElementById("ASIN");
         if (sku != null) {
             return sku.val().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -44,7 +38,7 @@ public class Amazon extends AbstractWebsite {
         if (name != null) {
             return name.text().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -76,7 +70,7 @@ public class Amazon extends AbstractWebsite {
                     }
                     strPrice = left + "." + right;
                 } else {
-                    price = doc.select("#priceblock_ourprice").first();
+                    price = doc.getElementById("priceblock_ourprice");
                     if (price != null) {
                         if (price.text().contains("-")) {
                             String[] priceChunks = price.text().split("-");
@@ -106,42 +100,31 @@ public class Amazon extends AbstractWebsite {
 
     @Override
     public String getShipment() {
-        String val = null;
         Element shipment = doc.getElementById("price-shipping-message");
         if (shipment == null) shipment = doc.getElementById("ddmDeliveryMessage span");
         if (shipment == null) shipment = doc.select(".shipping3P").first();
 
         if (shipment != null) {
-            val = shipment.text().trim();
+            return shipment.text().trim();
         }
-        return val;
+
+        return "NA";
     }
 
     @Override
     public String getBrand() {
-        String val;
-
         Element brand = doc.selectFirst("span.ac-keyword-link a");
         if (brand == null) brand = doc.getElementById("bylineInfo");
 
         if (brand != null) {
-            val = brand.text().trim();
-        } else {
-            val = "Amazon";
+            return brand.text().trim();
         }
-        return val;
+
+        return "Amazon";
     }
 
     @Override
     public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-        Elements specs = doc.select("#feature-bullets li:not(.aok-hidden)");
-        if (specs != null && specs.size() > 0) {
-            specList = new ArrayList<>();
-            for (Element spec : specs) {
-                specList.add(new LinkSpec("", spec.text().trim()));
-            }
-        }
-        return specList;
+        return getValueOnlySpecList(doc.select("#feature-bullets li:not(.aok-hidden)"));
     }
 }

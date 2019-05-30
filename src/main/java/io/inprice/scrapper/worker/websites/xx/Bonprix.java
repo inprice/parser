@@ -1,5 +1,6 @@
 package io.inprice.scrapper.worker.websites.xx;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
@@ -11,6 +12,10 @@ import java.util.List;
 
 public class Bonprix extends AbstractWebsite {
 
+    public Bonprix(Link link) {
+        super(link);
+    }
+
     @Override
     public boolean isAvailable() {
         Element available = doc.selectFirst("meta[property='og:availability']");
@@ -19,8 +24,10 @@ public class Bonprix extends AbstractWebsite {
         }
 
         available = doc.selectFirst("div.product-availability-box_wrapper div");
+        if (available == null) doc.selectFirst("div#product-detail-availibility-container noscript");
+
         if (available != null) {
-            return available.text().contains("verfügbar");
+            return available.text().contains("erfügbar");
         }
 
         return super.isAvailable();
@@ -93,14 +100,18 @@ public class Bonprix extends AbstractWebsite {
         List<LinkSpec> specList = null;
 
         Elements specKeys = doc.select("div.productFeaturesContainer span.productFeatureName");
+        if (specKeys == null) specKeys = doc.select("div.product-attributes strong");
+
         if (specKeys != null && specKeys.size() > 0) {
             specList = new ArrayList<>();
             for (Element key : specKeys) {
-                specList.add(new LinkSpec(key.text(), ""));
+                specList.add(new LinkSpec(key.text().replaceAll(":", "").trim(), ""));
             }
         }
 
         Elements specValues = doc.select("div.productFeaturesContainer span.productFeatureValue");
+        if (specValues == null) specValues = doc.select("div.product-attributes span");
+
         if (specValues != null && specValues.size() > 0) {
             boolean isEmpty = false;
             if (specList == null) {
@@ -113,33 +124,6 @@ public class Bonprix extends AbstractWebsite {
                     specList.add(new LinkSpec("", value.text().trim()));
                 } else {
                     specList.get(i).setValue(value.text().trim());
-                }
-            }
-        }
-
-        if (specList == null) {
-            specKeys = doc.select("div.product-attributes strong");
-            if (specKeys != null && specKeys.size() > 0) {
-                specList = new ArrayList<>();
-                for (Element key : specKeys) {
-                    specList.add(new LinkSpec(key.text().replaceAll(":", "").trim(), ""));
-                }
-            }
-
-            specValues = doc.select("div.product-attributes span");
-            if (specValues != null && specValues.size() > 0) {
-                boolean isEmpty = false;
-                if (specList == null) {
-                    isEmpty = true;
-                    specList = new ArrayList<>();
-                }
-                for (int i = 0; i < specValues.size(); i++) {
-                    Element value = specValues.get(i);
-                    if (isEmpty) {
-                        specList.add(new LinkSpec("", value.text().trim()));
-                    } else {
-                        specList.get(i).setValue(value.text().trim());
-                    }
                 }
             }
         }

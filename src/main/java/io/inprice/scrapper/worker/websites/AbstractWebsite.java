@@ -1,6 +1,7 @@
 package io.inprice.scrapper.worker.websites;
 
 import io.inprice.scrapper.common.logging.Logger;
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.UserAgents;
 import org.json.JSONObject;
 import org.jsoup.Connection;
@@ -13,6 +14,15 @@ import java.net.HttpURLConnection;
 public abstract class AbstractWebsite extends AbstractSite {
 
     protected static final Logger log = new Logger(AbstractWebsite.class);
+
+    protected AbstractWebsite(Link link) {
+        super(link);
+    }
+
+    @Override
+    protected JSONObject getJsonData() {
+        return null;
+    }
 
     protected String cleanPrice(String price) {
         StringBuilder sb = new StringBuilder();
@@ -30,11 +40,6 @@ public abstract class AbstractWebsite extends AbstractSite {
         } else {
             return pure;
         }
-    }
-
-    @Override
-    protected JSONObject getJsonData() {
-        return null;
     }
 
 }

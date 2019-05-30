@@ -20,7 +20,7 @@ public class HttpClient {
             HttpURLConnection con = getConnection("GET", getUrl, headers);
             return HttpClient.read(con.getInputStream());
         } catch (Exception e) {
-            log.error("Failed to connect to %s", getUrl);
+            log.error("Failed to connect to " + getUrl, e);
         }
         return null;
     }

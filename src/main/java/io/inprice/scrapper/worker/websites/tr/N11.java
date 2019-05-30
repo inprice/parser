@@ -1,15 +1,25 @@
 package io.inprice.scrapper.worker.websites.tr;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parser for n11 Turkiye
+ *
+ * Contains standard data, all is extracted by css selectors
+ *
+ * @author mdpinar
+ */
 public class N11 extends AbstractWebsite {
+
+    public N11(Link link) {
+        super(link);
+    }
 
     @Override
     public boolean isAvailable() {
@@ -18,9 +28,11 @@ public class N11 extends AbstractWebsite {
             try {
                 int realAmount = new Integer(amount.val().trim());
                 return (realAmount > 0);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                //
+            }
         }
-        return false;
+        return super.isAvailable();
     }
 
     @Override
@@ -29,48 +41,46 @@ public class N11 extends AbstractWebsite {
         if (sku != null) {
             return sku.val().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
     public String getName() {
         Element name = doc.selectFirst("h1.proName");
         if (name == null) name = doc.selectFirst("h1.pro-title_main");
+
         if (name != null) {
             return name.text().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
     public BigDecimal getPrice() {
-        String strPrice = null;
-
         Element price = doc.selectFirst(".newPrice ins");
         if (price == null) price = doc.selectFirst("ins.price-now");
+
         if (price != null) {
-            strPrice = price.attr("content").trim();
+            return new BigDecimal(cleanPrice(price.attr("content").trim()));
         }
 
-        if (strPrice == null)
-            return BigDecimal.ZERO;
-        else
-            return new BigDecimal(cleanPrice(strPrice));
+        return BigDecimal.ZERO;
     }
 
     @Override
     public String getSeller() {
-        String val = null;
+        String value = null;
+
         Element seller = doc.selectFirst("div.sallerTop h3 a");
         if (seller != null) {
-            val = seller.attr("title").trim();
+            value = seller.attr("title").trim();
         } else {
             seller = doc.selectFirst(".shop-name");
             if (seller != null) {
-                val = seller.text().trim();
+                value = seller.text().trim();
             }
         }
-        return val;
+        return value;
     }
 
     @Override
@@ -81,28 +91,18 @@ public class N11 extends AbstractWebsite {
         if (shipment != null) {
             return shipment.text().replaceAll(":", "").trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
     public String getBrand() {
         String[] titleChunks = getName().split("\\s");
-        if (titleChunks.length > 1) return titleChunks[0].trim();
-        return null;
+        if (titleChunks.length > 0) return titleChunks[0].trim();
+        return "NA";
     }
 
     @Override
     public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-        Elements specs = doc.select("div.feaItem");
-        if (specs != null && specs.size() > 0) {
-            specList = new ArrayList<>();
-            for (Element spec : specs) {
-                String key = spec.select(".label").text();
-                String value = spec.select(".data").text();
-                specList.add(new LinkSpec(key, value));
-            }
-        }
-        return specList;
+        return getKeyValueSpecList(doc.select("div.feaItem"), ".label", ".data");
     }
 }

@@ -1,15 +1,25 @@
 package io.inprice.scrapper.worker.websites.uk;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parser for Argos UK
+ *
+ * Contains standard data, all is extracted by css selectors
+ *
+ * @author mdpinar
+ */
 public class Argos extends AbstractWebsite {
+
+    public Argos(Link link) {
+        super(link);
+    }
 
     @Override
     public String getSku() {
@@ -17,7 +27,7 @@ public class Argos extends AbstractWebsite {
         if (sku != null) {
             return sku.attr("content").trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -26,7 +36,7 @@ public class Argos extends AbstractWebsite {
         if (name != null) {
             return name.text().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -45,7 +55,7 @@ public class Argos extends AbstractWebsite {
 
     @Override
     public String getShipment() {
-        return "Argos";
+        return "In-store pickup";
     }
 
     @Override
@@ -54,19 +64,11 @@ public class Argos extends AbstractWebsite {
         if (seller != null) {
             return seller.text().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
     public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-        Elements specs = doc.select(".product-description-content-text li");
-        if (specs != null && specs.size() > 0) {
-            specList = new ArrayList<>();
-            for (Element spec : specs) {
-                specList.add(new LinkSpec("", spec.text().trim()));
-            }
-        }
-        return specList;
+        return getValueOnlySpecList(doc.select(".product-description-content-text li"));
     }
 }

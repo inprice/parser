@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -117,10 +118,10 @@ public class deneme {
 
         String[] asos_uk = {
             "https://www.asos.com/ginger-ray/ginger-ray-pink-confetti-balloons-5pk/prd/9108594?clr=multi&colourWayId=15265656&SearchQuery=&cid=19872",
-            "https://www.asos.com/new-look/new-look-tube-flat-slider-sandal-in-black/prd/11873508?clr=black&colourWayId=16379931&SearchQuery=&cid=15872",
-            "https://www.asos.com/nike-training/nike-pro-training-leggings-in-black/prd/10587365?clr=black&colourWayId=15128132&SearchQuery=&cid=27163",
-            "https://www.asos.com/lime-crime/lime-crime-angel-velvetines-lip-liner-poppy/prd/11003593?clr=poppy&colourWayId=16277840&SearchQuery=&cid=25669",
-            "https://www.asos.com/new-balance/new-balance-373-trainers-in-black/prd/7350844?clr=black&colourWayId=15279827&SearchQuery=&cid=15892"
+            //"https://www.asos.com/new-look/new-look-tube-flat-slider-sandal-in-black/prd/11873508?clr=black&colourWayId=16379931&SearchQuery=&cid=15872",
+            //"https://www.asos.com/nike-training/nike-pro-training-leggings-in-black/prd/10587365?clr=black&colourWayId=15128132&SearchQuery=&cid=27163",
+            //"https://www.asos.com/lime-crime/lime-crime-angel-velvetines-lip-liner-poppy/prd/11003593?clr=poppy&colourWayId=16277840&SearchQuery=&cid=25669",
+            //"https://www.asos.com/new-balance/new-balance-373-trainers-in-black/prd/7350844?clr=black&colourWayId=15279827&SearchQuery=&cid=15892"
         };
 
         String[] newlook_uk = {
@@ -278,14 +279,15 @@ public class deneme {
             "https://www.pixmania.es/p/air-rise-paquete-hoverboard-65-azul-hoverkart-negro-bluetooth-bolsa-y-su-mando-5962449?offerId=20221680",
         };
 
-        for (String url: pixmaina_es) {
+        for (String url: asos_uk) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.es.Pixmania");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.uk.Asos");
             try {
-                Class<Website> resolverClass = (Class<Website>) Class.forName(link.getWebsiteClassName());
-                Website website = resolverClass.newInstance();
-                website.check(link);
-                //website.test(path + fileName, link);
+                Class<Website> clazz = (Class<Website>) Class.forName(link.getWebsiteClassName());
+                Constructor<Website> ctor = clazz.getConstructor(Link.class);
+                Website website = ctor.newInstance(link);
+                website.check();
+
                 printOut(link);
             } catch (Exception e) {
                 log.error("Error in converting message from byte array to Link", e);

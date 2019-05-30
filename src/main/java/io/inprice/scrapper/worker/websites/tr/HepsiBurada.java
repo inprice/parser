@@ -1,15 +1,25 @@
 package io.inprice.scrapper.worker.websites.tr;
 
+import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parser for HepsiBurada Turkiye
+ *
+ * Contains standard data, all is extracted by css selectors
+ *
+ * @author mdpinar
+ */
 public class HepsiBurada extends AbstractWebsite {
+
+    public HepsiBurada(Link link) {
+        super(link);
+    }
 
     @Override
     public boolean isAvailable() {
@@ -23,7 +33,7 @@ public class HepsiBurada extends AbstractWebsite {
         if (sku != null) {
             return sku.val().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
@@ -32,22 +42,17 @@ public class HepsiBurada extends AbstractWebsite {
         if (name != null) {
             return name.text().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
     public BigDecimal getPrice() {
-        String strPrice = null;
-
         Element price = doc.getElementById("offering-price");
         if (price != null) {
-            strPrice = price.attr("content").trim();
+            return new BigDecimal(cleanPrice(price.attr("content").trim()));
         }
 
-        if (strPrice == null)
-            return BigDecimal.ZERO;
-        else
-            return new BigDecimal(cleanPrice(strPrice));
+        return BigDecimal.ZERO;
     }
 
     @Override
@@ -56,11 +61,12 @@ public class HepsiBurada extends AbstractWebsite {
         if (seller != null) {
             return seller.val().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
     public String getShipment() {
+        //TODO: static text is not suitable, must be reasonable
         return "50 TL ve üzeri Kargo Bedava";
     }
 
@@ -70,21 +76,11 @@ public class HepsiBurada extends AbstractWebsite {
         if (brand != null) {
             return brand.text().trim();
         }
-        return null;
+        return "NA";
     }
 
     @Override
     public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-        Elements specs = doc.select(".data-list.tech-spec tr");
-        if (specs != null && specs.size() > 0) {
-            specList = new ArrayList<>();
-            for (Element spec : specs) {
-                String key = spec.select("th").text();
-                String value = spec.select("td").text();
-                specList.add(new LinkSpec(key, value));
-            }
-        }
-        return specList;
+        return getKeyValueSpecList(doc.select(".data-list.tech-spec tr"), "th", "td");
     }
 }
