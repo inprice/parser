@@ -10,6 +10,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parser for MediaMarkt Global
+ *
+ * Contains standard data, all is extracted by css selectors
+ *
+ * @author mdpinar
+ */
 public class MediaMarkt extends AbstractWebsite {
 
     public MediaMarkt(Link link) {
@@ -26,7 +33,7 @@ public class MediaMarkt extends AbstractWebsite {
             return ! available.attr("content").trim().equals("out of stock");
         }
 
-        return super.isAvailable();
+        return false;
     }
 
     @Override

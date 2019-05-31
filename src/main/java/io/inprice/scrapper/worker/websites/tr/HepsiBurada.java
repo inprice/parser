@@ -23,8 +23,7 @@ public class HepsiBurada extends AbstractWebsite {
 
     @Override
     public boolean isAvailable() {
-        Element available = doc.selectFirst("div.product-detail-box[style*='display: none']");
-        return (available != null);
+        return isTrue("\"isInStock\":");
     }
 
     @Override
@@ -38,7 +37,7 @@ public class HepsiBurada extends AbstractWebsite {
 
     @Override
     public String getName() {
-        Element name = doc.getElementById("product-name");
+        Element name = doc.selectFirst("span[itemprop='name']");
         if (name != null) {
             return name.text().trim();
         }
@@ -47,34 +46,33 @@ public class HepsiBurada extends AbstractWebsite {
 
     @Override
     public BigDecimal getPrice() {
-        Element price = doc.getElementById("offering-price");
+        Element price = doc.selectFirst("span[itemprop='price']");
         if (price != null) {
             return new BigDecimal(cleanPrice(price.attr("content").trim()));
         }
-
         return BigDecimal.ZERO;
     }
 
     @Override
     public String getSeller() {
-        Element seller = doc.selectFirst("input[name='merchantId']");
+        Element seller = doc.selectFirst("span.seller a");
         if (seller != null) {
-            return seller.val().trim();
+            return seller.text().trim();
         }
         return "NA";
     }
 
     @Override
     public String getShipment() {
-        //TODO: static text is not suitable, must be reasonable
-        return "50 TL ve üzeri Kargo Bedava";
+        boolean freeShipping = isTrue("\"freeShipping\":");
+        return "Ücretsiz Kargo: " + (freeShipping ? "Evet" : "Hayır");
     }
 
     @Override
     public String getBrand() {
-        Element brand = doc.selectFirst(".brand-name a");
+        Element brand = doc.selectFirst("span[itemprop='brand']");
         if (brand != null) {
-            return brand.text().trim();
+            return brand.attr("content");
         }
         return "NA";
     }
@@ -83,4 +81,15 @@ public class HepsiBurada extends AbstractWebsite {
     public List<LinkSpec> getSpecList() {
         return getKeyValueSpecList(doc.select(".data-list.tech-spec tr"), "th", "td");
     }
+
+    private boolean isTrue(String indicator) {
+        final String html = doc.html();
+
+        int start = html.indexOf(indicator) + indicator.length();
+        int end = html.indexOf(",", start);
+
+        final String result = html.substring(start, end);
+        return "true".equalsIgnoreCase(result);
+    }
+
 }

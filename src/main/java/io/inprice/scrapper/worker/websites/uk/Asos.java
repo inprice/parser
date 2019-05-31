@@ -76,9 +76,6 @@ public class Asos extends AbstractWebsite {
     public String getShipment() {
         String val = null;
 
-        //TODO: this logic is completely false!
-        //      It must be fixed. json data fetched from the server provides better projections for this kind of operations!
-
         Element shipment = doc.selectFirst("#shipping-restrictions .shipping-restrictions");
         if (shipment != null) {
             val = shipment.attr("style");
@@ -86,7 +83,11 @@ public class Asos extends AbstractWebsite {
         }
 
         shipment = doc.getElementById("shippingRestrictionsLink");
-        if (shipment != null) val = shipment.text().trim();
+        if (shipment != null) {
+            val = shipment.text().trim();
+        } else {
+            val = "See delivery and returns info";
+        }
 
         return val;
     }

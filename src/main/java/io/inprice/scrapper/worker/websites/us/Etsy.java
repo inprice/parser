@@ -9,6 +9,13 @@ import org.jsoup.select.Elements;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Parser for Etsy US
+ *
+ * Contains standard data. Nothing special, all is extracted by css selectors
+ *
+ * @author mdpinar
+ */
 public class Etsy extends AbstractWebsite {
 
     public Etsy(Link link) {

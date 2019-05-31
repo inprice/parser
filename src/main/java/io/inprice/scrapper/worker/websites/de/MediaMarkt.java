@@ -29,12 +29,12 @@ public class MediaMarkt extends AbstractWebsite {
         if (inStock != null) {
             return inStock.text().trim().contains("Online auf Lager");
         }
-        return super.isAvailable();
+        return false;
     }
 
     @Override
     public String getSku() {
-        String[] urlChunks = getMainUrl().split("-");
+        String[] urlChunks = getUrl().split("-");
         String raw = urlChunks[urlChunks.length-1];
         return raw.substring(0, raw.indexOf('.'));
     }

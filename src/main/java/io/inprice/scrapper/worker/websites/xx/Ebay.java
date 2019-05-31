@@ -11,7 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * itemid den buldurma : https://www.ebay.de/itm/372661939240
+ * Parser for Ebay Global
+ *
+ * Contains standard data. Nothing special, all is extracted by css selectors
+ *
+ * finding by item-id : https://www.ebay.com/itm/372661939240
+ *
+ * @author mdpinar
  */
 public class Ebay extends AbstractWebsite {
 
@@ -36,7 +42,7 @@ public class Ebay extends AbstractWebsite {
                 //
             }
         }
-        return super.isAvailable();
+        return false;
     }
 
     @Override

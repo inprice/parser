@@ -1,6 +1,5 @@
 import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.Website;
 
 import java.io.BufferedReader;
@@ -10,8 +9,6 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 public class deneme {
 
@@ -29,8 +26,8 @@ public class deneme {
         String[] trendyol_tr = {
             "https://www.trendyol.com/eurostar/bio-filter-ring-beyaz-500-ml-p-3300773?boutiqueId=314378&merchantId=107634",
             "https://www.trendyol.com/natracare/intim-mendil-12-li-p-2429648?boutiqueId=314714&merchantId=106679",
-            "https://www.trendyol.com/samsung/samsung-860-evo-2-5-sata-3-0-ssd-disk-500gb-mz-76e500bw-p-2517007?boutiqueId=304398&merchantId=107174",
-            "https://www.trendyol.com/u-s-polo-assn/siyah-antrasit-lacivert-erkek-3-lu-boxer-us-01-80097-p-1783349?boutiqueId=314756&merchantId=1235",
+            //"https://www.trendyol.com/samsung/samsung-860-evo-2-5-sata-3-0-ssd-disk-500gb-mz-76e500bw-p-2517007?boutiqueId=304398&merchantId=107174",
+            //"https://www.trendyol.com/u-s-polo-assn/siyah-antrasit-lacivert-erkek-3-lu-boxer-us-01-80097-p-1783349?boutiqueId=314756&merchantId=1235",
         };
 
         String[] hepsiburada_tr = {
@@ -206,9 +203,9 @@ public class deneme {
         };
 
         String[] lidl_de = {
-            "https://www.lidl.de/de/topmove-kameratasche/p255537",
+            //"https://www.lidl.de/de/topmove-kameratasche/p255537",
             "https://www.lidl.de/de/schildkroet-fitness-springseil-speed-rope-pro/p296902",
-            "https://www.lidl.de/de/florabest-hochlehner-polsterauflage-120-x-50-x-4-cm/p269476?fromRecommendation=true&scenario=top_selling"
+            //"https://www.lidl.de/de/florabest-hochlehner-polsterauflage-120-x-50-x-4-cm/p269476?fromRecommendation=true&scenario=top_selling"
         };
 
         String[] lidl_uk = {
@@ -279,9 +276,30 @@ public class deneme {
             "https://www.pixmania.es/p/air-rise-paquete-hoverboard-65-azul-hoverkart-negro-bluetooth-bolsa-y-su-mando-5962449?offerId=20221680",
         };
 
-        for (String url: asos_uk) {
+        String[] ulabox_es = {
+            //"https://www.ulabox.com/en/product/refresco-sunny-delight-fresa-1-25l/14762",
+            //"https://www.ulabox.com/en/product/dentifrico-elixir-non-stop-fresh/29509",
+            //"https://www.ulabox.com/en/product/jabon-liquido-infantil-litsea-eco-yipsophilia/41750",
+            "https://www.ulabox.com/en/product/comida-para-gatos-esterilizados-ultima-pollo-y-cebada/14502"
+        };
+
+        String[] gigas101_es = {
+            //"https://101gigas.com/gigabyte/tarjeta-grafica-gigabyte-rtx-2060-mini-itx-oc-6gd-gv-n2060ixoc-6gd/",
+            //"https://101gigas.com/msi/vga-msi-gtx-1050-2gt-ocv1-gddr5-912-v809-2634/",
+            //"https://101gigas.com/onaji/onaji-teclado-gaming-fukei-igg315774/",
+            "https://101gigas.com/xiaomi/xia-redmi-note-6-pro-32-a-15-9-bk-xiaomi-redmi-note-6-pro-4g-ds-eu-black-mzb6887eu/"
+        };
+
+        String[] electroking_es = {
+            //"https://www.electroking.es/redes/24238-hub-switch-8-ptos-tp-link-tl-sg1008d-6935364092313.html",
+            //"https://www.electroking.es/auriculares/24225-auricular-energy-sistem-style-6-ng-44731-8432426447312.html",
+                //"https://www.electroking.es/inicio/24200-patin-electrico-xiaomi-electric-5-blanc-6970244526816.html",
+            "https://www.electroking.es/lavadoras/16600-lavadora-balay-3ts873bc-4242006252250.html"
+        };
+
+        for (String url: electroking_es) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.uk.Asos");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.es.Electroking");
             try {
                 Class<Website> clazz = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Constructor<Website> ctor = clazz.getConstructor(Link.class);

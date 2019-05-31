@@ -8,7 +8,6 @@ import org.jsoup.nodes.Element;
 import java.math.BigDecimal;
 import java.util.List;
 
-
 /**
  * Parser for NotebooksBilliger Deutschland
  *
@@ -28,7 +27,7 @@ public class NotebooksBilliger extends AbstractWebsite {
         if (availability != null) {
             return availability.text().contains("Abholbereit");
         }
-        return super.isAvailable();
+        return false;
     }
 
     @Override

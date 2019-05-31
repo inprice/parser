@@ -8,12 +8,24 @@ import org.jsoup.nodes.Element;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Parser for Walmart US
+ *
+ * Contains standard data. all (except for availability) is extracted by css selectors
+ *
+ * @author mdpinar
+ */
 public class Walmart extends AbstractWebsite {
 
     public Walmart(Link link) {
         super(link);
     }
 
+    /**
+     * Returns availability status looking at html body
+     *
+     * @return boolean - availability status
+     */
     @Override
     public boolean isAvailable() {
         return doc.html().contains("\"availabilityStatus\":\"IN_STOCK\"");

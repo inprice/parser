@@ -47,7 +47,7 @@ public class Teknosa extends GenericWebsiteT1 {
         if (availability != null) {
             return availability.text().contains("Stokta var");
         }
-        return super.isAvailable();
+        return false;
     }
 
     @Override

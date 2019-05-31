@@ -9,7 +9,13 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * asin den buldurma https://www.amazon.co.uk/dp/B00VX62MHO
+ * Parser for Amazon Global
+ *
+ * Contains standard data. Nothing special, all is extracted by css selectors
+ *
+ * finding by asin : https://www.amazon.com/dp/B00VX62MHO
+ *
+ * @author mdpinar
  */
 public class Amazon extends AbstractWebsite {
 
@@ -41,6 +47,15 @@ public class Amazon extends AbstractWebsite {
         return "NA";
     }
 
+    /**
+     * The reason why this method became so complicated.
+     *
+     * Amazon has different types of page designs. Price can be found in different locations.
+     * Sometimes it can be a range like $100 - $300, or the product is on sale which is required to mark with extra css and tags.
+     * So, we need to consider all those possibilities to have the correct price info.
+     *
+     * @return BigDecimal - the price
+     */
     @Override
     public BigDecimal getPrice() {
         String strPrice = null;
@@ -70,6 +85,7 @@ public class Amazon extends AbstractWebsite {
                     }
                     strPrice = left + "." + right;
                 } else {
+                    //if price is a range like 100 - 300
                     price = doc.getElementById("priceblock_ourprice");
                     if (price != null) {
                         if (price.text().contains("-")) {

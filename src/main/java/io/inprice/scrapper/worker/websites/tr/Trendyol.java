@@ -4,8 +4,10 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,6 +21,12 @@ public class Trendyol extends AbstractWebsite {
 
     public Trendyol(Link link) {
         super(link);
+    }
+
+    @Override
+    public boolean isAvailable() {
+        Element soldoutButton = doc.selectFirst("button.add-to-bs.so");
+        return (soldoutButton == null);
     }
 
     @Override
@@ -50,13 +58,19 @@ public class Trendyol extends AbstractWebsite {
 
     @Override
     public String getSeller() {
-        Element seller = doc.selectFirst("meta[name='twitter:description']");
+        Element seller = doc.selectFirst("span.pr-in-dt-spn");
+        if (seller != null) {
+            return seller.text().trim();
+        }
+
+        seller = doc.selectFirst("meta[name='twitter:description']");
         if (seller != null) {
             String[] sellerChunks = seller.attr("content").split(":");
             if (sellerChunks.length > 0) {
                 return sellerChunks[sellerChunks.length-1].trim();
             }
         }
+
         return "Trendyol";
     }
 
@@ -76,12 +90,29 @@ public class Trendyol extends AbstractWebsite {
 
     @Override
     public String getBrand() {
+        Element brand = doc.selectFirst("div.pr-in-cn div.pr-in-br a");
+        if (brand != null) {
+            return brand.text().trim();
+        }
+
         return getSeller();
     }
 
     @Override
     public List<LinkSpec> getSpecList() {
-        return getValueOnlySpecList(doc.select("div.pr-in-dt-cn ul span li"));
+        List<LinkSpec> specList = null;
+
+        Elements specs = doc.select("div.pr-in-dt-cn ul span li");
+        if (specs != null && specs.size() > 0) {
+            specList = new ArrayList<>();
+            for (Element spec : specs) {
+                String[] specChunks = spec.text().split("\\.");
+                for (String sp: specChunks) {
+                    specList.add(new LinkSpec("", sp.trim()));
+                }
+            }
+        }
+        return specList;
     }
 
 }

@@ -10,10 +10,23 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parser for Zalando Global
+ *
+ * Contains standard data, all is extracted by css selectors
+ *
+ * @author mdpinar
+ */
 public class Zalando extends AbstractWebsite {
 
     public Zalando(Link link) {
         super(link);
+    }
+
+    @Override
+    public boolean isAvailable() {
+        Element addToCartButton = doc.getElementById("z-pdp-topSection-addToCartButton");
+        return (addToCartButton != null);
     }
 
     @Override

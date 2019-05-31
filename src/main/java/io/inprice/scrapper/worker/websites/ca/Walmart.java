@@ -17,7 +17,7 @@ import java.util.List;
  *
  * The parsing steps:
  *
- *  - we need a payload to get essential data
+ *  - we need a payload to get the data
  *  - in order to do that we need two info:
  *      a) product-id
  *      b) sku
@@ -66,7 +66,7 @@ public class Walmart extends AbstractSpasite {
             preData = new JSONObject(preDataEL.dataNodes().get(0).getWholeData().trim());
             if (preData.has("sku")) {
                 sku = preData.getString("sku");
-                String[] urlChunks = getMainUrl().split("/");
+                String[] urlChunks = getUrl().split("/");
                 if (urlChunks.length > 0) {
                     return String.format(STATIC_DATA, urlChunks[urlChunks.length - 1], sku).replaceAll("'", "\"");
                 }
@@ -76,7 +76,7 @@ public class Walmart extends AbstractSpasite {
     }
 
     /**
-     * Request the essential data with a constant url with payload
+     * Request the data with a constant url with payload
      *
      * @return JSONObject - json
      */
@@ -101,7 +101,7 @@ public class Walmart extends AbstractSpasite {
         if (json != null && json.has("gmAvailability")) {
             return "Available".equals(json.getString("gmAvailability"));
         }
-        return super.isAvailable();
+        return false;
     }
 
     @Override

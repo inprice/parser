@@ -8,6 +8,13 @@ import org.jsoup.nodes.Element;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Parser for BestBuy US
+ *
+ * Contains standard data. Nothing special, all is extracted by css selectors
+ *
+ * @author mdpinar
+ */
 public class BestBuy extends AbstractWebsite {
 
     public BestBuy(Link link) {

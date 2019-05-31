@@ -32,7 +32,7 @@ public class GittiGidiyor extends AbstractWebsite {
                 //
             }
         }
-        return super.isAvailable();
+        return false;
     }
 
     @Override
@@ -94,7 +94,6 @@ public class GittiGidiyor extends AbstractWebsite {
 
     @Override
     public List<LinkSpec> getSpecList() {
-        //TODO: the operation needed to be executed for value part --> String value = spec.select("strong").text().replaceAll(":", "").trim();
         return getKeyValueSpecList(doc.select("#specs-container ul li"), "span", "strong");
     }
 

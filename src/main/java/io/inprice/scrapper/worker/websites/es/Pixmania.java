@@ -20,7 +20,7 @@ import java.util.Map;
  * This is a very special case. Pixmania actually provides nothing in html form.
  * So, we need to make two different request to collect all the data we need.
  *      a) The first is for token info pulled by product-id, whose steps are explained below
- *      b) The second is for the essential data
+ *      b) The second is for the data
  * Besides, in order to make the first request we also need to get product-id, which is in place the main url
  *
  * Product-id
@@ -50,7 +50,7 @@ public class Pixmania extends AbstractSpasite {
      * @return String - the reference url
      */
     @Override
-    public String getSubUrl() {
+    public String getAlternativeUrl() {
         return "https://www.pixmania.es/api/ecrm/session";
     }
 
@@ -60,7 +60,7 @@ public class Pixmania extends AbstractSpasite {
      * @return String - product-id
      */
     private String findProductId() {
-        final String[] urlChunks = getMainUrl().split("\\?");
+        final String[] urlChunks = getUrl().split("\\?");
         if (urlChunks.length > 0) {
             final String[] partChunks = urlChunks[0].split("-");
             if (partChunks.length > 0) {
@@ -88,7 +88,7 @@ public class Pixmania extends AbstractSpasite {
     /**
      * Returns payload as key value maps
      *
-     * @return Map - payload required for having the essential data
+     * @return Map - payload required for having the data
      */
     private Map<String, String> getPayload() {
         String token = getToken();
@@ -136,7 +136,7 @@ public class Pixmania extends AbstractSpasite {
         if (bestOffer != null && bestOffer.has("stock")) {
             return bestOffer.getInt("stock") > 0;
         }
-        return super.isAvailable();
+        return false;
     }
 
     @Override

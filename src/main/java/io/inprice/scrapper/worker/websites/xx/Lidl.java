@@ -11,6 +11,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parser for Lidl Global
+ *
+ * Contains standard data, all is extracted from html body and via json data in getJsonData()
+ *
+ * @author mdpinar
+ */
 public class Lidl extends AbstractWebsite {
 
     public Lidl(Link link) {
@@ -24,10 +31,19 @@ public class Lidl extends AbstractWebsite {
 
         if (data != null) {
             String rawData = data.dataNodes().get(0).getWholeData();
-            String pureData = rawData.replaceAll("var dynamic_tm_data = ", "").trim();
+            String pureData = rawData.replaceAll("var dynamic_tm_data = ", "").replaceAll(";", "").trim();
             return new JSONObject(pureData);
         }
+
         return null;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        if (json != null && json.has("product_instock")) {
+            return json.getInt("product_instock") > 0;
+        }
+        return false;
     }
 
     @Override
@@ -40,28 +56,18 @@ public class Lidl extends AbstractWebsite {
 
     @Override
     public String getName() {
-        Element name = doc.selectFirst("title");
-        if (name != null) {
-            String[] nameChunks = name.text().split("-");
-            if (nameChunks.length > 0) {
-                return nameChunks[0].trim();
-            }
+        if (json != null && json.has("productname")) {
+            return json.getString("productname");
         }
         return "NA";
     }
 
     @Override
     public BigDecimal getPrice() {
-        String strPrice = null;
-
         if (json != null && json.has("amount")) {
-            strPrice = json.getString("amount").trim();
+            return json.getBigDecimal("amount");
         }
-
-        if (strPrice == null)
-            return BigDecimal.ZERO;
-        else
-            return new BigDecimal(cleanPrice(strPrice));
+        return BigDecimal.ZERO;
     }
 
     @Override
@@ -81,9 +87,7 @@ public class Lidl extends AbstractWebsite {
     @Override
     public String getBrand() {
         if (json != null && json.has("productbrand")) {
-            String rawBrand = json.getString("productbrand").trim();
-            String[] brandChunks = rawBrand.split("&amp");
-            if (brandChunks.length > 0) return brandChunks[0];
+            return json.getString("productbrand").trim();
         }
         return "NA";
     }

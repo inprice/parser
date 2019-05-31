@@ -56,7 +56,7 @@ public class BestBuy extends AbstractWebsite {
         if (json != null && json.has("isAvailabilityError")) {
             return ! json.getBoolean("isAvailabilityError");
         }
-        return super.isAvailable();
+        return false;
     }
 
     @Override

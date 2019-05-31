@@ -12,14 +12,30 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parser for Zavvi UK
+ *
+ * Some parts of data place in html body, some in json data which is also in html,
+ * and a significant part of them is in json which is in a script tag
+ *
+ * @author mdpinar
+ */
 public class Zavvi extends AbstractWebsite {
 
-    private JSONObject offers;
+    /*
+     * the main data provider derived from json placed in html
+     */
+    private JSONObject product;
 
     public Zavvi(Link link) {
         super(link);
     }
 
+    /**
+     * Returns some info of the product as json
+     *
+     * @return json - partially has product data
+     */
     @Override
     public JSONObject getJsonData() {
         Element dataEL = doc.selectFirst("script[type='application/ld+json']");
@@ -30,7 +46,7 @@ public class Zavvi extends AbstractWebsite {
                 JSONArray offersArray = data.getJSONArray("offers");
                 if (! offersArray.isEmpty()) {
                     if (offersArray.getJSONObject(0).has("sku")) {
-                        offers = offersArray.getJSONObject(0);
+                        product = offersArray.getJSONObject(0);
                     }
                 }
             }
@@ -44,15 +60,15 @@ public class Zavvi extends AbstractWebsite {
     public boolean isAvailable() {
         Element stock = doc.selectFirst("p.productStockInformation_prefix");
         if (stock != null) {
-            return "In stock".equals(stock.text().trim());
+            return stock.text().contains("In stock");
         }
-        return super.isAvailable();
+        return false;
     }
 
     @Override
     public String getSku() {
-        if (offers != null && offers.has("offers")) {
-            return offers.getString("sku");
+        if (product != null && product.has("offers")) {
+            return product.getString("sku");
         }
         return "NA";
     }
@@ -67,8 +83,8 @@ public class Zavvi extends AbstractWebsite {
 
     @Override
     public BigDecimal getPrice() {
-        if (offers != null && offers.has("price")) {
-            return offers.getBigDecimal("price");
+        if (product != null && product.has("price")) {
+            return product.getBigDecimal("price");
         }
         return BigDecimal.ZERO;
     }

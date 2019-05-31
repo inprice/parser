@@ -45,7 +45,7 @@ public class Currys extends AbstractWebsite {
             String status = product.getString("stockStatus");
             return "In stock".equalsIgnoreCase(status);
         }
-        return super.isAvailable();
+        return false;
     }
 
     @Override

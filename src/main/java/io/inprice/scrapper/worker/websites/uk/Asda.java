@@ -53,7 +53,7 @@ public class Asda extends AbstractWebsite {
         if (product != null && product.has("available")) {
             return product.getBoolean("available");
         }
-        return super.isAvailable();
+        return false;
     }
 
     @Override

@@ -10,6 +10,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parser for Bonprix Global
+ *
+ * Contains standard data, all is extracted by css selectors
+ *
+ * @author mdpinar
+ */
 public class Bonprix extends AbstractWebsite {
 
     public Bonprix(Link link) {
@@ -20,7 +27,7 @@ public class Bonprix extends AbstractWebsite {
     public boolean isAvailable() {
         Element available = doc.selectFirst("meta[property='og:availability']");
         if (available != null) {
-            return available.attr("content").trim().equals("instock");
+            return available.attr("content").trim().contains("instock");
         }
 
         available = doc.selectFirst("div.product-availability-box_wrapper div");
@@ -30,7 +37,7 @@ public class Bonprix extends AbstractWebsite {
             return available.text().contains("erfügbar");
         }
 
-        return super.isAvailable();
+        return false;
     }
 
     @Override

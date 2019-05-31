@@ -7,6 +7,7 @@ import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.UserAgents;
 import org.json.JSONObject;
 import org.jsoup.Connection;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -40,22 +41,18 @@ public abstract class AbstractSite implements Website {
     }
 
     @Override
-    public String getMainUrl() {
+    public String getUrl() {
         return link.getUrl();
     }
 
-    public String getSubUrl() {
+    @Override
+    public String getAlternativeUrl() {
         return null;
     }
 
     @Override
-    public boolean isAvailable() {
-        return true;
-    }
-
-    @Override
-    public boolean willHtmlBeDownloaded() {
-        return true;
+    public Link test(String fileName) {
+        return null;
     }
 
     protected List<LinkSpec> getValueOnlySpecList(Elements specs) {
@@ -119,24 +116,28 @@ public abstract class AbstractSite implements Website {
     }
 
     private int openDocument() {
-        String url = getSubUrl();
-        if (url == null) url = getMainUrl();
+        String url = getAlternativeUrl();
+        if (url == null) url = getUrl();
 
         try {
             Connection.Response response =
-                Jsoup.connect(url)
-                    .userAgent(UserAgents.findARandomUA())
-                    .referrer(UserAgents.findARandomReferer())
-                    .maxBodySize(0)
-                    .timeout(10000)
-                    .ignoreContentType(true)
-                    .followRedirects(true)
-                .execute();
+                    Jsoup.connect(url)
+                            .userAgent(UserAgents.findARandomUA())
+                            .referrer(UserAgents.findARandomReferer())
+                            .maxBodySize(0)
+                            .timeout(10000)
+                            .ignoreContentType(true)
+                            .followRedirects(true)
+                            .execute();
             doc = response.parse();
             return response.statusCode();
+        } catch (HttpStatusException httpe) {
+            log.warn("Something went missing for " + url);
+            return httpe.getStatusCode();
         } catch (IOException e) {
             log.error("Failed to connect to " + url, e);
             return 0;
         }
     }
+
 }

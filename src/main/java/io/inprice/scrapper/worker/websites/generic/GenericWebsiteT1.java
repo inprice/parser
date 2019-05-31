@@ -52,7 +52,7 @@ public class GenericWebsiteT1 extends AbstractWebsite {
         if (availability != null) {
             return "In Stock".equals(availability.attr("content"));
         }
-        return super.isAvailable();
+        return false;
     }
 
     @Override

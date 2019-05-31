@@ -8,6 +8,13 @@ import org.jsoup.nodes.Element;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Parser for NewLook UK
+ *
+ * Contains standard data, all is extracted by css selectors
+ *
+ * @author mdpinar
+ */
 public class NewLook extends AbstractWebsite {
 
     public NewLook(Link link) {
@@ -16,12 +23,11 @@ public class NewLook extends AbstractWebsite {
 
     @Override
     public boolean isAvailable() {
-        dsamfdasdflşsadfşl
         Element inStock = doc.selectFirst("meta[itemprop='availability']");
         if (inStock != null) {
             return inStock.attr("content").trim().equals("inStock");
         }
-        return super.isAvailable();
+        return false;
     }
 
     @Override

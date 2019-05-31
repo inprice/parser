@@ -62,7 +62,7 @@ public class Otto extends AbstractWebsite {
                 return "available".equals(var.getString("status"));
             }
         }
-        return super.isAvailable();
+        return false;
     }
 
     @Override

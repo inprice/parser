@@ -32,7 +32,7 @@ public class N11 extends AbstractWebsite {
                 //
             }
         }
-        return super.isAvailable();
+        return false;
     }
 
     @Override

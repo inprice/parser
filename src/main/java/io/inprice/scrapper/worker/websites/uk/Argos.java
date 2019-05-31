@@ -22,6 +22,18 @@ public class Argos extends AbstractWebsite {
     }
 
     @Override
+    public boolean isAvailable() {
+        final String html = doc.html();
+        final String indicator = "\"globallyOutOfStock\":";
+
+        int start = html.indexOf(indicator) + indicator.length();
+        int end = html.indexOf(",", start);
+
+        final String result = html.substring(start, end);
+        return "false".equalsIgnoreCase(result);
+    }
+
+    @Override
     public String getSku() {
         Element sku = doc.selectFirst("[itemProp='sku']");
         if (sku != null) {
@@ -60,9 +72,9 @@ public class Argos extends AbstractWebsite {
 
     @Override
     public String getBrand() {
-        Element seller = doc.selectFirst(".product-brand a");
-        if (seller != null) {
-            return seller.text().trim();
+        Element brand = doc.selectFirst("[itemprop='brand']");
+        if (brand != null) {
+            return brand.text().trim();
         }
         return "NA";
     }
