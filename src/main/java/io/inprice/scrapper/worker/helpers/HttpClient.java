@@ -12,15 +12,16 @@ public class HttpClient {
     protected static final Logger log = new Logger(HttpClient.class);
 
     public static String get(String getUrl) {
-        return get(getUrl, null);
+        return get(getUrl, null, false);
     }
 
-    public static String get(String getUrl, Map<String, String> headers) {
+    public static String get(String getUrl, Map<String, String> headers, boolean isQueryParams) {
         try {
-            HttpURLConnection con = getConnection("GET", getUrl, headers);
+            HttpURLConnection con = getConnection("GET", getUrl, headers, isQueryParams);
             return HttpClient.read(con.getInputStream());
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.error("Failed to connect to " + getUrl, e);
+
         }
         return null;
     }
@@ -35,7 +36,7 @@ public class HttpClient {
 
     public static String post(String postUrl, Map<String, String> headers, String data) {
         try {
-            HttpURLConnection con = getConnection("POST", postUrl, headers);
+            HttpURLConnection con = getConnection("POST", postUrl, headers, false);
             con.setDoOutput(true);
             HttpClient.sendData(con, data);
 
@@ -46,8 +47,14 @@ public class HttpClient {
         return null;
     }
 
-    private static HttpURLConnection getConnection(String method, String strUrl, Map<String, String> headers) throws IOException {
-        URL url = new URL(strUrl);
+    private static HttpURLConnection getConnection(String method, String strUrl, Map<String, String> headers, boolean isQueryParams) throws IOException {
+        URL url;
+        if (isQueryParams && headers.size() > 0) {
+            url = new URL(buildUrlWithQueryParams(strUrl, headers));
+        } else {
+            url = new URL(strUrl);
+        }
+
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod(method);
 
@@ -55,12 +62,28 @@ public class HttpClient {
         con.setRequestProperty("User-Agent", UserAgents.findARandomUA());
         con.setRequestProperty("Referrer", UserAgents.findARandomReferer());
 
-        if (headers != null && ! headers.isEmpty()) {
+        if (! isQueryParams && headers != null && ! headers.isEmpty()) {
             for (Map.Entry<String, String> entry: headers.entrySet()) {
                 con.setRequestProperty(entry.getKey(), entry.getValue());
             }
         }
         return con;
+    }
+
+    private static String buildUrlWithQueryParams(String url, Map<String, String> headers) {
+        StringBuilder sb = new StringBuilder(url);
+        sb.append("?");
+        for (Map.Entry<String, String> entry: headers.entrySet()) {
+            sb.append(entry.getKey());
+            sb.append("=");
+            sb.append(entry.getValue());
+            sb.append("&");
+        }
+        if (sb.charAt(sb.length()-1) != '&')
+            return sb.toString();
+        else {
+            return sb.toString().substring(0, sb.length()-1);
+        }
     }
 
     private static void sendData(HttpURLConnection con, String data) {

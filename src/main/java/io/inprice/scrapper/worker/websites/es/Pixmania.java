@@ -115,7 +115,7 @@ public class Pixmania extends AbstractSpasite {
             final Map<String, String> payload = getPayload();
             if (payload != null) {
 
-                String body = HttpClient.get(String.format("https://www.pixmania.es/api/pcm/products/%s", productId), payload);
+                String body = HttpClient.get(String.format("https://www.pixmania.es/api/pcm/products/%s", productId), payload, false);
                 if (body != null && ! body.trim().isEmpty()) {
                     JSONObject data = new JSONObject(body.trim());
                     if (data.has("product")) {

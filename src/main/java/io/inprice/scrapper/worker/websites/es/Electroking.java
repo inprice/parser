@@ -66,7 +66,7 @@ public class Electroking extends AbstractWebsite {
     @Override
     public String getSeller() {
         Elements cats = doc.select("a[itemprop='item'] span[itemprop='name']");
-        if (cats != null && cats.size() >= 2) {
+        if (cats != null && cats.size() > 1) {
             Element seller = cats.get(cats.size()-2);
             return seller.text().trim();
         }

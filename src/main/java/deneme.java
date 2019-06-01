@@ -263,13 +263,6 @@ public class deneme {
             "https://direct.asda.com/george/women/shoes/light-brown-snake-print-heeled-chelsea-boots/GEM687876,default,pd.html?cgid=D1M1G20C20&cmpid=otc-good-_-geor-_-6-animal-print-accessories-weve-gone-wild-for-_-fashion-tips-_-section",
         };
 
-        String[] etsy_us = {
-            "https://www.etsy.com/listing/477969731/the-spamp-guitar-practice-amplifier-and?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sr_gallery-1-5&cns=1",
-            "https://www.etsy.com/listing/693195462/jack-daniels-vinyl-wall-clock-large-jack?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sc_gallery-1-3&plkey=4f0b7348bf0c89cf89355a3471585dfe98ae5b77%3A693195462&pro=1&frs=1",
-            "https://www.etsy.com/listing/498796241/custom-skirt-circle-skirt-midi-skirt?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sr_gallery-1-5&bes=1&col=1",
-            "https://www.etsy.com/listing/253465953/plug-in-wall-sconce-lamp?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sc_gallery-1-4&plkey=b2e990a66028190194e6b8ae7e8455212c131ef0%3A253465953&pro=1&col=1"
-        };
-
         String[] pixmaina_es = {
             //"https://www.pixmania.es/p/knipex-slipjoint-gripping-pliers-125-mm-1054557?offerId=22687062",
             //"https://www.pixmania.es/p/navroad-x5-navegador-127-cm-5-pantalla-tactil-lcd-fijo-negro-184-g-7395496?offerId=22685200",
@@ -293,13 +286,48 @@ public class deneme {
         String[] electroking_es = {
             //"https://www.electroking.es/redes/24238-hub-switch-8-ptos-tp-link-tl-sg1008d-6935364092313.html",
             //"https://www.electroking.es/auriculares/24225-auricular-energy-sistem-style-6-ng-44731-8432426447312.html",
-                //"https://www.electroking.es/inicio/24200-patin-electrico-xiaomi-electric-5-blanc-6970244526816.html",
+            //"https://www.electroking.es/inicio/24200-patin-electrico-xiaomi-electric-5-blanc-6970244526816.html",
             "https://www.electroking.es/lavadoras/16600-lavadora-balay-3ts873bc-4242006252250.html"
         };
 
-        for (String url: electroking_es) {
+        String[] canadiantire_ca = {
+            //"https://www.canadiantire.ca/en/pdp/geeni-spot-smart-wi-fi-plug-0529700p.html#srp",
+            //"https://www.canadiantire.ca/en/pdp/granite-rain-barrel-180l-0594161p.html#srp",
+            //"https://www.canadiantire.ca/en/pdp/dewalt-7a-drill-driver-3-8-in-0542992p.html#srp",
+            "https://www.canadiantire.ca/en/pdp/philips-satinshave-advanced-wet-dry-shaver-women-s-0438594p.html#srp"
+        };
+
+        String[] etsy_us = {
+            "https://www.etsy.com/listing/477969731/the-spamp-guitar-practice-amplifier-and?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sr_gallery-1-5&cns=1",
+            //"https://www.etsy.com/listing/693195462/jack-daniels-vinyl-wall-clock-large-jack?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sc_gallery-1-3&plkey=4f0b7348bf0c89cf89355a3471585dfe98ae5b77%3A693195462&pro=1&frs=1",
+            //"https://www.etsy.com/listing/498796241/custom-skirt-circle-skirt-midi-skirt?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sr_gallery-1-5&bes=1&col=1",
+            //"https://www.etsy.com/listing/253465953/plug-in-wall-sconce-lamp?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sc_gallery-1-4&plkey=b2e990a66028190194e6b8ae7e8455212c131ef0%3A253465953&pro=1&col=1"
+        };
+
+        String[] etsy_ca = {
+            //"https://www.etsy.com/ca/listing/616087947/bridal-hair-barrette-pearl-crystal-hair?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sc_gallery-1-4&plkey=297eae4ae00824f5bd1edd1aebf5e1e383eca42b%3A616087947&bes=1"
+            //"https://www.etsy.com/ca/listing/627221358/antique-wooden-tobacco-cutter-distressed?ref=finds_l&pro=1&frs=1",
+            //"https://www.etsy.com/ca/listing/456971012/room-decor-dorm-light-dorm-decor-lights?ref=hp_prn&bes=1",
+            "https://www.etsy.com/ca/listing/507016675/vintage-metal-drum-drum-toy-eagle-toys?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sr_gallery-1-1"
+        };
+
+        String[] target_us = {
+            "https://www.target.com/p/armitron-174-sport-women-s-digital-chronograph-resin-strap-watch-black/-/A-16747358",
+            //"https://www.target.com/p/wire-fan-tassel-necklace-universal-thread-153/-/A-54278968?preselect=54222438#lnk=sametab",
+            //"https://www.target.com/p/full-wheaton-coil-spring-mattress-futon-dual-comfort/-/A-54278834?preselect=54242168#lnk=sametab",
+            //"https://www.target.com/p/barbie-glam-pool-with-water-slide-pool-accessories/-/A-17305299"
+        };
+
+        String[] bonanza_us = {
+            //"https://www.bonanza.com/listings/Women-Silk-Chemise-Sexy-V-Neck-Lingerie-Nightwear-Satin-Sleepwear-Lace-Nightgown/718176135?search_term_id=40273148",
+            "https://www.bonanza.com/listings/Creative-Living-Solutions-Classic-White-Goose-Feather-Down-3-Piece-Comforter-and/722871269?featured=true&search_term_id=40295301",
+            //"https://www.bonanza.com/items/like/87284491/alessandra-adelaide-needleworks-cross-stitch-pattern",
+            //"https://www.bonanza.com/listings/MissNity-White-Simulated-Druzy-Stackable-Ring-Women-s-Silver-Plated-Hypoallergen/718348174?featured=true&search_term_id=40301281"
+        };
+
+        for (String url: bonanza_us) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.es.Electroking");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.us.Bonanza");
             try {
                 Class<Website> clazz = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Constructor<Website> ctor = clazz.getConstructor(Link.class);
@@ -311,13 +339,16 @@ public class deneme {
                 log.error("Error in converting message from byte array to Link", e);
             }
         }
+
     }
 
     private static String findProductId(String url) {
         final String[] urlChunks = url.split("\\?");
-        final String[] partChunks = urlChunks[0].split("-");
-        if (partChunks.length > 0) {
-            return partChunks[partChunks.length-1];
+        if (urlChunks.length > 0) {
+            final String[] partChunks = urlChunks[0].split("-");
+            if (partChunks.length > 0) {
+                return partChunks[partChunks.length-1].replaceAll("\\D+", "").trim();
+            }
         }
         return null;
     }
