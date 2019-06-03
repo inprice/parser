@@ -19,6 +19,10 @@ public interface Website {
     //indicates the availability of the page
     boolean isAvailable();
 
+    String getBrand();
+
+    String getSeller();
+
     //can be used as SKU, CODE, ASIN, PRODUCT-ID, ITEM-ID...
     String getSku();
 
@@ -26,11 +30,7 @@ public interface Website {
 
     BigDecimal getPrice();
 
-    String getSeller();
-
     String getShipment();
-
-    String getBrand();
 
     List<LinkSpec> getSpecList();
 

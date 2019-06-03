@@ -1,5 +1,6 @@
 package io.inprice.scrapper.worker.websites.ca;
 
+import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.HttpClient;
@@ -84,9 +85,9 @@ public class Walmart extends AbstractWebsite {
     public JSONObject getJsonData() {
         final String payload = getPayload();
         if (payload != null && ! payload.isEmpty()) {
-            String body = HttpClient.post(STATIC_URL, payload);
-            if (! body.trim().isEmpty()) {
-                JSONObject product = new JSONObject(body.trim());
+            HttpResponse<String> response = HttpClient.post(STATIC_URL, payload);
+            if (response != null && response.getStatus() < 400) {
+                JSONObject product = new JSONObject(response.getBody());
                 if (product.has("offers")) {
                     JSONObject offers = product.getJSONObject("offers");
                     if (offers.has(sku)) return offers.getJSONObject(sku); //find all the detail by sku

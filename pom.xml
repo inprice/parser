@@ -55,6 +55,13 @@
 			<version>1.10.19</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.github.bingoohuang</groupId>
+			<artifactId>unirest-java</artifactId>
+			<version>0.0.7</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

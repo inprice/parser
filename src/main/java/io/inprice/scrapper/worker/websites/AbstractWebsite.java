@@ -32,14 +32,22 @@ public abstract class AbstractWebsite implements Website {
         this.link = link;
     }
 
+    protected boolean willHtmlBePulled() {
+        return true;
+    }
+
     protected JSONObject getJsonData() {
         return null;
     }
 
     @Override
     public void check() {
-        createDoc();
-        if (link.getHttpStatus() == null || link.getHttpStatus() == 200) read();
+        if (willHtmlBePulled()) {
+            createDoc();
+            if (link.getHttpStatus() == null || link.getHttpStatus() == 200) read();
+        } else {
+            read();
+        }
     }
 
     @Override
@@ -142,17 +150,18 @@ public abstract class AbstractWebsite implements Website {
         try {
             Connection.Response response =
                 Jsoup.connect(url)
+                    .header("Accept-Language", "en-US,en;q=0.5")
+                    .header("Cache-Control","max-age=0")
                     .userAgent(UserAgents.findARandomUA())
                     .referrer(UserAgents.findARandomReferer())
-                    .maxBodySize(0)
-                    .timeout(10000)
+                    .timeout(0)
                     .ignoreContentType(true)
                     .followRedirects(true)
                 .execute();
             doc = response.parse();
             return response.statusCode();
         } catch (HttpStatusException httpe) {
-            log.warn("Something went wrong: " + url);
+            log.error("Something went wrong: " + url, httpe);
             return httpe.getStatusCode();
         } catch (IOException e) {
             log.error("Failed to connect to " + url, e);

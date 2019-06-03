@@ -1,5 +1,6 @@
 package io.inprice.scrapper.worker.websites.es;
 
+import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.HttpClient;
@@ -115,9 +116,9 @@ public class Pixmania extends AbstractWebsite {
             final Map<String, String> payload = getPayload();
             if (payload != null) {
 
-                String body = HttpClient.get(String.format("https://www.pixmania.es/api/pcm/products/%s", productId), payload, false);
-                if (body != null && ! body.trim().isEmpty()) {
-                    JSONObject data = new JSONObject(body.trim());
+                HttpResponse<String> response = HttpClient.get(String.format("https://www.pixmania.es/api/pcm/products/%s", productId), payload);
+                if (response != null && response.getStatus() < 400) {
+                    JSONObject data = new JSONObject(response.getBody());
                     if (data.has("product")) {
                         JSONObject productEL = data.getJSONObject("product");
                         if (productEL.has("best_offer")) {

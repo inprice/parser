@@ -1,5 +1,6 @@
 package io.inprice.scrapper.worker.websites.us;
 
+import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.HttpClient;
@@ -64,15 +65,17 @@ public class Target extends AbstractWebsite {
     }
 
     /**
-     * Returns payload as key value maps
+     * Returns payload as key value query string
      *
-     * @return Map - payload required for having the data
+     * @return String - as query parameter payload
      */
-    private Map<String, String> getPayload() {
-        Map<String, String> payload = new HashMap<>();
-        payload.put("pricing_store_id", "1531");
-        payload.put("key", getApiKey());
-        return payload;
+    private String getPayload() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("pricing_store_id=1531");
+        sb.append("&");
+        sb.append("key=");
+        sb.append(getApiKey());
+        return sb.toString();
     }
 
     @Override
@@ -82,14 +85,11 @@ public class Target extends AbstractWebsite {
     }
 
     private void setPriceData() {
-        final Map<String, String> payload = getPayload();
-        if (payload != null) {
-            String body = HttpClient.get("https://redsky.target.com/web/pdp_location/v1/tcin/" + getSku(), payload, true);
-            if (body != null && ! body.trim().isEmpty()) {
-                JSONObject priceEL = new JSONObject(body.trim());
-                if (! priceEL.isEmpty()) {
-                    priceData = priceEL.getJSONObject("price");
-                }
+        HttpResponse<String> response = HttpClient.get("https://redsky.target.com/web/pdp_location/v1/tcin/" + getSku() + "?" + getPayload());
+        if (response != null && response.getStatus() < 400) {
+            JSONObject priceEL = new JSONObject(response.getBody());
+            if (! priceEL.isEmpty()) {
+                priceData = priceEL.getJSONObject("price");
             }
         }
     }

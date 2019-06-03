@@ -40,11 +40,11 @@ public class BestBuy extends AbstractWebsite {
     public JSONObject getJsonData() {
         final String indicator = "\"product\":{";
 
-        int start = doc.data().indexOf(indicator) + indicator.length()-1;
-        int end   = doc.data().indexOf(",\"productSellers\":{");
+        int start = doc.html().indexOf(indicator) + indicator.length()-1;
+        int end   = doc.html().indexOf(",\"productSellers\":{");
 
         if (start > indicator.length() && end > start) {
-            JSONObject data = new JSONObject(doc.data().substring(start, end));
+            JSONObject data = new JSONObject(doc.html().substring(start, end));
             if (data.has("product")) product = data.getJSONObject("product");
             return data;
         }

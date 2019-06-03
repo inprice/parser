@@ -1,6 +1,13 @@
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.worker.helpers.UserAgents;
 import io.inprice.scrapper.worker.websites.Website;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +16,8 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 public class deneme {
 
@@ -386,9 +395,23 @@ public class deneme {
             "https://www.apple.com/shop/buy-mac/imac/21.5-inch-3.6ghz-quad-core-processor-1tb"
         };
 
-        for (String url: apple_xx) {
+        String[] fnac_fr = {
+            "https://www.fnac.com/LEGO-Star-Wars-75209-Le-Landspeeder-de-Han-Solo/a11562346/w-4#int=S:HookLogic|Home%20G%C3%A9n%C3%A9%7CNonApplicable|11562346|BL6|L1",
+            //"https://www.fnac.com/Pack-Fnac-PC-Ultra-Portable-Lenovo-Yoga-530-14IKB-81EK00LBFR-14-Souris-sans-fil-Noir-Tapis-de-souris-It-Works-Noir-Sacoche-d-ordinateur-Mobilis-TheOne-Basic-Noir-Microsoft-Office-365-Personnel-1-PC-MAC-1-an/a12909241/w-4#int=:NonApplicable|NonApplicable|NonApplicable|12909241|NonApplicable|NonApplicable",
+            //"https://www.fnac.com/mp33469041/Salon-de-jardin-table-extensible-Chicago-210-Taupe-Alice-s-Garden/w-4#int=:NonApplicable|NonApplicable|NonApplicable|33469041|NonApplicable|NonApplicable",
+            //"https://www.fnac.com/a13495268/Avengers-Endgame-Steelbook-Edition-Speciale-Fnac-Blu-ray-4K-Ultra-HD-Robert-Downey-Jr-Blu-ray-4K#int=S:Suggestion|Home%20G%C3%A9n%C3%A9%7CNonApplicable|13495268|BL2|L1"
+        };
+
+        String[] rakuten_fr = {
+            //"https://fr.shopping.rakuten.com/offer?action=desc&aid=4731998207&xtatc=PUB-[pmad]-[KEYWORD1]-[super-hros]-[CPC]-[2927]-[2415162]-19662299[jayobone]",
+            //"https://fr.shopping.rakuten.com/mfp/5693259/samsung-galaxy-note8-duos?pid=2270068266&xtatc=PUB-[PMC]-[H]-[Tel-PDA]-[PushProduit1]-[Pdts-2]-[]",
+            //"https://fr.shopping.rakuten.com/offer?action=desc&aid=2880539926&productid=763543992",
+            "https://fr.shopping.rakuten.com/offer?action=desc&aid=4542698602&productid=3622939970#xtatc=PUB-[PMC]-[H]-[HomePage]-[Carrousel]-[Marque]-[Boulanger]-[3622939970]-[]"
+        };
+
+        for (String url: fnac_fr) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.xx.Apple");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.fr.Fnac");
             try {
                 Class<Website> clazz = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Constructor<Website> ctor = clazz.getConstructor(Link.class);
@@ -401,14 +424,34 @@ public class deneme {
             }
         }
 
+//        System.out.println(getThePage());
+
+    }
+
+    private static String getThePage() {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Accept-Language", "en-US,en;q=0.5");
+
+        HttpResponse<String> response = null;
+        try {
+            response = Unirest.get("https://www.fnac.com/Nav/API/Article/GetStrate?prid=11562346&catalogRef=1&strateType=DoNotMiss")
+                    .headers(headers)
+                    .header("User-Agent", UserAgents.findARandomUA())
+                    .header("Referrer", UserAgents.findARandomReferer())
+                    .asString();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        }
+        return response.getBody();
     }
 
     private static String findProductId(String url) {
-        final String[] urlChunks = url.split("\\?");
+        final String[] urlChunks = url.split("\\|");
         if (urlChunks.length > 0) {
-            final String[] partChunks = urlChunks[0].split("-");
-            if (partChunks.length > 0) {
-                return partChunks[partChunks.length-1].replaceAll("\\D+", "").trim();
+            for (String u: urlChunks) {
+                if (u.matches("\\d+") && u.length() > 5) {
+                    return u;
+                }
             }
         }
         return null;
@@ -423,7 +466,6 @@ public class deneme {
         String maxOrder = body.substring(start, end);
         System.out.println(maxOrder.trim());
     }
-
 
     private static void printOut(Link link) {
         log.debug("--------------------------------------------------------------------------------------------------");

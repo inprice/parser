@@ -1,5 +1,6 @@
 package io.inprice.scrapper.worker.websites.ca;
 
+import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.HttpClient;
@@ -30,20 +31,26 @@ public class CanadianTire extends AbstractWebsite {
     }
 
     /**
-     * Returns payload as key value maps
+     * Returns payload as key value query string
      *
-     * @return Map - payload required for having the data
+     * @return String - as query parameter payload
      */
-    private Map<String, String> getPayload() {
-        long now = new Date().getTime();
-        Map<String, String> payload = new HashMap<>();
-        payload.put("SKU", getSku());
-        payload.put("Store", "0144");
-        payload.put("Banner", "CTR");
-        payload.put("isKiosk", "FALSE");
-        payload.put("Language", "E");
-        payload.put("_", "" + now);
-        return payload;
+    private String getPayload() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SKU=");
+        sb.append(getSku());
+        sb.append("&");
+        sb.append("Store=0144");
+        sb.append("&");
+        sb.append("Banner=CTR");
+        sb.append("&");
+        sb.append("isKiosk=FALSE");
+        sb.append("&");
+        sb.append("Language=E");
+        sb.append("&");
+        sb.append("_");
+        sb.append(new Date().getTime());
+        return sb.toString();
     }
 
     /**
@@ -54,14 +61,11 @@ public class CanadianTire extends AbstractWebsite {
      */
     @Override
     public JSONObject getJsonData() {
-        final Map<String, String> payload = getPayload();
-        if (payload != null) {
-            String body = HttpClient.get("https://www.canadiantire.ca/ESB/PriceAvailability", payload, true);
-            if (body != null && ! body.trim().isEmpty()) {
-                JSONArray data = new JSONArray(body.trim());
-                if (! data.isEmpty()) {
-                    return data.getJSONObject(0);
-                }
+        HttpResponse<String> response = HttpClient.get("https://www.canadiantire.ca/ESB/PriceAvailability?" + getPayload());
+        if (response != null && response.getStatus() < 400) {
+            JSONArray data = new JSONArray(response.getBody());
+            if (! data.isEmpty()) {
+                return data.getJSONObject(0);
             }
         }
         return null;
