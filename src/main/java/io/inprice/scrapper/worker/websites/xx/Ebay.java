@@ -31,18 +31,10 @@ public class Ebay extends AbstractWebsite {
         if (stock != null) return true;
 
         stock = doc.selectFirst("#qtySubTxt span");
-        if (stock != null) {
-            if (stock.text().contains("available")) return true;
+        if (stock != null) return true;
 
-            String number = cleanPrice(stock.text().trim());
-            try {
-                int amount = new Integer(number.trim());
-                return (amount > 0);
-            } catch (Exception e) {
-                //
-            }
-        }
-        return false;
+        stock = doc.selectFirst("a[data-action-name='BUY_IT_NOW']");
+        return  (stock != null);
     }
 
     @Override

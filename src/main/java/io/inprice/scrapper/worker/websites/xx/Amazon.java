@@ -25,8 +25,12 @@ public class Amazon extends AbstractWebsite {
 
     @Override
     public boolean isAvailable() {
-        Element available = doc.selectFirst("div#availability span");
-        return (available != null && available.text().contains("In Stock"));
+        Element available = doc.getElementById("availability");
+        if (available != null) {
+            Element span = available.selectFirst("span.a-color-success");
+            return span != null;
+        }
+        return false;
     }
 
     @Override
@@ -129,8 +133,8 @@ public class Amazon extends AbstractWebsite {
 
     @Override
     public String getBrand() {
-        Element brand = doc.selectFirst("span.ac-keyword-link a");
-        if (brand == null) brand = doc.getElementById("bylineInfo");
+        Element brand = doc.getElementById("bylineInfo");
+        if (brand == null) brand = doc.selectFirst("span.ac-keyword-link a");
 
         if (brand != null) {
             return brand.text().trim();

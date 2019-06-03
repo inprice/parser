@@ -74,22 +74,18 @@ public class Asos extends AbstractWebsite {
 
     @Override
     public String getShipment() {
-        String val = null;
-
         Element shipment = doc.selectFirst("#shipping-restrictions .shipping-restrictions");
         if (shipment != null) {
-            val = shipment.attr("style");
-            if (val != null) val = "Please refer to Delivery and returns info section";
+            String val = shipment.attr("style");
+            if (val != null) return "Please refer to Delivery and returns info section";
         }
 
         shipment = doc.getElementById("shippingRestrictionsLink");
         if (shipment != null) {
-            val = shipment.text().trim();
+            return shipment.text().trim();
         } else {
-            val = "See delivery and returns info";
+            return "See delivery and returns info";
         }
-
-        return val;
     }
 
     @Override

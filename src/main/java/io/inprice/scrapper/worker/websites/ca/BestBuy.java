@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Parser for Bestbuy Canada
+ * Parser for BestBuy Canada
  *
  * The parsing steps:
  *

@@ -325,9 +325,70 @@ public class deneme {
             //"https://www.bonanza.com/listings/MissNity-White-Simulated-Druzy-Stackable-Ring-Women-s-Silver-Plated-Hypoallergen/718348174?featured=true&search_term_id=40301281"
         };
 
-        for (String url: bonanza_us) {
+        String[] rakuten_xx = {
+            //"https://global.rakuten.com/en/store/maximum-japan/item/lens_case_l/",
+            //"https://global.rakuten.com/en/store/jiggys-shop/item/fa162/",
+            //"https://global.rakuten.com/en/store/cloudmoda/item/redwing-101/",
+            "https://global.rakuten.com/en/store/lecollier/item/10000199/"
+        };
+
+        String[] ebay_it = {
+            //"https://www.ebay.it/itm/Xiaomi-Redmi-Note-7-4GB-RAM-64GB-ROM-BLU-Snapdragon-660-Octa-Core-48MP-BANDA-20/333116119891?_trkparms=5373%3A0%7C5374%3AFeatured",
+            //"https://www.ebay.it/itm/SHABBY-CHIC-PINK-VINTAGE-DISTRESSED-FLORAL-KNOB-HANDLE-DRAWER-DRESSER-CHILDREN/331565009011?hash=item4d32d08873:m:m8As4oOR012VV-wO9hBPg6Q&var=541447287554",
+            "https://www.ebay.it/itm/Scarpa-Moto-Scarpette-Calzature-Scooter-Stivale-Tecnico-Pelle-impermianile-Rpro/263788550769?hash=item3d6b05da71:m:mDJwNhQoXN0vfv70xjNxvPg&var=563037879399",
+            //"https://www.ebay.it/itm/Polo-Uomo-SLAZENGER-Cotone-Piquet-8-Colori-Art-045/283448150846?_trkparms=pageci%3A3006e80f-84fa-11e9-80f4-74dbd1802eb6%7Cparentrq%3A16bc534c16b0aa6fd65552d6ff91ec4b%7Ciid%3A1"
+        };
+
+        String[] amazon_it = {
+            //"https://www.amazon.it/massaggiatore-contorno-occhiaie-Ricaricabile-garantita/dp/B01N26M6MV/ref=lp_14606354031_1_15?s=boost&srs=14606354031&ie=UTF8&qid=1559455192&sr=1-15",
+            "https://www.amazon.it/Canon-fotocamera-obbiettivi-Ricondizionato-Certificato/dp/B01M5CG6SA?pd_rd_w=ZGnvT&pf_rd_p=54245443-aff5-4834-af54-d4a0f097d6fd&pf_rd_r=2QXNF9VQT443ZNVBCS2G&pd_rd_r=6c4b23a2-da9d-41d3-9c35-0cf5e3461d5f&pd_rd_wg=RKdZm&ref_=pd_gw_unk",
+            //"https://www.amazon.it/dp/B07FDV6PKX?ref_=Oct_LDealsC_969755031_1&pf_rd_p=a306f344-7261-51d6-9914-c7727ca71cbe&pf_rd_s=merchandised-search-5&pf_rd_t=101&pf_rd_i=969755031&pf_rd_m=A11IL2PNWYJU7H&pf_rd_r=HRRKPMB97PSYFSQ2GETY&pf_rd_r=HRRKPMB97PSYFSQ2GETY&pf_rd_p=a306f344-7261-51d6-9914-c7727ca71cbe",
+            //"https://www.amazon.it/SONGMICS-Poltrona-Direzionale-Ergonomica-Regolabile/dp/B01HNXGLFO/ref=lp_15855215031_1_6?s=kitchen&ie=UTF8&qid=1559455189&sr=1-6"
+        };
+
+        String[] mediaworld_it = {
+            //"https://www.mediaworld.it/product/p-710937/sigma-150-600mmf5-63-sport-nikon",
+            //"https://www.mediaworld.it/product/p-984752/samsung-galaxy-watch-46mm-silver",
+            "https://www.mediaworld.it/product/p-994453/amazon-echo-dot-3-generazione-antracite",
+            //"https://www.mediaworld.it/product/p-749095/coolermaster-masterset-ms120-combo"
+        };
+
+        String[] eprice_it = {
+            //"https://www.eprice.it/fotocamere-a-sviluppo-istantaneo-POLAROID/d-7867039?metb=widget-prodotti-hp-sostitutivo-target",
+            //"https://www.eprice.it/pneumatici-moto-METZELER/d-56598129",
+            //"https://www.eprice.it/carta-HP/d-6896874?metb=widget-prodotti-n_uf_co-widget2",
+            "https://www.eprice.it/toner-XEROX/d-9031240?shopid=0"
+        };
+
+        String[] euronics_it = {
+            //"https://www.euronics.it/indossabili/apple/applewatch-s3-2018-cel-42mm-alluminio-space-grey/eProd182024114/",
+            //"https://www.euronics.it/home-theatre/yamaha/yas108bl/eProd192003459/",
+            "https://www.euronics.it/contenuti-digitali-games/sony-computer/playstation-network-card-10-/eProd152004387/",
+            //"https://www.euronics.it/ventilatori/dyson/am06-dyson-cool/eProd142010733/"
+        };
+
+        String[] vidaxl_it = {
+            "https://www.vidaxl.it/aste/index/viewProduct/id/961389/hash/4691327b055c78b5bdeb3dd1a4984b6f/",
+            //"https://www.vidaxl.it/aste/index/viewProduct/id/961404/hash/d07a780ff0323c327a21cfc426a1ccb5/",
+            //"https://www.vidaxl.it/aste/index/viewProduct/id/961379/hash/50ecd22467a943905e9374299dd38d87/",
+            //"https://www.vidaxl.it/e/8718475052173/tenda-da-insetti-90-x-220-cm-marrone-beige"
+        };
+
+        String[] ebay_fr = {
+            //"https://www.ebay.fr/itm/ADIDAS-ORIGINALS-STAN-SMITH-M2060-chaussures-femmes-sport-sneaker-blanc-loisir/183590929929",
+            //"https://www.ebay.fr/itm/Trottinette-Electrique-Scooter-Motor-25km-h-20Km-250W-7-0Ah-S9-Tubeless/253928908275?_trkparms=pageci%3A07cc4642-854b-11e9-b23d-74dbd180e728%7Cparentrq%3A18ce233116b0aa46947513b6ff8e1df0%7Ciid%3A1",
+            "https://www.ebay.fr/p/Trixie-Maison-de-Toilettes-Vico-Easy-Clean-Chat/1312569062?iid=254248396599",
+            //"https://www.ebay.fr/itm/Velo-spinning-appartement-ergonomique-volant-dinertie-24kg-reglable-FITFIU/311796498963"
+        };
+
+        String[] apple_xx = {
+            //"https://www.apple.com/shop/product/HJ162/steelseries-nimbus-wireless-gaming-controller?fnode=a4",
+            "https://www.apple.com/shop/buy-mac/imac/21.5-inch-3.6ghz-quad-core-processor-1tb"
+        };
+
+        for (String url: apple_xx) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.us.Bonanza");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.xx.Apple");
             try {
                 Class<Website> clazz = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Constructor<Website> ctor = clazz.getConstructor(Link.class);
@@ -368,8 +429,7 @@ public class deneme {
         log.debug("--------------------------------------------------------------------------------------------------");
         log.debug("SKU   : " + link.getSku());
         log.debug("Name  : " + link.getName());
-        log.debug("Status: " + link.getStatus());
-        log.debug("Http  : " + link.getHttpStatus());
+        log.debug("Status: " + link.getStatus() + (link.getHttpStatus() != null ? " ("+link.getHttpStatus()+")" : ""));
         log.debug("Price : %f, Seller: %s, Shipment: %s, Brand: %s", link.getPrice(), link.getSeller(), link.getShipment(), link.getBrand());
         if (link.getSpecList() != null && link.getSpecList().size() > 0) {
             link.getSpecList().forEach(spec -> {

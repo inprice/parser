@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.ca;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.HttpClient;
-import io.inprice.scrapper.worker.websites.AbstractSpasite;
+import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
@@ -35,7 +35,7 @@ import java.util.List;
  *
  * @author mdpinar
  */
-public class Walmart extends AbstractSpasite {
+public class Walmart extends AbstractWebsite {
 
     //used in pre-request
     private static final String STATIC_DATA = "{'availabilityStoreId':'3124','fsa':'P7B','lang':'en','products':[{'productId':'%s','skuIds':['%s']}]}";

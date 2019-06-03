@@ -26,7 +26,7 @@ public class Asda extends AbstractWebsite {
     }
 
     /**
-     * Retruns json object which holds all the necessity data
+     * Returns json object which holds all the necessity data
      *
      * @return json - product data
      */

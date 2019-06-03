@@ -31,7 +31,7 @@ public class Teknosa extends GenericWebsiteT1 {
         if (dataEL != null) {
             JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
             if (data.has("offers")) {
-                JSONArray offersArray = offers.getJSONArray("offers");
+                JSONArray offersArray = data.getJSONArray("offers");
                 if (! offersArray.isEmpty()) {
                     offers = offersArray.getJSONObject(0);
                 }

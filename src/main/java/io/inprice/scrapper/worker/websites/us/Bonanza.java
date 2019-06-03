@@ -12,14 +12,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Parser for Bonanze USA
+ * Parser for Bonanza USA
  *
- * Contains standard data, all is extracted by css selectors
+ * The data is in two parts:
+ *  - in html body
+ *  - price is handled via a rest call
+ *
  *
  * @author mdpinar
  */
 public class Bonanza extends AbstractWebsite {
 
+    /*
+     * The following data can only be gathered over spec list
+     */
     private String sku = "NA";
     private String brand = "NA";
     private boolean availability;
@@ -29,6 +35,12 @@ public class Bonanza extends AbstractWebsite {
         super(link);
     }
 
+    /**
+     * This method is used as a initial data loader using product's spec list.
+     * Class level variables are set over the spec list here.
+     *
+     * @return nothing!
+     */
     @Override
     protected JSONObject getJsonData() {
         Elements specs = doc.select("table.extended_info_table tr.extended_info_row");

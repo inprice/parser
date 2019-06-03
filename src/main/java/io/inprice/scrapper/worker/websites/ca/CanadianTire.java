@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.ca;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.HttpClient;
-import io.inprice.scrapper.worker.websites.AbstractSpasite;
+import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -23,7 +23,7 @@ import java.util.*;
  *
  * @author mdpinar
  */
-public class CanadianTire extends AbstractSpasite {
+public class CanadianTire extends AbstractWebsite {
 
     public CanadianTire(Link link) {
         super(link);

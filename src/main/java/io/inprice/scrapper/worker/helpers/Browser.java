@@ -79,7 +79,6 @@ class Browser {
             String html = driver.findElementByCssSelector(".pix-price").getAttribute("innerHTML");
             System.out.println("-----------------------------------------------------------------" + html);
         } catch (Exception e) {
-            ;
         }
 
         long end = new Date().getTime();

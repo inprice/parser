@@ -6,7 +6,6 @@ import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
 import java.util.*;

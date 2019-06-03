@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.es;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.HttpClient;
-import io.inprice.scrapper.worker.websites.AbstractSpasite;
+import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
@@ -32,7 +32,7 @@ import java.util.Map;
  *
  * @author mdpinar
  */
-public class Pixmania extends AbstractSpasite {
+public class Pixmania extends AbstractWebsite {
 
     /*
      * the main data derived from json gotten server via getSubUrl()
