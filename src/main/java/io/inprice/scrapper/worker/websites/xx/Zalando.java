@@ -70,21 +70,18 @@ public class Zalando extends AbstractWebsite {
 
     @Override
     public String getShipment() {
-        Element shipment = doc.selectFirst("div#z-pdp-topDeliveryInfo--standard div.h-p-left-s");
+        Element shipment = doc.getElementById("z-pdp-topDeliveryInfo--standard");
         if (shipment != null) {
             return shipment.text().trim();
         }
-        return "NA";
+        return "Standard shipment";
     }
 
     @Override
     public String getBrand() {
-        Element title = doc.selectFirst("title");
-        if (title != null) {
-            String[] titleChunks = title.text().split("-");
-            if (titleChunks.length > 0) {
-                return titleChunks[0].trim();
-            }
+        Element brand = doc.selectFirst("a[title] h2");
+        if (brand != null) {
+            return brand.text();
         }
         return "NA";
     }

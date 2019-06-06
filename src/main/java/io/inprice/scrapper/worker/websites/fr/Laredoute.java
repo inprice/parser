@@ -3,31 +3,31 @@ package io.inprice.scrapper.worker.websites.fr;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Parser for Fnac France
+ * Parser for Laredoute France
  *
- * Contains standard data, all is extracted from html body and via json data in getJsonData()
+ * Contains standard data, all is extracted by css selectors
  *
  * @author mdpinar
  */
-public class Fnac extends AbstractWebsite {
+public class Laredoute extends AbstractWebsite {
 
-    protected JSONObject offers;
+    private JSONObject offers;
 
-    public Fnac(Link link) {
+    public Laredoute(Link link) {
         super(link);
     }
 
     @Override
-    public JSONObject getJsonData() {
+    protected JSONObject getJsonData() {
         Element dataEL = doc.selectFirst("script[type='application/ld+json']");
         if (dataEL != null) {
             JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
@@ -50,9 +50,9 @@ public class Fnac extends AbstractWebsite {
 
     @Override
     public String getSku() {
-        if (json != null) {
-            if (json.has("sku")) return json.getString("sku");
-            if (json.has("prid")) return ""+json.getInt("prid");
+        Element sku = doc.getElementById("vendorsList");
+        if (sku != null) {
+            return sku.attr("data-prodid");
         }
         return "NA";
     }
@@ -81,14 +81,15 @@ public class Fnac extends AbstractWebsite {
                 return seller.getString("name");
             }
         }
-        return "FNAC.COM";
+        return "Laredoute";
     }
 
     @Override
     public String getShipment() {
-        Element shipment = doc.selectFirst("div.f-productSpecialsOffers-offerParagraphWrapper");
+        Element shipment = doc.selectFirst("li.delivery-info-item.delivery-info.delivery-info-content");
         if (shipment != null) {
-            return shipment.text().trim();
+            String text = shipment.attr("data-text");
+            return text.replaceAll("<b>", "").replaceAll("</b>", "").replaceAll("\\[", "").replaceAll("]", "");
         }
         return "NA";
     }
@@ -107,20 +108,21 @@ public class Fnac extends AbstractWebsite {
     @Override
     public List<LinkSpec> getSpecList() {
         List<LinkSpec> specList = null;
-
-        Elements specs = doc.select("table.f-productDetails-table tr");
+        Element specs = doc.getElementsByTag("dscpdp").first();
         if (specs != null) {
-            specList = new ArrayList<>();
-            for (Element spec: specs) {
-                Elements pairs = spec.select("td.f-productDetails-cell");
-                if (pairs.size() == 1) {
-                    specList.add(new LinkSpec("", pairs.get(0).text()));
-                } else if (pairs.size() > 1) {
-                    specList.add(new LinkSpec(pairs.get(0).text(), pairs.get(1).text()));
+            String[] specChunks;
+            if (specs.text().indexOf("•") > 0)
+                specChunks = specs.text().split("•");
+            else
+                specChunks = specs.text().split("\\.");
+
+            if (specChunks.length > 0) {
+                specList = new ArrayList<>(specChunks.length);
+                for (String spec : specChunks) {
+                    specList.add(new LinkSpec("", spec.trim()));
                 }
             }
         }
-
         return specList;
     }
 }

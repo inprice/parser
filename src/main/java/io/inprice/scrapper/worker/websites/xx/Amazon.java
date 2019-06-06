@@ -30,15 +30,23 @@ public class Amazon extends AbstractWebsite {
             Element span = available.selectFirst("span.a-color-success");
             return span != null;
         }
-        return false;
+
+        available = doc.getElementById("ebooksProductTitle");
+        return available != null;
     }
 
     @Override
     public String getSku() {
         Element sku = doc.getElementById("ASIN");
         if (sku != null) {
-            return sku.val().trim();
+            return sku.val();
         }
+
+        sku = doc.selectFirst("input[name='ASIN.0']");
+        if (sku != null) {
+            return sku.val();
+        }
+
         return "NA";
     }
 
@@ -46,7 +54,12 @@ public class Amazon extends AbstractWebsite {
     public String getName() {
         Element name = doc.getElementById("productTitle");
         if (name != null) {
-            return name.text().trim();
+            return name.text();
+        }
+
+        name = doc.getElementsByTag("title").first();
+        if (name != null) {
+            return name.text();
         }
         return "NA";
     }
@@ -65,6 +78,8 @@ public class Amazon extends AbstractWebsite {
         String strPrice = null;
 
         Element price = doc.getElementById("priceblock_dealprice");
+        if (price == null) price = doc.getElementById("priceblock_ourprice");
+
         if (price != null) {
             strPrice = price.text();
         } else {
@@ -73,14 +88,14 @@ public class Amazon extends AbstractWebsite {
         }
 
         if (strPrice == null || strPrice.isEmpty()) {
-            price = doc.select(".header-price").first();
-            if (price == null) price = doc.select("span.a-color-price").first();
-            if (price == null) price = doc.select(".a-size-medium.a-color-price.offer-price.a-text-normal").first();
+            price = doc.selectFirst(".header-price");
+            if (price == null) price = doc.selectFirst("span.a-size-base.a-color-price.a-color-price");
+            if (price == null) price = doc.selectFirst(".a-size-medium.a-color-price.offer-price.a-text-normal");
 
             if (price != null) {
                 strPrice = price.text();
             } else {
-                price = doc.select(".price-large").first();
+                price = doc.selectFirst(".price-large");
                 if (price != null) {
                     String left = cleanPrice(price.text());
                     String right = "00";
@@ -122,7 +137,7 @@ public class Amazon extends AbstractWebsite {
     public String getShipment() {
         Element shipment = doc.getElementById("price-shipping-message");
         if (shipment == null) shipment = doc.getElementById("ddmDeliveryMessage span");
-        if (shipment == null) shipment = doc.select(".shipping3P").first();
+        if (shipment == null) shipment = doc.selectFirst(".shipping3P");
 
         if (shipment != null) {
             return shipment.text().trim();
@@ -145,6 +160,10 @@ public class Amazon extends AbstractWebsite {
 
     @Override
     public List<LinkSpec> getSpecList() {
-        return getValueOnlySpecList(doc.select("#feature-bullets li:not(.aok-hidden)"));
+        List<LinkSpec> specList = getValueOnlySpecList(doc.select("#feature-bullets li:not(.aok-hidden)"));
+        if (specList == null) {
+            specList = getValueOnlySpecList(doc.select("div.content ul li"));
+        }
+        return specList;
     }
 }

@@ -5,9 +5,6 @@ import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.UserAgents;
 import io.inprice.scrapper.worker.websites.Website;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,9 +23,9 @@ public class deneme {
     public static void main(String... args) {
 
         String[] teknosa_tr = {
-            "https://www.teknosa.com/goldmaster-enjoy-60-radyolu-turuncu-bluetooth-speaker-p-110300637",
-            "https://www.teknosa.com/philips-gc932420-perfectcare-aqua-pro-tionic-taban-buhar-kazanli-utu-p-120170416",
-            "https://www.teknosa.com/mickey-clubhouse-havlu-p-176000129",
+            //"https://www.teknosa.com/goldmaster-enjoy-60-radyolu-turuncu-bluetooth-speaker-p-110300637",
+            //"https://www.teknosa.com/philips-gc932420-perfectcare-aqua-pro-tionic-taban-buhar-kazanli-utu-p-120170416",
+            //"https://www.teknosa.com/mickey-clubhouse-havlu-p-176000129",
             "https://www.teknosa.com/jwin-jf01-blok-flut-p-135040422"
         };
 
@@ -153,9 +150,9 @@ public class deneme {
 
         String[] debenhams_uk = {
             "https://www.debenhams.com/webapp/wcs/stores/servlet/prod_10701_10001_321009114299MISC_-1",
-            "https://www.debenhamsplus.com/p/1335624/medion-erazer-p6689-core-i7-8550u-8gb-1tb-128gb-ssd-dvdrw-nvidia-gtx1050-4gb-15.6-inch-full-hd-gaming-laptop",
-            "https://www.debenhams.com/webapp/wcs/stores/servlet/prod_10701_10001_61131+DF72199_-1",
-            "https://www.debenhams.com/webapp/wcs/stores/servlet/prod_10701_10001_161010418163_-1"
+            //"https://www.debenhamsplus.com/p/1335624/medion-erazer-p6689-core-i7-8550u-8gb-1tb-128gb-ssd-dvdrw-nvidia-gtx1050-4gb-15.6-inch-full-hd-gaming-laptop",
+            //"https://www.debenhams.com/webapp/wcs/stores/servlet/prod_10701_10001_61131+DF72199_-1",
+            //"https://www.debenhams.com/webapp/wcs/stores/servlet/prod_10701_10001_161010418163_-1"
         };
 
         String[] mediamarkt_de = {
@@ -203,6 +200,7 @@ public class deneme {
             "https://www.zalando.co.uk/adidas-performance-condivo-18-tracksuit-bottoms-grey-ad543e0lz-c11.html",
             "https://www.zalando.de/resteroeds-resort-shirt-terry-hemd-r6222d00k-a11.html"
         };
+
 
         String[] notebooksbilliger_de_ = {
             "https://www.notebooksbilliger.de/netzwerk/powerlines+netzwerk/devolo+magic+2+wifi+starter+kit",
@@ -396,8 +394,8 @@ public class deneme {
         };
 
         String[] fnac_fr = {
-            "https://www.fnac.com/LEGO-Star-Wars-75209-Le-Landspeeder-de-Han-Solo/a11562346/w-4#int=S:HookLogic|Home%20G%C3%A9n%C3%A9%7CNonApplicable|11562346|BL6|L1",
-            //"https://www.fnac.com/Pack-Fnac-PC-Ultra-Portable-Lenovo-Yoga-530-14IKB-81EK00LBFR-14-Souris-sans-fil-Noir-Tapis-de-souris-It-Works-Noir-Sacoche-d-ordinateur-Mobilis-TheOne-Basic-Noir-Microsoft-Office-365-Personnel-1-PC-MAC-1-an/a12909241/w-4#int=:NonApplicable|NonApplicable|NonApplicable|12909241|NonApplicable|NonApplicable",
+            //"https://www.fnac.com/LEGO-Star-Wars-75209-Le-Landspeeder-de-Han-Solo/a11562346/w-4#int=S:HookLogic|Home%20G%C3%A9n%C3%A9%7CNonApplicable|11562346|BL6|L1",
+            "https://www.fnac.com/Pack-Fnac-PC-Ultra-Portable-Lenovo-Yoga-530-14IKB-81EK00LBFR-14-Souris-sans-fil-Noir-Tapis-de-souris-It-Works-Noir-Sacoche-d-ordinateur-Mobilis-TheOne-Basic-Noir-Microsoft-Office-365-Personnel-1-PC-MAC-1-an/a12909241/w-4#int=:NonApplicable|NonApplicable|NonApplicable|12909241|NonApplicable|NonApplicable",
             //"https://www.fnac.com/mp33469041/Salon-de-jardin-table-extensible-Chicago-210-Taupe-Alice-s-Garden/w-4#int=:NonApplicable|NonApplicable|NonApplicable|33469041|NonApplicable|NonApplicable",
             //"https://www.fnac.com/a13495268/Avengers-Endgame-Steelbook-Edition-Speciale-Fnac-Blu-ray-4K-Ultra-HD-Robert-Downey-Jr-Blu-ray-4K#int=S:Suggestion|Home%20G%C3%A9n%C3%A9%7CNonApplicable|13495268|BL2|L1"
         };
@@ -409,9 +407,79 @@ public class deneme {
             "https://fr.shopping.rakuten.com/offer?action=desc&aid=4542698602&productid=3622939970#xtatc=PUB-[PMC]-[H]-[HomePage]-[Carrousel]-[Marque]-[Boulanger]-[3622939970]-[]"
         };
 
-        for (String url: fnac_fr) {
+        String[] cdiscount_fr = {
+            "https://www.cdiscount.com/jardin/barbecue-plancha/barbecue-au-gaz-richelieu-marron-4-bruleurs-dont/f-1631901-ali3760247261363.html#mpos=2|mp",
+            //"https://www.cdiscount.com/bricolage/outillage/mecafer-groupe-electrogene-essence-mf3800-3500-w/f-166010301-mec3283494501384.html?idOffre=139440285",
+            //"https://www.cdiscount.com/bricolage/revetement-sol/ajtimber-revetement-stratifie-villa-2-22-m2-ch/f-166180201-ajt4042456978454.html",
+            //"https://www.cdiscount.com/maison/achat-meuble-literie/confort-design-matelas-140-x-190cm-mousse-memoir/f-117552013-mrprince04ab.html"
+        };
+
+        String[] zalando_fr = {
+            //"https://www.zalando.fr/anna-field-manteau-classique-maritime-blue-an621u00c-k11.html",
+            //"https://www.zalando.fr/swarovski-luckily-pendant-collier-dark-multi-4sw51l08v-f11.html",
+            //"https://www.zalando.fr/tory-burch-fleming-convertible-shoulder-bag-sac-bandouliere-t0751h003-j12.html",
+            "https://www.zalando.fr/calvin-klein-jeans-padded-varsity-blouson-bomber-begonia-pink-c1821g01y-j11.html"
+        };
+
+        String[] auchan_fr = {
+            //"https://www.auchan.fr/apple-iphone-6-reconditionne-grade-b-64-go-gris-slp/p-c1057432",
+            //"https://www.auchan.fr/wickey-aire-de-jeux-freeflyer-portique-de-jeux-en-bois-cabane-avec-balancoire-et-toboggan-vert/p-m1733327",
+            //"https://www.auchan.fr/yoyo-lumineux-star-wars-disney/p-m1184489",
+            "https://www.auchan.fr/lit-cabaneen-bois-massif-90-x-190-cm-louis/p-ca1098579"
+        };
+
+        String[] laredoute_fr = {
+            //"https://www.laredoute.fr/ppdp/prod-520662037.aspx",
+            "https://www.laredoute.fr/ppdp/prod-508220242.aspx",
+            //"https://www.laredoute.fr/ppdp/prod-511804188.aspx",
+            //"https://www.laredoute.fr/ppdp/prod-526894420.aspx"
+        };
+
+        String[] bol_nl = {
+            //"https://www.bol.com/nl/p/ses-soep-in-bad-waterspeelset/9200000075519637/?bltg=itm_event%3Dclick%26slt_owner%3DMCM%26itm_type%3Dproduct%26pg_nm%3Dmain%26slt_id%3D802%26slt_pos%3DB3%26itm_lp%3D0%26slt_ttd%3D5%26mcm_ccd%3DTRDO%26mmt_id%3DMMTUNKNOWN&promo=main_802_TRDO-_B3_product_0_",
+            //"https://www.bol.com/nl/p/bobby-anti-diefstal-rugzak-zwart/9200000073006245/?bltg=itm_event%3Dclick%26slt_owner%3DMCM%26itm_type%3Dproduct%26pg_nm%3Dmain%26slt_id%3D802%26slt_pos%3DB3%26itm_lp%3D2%26slt_ttd%3D5%26mcm_ccd%3DTRDO%26mmt_id%3DMMTUNKNOWN&promo=main_802_TRDO-_B3_product_2_",
+            //"https://www.bol.com/nl/p/walter-wallet-kunststof-creditcardhouder-way-black/9200000061709061/?suggestionType=browse&bltgh=mpfoymqB1-SXWXDXiblHSw.1.7.ProductImage#product_specifications",
+            "https://www.bol.com/nl/p/hugo-boss-bottled-200-ml-eau-toilette-herenparfum/9200000016313339/?bltg=itm_event%3Dclick%26slt_owner%3DMCM%26itm_type%3Dproduct%26pg_nm%3Dmain%26slt_id%3D802%26slt_pos%3DB3%26itm_lp%3D4%26slt_ttd%3D5%26mcm_ccd%3DTRDO%26mmt_id%3DMMTUNKNOWN&promo=main_802_TRDO-_B3_product_4_"
+        };
+
+        String[] amazon_nl = {
+            "https://www.amazon.de/Kindle-Paperwhite/dp/B07741S7Y8/ref=nl_de_rd_b",
+            //"https://www.amazon.nl/Parel-zeven-zussen-Book-4-ebook/dp/B07GCYBZ4J?pd_rd_wg=lVua1&pd_rd_r=34d85d21-9be8-4fd1-ae21-795f6b5d5b6a&pd_rd_w=TMuex&ref_=pd_gw_ri&pf_rd_r=ZP9DB96AQ82Y9TNJ9VZW&pf_rd_p=69f19002-e722-56c6-b1e4-850aae3f9ccb",
+            //"https://www.amazon.nl/Verras-me-Sophie-Kinsella-ebook/dp/B078Z5HWKW?pd_rd_wg=lVua1&pd_rd_r=34d85d21-9be8-4fd1-ae21-795f6b5d5b6a&pd_rd_w=VnmdA&ref_=pd_gw_ri&pf_rd_r=ZP9DB96AQ82Y9TNJ9VZW&pf_rd_p=3c14ef57-c926-55f7-b255-6997401dac51",
+            //"https://www.amazon.nl/Kronieken-van-Onderwereld-Deel-Beenderen-ebook/dp/B00O7TZ43S?pd_rd_wg=lVua1&pd_rd_r=34d85d21-9be8-4fd1-ae21-795f6b5d5b6a&pd_rd_w=n2wRK&ref_=pd_gw_ri&pf_rd_r=ZP9DB96AQ82Y9TNJ9VZW&pf_rd_p=f13739b4-7e6c-567f-b602-0222329ab117"
+        };
+
+        String[] ebay_nl = {
+            //"https://www.ebay.nl/itm/Nintendo-64-N64-System-Charcoal-Grey-Console-NTSC/192901018413?hash=item2ce9cbf32d:g:Z5gAAOSwOz5cxO1K",
+            //"https://www.ebay.nl/itm/MADONNA-Madame-X-2019-Box-Set-2CD-Book-32-Pg-Poster-7-Picture-Disc-MC-14-6/382954726845?hash=item5929e165bd:g:ezwAAOSwNTFc29-2",
+            //"https://www.ebay.nl/itm/Natural-Coir-Rubber-Non-Slip-Floor-Entrance-Door-Mat-Indoor-Outdoor-Doormat/192180733978?hash=item2cbedd481a:m:mPht7Tqrpy3VLTGdlPtX5dg",
+            //"https://www.ebay.nl/itm/4-Sommerreifen-Dunlop-SP-Sport-Maxx-GT-RFT-RSC-DSST-MFS-245-50-R18-100Y-TOP/253101033141?hash=item3aedff46b5:g:9DAAAOSwSHZWgRuR"
+        };
+
+        String[] zalando_nl = {
+            //"https://www.zalando.nl/new-balance-wsx90-sneakers-laag-white-ne211a07k-a11.html",
+            //"https://www.zalando.nl/calvin-klein-underwear-string-zwart-c1181a00g-q11.html",
+            //"https://www.zalando.nl/ecco-outdoorschoenen-black-ec141a05r-q11.html",
+            "https://www.zalando.nl/coach-academy-pack-in-signature-rugzak-khaki-coh52n00a-b11.html"
+        };
+
+        String[] coolblue_nl = {
+            //"https://www.coolblue.nl/product/670047/steelseries-qck-xxl.html",
+            //"https://www.coolblue.nl/product/764243/epson-ecotank-et-2650.html",
+            "https://www.coolblue.nl/product/831310/bose-quietcomfort-35-ii-limited-edition-rose-goud.html",
+            //"https://www.coolblue.nl/product/828805/apple-airpods-2-met-oplaadcase.html#product-alternatives"
+        };
+
+        String[] debijenkorf_nl = {
+            //"https://www.debijenkorf.nl/adidas-t-shirt-van-katoen-met-logo-opdruk-6859010010-685901001093128?ref=%2Fkindermode%2Fadidas",
+            "https://www.debijenkorf.nl/anna-nina-fijne-ketting-multi-ring-van-zilver-met-gouden-plating-3886090005-388609000500000?ref=%2Fsieraden%2Fanna-nina",
+            //"https://www.debijenkorf.nl/rituals-tulip-japanese-yuzu-body-cream-limited-edition-bodycreme-7423090050-742309005000000?ref=%2Fnet-binnen%2Fdamesmode%2Fcosmetica",
+            //"https://www.debijenkorf.nl/sonos-play-1-wifi-speaker-1944090000-194409000000000?query=fh_location%3D%252F%252Fcatalog01%252Fnl_NL%252Fcadeau_attribuut%253E%257Bcadeaus%257D%252Fcadeau_moment%253E%257Bhousewarming%257D%26country%3DNL%26chl%3D1"
+        };
+
+        for (String url: debijenkorf_nl) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.fr.Fnac");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.nl.DeBijenkorf");
             try {
                 Class<Website> clazz = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Constructor<Website> ctor = clazz.getConstructor(Link.class);
@@ -423,8 +491,6 @@ public class deneme {
                 log.error("Error in converting message from byte array to Link", e);
             }
         }
-
-//        System.out.println(getThePage());
 
     }
 
@@ -473,6 +539,7 @@ public class deneme {
         log.debug("Name  : " + link.getName());
         log.debug("Status: " + link.getStatus() + (link.getHttpStatus() != null ? " ("+link.getHttpStatus()+")" : ""));
         log.debug("Price : %f, Seller: %s, Shipment: %s, Brand: %s", link.getPrice(), link.getSeller(), link.getShipment(), link.getBrand());
+        log.debug("--------------------------------------------------------------------------------------------------");
         if (link.getSpecList() != null && link.getSpecList().size() > 0) {
             link.getSpecList().forEach(spec -> {
                 log.debug("  > " + spec.getKey() + " - " + spec.getValue());

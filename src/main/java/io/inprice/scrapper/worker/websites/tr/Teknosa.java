@@ -2,12 +2,13 @@ package io.inprice.scrapper.worker.websites.tr;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.websites.generic.GenericWebsiteT1;
+import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,14 +16,15 @@ import java.util.List;
  * Parser for Teknosa Turkiye
  *
  * Contains standard data, all is extracted by css selectors
- * Please refer GenericWebsiteT1 for extra information
  *
  * @author mdpinar
  */
-public class Teknosa extends GenericWebsiteT1 {
+public class Teknosa extends AbstractWebsite {
+
+    private JSONObject offers;
 
     public Teknosa(Link link) {
-        super(link,"Teknosa");
+        super(link);
     }
 
     @Override
@@ -31,10 +33,7 @@ public class Teknosa extends GenericWebsiteT1 {
         if (dataEL != null) {
             JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
             if (data.has("offers")) {
-                JSONArray offersArray = data.getJSONArray("offers");
-                if (! offersArray.isEmpty()) {
-                    offers = offersArray.getJSONObject(0);
-                }
+                offers = data.getJSONObject("offers");
             }
             return data;
         }
@@ -43,11 +42,94 @@ public class Teknosa extends GenericWebsiteT1 {
 
     @Override
     public boolean isAvailable() {
-        Element availability = doc.selectFirst("div.stock-status.in-stock");
-        if (availability != null) {
-            return availability.text().contains("Stokta var");
+        if (offers != null && offers.has("offers")) {
+            JSONArray subOffers = offers.getJSONArray("offers");
+            if (subOffers.length() > 0 && subOffers.getJSONObject(0).has("availability")) {
+                return subOffers.getJSONObject(0).getString("availability").contains("InStock");
+            }
         }
         return false;
+    }
+
+    @Override
+    public String getSku() {
+        if (json != null) {
+            if (json.has("sku")) {
+                return json.getString("sku");
+            }
+            if (json.has("@id")) {
+                String id = json.getString("@id");
+                if (id != null) return cleanPrice(id);
+            }
+        }
+
+        Element sku = doc.selectFirst("span.item-number-value");
+        if (sku != null) {
+            return sku.text().trim();
+        }
+
+        return "NA";
+    }
+
+    @Override
+    public String getName() {
+        if (json != null && json.has("name")) {
+            return json.getString("name");
+        }
+
+        Element name = doc.selectFirst("div#ProductTitle span.title");
+        if (name != null) {
+            return name.text().trim();
+        }
+
+        return "NA";
+    }
+
+    @Override
+    public BigDecimal getPrice() {
+        if (offers != null) {
+            if (! offers.isEmpty() && offers.has("lowPrice")) {
+                return offers.getBigDecimal("lowPrice");
+            } else if (! offers.isEmpty() && offers.has("price")) {
+                return offers.getBigDecimal("price");
+            }
+        }
+
+        Element price = doc.selectFirst("span.VersionOfferPrice img");
+        if (price != null) {
+            return new BigDecimal(cleanPrice(price.attr("alt").trim()));
+        }
+
+        return BigDecimal.ZERO;
+    }
+
+    @Override
+    public String getSeller() {
+        return "Teknosa";
+    }
+
+    @Override
+    public String getShipment() {
+        Element shipment = doc.selectFirst("div.pw-dangerous-html.dbh-content");
+        if (shipment == null) shipment = doc.getElementById("hd3");
+
+        if (shipment != null) {
+            return shipment.text().trim();
+        }
+        return "Mağazada";
+    }
+
+    @Override
+    public String getBrand() {
+        if (json != null) {
+            if (json.has("brand")) {
+                return json.getJSONObject("brand").getString("name");
+            }
+            if (json.has("schema:brand")) {
+                return json.getString("schema:brand");
+            }
+        }
+        return "NA";
     }
 
     @Override

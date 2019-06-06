@@ -70,7 +70,8 @@ public abstract class AbstractWebsite implements Website {
         if (specs != null && specs.size() > 0) {
             specList = new ArrayList<>();
             for (Element spec : specs) {
-                specList.add(new LinkSpec("", spec.text().trim()));
+                if (! spec.text().trim().isEmpty())
+                    specList.add(new LinkSpec("", spec.text().trim()));
             }
         }
         return specList;
@@ -81,8 +82,8 @@ public abstract class AbstractWebsite implements Website {
         if (specs != null && specs.size() > 0) {
             specList = new ArrayList<>();
             for (Element spec : specs) {
-                String key = spec.select(keySelector).text();
-                String value = spec.select(valueSelector).text();
+                String key = spec.selectFirst(keySelector).text();
+                String value = spec.selectFirst(valueSelector).text();
                 specList.add(new LinkSpec(key, value));
             }
         }
@@ -121,7 +122,6 @@ public abstract class AbstractWebsite implements Website {
 
         BigDecimal price = getPrice().setScale(2, RoundingMode.HALF_UP);
         if (! price.equals(link.getPrice())) link.setPrice(price);
-        log.debug("Price : %f, Seller: %s, Shipment: %s, Brand: %s", link.getPrice(), link.getSeller(), link.getShipment(), link.getBrand());
 
         if (isAvailable()) {
             link.setStatus(Status.ACTIVE);
@@ -154,7 +154,7 @@ public abstract class AbstractWebsite implements Website {
                     .header("Cache-Control","max-age=0")
                     .userAgent(UserAgents.findARandomUA())
                     .referrer(UserAgents.findARandomReferer())
-                    .timeout(0)
+                    .timeout(7 * 1000)
                     .ignoreContentType(true)
                     .followRedirects(true)
                 .execute();

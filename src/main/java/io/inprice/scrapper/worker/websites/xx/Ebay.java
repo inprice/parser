@@ -34,6 +34,9 @@ public class Ebay extends AbstractWebsite {
         if (stock != null) return true;
 
         stock = doc.selectFirst("a[data-action-name='BUY_IT_NOW']");
+        if (stock != null) return true;
+
+        stock = doc.selectFirst("span[itemprop='availableAtOrFrom']");
         return  (stock != null);
     }
 
@@ -134,16 +137,25 @@ public class Ebay extends AbstractWebsite {
     @Override
     public List<LinkSpec> getSpecList() {
         List<LinkSpec> specList = null;
-        Elements specs = doc.select("table[role='presentation']:not(#itmSellerDesc) td");
+        Elements specs = doc.select("table[role='presentation']:not(#itmSellerDesc) tr");
         if (specs != null && specs.size() > 0) {
             specList = new ArrayList<>();
-            for (int i = 0; i < specs.size(); i++) {
-                String key = specs.get(i).text().replaceAll(":", "").trim();
-                String value = "";
-                if (i < specs.size()-1) {
-                    value = specs.get(++i).text().trim();
+            for (Element row: specs) {
+                Elements tds = row.select("td");
+                if (tds != null && tds.size() > 0) {
+                    String key = "";
+                    String value = "";
+                    for (int i = 0; i < tds.size(); i++) {
+                        if (i % 2 == 0) {
+                            key = tds.get(i).text();
+                        } else {
+                            value = tds.get(i).text();
+                            specList.add(new LinkSpec(key, value));
+                            key = "";
+                            value = "";
+                        }
+                    }
                 }
-                specList.add(new LinkSpec(key, value));
             }
         } else {
             specs = doc.select("#ProductDetails li div");
