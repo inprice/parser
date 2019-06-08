@@ -4,6 +4,7 @@ import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Global;
 import io.inprice.scrapper.worker.helpers.UserAgents;
 import org.json.JSONObject;
 import org.jsoup.Connection;
@@ -18,6 +19,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractWebsite implements Website {
 
@@ -38,6 +40,10 @@ public abstract class AbstractWebsite implements Website {
 
     protected JSONObject getJsonData() {
         return null;
+    }
+
+    protected Map<String, String> getHeaders() {
+        return Global.standardHeaders;
     }
 
     @Override
@@ -66,12 +72,23 @@ public abstract class AbstractWebsite implements Website {
     }
 
     protected List<LinkSpec> getValueOnlySpecList(Elements specs) {
+       return getValueOnlySpecList(specs, null);
+    }
+
+    protected List<LinkSpec> getValueOnlySpecList(Elements specs, String sep) {
         List<LinkSpec> specList = null;
         if (specs != null && specs.size() > 0) {
             specList = new ArrayList<>();
             for (Element spec : specs) {
-                if (! spec.text().trim().isEmpty())
-                    specList.add(new LinkSpec("", spec.text().trim()));
+                if (!spec.text().trim().isEmpty()) {
+                    LinkSpec ls = new LinkSpec("", spec.text().trim());
+                    if (sep != null && ls.getValue().indexOf(sep) > 0) {
+                        String[] specChunks = ls.getValue().split(sep);
+                        ls.setKey(specChunks[0]);
+                        ls.setValue(specChunks[1]);
+                    }
+                    specList.add(ls);
+                }
             }
         }
         return specList;
@@ -82,9 +99,11 @@ public abstract class AbstractWebsite implements Website {
         if (specs != null && specs.size() > 0) {
             specList = new ArrayList<>();
             for (Element spec : specs) {
-                String key = spec.selectFirst(keySelector).text();
-                String value = spec.selectFirst(valueSelector).text();
-                specList.add(new LinkSpec(key, value));
+                Element key = spec.selectFirst(keySelector);
+                Element value = spec.selectFirst(valueSelector);
+                if (key != null || value != null) {
+                    specList.add(new LinkSpec((key != null ? key.text() : ""), (value != null ? value.text() : "")));
+                }
             }
         }
         return specList;
@@ -143,20 +162,19 @@ public abstract class AbstractWebsite implements Website {
         }
     }
 
-    private int openDocument() {
+    protected int openDocument() {
         String url = getAlternativeUrl();
         if (url == null) url = getUrl();
 
         try {
             Connection.Response response =
                 Jsoup.connect(url)
-                    .header("Accept-Language", "en-US,en;q=0.5")
-                    .header("Cache-Control","max-age=0")
+                    .headers(getHeaders())
                     .userAgent(UserAgents.findARandomUA())
                     .referrer(UserAgents.findARandomReferer())
                     .timeout(7 * 1000)
                     .ignoreContentType(true)
-                    .followRedirects(true)
+                    .followRedirects(false)
                 .execute();
             doc = response.parse();
             return response.statusCode();

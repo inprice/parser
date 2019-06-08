@@ -79,6 +79,7 @@ public class Amazon extends AbstractWebsite {
 
         Element price = doc.getElementById("priceblock_dealprice");
         if (price == null) price = doc.getElementById("priceblock_ourprice");
+        if (price == null) price = doc.selectFirst("div#buybox span.a-color-price");
 
         if (price != null) {
             strPrice = price.text();
@@ -136,7 +137,8 @@ public class Amazon extends AbstractWebsite {
     @Override
     public String getShipment() {
         Element shipment = doc.getElementById("price-shipping-message");
-        if (shipment == null) shipment = doc.getElementById("ddmDeliveryMessage span");
+        if (shipment == null) shipment = doc.getElementById("ddmDeliveryMessage");
+        if (shipment == null) shipment = doc.getElementById("mbc-shipping-sss-eligible-1");
         if (shipment == null) shipment = doc.selectFirst(".shipping3P");
 
         if (shipment != null) {

@@ -11,9 +11,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class deneme {
@@ -472,14 +472,72 @@ public class deneme {
 
         String[] debijenkorf_nl = {
             //"https://www.debijenkorf.nl/adidas-t-shirt-van-katoen-met-logo-opdruk-6859010010-685901001093128?ref=%2Fkindermode%2Fadidas",
-            "https://www.debijenkorf.nl/anna-nina-fijne-ketting-multi-ring-van-zilver-met-gouden-plating-3886090005-388609000500000?ref=%2Fsieraden%2Fanna-nina",
+            //"https://www.debijenkorf.nl/anna-nina-fijne-ketting-multi-ring-van-zilver-met-gouden-plating-3886090005-388609000500000?ref=%2Fsieraden%2Fanna-nina",
             //"https://www.debijenkorf.nl/rituals-tulip-japanese-yuzu-body-cream-limited-edition-bodycreme-7423090050-742309005000000?ref=%2Fnet-binnen%2Fdamesmode%2Fcosmetica",
-            //"https://www.debijenkorf.nl/sonos-play-1-wifi-speaker-1944090000-194409000000000?query=fh_location%3D%252F%252Fcatalog01%252Fnl_NL%252Fcadeau_attribuut%253E%257Bcadeaus%257D%252Fcadeau_moment%253E%257Bhousewarming%257D%26country%3DNL%26chl%3D1"
+            "https://www.debijenkorf.nl/sonos-play-1-wifi-speaker-1944090000-194409000000000?query=fh_location%3D%252F%252Fcatalog01%252Fnl_NL%252Fcadeau_attribuut%253E%257Bcadeaus%257D%252Fcadeau_moment%253E%257Bhousewarming%257D%26country%3DNL%26chl%3D1"
         };
 
-        for (String url: debijenkorf_nl) {
+        String[] wehkamp_nl = {
+            //"https://www.wehkamp.nl/bottled-eau-de-toilette-50-ml-558907/?CC=C52&SC=VAD&PI=1",
+            //"https://www.wehkamp.nl/babyliss-baardtrimmer-16219237/?CC=C29&SC=9IG&PI=1",
+            "https://www.wehkamp.nl/lascal-kiddyguard-traphekje-avant-wit-16243750/?CC=C30&SC=8HE&PI=1",
+            //"https://www.wehkamp.nl/denver-cau-438-1din-autoradio-zwart-16172809/?CC=C26&SC=6FH&PI=1"
+        };
+
+        String[] ebay_au = {
+            //"https://www.ebay.com.au/itm/NEW-Avanti-Retro-Bread-Bin-Large-White-Keep-Bread-Pastries-Fresher/283280979556?hash=item41f4dcb664%3Ag%3A6TcAAOSwBZBb%7Eooi&_trkparms=%2526rpp_cid%253D5cec6d6b50d10434324388b5",
+            //"https://www.ebay.com.au/itm/Milano-Deluxe-3pc-ABS-Luggage-Suitcase-Luxury-Hard-Case-Shockproof-Travel-Set/253639280508?_trkparms=pageci%3A14e8f2aa-88f0-11e9-a524-74dbd1801e4f%7Cparentrq%3A30b0fb1b16b0a4b7b6eca552fff592ec%7Ciid%3A1",
+            "https://www.ebay.com.au/itm/Acclaimed-Exclusive-Yellow-Tail-All-The-Red-Mix-Wine-Case-12-x-750ml-RRP-129/202674359212?_trkparms=pageci%3A14e8f2aa-88f0-11e9-a524-74dbd1801e4f%7Cparentrq%3A30b0fb1b16b0a4b7b6eca552fff592ec%7Ciid%3A1",
+            //"https://www.ebay.com.au/itm/NEW-Peter-Thomas-Roth-Max-Anti-Shine-Mattifying-Gel-30ml-Womens-Skin-Care/291875944966?_trkparms=pageci%3A14e8f2aa-88f0-11e9-a524-74dbd1801e4f%7Cparentrq%3A30b0fb1b16b0a4b7b6eca552fff592ec%7Ciid%3A1"
+        };
+
+        String[] amazon_au = {
+            //"https://www.amazon.com.au/gp/product/B07FTHCPDP/ref=s9_acsd_al_bw_c_x_3_w?pf_rd_m=AMMK0LS9EDNM8&pf_rd_s=merchandised-search-4&pf_rd_r=WVWRBCQT4753FKR4TJQN&pf_rd_t=101&pf_rd_p=5233de58-9307-4731-ace0-52ac77689964&pf_rd_i=5130733051",
+            //"https://www.amazon.com.au/dp/B072KMX18S?ref_=Oct_DotdC_5130767051_3&pf_rd_p=3d3d90e5-4547-5a84-a7ca-eeed2830215f&pf_rd_s=merchandised-search-3&pf_rd_t=101&pf_rd_i=5130767051&pf_rd_m=ANEGB3WVEVKZB&pf_rd_r=MC3AXM6FVJXZZ85HWGCC&pf_rd_r=MC3AXM6FVJXZZ85HWGCC&pf_rd_p=3d3d90e5-4547-5a84-a7ca-eeed2830215f",
+            "https://www.amazon.com.au/GoPro-Handler-Version-Accessories-Orange/dp/B0755PDKCN?pf_rd_p=57122184-1c13-4448-aa3a-9048d997005b&pf_rd_r=HK1QPZMZQ1NE2FBS256Y",
+            //"https://www.amazon.com.au/Milk-Chocolate-Party-Bucket-Packaging/dp/B07G9ZGL9X?pd_rd_w=iOSo7&pf_rd_p=6dd30046-d5ec-40cb-87a8-1ce2e00dae18&pf_rd_r=HK1QPZMZQ1NE2FBS256Y&pd_rd_r=7002a6d9-c146-4251-9fbb-4029d1a536c9&pd_rd_wg=qzFym&ref_=pd_gw_unk",
+            //"https://www.amazon.com.au/Ice-Blu-ray-Digital-Copy-Discs/dp/B0776KXY4M?pd_rd_w=vvSyR&pf_rd_p=2d377477-2aa0-46e8-ad79-691cf3dcfbbc&pf_rd_r=HK1QPZMZQ1NE2FBS256Y&pd_rd_r=7002a6d9-c146-4251-9fbb-4029d1a536c9&pd_rd_wg=qzFym&ref_=pd_gw_unk"
+        };
+
+        String[] kogan_au = {
+            //"https://www.kogan.com/au/buy/lavazza-amm-divinamente-64-pack/",
+            //"https://www.kogan.com/au/buy/kogan-32-android-tv-smart-tv-chromecast-3-bundle/",
+            "https://www.kogan.com/au/buy/kogan-hd-30-pro-headphone-black/",
+            //"https://www.kogan.com/au/buy/exquisite-natural-cow-hide-brindle-170x180cm-premium-rugs/"
+        };
+
+        //DOESN'T WORK!!!
+        String[] harveynorman_au = {
+            //"https://www.harveynorman.com.au/nutri-ninja-pro-blender.html",
+            "https://www.harveynorman.com.au/lenovo-smart-clock.html",
+            //"https://www.harveynorman.com.au/norton-security-premium-1-year-for-3-devices-1.html",
+            //"https://www.harveynorman.com.au/jbl-bar-5-1-soundbar-with-wireless-subwoofer.html"
+        };
+
+        String[] bigw_au = {
+            //"https://www.bigw.com.au/product/toy-story-4-colour-pen/p/861741/",
+            "https://www.bigw.com.au/product/fujifilm-instax-mini-film-10-pack-stained-glass/p/37834/",
+            //"https://www.bigw.com.au/product/kambrook-upright-fan-heater-2400w-kfh600/p/886096/",
+            //"https://www.bigw.com.au/product/philips-all-in-one-cooker-hd2237-72/p/867367/"
+        };
+
+        String[] thegoodguys_au = {
+            "https://www.thegoodguys.com.au/asko-60cm-induction-cooktop--hi1611g",
+            //"https://www.thegoodguys.com.au/dyson-am09-hotcool-fan-heater-blacknickel-302644-01",
+            //"https://www.thegoodguys.com.au/fisher-and-paykel-75kg-front-load-washer-wh7560j3?rrec=true",
+            //"https://www.thegoodguys.com.au/tom-tom-start-52-5-inches-gps-3278984"
+        };
+
+        String[] appliancesonline_au = {
+            "https://www.appliancesonline.com.au/product/ionmax-humidifier-ion90",
+            //"https://www.appliancesonline.com.au/product/armando-vicario-palais-kitchen-mixer",
+            //"https://www.appliancesonline.com.au/product/philips-ironing-board-gc240",
+            //"https://www.appliancesonline.com.au/product/marshall-150531-monitor-wireless-bluetooth-over-ear-headphones-black"
+        };
+
+        for (String url: appliancesonline_au) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.nl.DeBijenkorf");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.au.AppliancesOnline");
             try {
                 Class<Website> clazz = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Constructor<Website> ctor = clazz.getConstructor(Link.class);

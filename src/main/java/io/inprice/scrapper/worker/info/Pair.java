@@ -1,20 +1,20 @@
 package io.inprice.scrapper.worker.info;
 
-public class HtmlResponse {
+public class Pair {
 
     private int status;
     private String body;
 
-    public HtmlResponse(int status) {
+    public Pair(int status) {
         this.status = status;
     }
 
-    public HtmlResponse(String body) {
+    public Pair(String body) {
         this.status = 200;
         this.body = body;
     }
 
-    public HtmlResponse(int status, String body) {
+    public Pair(int status, String body) {
         this.status = status;
         this.body = body;
     }
@@ -25,5 +25,9 @@ public class HtmlResponse {
 
     public String getBody() {
         return body;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

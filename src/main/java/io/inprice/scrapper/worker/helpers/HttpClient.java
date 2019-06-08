@@ -15,8 +15,8 @@ public class HttpClient {
         HttpResponse<String> response = null;
         try {
             response = Unirest.get(url)
-                    .header("User-Agent", UserAgents.findARandomUA())
-                    .header("Referrer", UserAgents.findARandomReferer())
+                    //.header("User-Agent", UserAgents.findARandomUA())
+                    //.header("Referrer", UserAgents.findARandomReferer())
                     .asString();
         } catch (UnirestException e) {
             log.error(e);
