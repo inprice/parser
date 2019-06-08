@@ -14,9 +14,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +71,15 @@ public abstract class AbstractWebsite implements Website {
 
     @Override
     public Link test(String fileName) {
-        return null;
+        try {
+            URL path = ClassLoader.getSystemResource(fileName);
+            File input = new File(path.toURI());
+            doc = Jsoup.parse(input, "UTF-8");
+            read();
+        } catch (Exception e) {
+            log.error(e);
+        }
+        return link;
     }
 
     protected List<LinkSpec> getValueOnlySpecList(Elements specs) {

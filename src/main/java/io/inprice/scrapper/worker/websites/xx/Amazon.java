@@ -32,7 +32,9 @@ public class Amazon extends AbstractWebsite {
         }
 
         available = doc.getElementById("ebooksProductTitle");
-        return available != null;
+        if (available == null) available = doc.getElementById("add-to-cart-button");
+
+        return (available != null);
     }
 
     @Override
@@ -107,19 +109,20 @@ public class Amazon extends AbstractWebsite {
                 } else {
                     //if price is a range like 100 - 300
                     price = doc.getElementById("priceblock_ourprice");
-                    if (price != null) {
-                        if (price.text().contains("-")) {
-                            String[] priceChunks = price.text().split("-");
-                            String first = cleanPrice(priceChunks[0]);
-                            String second = cleanPrice(priceChunks[1]);
-                            BigDecimal low = new BigDecimal(first);
-                            BigDecimal high = new BigDecimal(second);
-                            strPrice = high.add(low).divide(BigDecimal.valueOf(2)).toString();
-                        } else {
-                            strPrice = price.text();
-                        }
-                    }
                 }
+            }
+        }
+
+        if (price != null) {
+            if (price.text().contains("-")) {
+                String[] priceChunks = price.text().split("-");
+                String first = cleanPrice(priceChunks[0]);
+                String second = cleanPrice(priceChunks[1]);
+                BigDecimal low = new BigDecimal(first);
+                BigDecimal high = new BigDecimal(second);
+                strPrice = high.add(low).divide(BigDecimal.valueOf(2)).toString();
+            } else {
+                strPrice = price.text();
             }
         }
 
@@ -131,18 +134,31 @@ public class Amazon extends AbstractWebsite {
 
     @Override
     public String getSeller() {
+        Element seller = doc.getElementById("sellerProfileTriggerId");
+        if (seller == null) seller = doc.selectFirst("span.mbcMerchantName");
+
+        if (seller != null) {
+            return seller.text().trim();
+        }
         return "Amazon";
     }
 
     @Override
     public String getShipment() {
         Element shipment = doc.getElementById("price-shipping-message");
-        if (shipment == null) shipment = doc.getElementById("ddmDeliveryMessage");
+        if (shipment == null) shipment = doc.getElementById("mbc-shipping-free-1");
+        if (shipment == null) shipment = doc.getElementById("mbc-shipping-sss-returns-free-1");
         if (shipment == null) shipment = doc.getElementById("mbc-shipping-sss-eligible-1");
+        if (shipment == null) shipment = doc.getElementById("ddmDeliveryMessage");
         if (shipment == null) shipment = doc.selectFirst(".shipping3P");
 
         if (shipment != null) {
             return shipment.text().trim();
+        }
+
+        shipment = doc.getElementById("buybox-see-all-buying-choices-announce");
+        if (shipment != null) {
+            return "See all offers";
         }
 
         return "NA";
@@ -150,7 +166,15 @@ public class Amazon extends AbstractWebsite {
 
     @Override
     public String getBrand() {
-        Element brand = doc.getElementById("bylineInfo");
+        Element brand = doc.getElementById("mbc");
+        if (brand != null) {
+            String brnd = brand.attr("data-brand");
+            if (!brnd.trim().isEmpty()) {
+                return brnd;
+            }
+        }
+
+        brand = doc.getElementById("bylineInfo");
         if (brand == null) brand = doc.selectFirst("span.ac-keyword-link a");
 
         if (brand != null) {

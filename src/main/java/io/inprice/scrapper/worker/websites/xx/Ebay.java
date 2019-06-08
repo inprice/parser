@@ -3,6 +3,7 @@ package io.inprice.scrapper.worker.websites.xx;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -21,8 +22,18 @@ import java.util.List;
  */
 public class Ebay extends AbstractWebsite {
 
+    private String brand = "NA";
+    private List<LinkSpec> specList;
+
     public Ebay(Link link) {
         super(link);
+    }
+
+    @Override
+    protected JSONObject getJsonData() {
+        //for handling brand name at first hand
+        buildSpecList();
+        return super.getJsonData();
     }
 
     @Override
@@ -56,9 +67,11 @@ public class Ebay extends AbstractWebsite {
 
     @Override
     public String getName() {
-        Element name = doc.selectFirst("title");
-        if (name == null) name = doc.getElementById("itemTitle");
-        if (name == null) name = doc.selectFirst("h1.product-title");
+        Element name = doc.selectFirst("span#vi-lkhdr-itmTitl");
+        if (name == null) name = doc.selectFirst("title");
+        if (name != null) return name.text().trim();
+
+        name = doc.selectFirst("h1.product-title");
         if (name != null) return name.text().trim();
 
         name = doc.selectFirst("a[data-itemid]");
@@ -72,19 +85,24 @@ public class Ebay extends AbstractWebsite {
     public BigDecimal getPrice() {
         String strPrice = null;
 
-        Element price = doc.getElementById("prcIsum");
-        if (price == null) price = doc.getElementById("prcIsum_bidPrice");
-
+        Element price = doc.getElementById("convbidPrice");
         if (price != null) {
-            strPrice = price.attr("content").trim();
+            strPrice = price.text();
         } else {
-            price = doc.getElementById("mm-saleDscPrc");
-            if (price != null) strPrice = price.text().trim();
-        }
+            price = doc.getElementById("prcIsum");
+            if (price == null) price = doc.getElementById("prcIsum_bidPrice");
 
-        if (price == null) {
-            price = doc.selectFirst("div.price");
-            if (price != null) strPrice = price.text().trim();
+            if (price != null) {
+                strPrice = price.attr("content").trim();
+            } else {
+                price = doc.getElementById("mm-saleDscPrc");
+                if (price != null) strPrice = price.text().trim();
+            }
+
+            if (price == null) {
+                price = doc.selectFirst("div.price");
+                if (price != null) strPrice = price.text().trim();
+            }
         }
 
         if (strPrice == null)
@@ -117,11 +135,17 @@ public class Ebay extends AbstractWebsite {
     @Override
     public String getShipment() {
         String value = null;
+
         Element shipment = doc.selectFirst("#shSummary span");
         if (shipment == null) shipment = doc.selectFirst("span.logistics-cost");
 
-        if (shipment != null) {
+        if (shipment != null && shipment.text().trim().length() > 1) {
             value = shipment.text().trim();
+        } else {
+            shipment = doc.getElementById("shSummary");
+            if (shipment != null) {
+                value = shipment.text().trim();
+            }
         }
 
         return value;
@@ -129,14 +153,17 @@ public class Ebay extends AbstractWebsite {
 
     @Override
     public String getBrand() {
-        String[] titleChunks = getName().split("\\s");
-        if (titleChunks.length > 1) return titleChunks[0].trim();
-        return "NA";
+        return brand;
     }
 
     @Override
     public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
+        return specList;
+    }
+
+    private final String BRAND_WORDS = "(Brand|Marca|Marke|Marque).";
+
+    private void buildSpecList() {
         Elements specs = doc.select("table[role='presentation']:not(#itmSellerDesc) tr");
         if (specs != null && specs.size() > 0) {
             specList = new ArrayList<>();
@@ -151,6 +178,9 @@ public class Ebay extends AbstractWebsite {
                         } else {
                             value = tds.get(i).text();
                             specList.add(new LinkSpec(key, value));
+                            if (key.matches(BRAND_WORDS)) {
+                                brand = value;
+                            }
                             key = "";
                             value = "";
                         }
@@ -167,10 +197,12 @@ public class Ebay extends AbstractWebsite {
                     if (i < specs.size() - 1) {
                         value = specs.get(++i).text().trim();
                     }
+                    if (key.matches(BRAND_WORDS)) {
+                        brand = value;
+                    }
                     specList.add(new LinkSpec(key, value));
                 }
             }
         }
-        return specList;
     }
 }

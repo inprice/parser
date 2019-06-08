@@ -70,6 +70,13 @@ public class deneme {
             "https://www.amazon.de/Tassimo-Jacobs-Classico-Kaffee-Getr%C3%A4nke/dp/B0095FMJE6?pd_rd_wg=aC7Tp&pd_rd_r=e5f88f78-fc27-448a-ace0-84abfef3a174&pd_rd_w=kchaO&ref_=pd_gw_ri&pf_rd_r=WRKSQCH44DENSVR2FDVK&pf_rd_p=9dbb654c-708a-5b76-98fc-bdd043d90222"
         };
 
+        String[] amazon_es = {
+            "https://www.amazon.es/Xiaomi-Inteligente-Rastreador-Puls%C3%B3metro-Pron%C3%B3stico/dp/B07R2LSHLR?pf_rd_p=3187c5a7-b24d-5d8f-ba5a-bd70f4f3b001&pf_rd_r=GP6Y2MNCHP9QPCDQNPVV&pd_rd_wg=mfsWq&ref_=pd_gw_ri&pd_rd_w=1vTe6&pd_rd_r=9a0a4f8d-0f3b-499e-bb99-1a3c88159cde",
+            "https://www.amazon.es/Dodow-60-000-usuarios-quedan-dormidos/dp/B00ZFOB4BK?pf_rd_p=8aa0eef6-6cd2-46ac-81c9-33b6c7a885a0&pd_rd_wg=mfsWq&pf_rd_r=GP6Y2MNCHP9QPCDQNPVV&ref_=pd_gw_unk&pd_rd_w=PT4Q2&pd_rd_r=9a0a4f8d-0f3b-499e-bb99-1a3c88159cde",
+            "https://www.amazon.es/Travis-Touch-Traductor-Inteligente-Inal%C3%A1mbrica/dp/B07HB1RYG7?pf_rd_p=8aa0eef6-6cd2-46ac-81c9-33b6c7a885a0&pd_rd_wg=mfsWq&pf_rd_r=GP6Y2MNCHP9QPCDQNPVV&ref_=pd_gw_unk&pd_rd_w=PT4Q2&pd_rd_r=9a0a4f8d-0f3b-499e-bb99-1a3c88159cde",
+            "https://www.amazon.es/Apple-Espacial-Smartphone-Reacondicionado-Certificado/dp/B01L9KX5RY?pf_rd_p=f65deca5-51be-4e0d-81bc-558127d77030&pd_rd_wg=mfsWq&pf_rd_r=GP6Y2MNCHP9QPCDQNPVV&ref_=pd_gw_unk&pd_rd_w=VFCTt&pd_rd_r=9a0a4f8d-0f3b-499e-bb99-1a3c88159cde"
+        };
+
         String[] amazon_fr = {
             "https://www.amazon.fr/Gritin-dextension-%C3%89cologique-Porte-Cl%C3%A9s-Carte-Touch/dp/B07H4K2QPP?ref_=Oct_BSellerC_1456155031_2&pf_rd_p=2bbad10e-a823-5711-88f0-2d55fe5ba61f&pf_rd_s=merchandised-search-6&pf_rd_t=101&pf_rd_i=1456155031&pf_rd_m=A1X6FK5RDHNB96&pf_rd_r=VQPEQ9W3HH24AQAQC06C&pf_rd_r=VQPEQ9W3HH24AQAQC06C&pf_rd_p=2bbad10e-a823-5711-88f0-2d55fe5ba61f",
             "https://www.amazon.fr/dp/B001NJ179U?ref_=Oct_DotdC_210992031_3&pf_rd_p=8c79e101-094d-57da-a8b9-c8331847982c&pf_rd_s=merchandised-search-5&pf_rd_t=101&pf_rd_i=210992031&pf_rd_m=A1X6FK5RDHNB96&pf_rd_r=C35RQYZ0DQFTX8MB5VXE&pf_rd_r=C35RQYZ0DQFTX8MB5VXE&pf_rd_p=8c79e101-094d-57da-a8b9-c8331847982c",
