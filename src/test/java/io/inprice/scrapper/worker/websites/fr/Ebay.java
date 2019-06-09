@@ -71,7 +71,7 @@ public class Ebay {
         assertEquals("20.00", link.getPrice().toString());
         assertEquals("Kimbaloo", link.getBrand());
         assertEquals("petitbiscuit12345", link.getSeller());
-        assertEquals("7,00 EUR", link.getShipment());
+        assertEquals("7,00 EUR La Poste - Lettre Suivie Internationale", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 

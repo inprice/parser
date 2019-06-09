@@ -28,6 +28,7 @@ public class Amazon extends AbstractWebsite {
         Element available = doc.getElementById("availability");
         if (available != null) {
             Element span = available.selectFirst("span.a-color-success");
+            if (span == null) span = available.selectFirst("span.a-color-price");
             return span != null;
         }
 
@@ -55,6 +56,8 @@ public class Amazon extends AbstractWebsite {
     @Override
     public String getName() {
         Element name = doc.getElementById("productTitle");
+        if (name == null) name = doc.getElementById("ebooksProductTitle");
+
         if (name != null) {
             return name.text();
         }
@@ -80,7 +83,20 @@ public class Amazon extends AbstractWebsite {
         String strPrice = null;
 
         Element price = doc.getElementById("priceblock_dealprice");
-        if (price == null) price = doc.getElementById("priceblock_ourprice");
+        if (price == null) {
+            price = doc.getElementById("priceblock_ourprice");
+            if (price != null) {
+                Element integer = price.selectFirst("span.price-large");
+                if (integer != null) {
+                    Element decimal = integer.nextElementSibling();
+                    if (decimal != null) {
+                        strPrice = integer.text().trim() + "." + decimal.text().trim();
+                        return new BigDecimal(cleanPrice(strPrice));
+                    }
+                }
+            }
+        }
+
         if (price == null) price = doc.selectFirst("div#buybox span.a-color-price");
 
         if (price != null) {
@@ -146,11 +162,15 @@ public class Amazon extends AbstractWebsite {
     @Override
     public String getShipment() {
         Element shipment = doc.getElementById("price-shipping-message");
+        if (shipment != null && shipment.text().trim().length() == 0) shipment = null;
+
+        if (shipment == null) shipment = doc.selectFirst(".shipping3P");
         if (shipment == null) shipment = doc.getElementById("mbc-shipping-free-1");
         if (shipment == null) shipment = doc.getElementById("mbc-shipping-sss-returns-free-1");
         if (shipment == null) shipment = doc.getElementById("mbc-shipping-sss-eligible-1");
         if (shipment == null) shipment = doc.getElementById("ddmDeliveryMessage");
-        if (shipment == null) shipment = doc.selectFirst(".shipping3P");
+        if (shipment == null) shipment = doc.getElementById("deliverTo");
+        if (shipment == null) shipment = doc.getElementById("delivery-message");
 
         if (shipment != null) {
             return shipment.text().trim();

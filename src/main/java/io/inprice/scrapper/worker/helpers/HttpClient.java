@@ -15,8 +15,9 @@ public class HttpClient {
         HttpResponse<String> response = null;
         try {
             response = Unirest.get(url)
-                    //.header("User-Agent", UserAgents.findARandomUA())
-                    //.header("Referrer", UserAgents.findARandomReferer())
+                    .header("Accept-Language", "en-US,en;q=0.5")
+                    .header("User-Agent", UserAgents.findARandomUA())
+                    .header("Referrer", "https://www.apple.com/au/shop/buy-ipad/ipad-pro")
                     .asString();
         } catch (UnirestException e) {
             log.error(e);
@@ -55,6 +56,7 @@ public class HttpClient {
         HttpResponse<String> response = null;
         try {
             response = Unirest.post(url)
+                    .header("Accept-Language", "en-US,en;q=0.5")
                     .header("User-Agent", UserAgents.findARandomUA())
                     .header("Referrer", UserAgents.findARandomReferer())
                     .body(data)

@@ -1,4 +1,4 @@
-package io.inprice.scrapper.worker.websites.au;
+package io.inprice.scrapper.worker.websites.uk;
 
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 public class Ebay {
 
     private final String SITE_NAME = "ebay";
-    private final String COUNTRY_CODE = "au";
+    private final String COUNTRY_CODE = "uk";
 
     private final Website site = new io.inprice.scrapper.worker.websites.xx.Ebay(new Link());
 
@@ -24,11 +24,11 @@ public class Ebay {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
         assertEquals(Status.ACTIVE, link.getStatus());
-        assertEquals("253639280508", link.getSku());
-        assertEquals("Milano Deluxe 3pc ABS Luggage Suitcase Luxury Hard Case Shockproof Travel Set", link.getName());
-        assertEquals("99.95", link.getPrice().toString());
-        assertEquals("Milano", link.getBrand());
-        assertEquals("grouptwowarehouse", link.getSeller());
+        assertEquals("302965837951", link.getSku());
+        assertEquals("Nextbase 312G Dash Cam 1080P 2.7\" LED Car Recorder Night Vision", link.getName());
+        assertEquals("49.95", link.getPrice().toString());
+        assertEquals("NEXTBASE", link.getBrand());
+        assertEquals("velocityelectronics", link.getSeller());
         assertEquals("May not post to Turkey", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
@@ -38,11 +38,11 @@ public class Ebay {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
         assertEquals(Status.ACTIVE, link.getStatus());
-        assertEquals("291875944966", link.getSku());
-        assertEquals("NEW Peter Thomas Roth Max Anti-Shine Mattifying Gel 30ml Womens Skin Care", link.getName());
-        assertEquals("41.97", link.getPrice().toString());
-        assertEquals("Peter Thomas Roth", link.getBrand());
-        assertEquals("the_beauty_club_au", link.getSeller());
+        assertEquals("282124090417", link.getSku());
+        assertEquals("VonShef Deep Fat Fryer 1.5 Litre Chip Pan Basket Non Stick Oil Fry 900W Compact", link.getName());
+        assertEquals("18.99", link.getPrice().toString());
+        assertEquals("VonShef", link.getBrand());
+        assertEquals("domu-uk", link.getSeller());
         assertEquals("Doesn't post to Turkey", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
@@ -52,12 +52,12 @@ public class Ebay {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
         assertEquals(Status.ACTIVE, link.getStatus());
-        assertEquals("254255431988", link.getSku());
-        assertEquals("140340 vidaXL Auger Ground Drill Orange", link.getName());
-        assertEquals("195.97", link.getPrice().toString());
-        assertEquals("vidaXL", link.getBrand());
-        assertEquals("comebuy-uk", link.getSeller());
-        assertEquals("Doesn't post to Turkey", link.getShipment());
+        assertEquals("312192267322", link.getSku());
+        assertEquals("Levis 2 Pack Trunk Short Briefs 200SF Vintage HeatherMens Birthday", link.getName());
+        assertEquals("10.99", link.getPrice().toString());
+        assertEquals("Levis", link.getBrand());
+        assertEquals("underworldunderwear", link.getSeller());
+        assertEquals("£9.99 Royal Mail International Tracked", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -66,12 +66,12 @@ public class Ebay {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
         assertEquals(Status.ACTIVE, link.getStatus());
-        assertEquals("283038845115", link.getSku());
-        assertEquals("MEN'S TROUSERS DIAMOND mod. CAPRI DARK GREY CHECK CASUAL COTTON", link.getName());
-        assertEquals("38.13", link.getPrice().toString());
-        assertEquals("Diamond Collezioni", link.getBrand());
-        assertEquals("gi-store1", link.getSeller());
-        assertEquals("AU $21.18 Australia Post Air Mail Parcel", link.getShipment());
+        assertEquals("362401070603", link.getSku());
+        assertEquals("Lava KAHULA Portable Bluetooth Soundbar Speaker With Rechargable Battery", link.getName());
+        assertEquals("19.99", link.getPrice().toString());
+        assertEquals("Lava", link.getBrand());
+        assertEquals("3monkeys", link.getSeller());
+        assertEquals("May not post to Turkey", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 

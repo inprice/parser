@@ -57,7 +57,7 @@ public class Ebay {
         assertEquals("1.00", link.getPrice().toString());
         assertEquals("NA", link.getBrand());
         assertEquals("elsamia2016", link.getSeller());
-        assertEquals("EUR 10,99", link.getShipment());
+        assertEquals("EUR 10,99 Standard", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -71,7 +71,7 @@ public class Ebay {
         assertEquals("6.74", link.getPrice().toString());
         assertEquals("Nike", link.getBrand());
         assertEquals("empire_sports", link.getSeller());
-        assertEquals("GBP 9,99 (circa EUR 11,24)", link.getShipment());
+        assertEquals("GBP 9,99 (circa EUR 11,24) Spedizione celere", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 

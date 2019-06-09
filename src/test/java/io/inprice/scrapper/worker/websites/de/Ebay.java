@@ -29,7 +29,7 @@ public class Ebay {
         assertEquals("29.90", link.getPrice().toString());
         assertEquals("Surplus Raw Vintage", link.getBrand());
         assertEquals("urbandreamz_ltd", link.getSeller());
-        assertEquals("EUR 34,90", link.getShipment());
+        assertEquals("EUR 34,90 Standardversand", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 

@@ -71,7 +71,7 @@ public class Amazon {
         assertEquals("28.80", link.getPrice().toString());
         assertEquals("LGAHENG", link.getBrand());
         assertEquals("LIMEISANMO", link.getSeller());
-        assertEquals("+ Free Shipping", link.getShipment());
+        assertEquals("+ FREE SHIPPING", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 

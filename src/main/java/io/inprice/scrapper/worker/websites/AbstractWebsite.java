@@ -33,6 +33,8 @@ public abstract class AbstractWebsite implements Website {
     protected Document doc;
     protected JSONObject json;
 
+    private boolean isTestModeOn;
+
     protected AbstractWebsite(Link link) {
         this.link = link;
     }
@@ -71,6 +73,7 @@ public abstract class AbstractWebsite implements Website {
 
     @Override
     public Link test(String fileName) {
+        isTestModeOn = true;
         try {
             URL path = ClassLoader.getSystemResource(fileName);
             File input = new File(path.toURI());
@@ -118,6 +121,10 @@ public abstract class AbstractWebsite implements Website {
             }
         }
         return specList;
+    }
+
+    protected boolean isTestModeOn() {
+        return isTestModeOn;
     }
 
     protected String cleanPrice(String price) {

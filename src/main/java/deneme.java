@@ -541,7 +541,7 @@ public class deneme {
             //"https://www.appliancesonline.com.au/product/philips-ironing-board-gc240",
             //"https://www.appliancesonline.com.au/product/marshall-150531-monitor-wireless-bluetooth-over-ear-headphones-black"
         };
-
+/*
         for (String url: appliancesonline_au) {
             Link link = new Link(url);
             link.setWebsiteClassName("io.inprice.scrapper.worker.websites.au.AppliancesOnline");
@@ -556,7 +556,14 @@ public class deneme {
                 log.error("Error in converting message from byte array to Link", e);
             }
         }
+*/
 
+        System.out.println(getRootDomain("https://www.apple.com/au/shop/buy-ipad/ipad-pro/11-inch-display-64gb-silver-wifi"));
+
+    }
+
+    private static String getRootDomain(String url) {
+        return url.substring(0, url.indexOf("/shop/"));
     }
 
     private static String getThePage() {

@@ -85,7 +85,9 @@ public class Ebay extends AbstractWebsite {
     public BigDecimal getPrice() {
         String strPrice = null;
 
-        Element price = doc.getElementById("convbidPrice");
+        Element price = doc.getElementById("convbinPrice");
+        if (price == null) price = doc.getElementById("convbidPrice");
+
         if (price != null) {
             strPrice = price.text();
         } else {
@@ -136,7 +138,19 @@ public class Ebay extends AbstractWebsite {
     public String getShipment() {
         String value = null;
 
-        Element shipment = doc.selectFirst("#shSummary span");
+        Element shipment = doc.getElementById("fshippingCost");
+        if (shipment != null) {
+            String left = shipment.text().trim();
+            String right = "";
+
+            shipment = doc.getElementById("fShippingSvc");
+            if (shipment != null) {
+                right = shipment.text().trim();
+            }
+            return left + " " + right;
+        }
+
+        shipment = doc.selectFirst("#shSummary span");
         if (shipment == null) shipment = doc.selectFirst("span.logistics-cost");
 
         if (shipment != null && shipment.text().trim().length() > 1) {
