@@ -12,7 +12,7 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.websites.Website;
 
 @RunWith(JUnit4.class)
-public class Amazon {
+public class Amazon_AU_Test {
 
     private final String SITE_NAME = "amazon";
     private final String COUNTRY_CODE = "au";

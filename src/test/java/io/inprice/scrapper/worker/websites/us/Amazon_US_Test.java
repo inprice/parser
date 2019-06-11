@@ -11,7 +11,7 @@ import org.junit.runners.JUnit4;
 import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
-public class Amazon {
+public class Amazon_US_Test {
 
     private final String SITE_NAME = "amazon";
     private final String COUNTRY_CODE = "us";

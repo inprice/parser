@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
-public class Ebay {
+public class Ebay_US_Test {
 
     private final String SITE_NAME = "ebay";
     private final String COUNTRY_CODE = "us";

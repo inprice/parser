@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
-public class Amazon {
+public class Amazon_IT_Test {
 
     private final String SITE_NAME = "amazon";
     private final String COUNTRY_CODE = "it";

@@ -24,7 +24,6 @@ public class Apple extends AbstractWebsite {
 
     private JSONObject offers;
     private JSONObject product;
-    private JSONObject shipment;
     private boolean available;
 
     public Apple(Link link) {
@@ -40,7 +39,6 @@ public class Apple extends AbstractWebsite {
                 JSONArray offersArray = data.getJSONArray("offers");
                 if (! offersArray.isEmpty()) {
                     offers = offersArray.getJSONObject(0);
-                    //if (! isTestModeOn() && offers != null && offers.has("sku")) {
                     if (offers != null && offers.has("sku")) {
                         final int index = getUrl().indexOf("/shop/");
 
@@ -50,7 +48,7 @@ public class Apple extends AbstractWebsite {
                             final String rootDomain = getUrl().substring(0, index);
 
                             HttpResponse<String> response = HttpClient.get(rootDomain + "/shop/delivery-message?parts.0=" + sku);
-                            shipment = new JSONObject(response.getBody());
+                            JSONObject shipment = new JSONObject(response.getBody());
                             if (! shipment.isEmpty()) {
                                 if (shipment.getJSONObject("body").getJSONObject("content").getJSONObject("deliveryMessage").has(sku)) {
                                     product = shipment.getJSONObject("body").getJSONObject("content").getJSONObject("deliveryMessage").getJSONObject(sku);
