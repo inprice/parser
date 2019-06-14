@@ -1,10 +1,9 @@
 package io.inprice.scrapper.worker.websites.au;
 
-import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Global;
-import io.inprice.scrapper.worker.helpers.HttpClient;
+import io.inprice.scrapper.worker.helpers.Browser;
+import io.inprice.scrapper.worker.info.Pair;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,26 +13,11 @@ import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 /**
- * DOESN'T WORK!!! instant session ids are useless!!!
- *
  * Please note that:
  *    This site is guarded by incapsula that is a scrapper blocking service and checks every request for a set of cookies starting with visid_incap_ and incap_ses_
  *    For this reason, we have to add those cookies in header (please refer to getHeader() method)
- *
- * If you need to refresh those cookie values, here is the todo list:
- *    1) open your browser
- *    2) clear cache (especially cookies)
- *    3) open developer tools section
- *    4) paste the url into the address bar of the browser
- *    5) click on to Network Tab in developer tools
- *    4) find GET request of the url
- *    5) "Cookie" value in "Request Headers" is what we are looking for
- *    6) copy the value of incap_ses_XXXX_XXXXX (I mean Cookie value)
- *    7) use it as a value in getHeader()
  *
  * Parser for HarveyNorman Australia
  *
@@ -42,18 +26,6 @@ import java.util.Random;
  * @author mdpinar
  */
 public class HarveyNorman extends AbstractWebsite {
-
-    /*
-     * instant session ids
-     */
-    private final String[] INCAP_SESSIONS = {
-        "incap_ses_1193_39856=PIrqSV8PnwKV47puY2OOEBKQ+lwAAAAA2lfOySTdgWDap6cEnyuNJA==;",
-        "incap_ses_1193_39856=sOb2DXsjIB3ZpbpuY2OOEIeO+lwAAAAAypE0/nLxWa6fQEaZ+clo+Q==;",
-        "incap_ses_1193_39856=rfWmUnnbtik9ZbpuY2OOEKuM+lwAAAAApd1vq340qzurxipcJaVh/w==;",
-        "incap_ses_1193_39856=S5UEXsLLfipGIbtuY2OOEIqR+lwAAAAA+aR8Qh3cUWfvno/XWefW4g==;",
-        "incap_ses_1193_39856=4Q7xHupe5GhQOLtuY2OOEB2S+lwAAAAA3fOV6RP2+7rSuwjEJaGA0A==;",
-        "incap_ses_1193_39856=Sn40VqAjElWZXr1uY2OOEHWf+lwAAAAAyCyAkmarfaZp06hPJswJMA==;"
-    };
 
     /*
      * holds price info set in getJsonData()
@@ -65,16 +37,8 @@ public class HarveyNorman extends AbstractWebsite {
     }
 
     @Override
-    protected Map<String, String> getHeaders() {
-        Map<String, String> headers = Global.standardHeaders;
-        headers.put("Cookie", INCAP_SESSIONS[new Random().nextInt(INCAP_SESSIONS.length)]);
-        return headers;
-    }
-
-    @Override
     protected int openDocument() {
-        HttpResponse<String> response = HttpClient.get(getUrl(), getHeaders());
-        System.out.println(response.getBody());
+        Pair response = Browser.getHtmlWithJS("Harvey Norman", getUrl());
         if (response.getStatus() == 200) {
             doc = Jsoup.parse(response.getBody());
         }
@@ -86,7 +50,7 @@ public class HarveyNorman extends AbstractWebsite {
         Elements dataEL = doc.select("script[type='application/ld+json']");
         if (dataEL != null && dataEL.size() > 0) {
             for (int i = 0; i < dataEL.size(); i++) {
-                if (dataEL.get(i).dataNodes().get(0).getWholeData().indexOf("aggregateRating") > 0) {
+                if (dataEL.get(i).dataNodes().get(0).getWholeData().indexOf("priceCurrency") > 0) {
                     JSONObject data = new JSONObject(dataEL.get(i).dataNodes().get(0).getWholeData().replace("\r\n"," ").trim());
                     if (data.has("offers")) {
                         JSONArray offers = data.getJSONArray("offers");

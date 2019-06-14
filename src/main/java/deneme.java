@@ -542,9 +542,9 @@ public class deneme {
             //"https://www.appliancesonline.com.au/product/marshall-150531-monitor-wireless-bluetooth-over-ear-headphones-black"
         };
 
-        for (String url: appliancesonline_au) {
+        for (String url: harveynorman_au) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.au.AppliancesOnline");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.au.HarveyNorman");
             try {
                 Class<Website> clazz = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Constructor<Website> ctor = clazz.getConstructor(Link.class);
