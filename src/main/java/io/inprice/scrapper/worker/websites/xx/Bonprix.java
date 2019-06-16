@@ -26,8 +26,10 @@ public class Bonprix extends AbstractWebsite {
     @Override
     public boolean isAvailable() {
         Element available = doc.selectFirst("meta[property='og:availability']");
+        if (available == null) available = doc.selectFirst("meta[content='https://schema.org/InStock']");
+
         if (available != null) {
-            return available.attr("content").trim().contains("instock");
+            return available.attr("content").toLowerCase().contains("instock");
         }
 
         available = doc.selectFirst("div.product-availability-box_wrapper div");
@@ -51,20 +53,34 @@ public class Bonprix extends AbstractWebsite {
 
     @Override
     public String getName() {
-        Element name = doc.selectFirst("meta[property='og:title']");
+        Element name = doc.selectFirst("h1.product-name span[itemprop='name']");
+        if (name != null) return name.text();
+
+        name = doc.selectFirst("meta[property='og:title']");
         if (name != null) {
             return name.attr("content").trim();
         }
+
         return "NA";
     }
 
     @Override
     public BigDecimal getPrice() {
-        Element price = doc.selectFirst("span.clearfix.price");
+        Element price = doc.selectFirst("span.price");
+        if (price != null) {
+            return new BigDecimal(price.attr("content").trim());
+        }
+
+        price = doc.selectFirst("span[itemprop='price']");
+        if (price != null) {
+            return new BigDecimal(cleanPrice(price.text()));
+        }
+
+        price = doc.selectFirst("span.clearfix.price");
         if (price == null) price = doc.selectFirst("meta[property='og:price:amount']");
 
         if (price != null) {
-            return new BigDecimal(price.attr("content").trim());
+            return new BigDecimal(cleanPrice(price.attr("content").trim()));
         }
 
         return BigDecimal.ZERO;
@@ -77,7 +93,21 @@ public class Bonprix extends AbstractWebsite {
 
     @Override
     public String getShipment() {
-        Element shipment = doc.selectFirst("div.product-availability-box_wrapper div");
+        /*
+        Elements ships = doc.select("div[data-controller='infoicon'] div.info-text");
+        if (ships != null && ships.size() > 0) {
+            if (ships.get(0).childNodeSize() > 0) {
+                return ships.get(0).childNode(0).toString().trim();
+            }
+        }
+         */
+
+        Element shipment = doc.selectFirst("div[data-controller='infoicon'] div.info-text");
+        if (shipment != null) {
+            return shipment.text().replaceAll(" ada12_info-icon-bigsize-additional-text", "");
+        }
+
+        shipment = doc.selectFirst("div.product-availability-box_wrapper div");
         if (shipment != null) {
             return shipment.text();
         }
@@ -106,7 +136,22 @@ public class Bonprix extends AbstractWebsite {
     public List<LinkSpec> getSpecList() {
         List<LinkSpec> specList = null;
 
-        Elements specKeys = doc.select("div.productFeaturesContainer span.productFeatureName");
+        Elements specKeys = doc.select("div.product-attributes strong");
+        if (specKeys != null && specKeys.size() > 0) {
+            specList = new ArrayList<>();
+            Elements specValues = doc.select("div.product-attributes span");
+            for (int i = 0; i < specKeys.size(); i++) {
+                Element key = specKeys.get(i);
+                Element val = null;
+                if (i < specValues.size() - 1) {
+                    val = specValues.get(i);
+                }
+                specList.add(new LinkSpec(key.text().replaceAll(":", ""), (val != null ? val.text() : "")));
+            }
+            return specList;
+        }
+
+        specKeys = doc.select("div.productFeaturesContainer span.productFeatureName");
         if (specKeys == null) specKeys = doc.select("div.product-attributes strong");
 
         if (specKeys != null && specKeys.size() > 0) {
@@ -117,7 +162,6 @@ public class Bonprix extends AbstractWebsite {
         }
 
         Elements specValues = doc.select("div.productFeaturesContainer span.productFeatureValue");
-        if (specValues == null) specValues = doc.select("div.product-attributes span");
 
         if (specValues != null && specValues.size() > 0) {
             boolean isEmpty = false;
@@ -131,6 +175,21 @@ public class Bonprix extends AbstractWebsite {
                     specList.add(new LinkSpec("", value.text().trim()));
                 } else {
                     specList.get(i).setValue(value.text().trim());
+                }
+            }
+
+            return specList;
+        }
+
+        specValues = doc.select("div.productDescription");
+
+        if (specValues != null) {
+            specList = new ArrayList<>();
+            String desc = specValues.text();
+            String[] descChunks = desc.split("\\.");
+            if (descChunks.length > 0) {
+                for (String dsc: descChunks) {
+                    specList.add(new LinkSpec("", dsc.trim()));
                 }
             }
         }

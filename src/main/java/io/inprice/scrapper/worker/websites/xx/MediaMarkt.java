@@ -3,6 +3,7 @@ package io.inprice.scrapper.worker.websites.xx;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -19,8 +20,24 @@ import java.util.List;
  */
 public class MediaMarkt extends AbstractWebsite {
 
+    private BigDecimal freeShippingTresholdForNL;
+
     public MediaMarkt(Link link) {
         super(link);
+    }
+
+    @Override
+    protected JSONObject getJsonData() {
+        final String indicator = "bezorgkostenDrempel =";
+
+        int start = doc.html().indexOf(indicator) + indicator.length();
+        int end   = doc.html().indexOf(";", start);
+
+        if (start > indicator.length() && end > start) {
+            freeShippingTresholdForNL = new BigDecimal(cleanPrice(doc.html().substring(start, end)));
+        }
+
+        return super.getJsonData();
     }
 
     @Override
@@ -74,6 +91,14 @@ public class MediaMarkt extends AbstractWebsite {
 
     @Override
     public String getShipment() {
+        if (freeShippingTresholdForNL != null) {
+            if (freeShippingTresholdForNL.compareTo(getPrice()) > 0) {
+                return "Gratis bezorging vanaf € " + freeShippingTresholdForNL.toString();
+            } else {
+                return "Gratis bezorging";
+            }
+        }
+
         Element shipment = doc.selectFirst("div.price.big");
         if (shipment != null) {
             Element desc = shipment.nextElementSibling().selectFirst("small");

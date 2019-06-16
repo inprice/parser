@@ -47,7 +47,12 @@ public class Zalando extends AbstractWebsite {
 
     @Override
     public String getName() {
-        Element name = doc.selectFirst("meta[name='twitter:title']");
+        Element name = doc.selectFirst("h1[title]");
+        if (name != null) {
+            return name.attr("title").trim();
+        }
+
+        name = doc.selectFirst("meta[name='twitter:title']");
         if (name != null) {
             return name.attr("content").trim();
         }

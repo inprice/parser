@@ -112,7 +112,7 @@ public abstract class AbstractWebsite implements Website {
                 Element key = spec.selectFirst(keySelector);
                 Element value = spec.selectFirst(valueSelector);
                 if (key != null || value != null) {
-                    specList.add(new LinkSpec((key != null ? key.text() : ""), (value != null ? value.text() : "")));
+                    specList.add(new LinkSpec((key != null ? key.text().replaceAll(":", "") : ""), (value != null ? value.text() : "")));
                 }
             }
         }

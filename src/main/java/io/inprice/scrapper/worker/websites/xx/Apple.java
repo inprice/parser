@@ -117,7 +117,7 @@ public class Apple extends AbstractWebsite {
             if (options.length() > 0) {
                 JSONObject delivery = options.getJSONObject(0);
                 StringBuilder sb = new StringBuilder();
-                if (delivery.has("displayName")) sb.append(delivery.getString("displayName")).append(". ");
+                if (delivery.has("displayName")) sb.append(delivery.getString("displayName")).append(": ");
                 if (delivery.has("shippingCost")) sb.append(delivery.getString("shippingCost"));
                 return sb.toString();
             }

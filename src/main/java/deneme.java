@@ -162,14 +162,6 @@ public class deneme {
             //"https://www.debenhams.com/webapp/wcs/stores/servlet/prod_10701_10001_161010418163_-1"
         };
 
-        String[] mediamarkt_de = {
-            "https://www.mediamarkt.de/de/product/_beats-solo-3-wireless-2178424.html",
-            "https://www.mediamarkt.de/de/product/_braun-silk%C2%B7expert-pro-5-pl5137-2514623.html",
-            "https://www.mediamarkt.de/de/product/_zhiyun-smooth-4-3-achsen-2487706.html",
-            "https://www.mediamarkt.de/de/product/_panasonic-kx-tg-6622-gb-1385157.html",
-            "https://www.mediamarkt.de/de/product/_iconbit-kick-scooter-ttv2-2438683.html"
-        };
-
         String[] mediamarkt_tr = {
             "https://www.mediamarkt.com.tr/tr/product/_n%C4%B1ntendo-1-2-switch-nintende-switch-oyun-1181774.html#teknik-bilgiler",
             "https://www.mediamarkt.com.tr/tr/product/_sand%C4%B1sk-128gb-m%C4%B1cro-sd-extreme-sand%C4%B1sk-sdsqxa1-128g-gn6ma-adp-160mb-s-rescue-pro-deluxe-1192375.html",
@@ -542,9 +534,17 @@ public class deneme {
             //"https://www.appliancesonline.com.au/product/marshall-150531-monitor-wireless-bluetooth-over-ear-headphones-black"
         };
 
-        for (String url: harveynorman_au) {
+        String[] mediamarkt_de = {
+                //"https://www.mediamarkt.de/de/product/_beats-solo-3-wireless-2178424.html",
+                "https://www.mediamarkt.de/de/product/_braun-silk%C2%B7expert-pro-5-pl5137-2514623.html",
+                //"https://www.mediamarkt.de/de/product/_zhiyun-smooth-4-3-achsen-2487706.html",
+                //"https://www.mediamarkt.de/de/product/_panasonic-kx-tg-6622-gb-1385157.html",
+                //"https://www.mediamarkt.de/de/product/_iconbit-kick-scooter-ttv2-2438683.html"
+        };
+
+        for (String url: mediamarkt_de) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.au.HarveyNorman");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.de.MediaMarkt");
             try {
                 Class<Website> clazz = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Constructor<Website> ctor = clazz.getConstructor(Link.class);
