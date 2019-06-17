@@ -43,7 +43,7 @@ public class Lidl extends AbstractWebsite {
         if (json != null && json.has("product_instock")) {
             return json.getInt("product_instock") > 0;
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class Lidl extends AbstractWebsite {
         if (shipment != null) {
             return shipment.text().trim();
         }
-        return "NA";
+        return "In-store pickup";
     }
 
     @Override
@@ -89,12 +89,24 @@ public class Lidl extends AbstractWebsite {
         if (json != null && json.has("productbrand")) {
             return json.getString("productbrand").trim();
         }
-        return "NA";
+
+        Element brand = doc.selectFirst("div.brand div.brand__claim");
+        if (brand != null && ! brand.text().isEmpty()) {
+            return brand.text().trim();
+        }
+
+        String[] nameChunks = getName().split("\\s");
+        if (nameChunks.length > 1) {
+            return nameChunks[0];
+        }
+
+        return "Lidl";
     }
 
     @Override
     public List<LinkSpec> getSpecList() {
         List<LinkSpec> specList = null;
+
         Elements specs = doc.select("div.product-detail-hero li");
         if (specs != null && specs.size() > 0) {
             specList = new ArrayList<>();
@@ -107,6 +119,8 @@ public class Lidl extends AbstractWebsite {
         }
 
         specs = doc.select("div.attributebox__keyfacts li");
+        if (specs == null || specs.size() == 0) specs = doc.select("div#detail-tab-0 li");
+
         if (specs != null && specs.size() > 0) {
             specList = new ArrayList<>();
             for (Element spec : specs) {
@@ -124,6 +138,8 @@ public class Lidl extends AbstractWebsite {
                 specList.add(new LinkSpec(key, value));
             }
         }
+
+
         return specList;
     }
 }
