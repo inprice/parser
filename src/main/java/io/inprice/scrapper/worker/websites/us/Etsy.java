@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Parser for Etsy US
+ * Parser for Etsy USA
  *
  * Contains standard data. Nothing special, all is extracted by css selectors
  *

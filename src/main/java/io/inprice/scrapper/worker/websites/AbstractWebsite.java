@@ -71,9 +71,11 @@ public abstract class AbstractWebsite implements Website {
     @Override
     public Link test(String fileName) {
         try {
-            URL path = ClassLoader.getSystemResource(fileName);
-            File input = new File(path.toURI());
-            doc = Jsoup.parse(input, "UTF-8");
+            if (willHtmlBePulled()) {
+                URL path = ClassLoader.getSystemResource(fileName);
+                File input = new File(path.toURI());
+                doc = Jsoup.parse(input, "UTF-8");
+            }
             read();
         } catch (Exception e) {
             log.error(e);

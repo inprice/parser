@@ -155,7 +155,7 @@ public class Apple_ES_Test {
 
         when(mockResponse.getStatus()).thenReturn(200);
         when(mockResponse.getBody()).thenReturn(SHIPMENT_DATA);
-        when(HttpClient.get(anyString())).thenReturn(mockResponse);
+        when(HttpClient.get(anyString(), anyString())).thenReturn(mockResponse);
     }
 
 }

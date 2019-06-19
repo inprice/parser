@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Parser for Walmart US
+ * Parser for Walmart USA
  *
  * Contains standard data. all (except for availability) is extracted by css selectors
  *

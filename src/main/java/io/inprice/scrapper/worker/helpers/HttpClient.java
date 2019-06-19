@@ -17,7 +17,20 @@ public class HttpClient {
             response = Unirest.get(url)
                     .header("Accept-Language", "en-US,en;q=0.5")
                     .header("User-Agent", UserAgents.findARandomUA())
-                    .header("Referrer", "https://www.apple.com/au/shop/buy-ipad/ipad-pro")
+                    .asString();
+        } catch (UnirestException e) {
+            log.error(e);
+        }
+        return response;
+    }
+
+    public static HttpResponse<String> get(String url, String referrer) {
+        HttpResponse<String> response = null;
+        try {
+            response = Unirest.get(url)
+                    .header("Accept-Language", "en-US,en;q=0.5")
+                    .header("User-Agent", UserAgents.findARandomUA())
+                    .header("Referrer", referrer)
                     .asString();
         } catch (UnirestException e) {
             log.error(e);

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Parser for BestBuy US
+ * Parser for BestBuy USA
  *
  * Contains standard data. Nothing special, all is extracted by css selectors
  *

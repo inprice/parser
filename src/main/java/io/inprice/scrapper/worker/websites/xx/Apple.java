@@ -22,6 +22,8 @@ import java.util.List;
  */
 public class Apple extends AbstractWebsite {
 
+    private static final String REFERRER = "https://www.apple.com/au/shop/buy-ipad/ipad-pro";
+
     private JSONObject offers;
     private JSONObject product;
     private boolean available;
@@ -47,12 +49,14 @@ public class Apple extends AbstractWebsite {
                             final String sku = offers.getString("sku");
                             final String rootDomain = getUrl().substring(0, index);
 
-                            HttpResponse<String> response = HttpClient.get(rootDomain + "/shop/delivery-message?parts.0=" + sku);
-                            JSONObject shipment = new JSONObject(response.getBody());
-                            if (! shipment.isEmpty()) {
-                                if (shipment.getJSONObject("body").getJSONObject("content").getJSONObject("deliveryMessage").has(sku)) {
-                                    product = shipment.getJSONObject("body").getJSONObject("content").getJSONObject("deliveryMessage").getJSONObject(sku);
-                                    available = product.getBoolean("isBuyable");
+                            HttpResponse<String> response = HttpClient.get(rootDomain + "/shop/delivery-message?parts.0=" + sku, REFERRER);
+                            if (response.getStatus() < 400) {
+                                JSONObject shipment = new JSONObject(response.getBody());
+                                if (!shipment.isEmpty()) {
+                                    if (shipment.getJSONObject("body").getJSONObject("content").getJSONObject("deliveryMessage").has(sku)) {
+                                        product = shipment.getJSONObject("body").getJSONObject("content").getJSONObject("deliveryMessage").getJSONObject(sku);
+                                        available = product.getBoolean("isBuyable");
+                                    }
                                 }
                             }
                         }

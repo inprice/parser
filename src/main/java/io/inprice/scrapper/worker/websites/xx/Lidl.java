@@ -57,7 +57,7 @@ public class Lidl extends AbstractWebsite {
     @Override
     public String getName() {
         if (json != null && json.has("productname")) {
-            return json.getString("productname");
+            return json.getString("productname").trim();
         }
         return "NA";
     }

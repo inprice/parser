@@ -542,9 +542,16 @@ public class deneme {
                 //"https://www.mediamarkt.de/de/product/_iconbit-kick-scooter-ttv2-2438683.html"
         };
 
-        for (String url: mediamarkt_de) {
+        String[] lidl_us = {
+            //"https://www.lidl.com/products/285939_A",
+            //"https://www.lidl.com/products/311073_A",
+            //"https://www.lidl.com/products/310436_C",
+            "https://www.lidl.com/products/1031629"
+        };
+
+        for (String url: lidl_us) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.de.MediaMarkt");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.us.Lidl");
             try {
                 Class<Website> clazz = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Constructor<Website> ctor = clazz.getConstructor(Link.class);
