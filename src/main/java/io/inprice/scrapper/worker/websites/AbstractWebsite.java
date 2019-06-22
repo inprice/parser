@@ -21,7 +21,6 @@ import java.math.RoundingMode;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractWebsite implements Website {
 
@@ -36,16 +35,12 @@ public abstract class AbstractWebsite implements Website {
         this.link = link;
     }
 
-    protected boolean willHtmlBePulled() {
+    public boolean willHtmlBePulled() {
         return true;
     }
 
     protected JSONObject getJsonData() {
         return null;
-    }
-
-    protected Map<String, String> getHeaders() {
-        return Global.standardHeaders;
     }
 
     @Override
@@ -181,7 +176,7 @@ public abstract class AbstractWebsite implements Website {
         try {
             Connection.Response response =
                 Jsoup.connect(url)
-                    .headers(getHeaders())
+                    .headers(Global.standardHeaders)
                     .userAgent(UserAgents.findARandomUA())
                     .referrer(UserAgents.findARandomReferer())
                     .timeout(7 * 1000)

@@ -35,7 +35,8 @@ public class AppliancesOnline extends AbstractWebsite {
 
     @Override
     protected JSONObject getJsonData() {
-        return new JSONObject(doc.body().html());
+        if (doc != null) return new JSONObject(doc.body().html());
+        return null;
     }
 
     @Override
@@ -48,8 +49,8 @@ public class AppliancesOnline extends AbstractWebsite {
 
     @Override
     public String getSku() {
-        if (json != null && json.has("sku")) {
-            return json.getString("sku");
+        if (json != null && json.has("productId")) {
+            return ""+json.getInt("productId");
         }
         return "NA";
     }

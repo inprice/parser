@@ -29,7 +29,12 @@ public class TheGoodGuys extends AbstractWebsite {
 
     @Override
     public String getSku() {
-        Element sku = doc.getElementById("mainProductId");
+        Element sku = doc.selectFirst("span.titleItems_model_digit");
+        if (sku != null) {
+            return sku.text();
+        }
+
+        sku = doc.getElementById("mainProductId");
         if (sku != null) {
             return sku.val();
         }
@@ -56,7 +61,7 @@ public class TheGoodGuys extends AbstractWebsite {
 
     @Override
     public String getSeller() {
-        return "The Good Guys";
+        return "TheGoodGuys";
     }
 
     @Override

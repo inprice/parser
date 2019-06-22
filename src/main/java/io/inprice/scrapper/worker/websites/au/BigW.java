@@ -41,7 +41,9 @@ public class BigW extends AbstractWebsite {
         int end   = doc.html().indexOf("}]", start) + 1;
 
         if (start > indicator.length() && end > start) {
-            return new JSONObject(doc.html().substring(start, end));
+            //TODO: the replaceAll approach in here should be used in every point!!!
+
+            return new JSONObject(doc.html().substring(start, end).replaceAll("((?<=(\\{|\\[|\\,|:))\\s*')|('\\s*(?=(\\}|(\\])|(\\,|:))))", "\""));
         }
 
         return super.getJsonData();

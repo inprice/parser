@@ -34,7 +34,6 @@ public class Apple_AU_Test {
 
         PowerMockito.mockStatic(HttpClient.class);
     }
-
     @Test
     public void test_product_1() {
         final String sku = "MTXP2X/A";

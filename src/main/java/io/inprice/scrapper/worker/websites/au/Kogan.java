@@ -41,7 +41,12 @@ public class Kogan extends AbstractWebsite {
 
     @Override
     public String getName() {
-        Element name = doc.selectFirst("meta[property='og:title']");
+        Element name = doc.selectFirst("h1[itemprop='name']");
+        if (name != null) {
+            return name.text();
+        }
+
+        name = doc.selectFirst("meta[property='og:title']");
         if (name != null) {
             return name.attr("content").trim();
         }

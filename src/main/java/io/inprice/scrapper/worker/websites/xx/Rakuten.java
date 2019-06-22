@@ -7,6 +7,7 @@ import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ import java.util.List;
  */
 public class Rakuten extends AbstractWebsite {
 
+    private JSONObject offer;
+
     public Rakuten(Link link) {
         super(link);
     }
@@ -34,7 +37,29 @@ public class Rakuten extends AbstractWebsite {
 
         if (start > indicator.length() && end > start) {
             return new JSONObject(doc.html().substring(start, end));
+        } else {
+            Elements dataELs = doc.select("script[type='application/ld+json']");
+            if (dataELs != null && dataELs.size() > 0) {
+                for (Element dataEL: dataELs) {
+                    JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
+                    if (data.has("@type") && data.getString("@type").equals("Product")) {
+                        if (data.has("offers")) {
+                            JSONObject offersParent = data.getJSONObject("offers");
+                            if (offersParent.has("offers")) {
+                                JSONArray offers = offersParent.getJSONArray("offers");
+                                if (offers.length() > 0) {
+                                    offer = offers.getJSONObject(0);
+                                }
+                            } else {
+                                offer = offersParent;
+                            }
+                        }
+                        return data;
+                    }
+                }
+            }
         }
+
         return super.getJsonData();
     }
 
@@ -42,6 +67,10 @@ public class Rakuten extends AbstractWebsite {
     public boolean isAvailable() {
         if (json != null && json.has("isAvailable")) {
             return json.getBoolean("isAvailable");
+        }
+
+        if (offer != null && offer.has("availability")) {
+            return offer.getString("availability").contains("InStock");
         }
 
         Element available = doc.selectFirst("meta[property='product:availability']");
@@ -53,8 +82,13 @@ public class Rakuten extends AbstractWebsite {
 
     @Override
     public String getSku() {
-        if (json != null && json.has("articleNumber")) {
-            return json.getString("articleNumber");
+        if (json != null) {
+            if (json.has("articleNumber")) {
+                return json.getString("articleNumber");
+            }
+            if (json.has("mpn")) {
+                return json.getString("mpn");
+            }
         }
 
         Element sku = doc.selectFirst("meta[property='product:retailer_item_id']");
@@ -67,7 +101,7 @@ public class Rakuten extends AbstractWebsite {
     @Override
     public String getName() {
         if (json != null && json.has("name")) {
-            return json.getString("name");
+            return json.getString("name").trim();
         }
 
         Element name = doc.selectFirst("meta[property='og:title']");
@@ -79,8 +113,18 @@ public class Rakuten extends AbstractWebsite {
 
     @Override
     public BigDecimal getPrice() {
-        if (json != null && json.has("price")) {
-            return json.getBigDecimal("price");
+        if (json != null) {
+            if (json.has("price")) {
+                return json.getBigDecimal("price");
+            }
+            if (json.has("offers")) {
+                JSONObject offersParent = json.getJSONObject("offers");
+                if (offersParent.has("lowPrice")) {
+                    return offersParent.getBigDecimal("lowPrice");
+                } else if (offer.has("price")) {
+                    return offer.getBigDecimal("price");
+                }
+            }
         }
 
         Element price = doc.selectFirst("meta[property='product:price:amount']");
@@ -99,6 +143,13 @@ public class Rakuten extends AbstractWebsite {
                 if (seller.has("company")) {
                     return seller.getString("company");
                 }
+            }
+        }
+
+        if (offer != null && offer.has("seller")) {
+            JSONObject seller = offer.getJSONObject("seller");
+            if (seller.has("name")) {
+                return seller.getString("name");
             }
         }
 
@@ -123,13 +174,33 @@ public class Rakuten extends AbstractWebsite {
             }
         }
 
+        Element shipping = doc.selectFirst("p.freeShipping");
+        if (shipping != null) {
+            return shipping.text().trim();
+        }
+
+        shipping = doc.selectFirst("ul.shipping li.value");
+        if (shipping == null) shipping = doc.selectFirst("li.shipping_amount span.value");
+
+        if (shipping != null) {
+            return shipping.text().trim();
+        }
+
         return "NA";
     }
 
     @Override
     public String getBrand() {
-        if (json != null && json.has("brandName")) {
-            return json.getString("brandName");
+        if (json != null) {
+            if (json.has("brandName")) {
+                return json.getString("brandName");
+            }
+            if (json.has("brand")) {
+                JSONObject brand = json.getJSONObject("brand");
+                if (brand.has("name")) {
+                    return brand.getString("name");
+                }
+            }
         }
 
         Element brand = doc.selectFirst("meta[property='product:brand']");
@@ -157,7 +228,10 @@ public class Rakuten extends AbstractWebsite {
         }
 
         if (specList == null || specList.size() == 0) {
-            return getValueOnlySpecList(doc.select("div.product-description li"));
+            specList = getValueOnlySpecList(doc.select("div.product-description li"));
+            if (specList != null && specList.size() > 0) return specList;
+
+            return getKeyValueSpecList(doc.select("div.specs_ctn tr"), "th.label", "td.value");
         }
 
         return specList;

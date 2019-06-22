@@ -30,7 +30,7 @@ public class Lidl extends AbstractWebsite {
     }
 
     @Override
-    protected boolean willHtmlBePulled() {
+    public boolean willHtmlBePulled() {
         return false;
     }
 

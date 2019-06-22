@@ -119,7 +119,7 @@ public class HarveyNorman extends AbstractWebsite {
         if (shipment != null) {
             return shipment.text().trim();
         }
-        return "NA";
+        return "See delivery details";
     }
 
     @Override
