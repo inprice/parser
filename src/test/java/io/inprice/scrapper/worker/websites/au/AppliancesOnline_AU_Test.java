@@ -1,10 +1,11 @@
 package io.inprice.scrapper.worker.websites.au;
 
+import com.google.common.io.CharStreams;
+import com.google.common.io.Resources;
 import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
-import io.inprice.scrapper.worker.websites.Helpers;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,12 +13,9 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -45,7 +43,7 @@ public class AppliancesOnline_AU_Test {
     }
 
     @Test
-    public void test_product_1() throws Exception {
+    public void test_product_1() {
         when(site.getJsonData()).thenReturn(getJsonDataFromFile(1));
 
         Link link = site.test(null);
@@ -61,7 +59,7 @@ public class AppliancesOnline_AU_Test {
     }
 
     @Test
-    public void test_product_2() throws Exception {
+    public void test_product_2() {
         when(site.getJsonData()).thenReturn(getJsonDataFromFile(2));
 
         Link link = site.test(null);
@@ -77,7 +75,7 @@ public class AppliancesOnline_AU_Test {
     }
 
     @Test
-    public void test_product_3() throws Exception {
+    public void test_product_3() {
         when(site.getJsonData()).thenReturn(getJsonDataFromFile(3));
 
         Link link = site.test(null);
@@ -93,7 +91,7 @@ public class AppliancesOnline_AU_Test {
     }
 
     @Test
-    public void test_product_4() throws Exception {
+    public void test_product_4() {
         when(site.getJsonData()).thenReturn(getJsonDataFromFile(4));
 
         Link link = site.test(null);
@@ -108,17 +106,16 @@ public class AppliancesOnline_AU_Test {
         assertNull(link.getSpecList());
     }
 
-    private JSONObject getJsonDataFromFile(int no) throws IOException, URISyntaxException {
-        URL path = ClassLoader.getSystemResource(Helpers.getJsonPath(SITE_NAME, COUNTRY_CODE, no));
-        File file = new File(path.toURI());
-
-        StringBuilder sb = new StringBuilder();
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        String readLine = "";
-        while ((readLine = br.readLine()) != null) {
-            sb.append(readLine);
+    private JSONObject getJsonDataFromFile(int no) {
+        String data = null;
+        try {
+            InputStream is = Resources.getResource(String.format("websites/%s/%s_%d.json", COUNTRY_CODE, SITE_NAME, no)).openStream();
+            data = CharStreams.toString(new InputStreamReader(is));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return new JSONObject(sb.toString());
+
+        return new JSONObject(data);
     }
 
 }

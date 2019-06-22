@@ -34,7 +34,7 @@ public class AppliancesOnline extends AbstractWebsite {
     }
 
     @Override
-    protected JSONObject getJsonData() {
+    public JSONObject getJsonData() {
         if (doc != null) return new JSONObject(doc.body().html());
         return null;
     }

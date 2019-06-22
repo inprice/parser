@@ -20,7 +20,7 @@ import java.util.*;
  * This is a very special case. CanadianTire provides too limited data in html form.
  * So, we need to make a json request to collect all the data we need.
  *
- * in getJsonData(), the data is pulled with the payload whose steps are explained above
+ * in getJsonData(), the data is pulled with a payload whose steps are explained above
  *
  * @author mdpinar
  */
@@ -101,8 +101,8 @@ public class CanadianTire extends AbstractWebsite {
     @Override
     public BigDecimal getPrice() {
         if (json != null) {
-            if (json.has("promo")) {
-                return json.getJSONObject("promo").getBigDecimal("Price");
+            if (json.has("Promo")) {
+                return json.getJSONObject("Promo").getBigDecimal("Price");
             }
             if (json.has("Price")) {
                 return json.getBigDecimal("Price");
