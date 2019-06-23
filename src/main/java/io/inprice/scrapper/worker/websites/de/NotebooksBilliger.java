@@ -69,7 +69,7 @@ public class NotebooksBilliger extends AbstractWebsite {
         if (shipment != null) {
             return shipment.attr("alt").trim();
         }
-        return "NA";
+        return "Abholung im Geschäft";
     }
 
     @Override
@@ -81,11 +81,25 @@ public class NotebooksBilliger extends AbstractWebsite {
                 return alt.substring(0, alt.lastIndexOf(" "));
             }
         }
+
+        final String indicator = "\"productBrand\":\"";
+        final String html = doc.html();
+
+        int start = html.indexOf(indicator) + indicator.length();
+        int end   = html.indexOf("\"", start);
+
+        if (start > indicator.length() && end > start) {
+            return html.substring(start, end);
+        }
+
         return "NA";
     }
 
     @Override
     public List<LinkSpec> getSpecList() {
-        return getValueOnlySpecList(doc.select("div#section_info li span"));
+        List<LinkSpec> specList = getValueOnlySpecList(doc.select("div#section_info li span"));
+        if (specList == null) specList = getKeyValueSpecList(doc.select("table.properties_table tr"), "td.produktDetails_eigenschaft2", "td.produktDetails_eigenschaft3");
+
+        return specList;
     }
 }

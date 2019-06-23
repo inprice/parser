@@ -59,7 +59,7 @@ public class Otto extends AbstractWebsite {
         if (product != null && product.has("availability")) {
             JSONObject var = product.getJSONObject("availability");
             if (var.has("status")) {
-                return "available".equals(var.getString("status"));
+                return "available".equals(var.getString("status")) || "delayed".equals(var.getString("status"));
             }
         }
         return false;
@@ -67,6 +67,11 @@ public class Otto extends AbstractWebsite {
 
     @Override
     public String getSku() {
+        Element sku = doc.selectFirst("meta[itemprop='sku']");
+        if (sku != null) {
+            return sku.attr("content");
+        }
+
         if (json != null && json.has("id")) {
             return json.getString("id");
         }
@@ -83,18 +88,18 @@ public class Otto extends AbstractWebsite {
 
     @Override
     public BigDecimal getPrice() {
-        if (product != null && product.has("displayPrice")) {
-            JSONObject var = product.getJSONObject("displayPrice");
-            if (var.has("techPriceAmount")) {
-                return var.getBigDecimal("techPriceAmount");
-            }
-        }
-
         Element price = doc.getElementById("reducedPriceAmount");
         if (price == null) price = doc.getElementById("normalPriceAmount");
 
         if (price != null) {
             return new BigDecimal(cleanPrice(price.attr("content").trim()));
+        }
+
+        if (product != null && product.has("displayPrice")) {
+            JSONObject var = product.getJSONObject("displayPrice");
+            if (var.has("techPriceAmount")) {
+                return var.getBigDecimal("techPriceAmount");
+            }
         }
 
         return BigDecimal.ZERO;

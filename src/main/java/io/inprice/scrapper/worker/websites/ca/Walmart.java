@@ -5,11 +5,13 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -61,15 +63,29 @@ public class Walmart extends AbstractWebsite {
      *
      * @return String - a link for the data pulling from the server
      */
-    private String getPayload() {
-        Element preDataEL = doc.selectFirst("div.js-content script[type='application/ld+json']");
-        if (preDataEL != null) {
-            preData = new JSONObject(preDataEL.dataNodes().get(0).getWholeData().trim());
-            if (preData.has("sku")) {
-                sku = preData.getString("sku");
-                String[] urlChunks = getUrl().split("/");
-                if (urlChunks.length > 0) {
-                    return String.format(STATIC_DATA, urlChunks[urlChunks.length - 1], sku).replaceAll("'", "\"");
+    public String getPayload() {
+        if (doc != null) {
+
+            final String indicator = "\"skus\":[";
+            final String html = doc.html();
+
+            int start = html.indexOf(indicator) + indicator.length()+1;
+            int end   = html.indexOf("]", start)-1;
+
+            String skus = "";
+            if (start > indicator.length() && end > start) {
+                skus = html.substring(start, end);
+            }
+
+            Element preDataEL = doc.selectFirst("div.js-content script[type='application/ld+json']");
+            if (preDataEL != null) {
+                preData = new JSONObject(preDataEL.dataNodes().get(0).getWholeData().trim());
+                if (preData.has("sku")) {
+                    sku = preData.getString("sku");
+                    String[] urlChunks = getUrl().split("/");
+                    if (urlChunks.length > 0) {
+                        return String.format(STATIC_DATA, urlChunks[urlChunks.length - 1], skus).replaceAll("'", "\"");
+                    }
                 }
             }
         }
@@ -88,9 +104,26 @@ public class Walmart extends AbstractWebsite {
             HttpResponse<String> response = HttpClient.post(STATIC_URL, payload);
             if (response != null && response.getStatus() < 400) {
                 JSONObject product = new JSONObject(response.getBody());
-                if (product.has("offers")) {
+
+                if (product.has("skus") && product.has("offers")) {
+                    JSONObject skus = product.getJSONObject("skus");
                     JSONObject offers = product.getJSONObject("offers");
-                    if (offers.has(sku)) return offers.getJSONObject(sku); //find all the detail by sku
+
+                    if (! skus.isEmpty()) {
+                        for (String s : skus.keySet()) {
+                            JSONArray hashArray = skus.getJSONArray(s);
+                            if (hashArray.length() > 0) {
+                                for (int i = 0; i < hashArray.length(); i++) {
+                                    JSONObject offer = offers.getJSONObject(hashArray.getString(i));
+                                    if (!offer.isEmpty()) {
+                                        if ("Available".equals(offer.getString("gmAvailability"))) {
+                                            return offer;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

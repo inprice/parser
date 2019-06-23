@@ -253,8 +253,9 @@ public class deneme {
         };
 
         String[] walmart_ca = {
-            "https://www.walmart.ca/en/ip/sharp-50-4k-smart-tv-n6003/6000198871514",
-            //"https://www.walmart.ca/en/ip/ViscoLogic-Series-THRILL-Gaming-Racing-Style-Swivel-Office-Chair/5P82E6OC9V42"
+            //"https://www.walmart.ca/en/ip/scunci-no-slip-silicone-elastics/6000196486963",
+            //"https://www.walmart.ca/en/ip/sharp-50-4k-smart-tv-n6003/6000198871514",
+            "https://www.walmart.ca/en/ip/ViscoLogic-Series-THRILL-Gaming-Racing-Style-Swivel-Office-Chair/5P82E6OC9V42"
         };
 
         String[] walmart_us = {
@@ -549,9 +550,9 @@ public class deneme {
             "https://www.lidl.com/products/1031629"
         };
 
-        for (String url: lidl_us) {
+        for (String url: walmart_ca) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.us.Lidl");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.ca.Walmart");
             try {
                 Class<Website> clazz = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Constructor<Website> ctor = clazz.getConstructor(Link.class);
