@@ -66,6 +66,15 @@ public class Gigas101 extends AbstractWebsite {
 
     @Override
     public String getShipment() {
+        Elements availability = doc.select("div.availability div#codigosku");
+        if (availability != null) {
+            for (int i = 0; i < availability.size(); i++) {
+                Element note = availability.get(i);
+                if (note.text().contains("Envío")) {
+                    return note.text();
+                }
+            }
+        }
         return "NA";
     }
 

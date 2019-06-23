@@ -91,7 +91,7 @@ public class Pixmania extends AbstractWebsite {
      *
      * @return Map - payload required for having the data
      */
-    private Map<String, String> getPayload() {
+    public Map<String, String> getPayload() {
         String token = getToken();
         if (token != null) {
             Map<String, String> payload = new HashMap<>();
