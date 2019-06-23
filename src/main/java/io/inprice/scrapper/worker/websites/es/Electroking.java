@@ -47,7 +47,12 @@ public class Electroking extends AbstractWebsite {
 
     @Override
     public String getName() {
-        Element name = doc.selectFirst("p.product_name strong");
+        Element name = doc.selectFirst("meta[property='og:title']");
+        if (name != null) {
+            return name.attr("content");
+        }
+
+        name = doc.selectFirst("p.product_name strong");
         if (name != null) {
             return name.text().trim();
         }
@@ -65,17 +70,12 @@ public class Electroking extends AbstractWebsite {
 
     @Override
     public String getSeller() {
-        Elements cats = doc.select("a[itemprop='item'] span[itemprop='name']");
-        if (cats != null && cats.size() > 1) {
-            Element seller = cats.get(cats.size()-2);
-            return seller.text().trim();
-        }
-        return "NA";
+        return "Electroking";
     }
 
     @Override
     public String getShipment() {
-        return "NA";
+        return "Envío por Agencia de Transporte. Ver detalles";
     }
 
     @Override
