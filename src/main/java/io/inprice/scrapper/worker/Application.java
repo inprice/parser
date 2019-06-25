@@ -1,6 +1,7 @@
 package io.inprice.scrapper.worker;
 
 import io.inprice.scrapper.common.logging.Logger;
+import io.inprice.scrapper.worker.browser.BrowserManager;
 import io.inprice.scrapper.worker.config.Config;
 import io.inprice.scrapper.worker.consumer.ActiveLinksConsumer;
 import io.inprice.scrapper.worker.consumer.FailedLinksConsumer;
@@ -36,6 +37,10 @@ public class Application {
 			log.info("RabbitMQ connection is closing...");
 			RabbitMQ.closeChannel();
 			log.info("RabbitMQ is closed.");
+
+			log.info("Browsers are closing...");
+			BrowserManager.closeAllBrowsers();
+			log.info("Browsers are closed.");
 
 			try {
 				log.info("Thread pool is shutting down...");

@@ -3,7 +3,9 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.worker.browser.BrowserManager;
 import io.inprice.scrapper.worker.helpers.UserAgents;
+import io.inprice.scrapper.worker.info.Pair;
 import io.inprice.scrapper.worker.websites.Website;
 
 import java.io.BufferedReader;
@@ -509,9 +511,9 @@ public class deneme {
         //DOESN'T WORK!!!
         String[] harveynorman_au = {
             //"https://www.harveynorman.com.au/nutri-ninja-pro-blender.html",
-            "https://www.harveynorman.com.au/lenovo-smart-clock.html",
+            //"https://www.harveynorman.com.au/lenovo-smart-clock.html",
             //"https://www.harveynorman.com.au/norton-security-premium-1-year-for-3-devices-1.html",
-            //"https://www.harveynorman.com.au/jbl-bar-5-1-soundbar-with-wireless-subwoofer.html"
+            "https://www.harveynorman.com.au/jbl-bar-5-1-soundbar-with-wireless-subwoofer.html"
         };
 
         String[] bigw_au = {

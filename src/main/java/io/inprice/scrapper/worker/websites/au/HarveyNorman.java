@@ -2,7 +2,7 @@ package io.inprice.scrapper.worker.websites.au;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Browser;
+import io.inprice.scrapper.worker.browser.BrowserManager;
 import io.inprice.scrapper.worker.info.Pair;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -38,7 +38,7 @@ public class HarveyNorman extends AbstractWebsite {
 
     @Override
     protected int openDocument() {
-        Pair response = Browser.getHtmlWithJS("Harvey Norman", getUrl());
+        Pair response = BrowserManager.getHarveyNormanBrowser().getHtml(getUrl());
         if (response.getStatus() == 200) {
             doc = Jsoup.parse(response.getBody());
         }

@@ -26,13 +26,14 @@ public class Lidl extends AbstractWebsite {
 
     @Override
     public JSONObject getJsonData() {
-        Element data = doc.selectFirst("section.page__section script");
-        if (data == null) data = doc.selectFirst("div.hidden-trackers.no-static-copy script");
+        final String indicator = "var dynamic_tm_data = ";
+        final String html = doc.html();
 
-        if (data != null) {
-            String rawData = data.dataNodes().get(0).getWholeData();
-            String pureData = rawData.replaceAll("var dynamic_tm_data = ", "").replaceAll(";", "").trim();
-            return new JSONObject(pureData);
+        int start = html.indexOf(indicator) + indicator.length();
+        int end   = html.indexOf("};", start) + 1;
+
+        if (start > indicator.length() && end > start) {
+            return new JSONObject(html.substring(start, end));
         }
 
         return null;
@@ -139,6 +140,7 @@ public class Lidl extends AbstractWebsite {
             }
         }
 
+        if (specs == null || specs.size() == 0) return getValueOnlySpecList(doc.select("div#detailtabProductDescriptionTab li"));
 
         return specList;
     }
