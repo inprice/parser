@@ -33,6 +33,13 @@ public class Laredoute extends AbstractWebsite {
             JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
             if (data.has("offers")) {
                 offers = data.getJSONObject("offers");
+
+                try {
+                    JSONArray jarray = offers.getJSONArray("offers");
+                    offers = jarray.getJSONObject(0);
+                } catch (Exception e) {
+                    //
+                }
             }
             return data;
         }
@@ -60,13 +67,23 @@ public class Laredoute extends AbstractWebsite {
     @Override
     public String getName() {
         if (json != null && json.has("name")) {
-            return json.getString("name");
+            return json.getString("name").trim();
         }
         return "NA";
     }
 
     @Override
     public BigDecimal getPrice() {
+        final String html = doc.html();
+        final String indicator = "\"SalePriceAfterWithCharges\":";
+
+        int start = html.indexOf(indicator) + indicator.length();
+        int end = html.indexOf(",", start);
+
+        if (start > indicator.length() && end > start) {
+            return new BigDecimal(cleanPrice(html.substring(start, end)));
+        }
+
         if (offers != null && offers.has("price")) {
             return offers.getBigDecimal("price");
         }
@@ -88,8 +105,26 @@ public class Laredoute extends AbstractWebsite {
     public String getShipment() {
         Element shipment = doc.selectFirst("li.delivery-info-item.delivery-info.delivery-info-content");
         if (shipment != null) {
+            return shipment.text().trim();
+            /*
             String text = shipment.attr("data-text");
-            return text.replaceAll("<b>", "").replaceAll("</b>", "").replaceAll("\\[", "").replaceAll("]", "");
+            String fee = text.replaceAll("<b>", "").replaceAll("</b>", "").replaceAll("\\[", "").replaceAll("]", "");
+            if (fee.contains("DELIVERYPRICE")) {
+
+                final String html = doc.html();
+                final String indicator = "\"FormattedDeliveryFee\":";
+
+                int start = html.indexOf(indicator) + indicator.length();
+                int end = html.indexOf("\",", start);
+
+                if (start > indicator.length() && end > start) {
+                    String expense = html.substring(start, end);
+                    return fee.replaceAll("DELIVERYPRICE", expense).replaceAll("\"", "").trim();
+                }
+            }
+            return fee;
+
+             */
         }
         return "NA";
     }

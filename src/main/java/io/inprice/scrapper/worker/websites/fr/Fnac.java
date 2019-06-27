@@ -86,10 +86,13 @@ public class Fnac extends AbstractWebsite {
 
     @Override
     public String getShipment() {
-        Element shipment = doc.selectFirst("div.f-productSpecialsOffers-offerParagraphWrapper");
+        Element shipment = doc.selectFirst("p.f-buyBox-shipping");
+        if (shipment == null) shipment = doc.selectFirst("div.f-productSpecialsOffers-offerParagraphWrapper");
+
         if (shipment != null) {
             return shipment.text().trim();
         }
+
         return "NA";
     }
 
