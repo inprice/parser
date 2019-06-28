@@ -1,9 +1,13 @@
 package io.inprice.scrapper.worker.websites.it;
 
+import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+import org.json.JSONObject;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,8 +21,34 @@ import java.util.List;
  */
 public class VidaXL extends AbstractWebsite {
 
+    private JSONObject current;
+
     public VidaXL(Link link) {
         super(link);
+    }
+
+    public String getAuctionId() {
+        Element auctionId = doc.getElementById("auctionId");
+        if (auctionId != null) {
+            return auctionId.val();
+        }
+        return null;
+    }
+
+    @Override
+    protected JSONObject getJsonData() {
+        String auctionId = getAuctionId();
+        if (auctionId != null) {
+            HttpResponse<String> response = HttpClient.get("https://www.vidaxl.it/platform/index.php?m=auction&a=getAuctionsList&id=" + auctionId);
+            if (response.getStatus() == 200 && ! response.getBody().isEmpty()) {
+                JSONObject auction = new JSONObject(response.getBody());
+                if (auction != null && auction.has("current")) {
+                    current = auction.getJSONObject("current");
+                }
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -33,6 +63,12 @@ public class VidaXL extends AbstractWebsite {
         if (code != null) {
             return code.attr("content").trim();
         }
+
+        code = doc.selectFirst("input[name='hidden_sku']");
+        if (code != null) {
+            return code.attr("value").trim();
+        }
+
         return "NA";
     }
 
@@ -42,11 +78,21 @@ public class VidaXL extends AbstractWebsite {
         if (title != null) {
             return title.text().trim();
         }
+
+        title = doc.selectFirst("meta[property='og:title']");
+        if (title != null) {
+            return title.attr("content");
+        }
+
         return "NA";
     }
 
     @Override
     public BigDecimal getPrice() {
+        if (current != null && current.has("price_num")) {
+            return new BigDecimal(current.getString("price_num"));
+        }
+
         Element price = doc.selectFirst("meta[itemprop='price']");
         if (price != null) {
             return new BigDecimal(price.attr("content").trim());
@@ -66,13 +112,16 @@ public class VidaXL extends AbstractWebsite {
     @Override
     public String getShipment() {
         StringBuilder sb = new StringBuilder();
+
         Element shipment = doc.selectFirst("div.delivery-name");
+        if (shipment == null) shipment = doc.selectFirst("div.delivery-info");
+
         if (shipment != null) {
             sb.append(shipment.text());
             sb.append(". ");
         }
 
-        shipment = doc.selectFirst("div.delivery-ship shipping-from");
+        shipment = doc.selectFirst("div.shipping-from");
         if (shipment != null) {
             sb.append(shipment.text());
             sb.append(". ");
@@ -81,12 +130,11 @@ public class VidaXL extends AbstractWebsite {
         shipment = doc.selectFirst("div.delivery-seller");
         if (shipment != null) {
             sb.append(shipment.text());
-            sb.append(". ");
         }
 
         if (sb.length() == 0) sb.append("NA");
 
-        return sb.toString().trim();
+        return sb.toString().replaceAll(" Disponibile Non disponibile", "").trim();
     }
 
     @Override

@@ -32,7 +32,8 @@ public class Euronics extends AbstractWebsite {
 
     @Override
     public boolean isAvailable() {
-        return true;
+        Element availability = doc.selectFirst("span.productDetails__availability.not-available");
+        return (availability == null);
     }
 
     @Override
@@ -66,9 +67,19 @@ public class Euronics extends AbstractWebsite {
 
     @Override
     public String getShipment() {
-        Element shipment = doc.selectFirst("span.productDetails__label.productDetails__label--left");
-        if (shipment != null) {
-            return shipment.text();
+        Element ship = doc.selectFirst("span.productDetails__label.productDetails__label--left");
+        if (ship != null) {
+            StringBuilder sb = new StringBuilder();
+
+            sb.append(ship.text());
+            sb.append(" ");
+
+            ship = doc.selectFirst("span.productDetails__label.productDetails__label--right");
+            if (ship != null) {
+                sb.append(ship.text());
+            }
+
+            return sb.toString();
         }
         return "NA";
     }
