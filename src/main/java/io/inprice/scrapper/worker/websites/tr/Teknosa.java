@@ -116,19 +116,27 @@ public class Teknosa extends AbstractWebsite {
         if (shipment != null) {
             return shipment.text().trim();
         }
-        return "Mağazada";
+        return "Mağazada teslim";
     }
 
     @Override
     public String getBrand() {
         if (json != null) {
             if (json.has("brand")) {
-                return json.getJSONObject("brand").getString("name");
+                String bn = json.getJSONObject("brand").getString("name");
+                if (bn != null && ! bn.trim().isEmpty()) return bn.trim();
             }
             if (json.has("schema:brand")) {
-                return json.getString("schema:brand");
+                String bn = json.getString("schema:brand");
+                if (bn != null && ! bn.trim().isEmpty()) return bn.trim();
             }
         }
+
+        Element brand = doc.selectFirst("div.brand-name a");
+        if (brand != null) {
+            return brand.text().trim();
+        }
+
         return "NA";
     }
 
