@@ -76,7 +76,7 @@ public class GittiGidiyor extends AbstractWebsite {
 
     @Override
     public String getShipment() {
-        Element shipment = doc.selectFirst(".CargoInfos .color-black");
+        Element shipment = doc.selectFirst(".CargoInfos");
         if (shipment != null) {
             return shipment.text().trim();
         }

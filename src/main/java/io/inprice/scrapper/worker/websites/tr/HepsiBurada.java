@@ -64,6 +64,11 @@ public class HepsiBurada extends AbstractWebsite {
 
     @Override
     public String getShipment() {
+        Element shipping = doc.selectFirst("label.campaign-text span");
+        if (shipping != null) {
+            return shipping.text();
+        }
+
         boolean freeShipping = isTrue("\"freeShipping\":");
         return "Ücretsiz Kargo: " + (freeShipping ? "Evet" : "Hayır");
     }

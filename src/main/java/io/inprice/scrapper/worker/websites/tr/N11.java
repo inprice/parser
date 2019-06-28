@@ -96,6 +96,16 @@ public class N11 extends AbstractWebsite {
 
     @Override
     public String getBrand() {
+        Element brand = doc.selectFirst("span.label:contains(Marka)");
+        if (brand == null) brand = doc.selectFirst("span.label:contains(Yazar)");
+
+        if (brand != null) {
+            Element sbling = brand.nextElementSibling();
+            if (sbling != null) {
+                return sbling.text();
+            }
+        }
+
         String[] titleChunks = getName().split("\\s");
         if (titleChunks.length > 0) return titleChunks[0].trim();
         return "NA";
