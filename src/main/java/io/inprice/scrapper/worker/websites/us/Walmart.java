@@ -69,12 +69,14 @@ public class Walmart extends AbstractWebsite {
 
     @Override
     public String getShipment() {
-        Element shipment = doc.selectFirst("div.prod-pickupMessageAccess span");
+        Element shipment = doc.selectFirst(".free-shipping-msg");
+        if (shipment == null) shipment = doc.selectFirst("div.prod-pickupMessageAccess span");
         if (shipment == null) shipment = doc.selectFirst("span.copy-small.font-bold");
 
         if (shipment != null) {
             return shipment.text();
         }
+
         return "NA";
     }
 

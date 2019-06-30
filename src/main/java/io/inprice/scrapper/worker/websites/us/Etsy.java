@@ -63,16 +63,16 @@ public class Etsy extends AbstractWebsite {
 
     @Override
     public BigDecimal getPrice() {
-        Element price = doc.selectFirst("meta[property='etsymarketplace:price_value']");
+        Element price = doc.selectFirst("span.override-listing-price");
+        if (price != null) {
+            return new BigDecimal(cleanPrice(price.text().trim()));
+        }
+
+        price = doc.selectFirst("meta[property='etsymarketplace:price_value']");
         if (price == null) price = doc.selectFirst("meta[property='product:price:amount']");
 
         if (price != null) {
             return new BigDecimal(price.attr("content"));
-        }
-
-        price = doc.selectFirst("span.override-listing-price");
-        if (price != null) {
-            return new BigDecimal(cleanPrice(price.text().trim()));
         }
 
         return BigDecimal.ZERO;
@@ -124,7 +124,7 @@ public class Etsy extends AbstractWebsite {
 
     @Override
     public List<LinkSpec> getSpecList() {
-        return getValueOnlySpecList(doc.select("div.listing-page-overview-component.bg-white div p"));
+        return getValueOnlySpecList(doc.select("div.listing-page-overview-component p"));
     }
 
 }
