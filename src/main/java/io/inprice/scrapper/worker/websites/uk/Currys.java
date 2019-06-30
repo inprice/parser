@@ -33,7 +33,7 @@ public class Currys extends AbstractWebsite {
         if (dataEL != null) {
             JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
             if (data.has("product") && ! data.getJSONArray("product").isEmpty()) {
-                product = json.getJSONArray("product").getJSONObject(0);
+                product = data.getJSONArray("product").getJSONObject(0);
             }
         }
         return super.getJsonData();
@@ -58,8 +58,8 @@ public class Currys extends AbstractWebsite {
 
     @Override
     public String getName() {
-        if (product != null && product.has("name")) {
-            return product.getString("name");
+        if (product != null && product.has("productName")) {
+            return product.getString("productName");
         }
         return "NA";
     }

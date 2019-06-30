@@ -26,6 +26,7 @@ public class Zavvi extends AbstractWebsite {
      * the main data provider derived from json placed in html
      */
     private JSONObject product;
+    private JSONObject offers;
 
     public Zavvi(Link link) {
         super(link);
@@ -67,7 +68,7 @@ public class Zavvi extends AbstractWebsite {
 
     @Override
     public String getSku() {
-        if (product != null && product.has("offers")) {
+        if (product != null) {
             return product.getString("sku");
         }
         return "NA";
@@ -83,7 +84,7 @@ public class Zavvi extends AbstractWebsite {
 
     @Override
     public BigDecimal getPrice() {
-        if (product != null && product.has("price")) {
+        if (product != null) {
             return product.getBigDecimal("price");
         }
         return BigDecimal.ZERO;

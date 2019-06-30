@@ -67,7 +67,14 @@ public class Argos extends AbstractWebsite {
 
     @Override
     public String getShipment() {
-        return "In-store pickup";
+        final String staticPart = "In-store pickup";
+
+        Element shippingFee = doc.selectFirst("a.ac-propbar__slot > span.sr-only");
+        if (shippingFee != null) {
+            return staticPart + " OR " + shippingFee.text();
+        }
+
+        return staticPart;
     }
 
     @Override
@@ -76,6 +83,17 @@ public class Argos extends AbstractWebsite {
         if (brand != null) {
             return brand.text().trim();
         }
+
+        final String html = doc.html();
+        final String indicator = "\"brand\":\"";
+
+        int start = html.indexOf(indicator) + indicator.length();
+        int end = html.indexOf("\",", start);
+
+        if (end > start) {
+            return html.substring(start, end);
+        }
+
         return "NA";
     }
 

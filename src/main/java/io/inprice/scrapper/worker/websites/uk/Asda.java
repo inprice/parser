@@ -1,7 +1,9 @@
 package io.inprice.scrapper.worker.websites.uk;
 
+import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,32 +28,37 @@ public class Asda extends AbstractWebsite {
     }
 
     /**
-     * Returns json object which holds all the necessity data
+     * Returns json object which holds all the essential data
      *
      * @return json - product data
      */
     @Override
     public JSONObject getJsonData() {
-        final String html = doc.html();
-        final String indicator = "window.productJSON";
+        String[] urlChunks = getUrl().split("/");
 
-        final int start = html.indexOf(indicator) + indicator.length() + 3;
-        final int end = html.indexOf("};", start) + 1;
-
-        if (start > 0 && end > start) {
-            JSONObject data = new JSONObject(html.substring(start, end));
-            if (data.has("product")) {
-                product = data.getJSONObject("product");
+        if (urlChunks.length > 1) {
+            String productId = urlChunks[urlChunks.length-1];
+            if (productId.matches("\\d+")) {
+                HttpResponse<String> response = HttpClient.get("https://groceries.asda.com/api/items/view?itemid=" + productId);
+                if (response.getStatus() == 200 && ! response.getBody().isEmpty()) {
+                    JSONObject prod = new JSONObject(response.getBody());
+                    if (prod.has("items")) {
+                        JSONArray items = prod.getJSONArray("items");
+                        if (items.length() > 0) {
+                            product = items.getJSONObject(0);
+                        }
+                    }
+                }
             }
-            return data;
         }
+
         return null;
     }
 
     @Override
     public boolean isAvailable() {
-        if (product != null && product.has("available")) {
-            return product.getBoolean("available");
+        if (product != null && product.has("availability")) {
+            return "A".equals(product.getString("availability"));
         }
         return false;
     }
@@ -74,29 +81,8 @@ public class Asda extends AbstractWebsite {
 
     @Override
     public BigDecimal getPrice() {
-        if (product != null) {
-            if (product.has("price")) {
-                JSONObject price = product.getJSONObject("price");
-                if (price.has("sale")) {
-                    return price.getJSONObject("sale").getBigDecimal("value");
-                }
-            }
-
-            if (product.has("variants")) {
-                JSONArray variants = product.getJSONArray("variants");
-                if (variants.length() > 0) {
-                    JSONObject firstVariant = variants.getJSONObject(0);
-                    if (firstVariant.has("price")) {
-                        JSONObject price = variants.getJSONObject(0).getJSONObject("price");
-                        if (price.has("list")) {
-                            JSONObject list = price.getJSONObject("list");
-                            if (list.has("decimalPrice")) {
-                                return list.getBigDecimal("decimalPrice");
-                            }
-                        }
-                    }
-                }
-            }
+        if (product != null && product.has("price")) {
+            return new BigDecimal(cleanPrice(product.getString("price")));
         }
 
         return BigDecimal.ZERO;
@@ -109,40 +95,20 @@ public class Asda extends AbstractWebsite {
 
     @Override
     public String getShipment() {
-        return "In-store pickup";
+        return "In-store pickup.";
     }
 
     @Override
     public String getBrand() {
-        List<LinkSpec> specList = getSpecList();
-        if (specList != null) {
-            for (LinkSpec spec: specList) {
-                if ("Brand".equals(spec.getKey())) return spec.getValue();
-            }
+        if (product != null && product.has("brandName")) {
+            return product.getString("brandName");
         }
         return "NA";
     }
 
     @Override
     public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-
-        if (product != null && product.has("attributes")) {
-            JSONArray attributes = product.getJSONArray("attributes");
-            if (! attributes.isEmpty()) {
-                specList = new ArrayList<>();
-                for (int i = 0; i < attributes.length(); i++) {
-                    JSONObject attr = attributes.getJSONObject(i);
-                    String key = null;
-                    String value = null;
-                    if (attr.has("key")) key = attr.getString("key");
-                    if (attr.has("value")) value = attr.getString("value");
-                    specList.add(new LinkSpec(key, value));
-                }
-            }
-        }
-
-        return specList;
+        return null;
     }
 
 }

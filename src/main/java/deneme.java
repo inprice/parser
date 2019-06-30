@@ -552,9 +552,9 @@ public class deneme {
             "https://www.lidl.com/products/1031629"
         };
 
-        for (String url: walmart_ca) {
+        for (String url: asos_uk) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.ca.Walmart");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.uk.Asos");
             try {
                 Class<Website> clazz = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Constructor<Website> ctor = clazz.getConstructor(Link.class);

@@ -1,8 +1,12 @@
 package io.inprice.scrapper.worker.websites.uk;
 
+import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
@@ -17,20 +21,49 @@ import java.util.List;
  */
 public class Asos extends AbstractWebsite {
 
+    private BigDecimal price = BigDecimal.ZERO;
+    private boolean isAvailable;
+
     public Asos(Link link) {
         super(link);
     }
 
     @Override
+    protected JSONObject getJsonData() {
+        final String sku = getSku();
+
+        HttpResponse<String> response = HttpClient.get("https://www.asos.com/api/product/catalogue/v3/stockprice?currency=EUR&store=ROW&productIds=" + sku);
+        if (response.getStatus() == 200 && ! response.getBody().isEmpty()) {
+            JSONArray items = new JSONArray(response.getBody());
+            if (items.length() > 0) {
+                JSONObject parent = items.getJSONObject(0);
+
+                if (parent.has("productPrice")) {
+                    JSONObject pprice = parent.getJSONObject("productPrice");
+                    price = pprice.getJSONObject("current").getBigDecimal("value");
+                }
+
+                if (parent.has("variants")) {
+                    JSONArray variants = parent.getJSONArray("variants");
+                    if (variants.length() > 0) {
+                        for (int i = 0; i < variants.length(); i++) {
+                            JSONObject var = variants.getJSONObject(i);
+                            if (var.getBoolean("isInStock")) {
+                                isAvailable = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return super.getJsonData();
+    }
+
+    @Override
     public boolean isAvailable() {
-        final String html = doc.html();
-        final String indicator = "\"isInStock\":";
-
-        int start = html.indexOf(indicator) + indicator.length();
-        int end = html.indexOf(",", start);
-
-        final String result = html.substring(start, end);
-        return "true".equalsIgnoreCase(result);
+        return isAvailable;
     }
 
     @Override
@@ -44,7 +77,7 @@ public class Asos extends AbstractWebsite {
 
     @Override
     public String getName() {
-        Element name = doc.selectFirst("span[itemprop='brand'] span[itemprop='name']");
+        Element name = doc.selectFirst("div.product-hero h1");
         if (name != null) {
             return name.text().trim();
         }
@@ -53,14 +86,7 @@ public class Asos extends AbstractWebsite {
 
     @Override
     public BigDecimal getPrice() {
-        BigDecimal val = null;
-
-        Element price = doc.selectFirst("span[itemprop='price']");
-        if (price != null) {
-            val = new BigDecimal(price.text().trim());
-            val = val.multiply(new BigDecimal(1.3825)); //asos' multiplier
-        }
-        return val;
+        return price;
     }
 
     @Override
@@ -90,7 +116,7 @@ public class Asos extends AbstractWebsite {
 
     @Override
     public String getBrand() {
-        Element brand = doc.selectFirst("span span[itemprop='name']");
+        Element brand = doc.selectFirst("span[itemprop='brand'] span[itemprop='name']");
         if (brand != null) {
             return brand.text().trim();
         }
