@@ -3,87 +3,134 @@ package io.inprice.scrapper.worker.websites.us;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+import org.json.JSONObject;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Parser for BestBuy USA
  *
- * Contains standard data. Nothing special, all is extracted by css selectors
+ * The parsing steps:
+ *
+ *  - the html body of link's url contains data (in json format) we need
+ *  - in getJsonData(), we get that json data by using substring() method of String class
+ *  - this data is named as product which is hold on a class-level variable
+ *  - each data (except for availability and specList) can be gathered using product variable
  *
  * @author mdpinar
  */
 public class BestBuy extends AbstractWebsite {
 
+    /*
+     * the main data provider derived from json placed in html
+     */
+    private JSONObject offers;
+
     public BestBuy(Link link) {
         super(link);
     }
 
+    /**
+     * The data we looking for is in html body.
+     * So, we get it by using String manipulations
+     */
+    @Override
+    public JSONObject getJsonData() {
+        Element dataEL = doc.select("div[data-reactroot] script[type='application/ld+json']").last();
+        if (dataEL != null) {
+            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
+            if (data.has("offers")) {
+                offers = data.getJSONObject("offers");
+            }
+
+            return data;
+        }
+
+        return super.getJsonData();
+    }
+
     @Override
     public boolean isAvailable() {
-        Element availability = doc.selectFirst("p.inactive-product-message");
-        return (availability == null);
+        if (offers != null && offers.has("availability")) {
+            return offers.getString("availability").contains("InStock");
+        }
+        return false;
     }
 
     @Override
     public String getSku() {
-        Element sku = doc.selectFirst("div.sku .product-data-value");
-        if (sku != null) {
-            return sku.text().trim();
+        if (json != null && json.has("sku")) {
+            return json.getString("sku");
         }
         return "NA";
     }
 
     @Override
     public String getName() {
-        Element name = doc.selectFirst("div.sku-title h1");
-        if (name != null) {
-            return name.text().trim();
+        if (json != null && json.has("name")) {
+            return json.getString("name");
         }
         return "NA";
     }
 
     @Override
     public BigDecimal getPrice() {
-        Element price = doc.selectFirst("div.priceView-hero-price span[aria-hidden]");
-
-        if (price != null) {
-            return new BigDecimal(cleanPrice(price.text().trim()));
+        if (offers != null && offers.has("price")) {
+            return new BigDecimal(cleanPrice(offers.getString("price")));
         }
-
         return BigDecimal.ZERO;
     }
 
     @Override
     public String getSeller() {
-        return "BestBuy";
+        if (offers != null && ! offers.isNull("seller")) {
+            JSONObject seller = offers.getJSONObject("seller");
+            if (seller != null) {
+                return seller.getString("name");
+            }
+        }
+        return "Best Buy";
     }
 
     @Override
     public String getShipment() {
-        Element shipment = doc.selectFirst("div.fulfillment-fulfillment-summary");
-
-        if (shipment != null) {
-            return shipment.text().trim();
-        }
-        return "NA";
+        return "Sold and shipped by " + getSeller();
     }
 
     @Override
     public String getBrand() {
-        String brand = getName();
-        if (brand != null && brand.indexOf("-") > 0) {
-            return brand.split("-")[0];
+        if (json != null && ! json.isNull("brand")) {
+            JSONObject brand = json.getJSONObject("brand");
+            if (brand != null) {
+                return brand.getString("name");
+            }
         }
-
         return "NA";
     }
 
     @Override
     public List<LinkSpec> getSpecList() {
-        return getValueOnlySpecList(doc.select("li.bullet"));
-    }
+        List<LinkSpec> specList = null;
 
+        if (json != null && ! json.isNull("description")) {
+            String desc = json.getString("description");
+            if (! desc.isEmpty()) {
+                specList = new ArrayList<>();
+
+                String[] descChunks = desc.split(";");
+                if (descChunks.length > 0) {
+                    for (String dsc: descChunks) {
+                        specList.add(new LinkSpec("", dsc));
+                    }
+                }
+            }
+
+        }
+
+        return specList;
+    }
 }
