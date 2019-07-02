@@ -23,7 +23,7 @@ public class GittiGidiyor_TR_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("445833337", link.getSku());
         assertEquals("Huawei Mate 20 Lite 64 GB Duos Cep Telefonu", link.getName());
         assertEquals("2029.00", link.getPrice().toString());
@@ -37,7 +37,7 @@ public class GittiGidiyor_TR_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("450770874", link.getSku());
         assertEquals("GÜNEŞ ENERJİLİ SOLAR DIŞ MEKAN AYDINLATMASI DEKORATİF 30 LED 5 METRE RENKLİ ANİMASYONLU", link.getName());
         assertEquals("99.99", link.getPrice().toString());
@@ -51,7 +51,7 @@ public class GittiGidiyor_TR_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("426398848", link.getSku());
         assertEquals("TÜP ŞEKLİNDE,50 adet, MANTAR TIPALI CAM ŞİŞE, ÜCRETSİZ KARGO", link.getName());
         assertEquals("71.99", link.getPrice().toString());
@@ -65,7 +65,7 @@ public class GittiGidiyor_TR_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("409029831", link.getSku());
         assertEquals("Aden X67 Fly More Combo 2K (3 Bataryalı Set)", link.getName());
         assertEquals("1249.00", link.getPrice().toString());

@@ -43,7 +43,7 @@ public class VidaXL_IT_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("41192", link.getSku());
         assertEquals("Programmatore timer irrigazione elettronico automatico per orto 1 via", link.getName());
         assertEquals("26.99", link.getPrice().toString());
@@ -57,7 +57,7 @@ public class VidaXL_IT_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("140654", link.getSku());
         assertEquals("vidaXL Scrostatore Pneumatico ad Aghi", link.getName());
         assertEquals("32.99", link.getPrice().toString());
@@ -75,7 +75,7 @@ public class VidaXL_IT_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("41296", link.getSku());
         assertEquals("Recinzione con traliccio estensibile di legno 180 x 100 cm", link.getName());
         assertEquals("19.10", link.getPrice().toString());
@@ -93,7 +93,7 @@ public class VidaXL_IT_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("141679", link.getSku());
         assertEquals("vidaXL Specchio Traffico Convesso Nero Plastica PC per Esterni 30 cm", link.getName());
         assertEquals("16.00", link.getPrice().toString());

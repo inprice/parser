@@ -139,7 +139,7 @@ public class Target extends AbstractWebsite {
             JSONObject priceEL = product.getJSONObject("price");
             if (priceEL.has("price")) {
                 String price = priceEL.getString("price");
-                if (! price.isEmpty()) return new BigDecimal(price);
+                if (! price.trim().isEmpty()) return new BigDecimal(price.trim());
             }
         }
 
@@ -163,7 +163,7 @@ public class Target extends AbstractWebsite {
     public String getSeller() {
         if (product != null && product.has("productVendorName")) {
             String seller = product.getString("productVendorName");
-            if (seller.isEmpty()) return getBrand();
+            if (! seller.isEmpty()) return seller;
         }
         return "Target";
     }

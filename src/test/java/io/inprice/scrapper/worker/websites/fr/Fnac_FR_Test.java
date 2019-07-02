@@ -21,7 +21,7 @@ public class Fnac_FR_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("6837425", link.getSku());
         assertEquals("LEGO® Creator 10220 Le campingcar Volkswagen T1", link.getName());
         assertEquals("81.99", link.getPrice().toString());
@@ -35,7 +35,7 @@ public class Fnac_FR_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("9116585", link.getSku());
         assertEquals("Blender Moulinex Freshboost LM181D10 800 W Noir", link.getName());
         assertEquals("99.99", link.getPrice().toString());
@@ -49,7 +49,7 @@ public class Fnac_FR_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("8598118", link.getSku());
         assertEquals("Casque Parrot Zik 3 by Starck Vert Emeraude avec chargeur à induction", link.getName());
         assertEquals("99.99", link.getPrice().toString());
@@ -63,7 +63,7 @@ public class Fnac_FR_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("8993319", link.getSku());
         assertEquals("Ventilateur Rowenta VU6620F0", link.getName());
         assertEquals("109.26", link.getPrice().toString());

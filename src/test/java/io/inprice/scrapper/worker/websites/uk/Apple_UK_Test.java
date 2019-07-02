@@ -42,7 +42,7 @@ public class Apple_UK_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("40mm Dragon Fruit Sport Band - S/M & M/L", link.getName());
         assertEquals("49.00", link.getPrice().toString());
@@ -59,7 +59,7 @@ public class Apple_UK_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("iPhone XR 64GB (PRODUCT)RED", link.getName());
         assertEquals("749.00", link.getPrice().toString());
@@ -76,7 +76,7 @@ public class Apple_UK_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Apple Watch Nike+ Series 4 GPS, 44mm Silver Aluminium Case with Pure Platinum/Black Nike Sport Band", link.getName());
         assertEquals("429.00", link.getPrice().toString());
@@ -93,7 +93,7 @@ public class Apple_UK_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Belkin Ultra High Speed 4K HDMI Cable (2m)", link.getName());
         assertEquals("29.95", link.getPrice().toString());

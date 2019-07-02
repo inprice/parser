@@ -6,8 +6,8 @@ public class Helpers {
         return String.format("websites/%s/%s_%d.html", countryCode, website, no);
     }
 
-    public static String getJsonPath(String website, String countryCode, int no) {
-        return String.format("websites/%s/%s_%d.json", countryCode, website, no);
+    public static String getEmptyHtmlPath() {
+        return "websites/exceptions/empty.html";
     }
 
 }

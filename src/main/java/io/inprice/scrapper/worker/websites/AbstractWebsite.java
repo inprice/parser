@@ -1,5 +1,6 @@
 package io.inprice.scrapper.worker.websites;
 
+import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
@@ -137,7 +138,19 @@ public abstract class AbstractWebsite implements Website {
     private void read() {
         json = getJsonData();
 
-        if (Status.NEW.equals(link.getStatus()) || Status.RENEWED.equals(link.getStatus()) || link.getName() == null) {
+        /*
+         * getJsonData method may return a network or socket error. thus, we need to check if it is so
+         */
+        if (Status.READ_ERROR.equals(link.getStatus())
+        ||  Status.NO_DATA.equals(link.getStatus())
+        ||  Status.SOCKET_ERROR.equals(link.getStatus())
+        ||  Status.NETWORK_ERROR.equals(link.getStatus())) {
+            return;
+        }
+
+        if (link.getName() == null
+        ||  Status.NEW.equals(link.getStatus())
+        ||  Status.RENEWED.equals(link.getStatus())) {
             link.setSku(getSku());
             link.setName(getName());
             link.setSeller(getSeller());
@@ -150,10 +163,34 @@ public abstract class AbstractWebsite implements Website {
         if (! price.equals(link.getPrice())) link.setPrice(price);
 
         if (isAvailable()) {
-            link.setStatus(Status.ACTIVE);
+            link.setStatus(Status.AVAILABLE);
         } else {
-            link.setStatus(Status.UNAVAILABLE);
+            link.setStatus(Status.OUT_OF_STOCK);
             log.debug("This product is not available!");
+        }
+    }
+
+    protected Status getLinkStatus() {
+        return link.getStatus();
+    }
+
+    protected void setLinkStatus(Status status) {
+        link.setStatus(status);
+    }
+
+    protected void setLinkStatus(Status status, int httpStatus) {
+        link.setStatus(status);
+        link.setHttpStatus(httpStatus);
+    }
+
+    protected void setLinkStatus(HttpResponse<String> response) {
+        if (response != null) {
+            final Status status = (response.getStatus() == 0 ? Status.SOCKET_ERROR : Status.NETWORK_ERROR);
+            log.error("Failed to fetch data! Status: %s, Http Status: %d", status.name(), response.getStatus());
+            setLinkStatus(status, response.getStatus());
+        } else {
+            log.error("Response is null!");
+            setLinkStatus(Status.READ_ERROR);
         }
     }
 

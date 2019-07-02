@@ -22,7 +22,7 @@ public class CoolBlue_NL_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("447037", link.getSku());
         assertEquals("Stanley Air Kit", link.getName());
         assertEquals("109.00", link.getPrice().toString());
@@ -36,7 +36,7 @@ public class CoolBlue_NL_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("819196", link.getSku());
         assertEquals("GoPro HERO 7 Black", link.getName());
         assertEquals("349.00", link.getPrice().toString());
@@ -50,7 +50,7 @@ public class CoolBlue_NL_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("819780", link.getSku());
         assertEquals("TomTom GO Essential 5 Europa", link.getName());
         assertEquals("187.00", link.getPrice().toString());
@@ -64,7 +64,7 @@ public class CoolBlue_NL_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("601518", link.getSku());
         assertEquals("Bose SoundLink Mini II Zwart", link.getName());
         assertEquals("139.00", link.getPrice().toString());

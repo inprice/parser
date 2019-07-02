@@ -22,7 +22,7 @@ public class Euronics_IT_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.UNAVAILABLE, link.getStatus());
+        assertEquals(Status.OUT_OF_STOCK, link.getStatus());
         assertEquals("eProd182001118", link.getSku());
         assertEquals("ASUS - CERBERUS V2/RED - Nero/Rosso", link.getName());
         assertEquals("0.00", link.getPrice().toString());
@@ -36,7 +36,7 @@ public class Euronics_IT_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("eProd182001461", link.getSku());
         assertEquals("OLIMPIA SPLENDID - Peler 4E - Bianco", link.getName());
         assertEquals("79.99", link.getPrice().toString());
@@ -50,7 +50,7 @@ public class Euronics_IT_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("eProd192005354", link.getSku());
         assertEquals("SAMSUNG - RB41R7719S9/EF - metal inox", link.getName());
         assertEquals("899.00", link.getPrice().toString());
@@ -64,7 +64,7 @@ public class Euronics_IT_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("eProd192003278", link.getSku());
         assertEquals("XIAOMI - Redmi Note 7 4+64 - Blu", link.getName());
         assertEquals("199.00", link.getPrice().toString());

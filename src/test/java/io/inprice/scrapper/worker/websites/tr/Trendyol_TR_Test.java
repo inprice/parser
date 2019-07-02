@@ -22,7 +22,7 @@ public class Trendyol_TR_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("30114319", link.getSku());
         assertEquals("Hacim Sağlayan Siyah Maskara - Colossal Go Extreme Volum Express Mascara 30114319", link.getName());
         assertEquals("29.95", link.getPrice().toString());
@@ -36,7 +36,7 @@ public class Trendyol_TR_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("BA5773-010", link.getSku());
         assertEquals("Unisex Sırt Çantası - Y Nk Academy Team - Ba5773-010 BA5773-010", link.getName());
         assertEquals("118.00", link.getPrice().toString());
@@ -50,7 +50,7 @@ public class Trendyol_TR_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("L6149AZ.19SM.NV42", link.getSku());
         assertEquals("Erkek Lacivert Kemer L6149AZ.19SM.NV42", link.getName());
         assertEquals("25.99", link.getPrice().toString());
@@ -64,7 +64,7 @@ public class Trendyol_TR_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("AL6100L", link.getSku());
         assertEquals("Altus AL 6100 L A+++ 1000 Devir 6 kg Çamaşır Makinesi AL6100L", link.getName());
         assertEquals("1199.00", link.getPrice().toString());

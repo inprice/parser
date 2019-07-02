@@ -42,7 +42,7 @@ public class Apple_FR_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Casque Beats Solo3 sans fil - Collection Club de Beats - Rouge Club", link.getName());
         assertEquals("199.95", link.getPrice().toString());
@@ -59,7 +59,7 @@ public class Apple_FR_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Housse en cuir pour MacBook Air et MacBook Pro 13 pouces - Noir", link.getName());
         assertEquals("199.00", link.getPrice().toString());
@@ -76,7 +76,7 @@ public class Apple_FR_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Smart Keyboard pour iPad Air 10,5 pouces (français)", link.getName());
         assertEquals("179.00", link.getPrice().toString());
@@ -93,7 +93,7 @@ public class Apple_FR_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Smart Battery Case pour iPhone XS Max – Rose des sables", link.getName());
         assertEquals("149.00", link.getPrice().toString());

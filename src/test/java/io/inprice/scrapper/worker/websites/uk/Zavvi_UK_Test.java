@@ -22,7 +22,7 @@ public class Zavvi_UK_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("11852041", link.getSku());
         assertEquals("Meta Merch Star Wars Chewbacca Arm Mug", link.getName());
         assertEquals("7.99", link.getPrice().toString());
@@ -36,7 +36,7 @@ public class Zavvi_UK_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.UNAVAILABLE, link.getStatus());
+        assertEquals(Status.OUT_OF_STOCK, link.getStatus());
         assertEquals("12071095", link.getSku());
         assertEquals("Marvel Pop! Advent Calendar (2019)", link.getName());
         assertEquals("49.99", link.getPrice().toString());
@@ -50,7 +50,7 @@ public class Zavvi_UK_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("11477837", link.getSku());
         assertEquals("Nintendo Retro NES Classically Trained Men's White T-Shirt", link.getName());
         assertEquals("14.99", link.getPrice().toString());
@@ -64,7 +64,7 @@ public class Zavvi_UK_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.UNAVAILABLE, link.getStatus());
+        assertEquals(Status.OUT_OF_STOCK, link.getStatus());
         assertEquals("12183579", link.getSku());
         assertEquals("Sonic the Hedgehog BOOM8 Series PVC Figure Vol. 02 Sonic (8cm)", link.getName());
         assertEquals("24.99", link.getPrice().toString());

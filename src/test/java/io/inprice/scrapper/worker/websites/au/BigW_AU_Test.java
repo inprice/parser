@@ -23,7 +23,7 @@ public class BigW_AU_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("827030", link.getSku());
         assertEquals("Repco Blade 20 Boys 50cm Mountain Bike", link.getName());
         assertEquals("99.00", link.getPrice().toString());
@@ -37,7 +37,7 @@ public class BigW_AU_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("33770", link.getSku());
         assertEquals("Laser Karaoke LED Microphone - Pink", link.getName());
         assertEquals("39.00", link.getPrice().toString());
@@ -51,7 +51,7 @@ public class BigW_AU_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("820960", link.getSku());
         assertEquals("NERF Mega Megalodon including 20 Mega Darts", link.getName());
         assertEquals("49.00", link.getPrice().toString());
@@ -65,7 +65,7 @@ public class BigW_AU_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("821107", link.getSku());
         assertEquals("Barbie Ultra Plus Folding Booster Seat", link.getName());
         assertEquals("129.00", link.getPrice().toString());

@@ -22,7 +22,7 @@ public class HarveyNorman_AU_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("ROYAL/NK/8", link.getSku());
         assertEquals("Nickel 8 Light Chandelier", link.getName());
         assertEquals("1039.00", link.getPrice().toString());
@@ -36,7 +36,7 @@ public class HarveyNorman_AU_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("65UM7600PTA", link.getSku());
         assertEquals("LG 65-inch UM76 4K UHD LED LCD AI ThinQ Smart TV", link.getName());
         assertEquals("1595.00", link.getPrice().toString());
@@ -50,7 +50,7 @@ public class HarveyNorman_AU_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("HWFM8012", link.getSku());
         assertEquals("Hisense 8kg Front Loading Washing Machine", link.getName());
         assertEquals("495.00", link.getPrice().toString());
@@ -64,7 +64,7 @@ public class HarveyNorman_AU_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("PT-0190", link.getSku());
         assertEquals("Plantronics RIG 300 Stereo Gaming Headset for PC", link.getName());
         assertEquals("47.00", link.getPrice().toString());

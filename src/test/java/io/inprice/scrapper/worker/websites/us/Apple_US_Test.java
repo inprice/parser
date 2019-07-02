@@ -42,7 +42,7 @@ public class Apple_US_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Powerbeats Pro - Totally Wireless Earphones - Black", link.getName());
         assertEquals("249.95", link.getPrice().toString());
@@ -59,7 +59,7 @@ public class Apple_US_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("HomePod - White", link.getName());
         assertEquals("299.00", link.getPrice().toString());
@@ -76,7 +76,7 @@ public class Apple_US_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("iPod touch 32GB - Pink", link.getName());
         assertEquals("199.00", link.getPrice().toString());
@@ -93,7 +93,7 @@ public class Apple_US_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Beats Solo3 Wireless Headphones - Mickey’s 90th Anniversary Edition", link.getName());
         assertEquals("224.95", link.getPrice().toString());

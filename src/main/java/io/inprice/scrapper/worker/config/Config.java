@@ -14,7 +14,7 @@ public class Config {
 
 	// Queues
 	public static final String RABBITMQ_NEW_LINKS_QUEUE;
-	public static final String RABBITMQ_ACTIVE_LINKS_QUEUE;
+	public static final String RABBITMQ_AVAILABLE_LINKS_QUEUE;
 	public static final String RABBITMQ_FAILED_LINKS_QUEUE;
 
 	public static final String RABBITMQ_STATUS_CHANGE_QUEUE;
@@ -38,7 +38,7 @@ public class Config {
 
 		//minutely
 		RABBITMQ_NEW_LINKS_QUEUE = getOrDefault("RABBITMQ_NEW_LINKS_QUEUE", "new-links");
-		RABBITMQ_ACTIVE_LINKS_QUEUE = getOrDefault("RABBITMQ_ACTIVE_LINKS_QUEUE", "active-links");
+		RABBITMQ_AVAILABLE_LINKS_QUEUE = getOrDefault("RABBITMQ_AVAILABLE_LINKS_QUEUE", "active-links");
 		RABBITMQ_FAILED_LINKS_QUEUE = getOrDefault("RABBITMQ_FAILED_LINKS_QUEUE", "socket-errors");
 
 		//different

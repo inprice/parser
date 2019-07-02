@@ -48,7 +48,7 @@ public class AppliancesOnline_AU_Test {
 
         Link link = site.test(null);
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("1562", link.getSku());
         assertEquals("Rinnai 6kg Dry-Soft 6 Natural Gas Dryer DRYSOFT6N", link.getName());
         assertEquals("1524.00", link.getPrice().toString());
@@ -64,7 +64,7 @@ public class AppliancesOnline_AU_Test {
 
         Link link = site.test(null);
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("2708", link.getSku());
         assertEquals("InSinkErator 100 Evolution Food Waste Disposer", link.getName());
         assertEquals("978.00", link.getPrice().toString());
@@ -80,7 +80,7 @@ public class AppliancesOnline_AU_Test {
 
         Link link = site.test(null);
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("39819", link.getSku());
         assertEquals("WEBER 6579 Q Portable Cart for Baby Q Q 1000 & Q2000 Series 6579", link.getName());
         assertEquals("152.00", link.getPrice().toString());
@@ -96,7 +96,7 @@ public class AppliancesOnline_AU_Test {
 
         Link link = site.test(null);
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("56789", link.getSku());
         assertEquals("Dimplex DC18 5.3kW Portable Air Conditioner with Dehumidifier", link.getName());
         assertEquals("978.00", link.getPrice().toString());

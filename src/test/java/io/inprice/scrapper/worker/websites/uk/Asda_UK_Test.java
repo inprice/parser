@@ -43,7 +43,7 @@ public class Asda_UK_Test {
         setMock(1, prodId);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(prodId, link.getSku());
         assertEquals("Gran Lomo Malbec", link.getName());
         assertEquals("5.00", link.getPrice().toString());
@@ -59,7 +59,7 @@ public class Asda_UK_Test {
         setMock(2, prodId);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(prodId, link.getSku());
         assertEquals("Purina ONE Adult Dry Cat Food Salmon and Wholegrain", link.getName());
         assertEquals("11.00", link.getPrice().toString());
@@ -75,7 +75,7 @@ public class Asda_UK_Test {
         setMock(3, prodId);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(prodId, link.getSku());
         assertEquals("Prince Chocolate Sandwich Biscuits", link.getName());
         assertEquals("1.00", link.getPrice().toString());
@@ -91,7 +91,7 @@ public class Asda_UK_Test {
         setMock(4, prodId);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(prodId, link.getSku());
         assertEquals("Oral-B Pro 600 White & Clean Rechargeable Electric Toothbrush", link.getName());
         assertEquals("15.00", link.getPrice().toString());

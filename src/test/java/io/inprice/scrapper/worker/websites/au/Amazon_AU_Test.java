@@ -23,7 +23,7 @@ public class Amazon_AU_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("B07FTHCPDP", link.getSku());
         assertEquals("Antler 4227130015 Juno 2 4W Large Roller Case Suitcases (Hardside), Turquoise, 81 cm", link.getName());
         assertEquals("179.00", link.getPrice().toString());
@@ -37,7 +37,7 @@ public class Amazon_AU_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("B072KMX18S", link.getSku());
         assertEquals("Emporio Armani Men's Quartz Watch Analog Display and Stainless Steel Strap, AR11068", link.getName());
         assertEquals("233.00", link.getPrice().toString());
@@ -51,7 +51,7 @@ public class Amazon_AU_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("B0755PDKCN", link.getSku());
         assertEquals("GoPro The Handler 2017 Version DVC Accessories, Orange", link.getName());
         assertEquals("46.34", link.getPrice().toString());
@@ -65,7 +65,7 @@ public class Amazon_AU_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("B07G9ZGL9X", link.getSku());
         assertEquals("M&M's Milk Chocolate Party Size Bucket (640g) (Packaging may vary)", link.getName());
         assertEquals("9.28", link.getPrice().toString());

@@ -68,7 +68,7 @@ class BaseLinkConsumer {
 
     private void sendToQueue(Link oldState, Link newState) {
         //make active
-        if (! newState.getActivated() && newState.getStatus().equals(Status.ACTIVE)) {
+        if (! newState.getActivated() && newState.getStatus().equals(Status.AVAILABLE)) {
             RabbitMQ.publish(Config.RABBITMQ_ACTIVATED_LINKS_QUEUE, Converter.fromObject(newState));
 
         //change status

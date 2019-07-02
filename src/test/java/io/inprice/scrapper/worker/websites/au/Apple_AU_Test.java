@@ -12,7 +12,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -34,6 +35,7 @@ public class Apple_AU_Test {
 
         PowerMockito.mockStatic(HttpClient.class);
     }
+
     @Test
     public void test_product_1() {
         final String sku = "MTXP2X/A";
@@ -41,7 +43,7 @@ public class Apple_AU_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("11-inch iPad Pro Wi-Fi 64GB — Silver", link.getName());
         assertEquals("1229.00", link.getPrice().toString());
@@ -58,7 +60,7 @@ public class Apple_AU_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("13-inch MacBook Air — Space Grey", link.getName());
         assertEquals("2149.00", link.getPrice().toString());
@@ -75,7 +77,7 @@ public class Apple_AU_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("iPhone 8 256GB Space Grey", link.getName());
         assertEquals("1229.00", link.getPrice().toString());
@@ -92,7 +94,7 @@ public class Apple_AU_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("HomePod — White", link.getName());
         assertEquals("469.00", link.getPrice().toString());

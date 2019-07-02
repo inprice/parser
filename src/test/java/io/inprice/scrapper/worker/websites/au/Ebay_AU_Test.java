@@ -23,7 +23,7 @@ public class Ebay_AU_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("253639280508", link.getSku());
         assertEquals("Milano Deluxe 3pc ABS Luggage Suitcase Luxury Hard Case Shockproof Travel Set", link.getName());
         assertEquals("99.95", link.getPrice().toString());
@@ -37,7 +37,7 @@ public class Ebay_AU_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("291875944966", link.getSku());
         assertEquals("NEW Peter Thomas Roth Max Anti-Shine Mattifying Gel 30ml Womens Skin Care", link.getName());
         assertEquals("41.97", link.getPrice().toString());
@@ -51,7 +51,7 @@ public class Ebay_AU_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("254255431988", link.getSku());
         assertEquals("140340 vidaXL Auger Ground Drill Orange", link.getName());
         assertEquals("195.97", link.getPrice().toString());
@@ -65,7 +65,7 @@ public class Ebay_AU_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("283038845115", link.getSku());
         assertEquals("MEN'S TROUSERS DIAMOND mod. CAPRI DARK GREY CHECK CASUAL COTTON", link.getName());
         assertEquals("38.13", link.getPrice().toString());

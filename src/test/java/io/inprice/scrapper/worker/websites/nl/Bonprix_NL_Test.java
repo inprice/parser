@@ -23,7 +23,7 @@ public class Bonprix_NL_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.UNAVAILABLE, link.getStatus());
+        assertEquals(Status.OUT_OF_STOCK, link.getStatus());
         assertEquals("97447795_29806865", link.getSku());
         assertEquals("Sweatbermuda", link.getName());
         assertEquals("9.99", link.getPrice().toString());
@@ -37,7 +37,7 @@ public class Bonprix_NL_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("94977395_26495747", link.getSku());
         assertEquals("Dekbedovertrek «Aap»", link.getName());
         assertEquals("19.99", link.getPrice().toString());
@@ -51,7 +51,7 @@ public class Bonprix_NL_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("90555595_26598631", link.getSku());
         assertEquals("Halskettingen (3-dlg. set)", link.getName());
         assertEquals("12.99", link.getPrice().toString());

@@ -41,7 +41,7 @@ public class Walmart_CA_Test {
         setMock(1);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("6000199211475", link.getSku());
         assertEquals("hometrends Tuscany Cuddle Chair", link.getName());
         assertEquals("224.00", link.getPrice().toString());
@@ -56,7 +56,7 @@ public class Walmart_CA_Test {
         setMock(2);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("6000187311310", link.getSku());
         assertEquals("Armor All Complete Car Care Kit", link.getName());
         assertEquals("21.97", link.getPrice().toString());
@@ -71,7 +71,7 @@ public class Walmart_CA_Test {
         setMock(3);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("6000188988578", link.getSku());
         assertEquals("Trudeau Maison Misto Party Grill", link.getName());
         assertEquals("35.00", link.getPrice().toString());
@@ -86,7 +86,7 @@ public class Walmart_CA_Test {
         setMock(4);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.UNAVAILABLE, link.getStatus());
+        assertEquals(Status.OUT_OF_STOCK, link.getStatus());
         assertEquals("6000196486964", link.getSku());
         assertEquals("Scunci No-Slip Silicone Elastics", link.getName());
         assertEquals("0.00", link.getPrice().toString());

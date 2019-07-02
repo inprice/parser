@@ -23,7 +23,7 @@ public class Ebay_TR_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("302965837951", link.getSku());
         assertEquals("Nextbase 312G Dash Cam 1080P 2.7\" LED Car Recorder Night Vision", link.getName());
         assertEquals("49.95", link.getPrice().toString());
@@ -37,7 +37,7 @@ public class Ebay_TR_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("282124090417", link.getSku());
         assertEquals("VonShef Deep Fat Fryer 1.5 Litre Chip Pan Basket Non Stick Oil Fry 900W Compact", link.getName());
         assertEquals("18.99", link.getPrice().toString());
@@ -51,7 +51,7 @@ public class Ebay_TR_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("312192267322", link.getSku());
         assertEquals("Levis 2 Pack Trunk Short Briefs 200SF Vintage HeatherMens Birthday", link.getName());
         assertEquals("10.99", link.getPrice().toString());
@@ -65,7 +65,7 @@ public class Ebay_TR_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("362401070603", link.getSku());
         assertEquals("Lava KAHULA Portable Bluetooth Soundbar Speaker With Rechargable Battery", link.getName());
         assertEquals("19.99", link.getPrice().toString());

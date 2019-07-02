@@ -22,7 +22,7 @@ public class Amazon_US_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("B0759YSF4W", link.getSku());
         assertEquals("Samsung Chromebook 3, 11.6in, 4GB RAM, 16GB eMMC, Chromebook (XE500C13-K04US) (Renewed)", link.getName());
         assertEquals("142.90", link.getPrice().toString());
@@ -36,7 +36,7 @@ public class Amazon_US_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("B0787V183F", link.getSku());
         assertEquals("Google Pixel 2 64 GB, Black Factory Unlocked (Renewed)", link.getName());
         assertEquals("294.99", link.getPrice().toString());
@@ -50,7 +50,7 @@ public class Amazon_US_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("B07PGR2G13", link.getSku());
         assertEquals("SAME DAY SHIPPING before 12pm Personalized Vertical Bar Necklace Coordinate Jewelry Mothers Day Gift Roman Numeral Graduation Gift Engraved 3D Necklaces for Women Initial Necklace - 4SBN", link.getName());
         assertEquals("16.58", link.getPrice().toString());
@@ -64,7 +64,7 @@ public class Amazon_US_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("B00SMJHB6C", link.getSku());
         assertEquals("Clarks Men's Tilden Walk Oxford", link.getName());
         assertEquals("67.69", link.getPrice().toString());

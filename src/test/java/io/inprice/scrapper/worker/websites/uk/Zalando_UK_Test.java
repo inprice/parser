@@ -23,7 +23,7 @@ public class Zalando_UK_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("AD121J0K8-I11", link.getSku());
         assertEquals("TREFOIL HOODIE - Hoodie", link.getName());
         assertEquals("41.90", link.getPrice().toString());
@@ -37,7 +37,7 @@ public class Zalando_UK_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("TO851L01L-F11", link.getSku());
         assertEquals("EARRINGS - Earrings - gold", link.getName());
         assertEquals("36.99", link.getPrice().toString());
@@ -51,7 +51,7 @@ public class Zalando_UK_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("M9121U0HC-K11", link.getSku());
         assertEquals("STAR - Classic coat", link.getName());
         assertEquals("69.99", link.getPrice().toString());
@@ -65,7 +65,7 @@ public class Zalando_UK_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("RA251K00I-O11", link.getSku());
         assertEquals("Sunglasses", link.getName());
         assertEquals("109.99", link.getPrice().toString());

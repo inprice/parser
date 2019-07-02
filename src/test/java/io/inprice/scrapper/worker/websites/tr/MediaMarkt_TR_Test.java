@@ -23,7 +23,7 @@ public class MediaMarkt_TR_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("1112117", link.getSku());
         assertEquals("GIGASET A415 Dect Telefon", link.getName());
         assertEquals("199.00", link.getPrice().toString());
@@ -37,7 +37,7 @@ public class MediaMarkt_TR_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("1170313", link.getSku());
         assertEquals("TRUST URBAN Trust Urban 21711 12W USB Hızlı Araç Şarj Cihazı", link.getName());
         assertEquals("59.99", link.getPrice().toString());
@@ -51,7 +51,7 @@ public class MediaMarkt_TR_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("1109421", link.getSku());
         assertEquals("FRISBY FNC 37ST Laptop Soğutucu", link.getName());
         assertEquals("69.99", link.getPrice().toString());
@@ -65,7 +65,7 @@ public class MediaMarkt_TR_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("1181169", link.getSku());
         assertEquals("WAHL Burun Kılı Kesme-Pilli", link.getName());
         assertEquals("29.99", link.getPrice().toString());

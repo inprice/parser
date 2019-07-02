@@ -23,7 +23,7 @@ public class Bonprix_DE_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("96091695_27838420", link.getSku());
         assertEquals("Solarleuchte \"Leuchtturm\"", link.getName());
         assertEquals("19.99", link.getPrice().toString());
@@ -37,7 +37,7 @@ public class Bonprix_DE_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("92556195_29973862", link.getSku());
         assertEquals("Brazil Slip (2er-Pack)", link.getName());
         assertEquals("14.98", link.getPrice().toString());
@@ -51,7 +51,7 @@ public class Bonprix_DE_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("95378681_29519547", link.getSku());
         assertEquals("Outdoor Boot", link.getName());
         assertEquals("29.99", link.getPrice().toString());
@@ -65,7 +65,7 @@ public class Bonprix_DE_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("95016895_29852337", link.getSku());
         assertEquals("Mädchen Shirtkleid mit Volant", link.getName());
         assertEquals("12.99", link.getPrice().toString());

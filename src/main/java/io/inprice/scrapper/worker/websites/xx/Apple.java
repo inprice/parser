@@ -1,6 +1,7 @@
 package io.inprice.scrapper.worker.websites.xx;
 
 import com.mashape.unirest.http.HttpResponse;
+import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.HttpClient;
@@ -34,6 +35,9 @@ public class Apple extends AbstractWebsite {
 
     @Override
     public JSONObject getJsonData() {
+        Status preStatus = getLinkStatus();
+        setLinkStatus(Status.NO_DATA);
+
         Element dataEL = doc.selectFirst("script[type='application/ld+json']");
         if (dataEL != null) {
             JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
@@ -45,25 +49,35 @@ public class Apple extends AbstractWebsite {
                         final int index = getUrl().indexOf("/shop/");
 
                         if (index > 0) {
-
                             final String sku = offers.getString("sku");
                             final String rootDomain = getUrl().substring(0, index);
 
                             HttpResponse<String> response = HttpClient.get(rootDomain + "/shop/delivery-message?parts.0=" + sku, REFERRER);
-                            if (response.getStatus() < 400) {
-                                JSONObject shipment = new JSONObject(response.getBody());
-                                if (!shipment.isEmpty()) {
-                                    if (shipment.getJSONObject("body").getJSONObject("content").getJSONObject("deliveryMessage").has(sku)) {
-                                        product = shipment.getJSONObject("body").getJSONObject("content").getJSONObject("deliveryMessage").getJSONObject(sku);
-                                        available = product.getBoolean("isBuyable");
+                            if (response != null && response.getStatus() > 0 && response.getStatus() < 400) {
+                                if (response.getBody() != null && ! response.getBody().trim().isEmpty()) {
+                                    JSONObject shipment = new JSONObject(response.getBody());
+                                    if (!shipment.isEmpty()) {
+                                        if (shipment.getJSONObject("body").getJSONObject("content").getJSONObject("deliveryMessage").has(sku)) {
+                                            product = shipment.getJSONObject("body").getJSONObject("content").getJSONObject("deliveryMessage").getJSONObject(sku);
+                                            available = product.getBoolean("isBuyable");
+                                            setLinkStatus(preStatus);
+                                        }
                                     }
                                 }
+                            } else {
+                                setLinkStatus(response);
                             }
                         }
                     }
                 }
+            } else {
+                log.error("Failed to fetch data! Status: READ_ERROR --> L1");
+                setLinkStatus(Status.READ_ERROR);
             }
             return data;
+        } else {
+            log.error("Failed to fetch data! Status: READ_ERROR --> L2");
+            setLinkStatus(Status.READ_ERROR);
         }
         return super.getJsonData();
     }

@@ -23,7 +23,7 @@ public class MediaMarkt_NL_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("1070699", link.getSku());
         assertEquals("HAMA USB 2.0 verlengkabel 1 ster 0,25m", link.getName());
         assertEquals("6.99", link.getPrice().toString());
@@ -37,7 +37,7 @@ public class MediaMarkt_NL_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("1555572", link.getSku());
         assertEquals("ZANUSSI ZGH65414XS", link.getName());
         assertEquals("299.00", link.getPrice().toString());
@@ -51,7 +51,7 @@ public class MediaMarkt_NL_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("1484859", link.getSku());
         assertEquals("LOGITECH POP Add-on Home Switch Grijs", link.getName());
         assertEquals("29.00", link.getPrice().toString());
@@ -65,7 +65,7 @@ public class MediaMarkt_NL_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("1399691", link.getSku());
         assertEquals("Sarah McLachlan - Surfacing | Vinyl", link.getName());
         assertEquals("22.99", link.getPrice().toString());

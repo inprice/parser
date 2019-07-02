@@ -42,7 +42,7 @@ public class Apple_ES_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("AirPods con estuche de carga", link.getName());
         assertEquals("179.00", link.getPrice().toString());
@@ -59,7 +59,7 @@ public class Apple_ES_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Mac mini", link.getName());
         assertEquals("899.00", link.getPrice().toString());
@@ -76,7 +76,7 @@ public class Apple_ES_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Apple Pencil", link.getName());
         assertEquals("99.00", link.getPrice().toString());
@@ -93,7 +93,7 @@ public class Apple_ES_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("iPhone 7 de 128 GB en plata", link.getName());
         assertEquals("639.00", link.getPrice().toString());

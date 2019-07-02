@@ -42,7 +42,7 @@ public class Apple_NL_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("21,5-inch iMac met Retina 4K‑display", link.getName());
         assertEquals("1699.00", link.getPrice().toString());
@@ -59,7 +59,7 @@ public class Apple_NL_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("512‑GB iPhone XS Max, goud", link.getName());
         assertEquals("1659.00", link.getPrice().toString());
@@ -76,7 +76,7 @@ public class Apple_NL_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("AirPods met draadloze oplaadcase", link.getName());
         assertEquals("229.00", link.getPrice().toString());
@@ -93,7 +93,7 @@ public class Apple_NL_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("SteelSeries Nimbus draadloze gamecontroller", link.getName());
         assertEquals("59.95", link.getPrice().toString());

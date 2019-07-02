@@ -22,7 +22,7 @@ public class DeBijenkorf_NL_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("3893011758", link.getSku());
         assertEquals("Swarovski Stone Signet ring 5412032", link.getName());
         assertEquals("64.50", link.getPrice().toString());
@@ -36,7 +36,7 @@ public class DeBijenkorf_NL_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("4549010000", link.getSku());
         assertEquals("Balenciaga I Love Techno T-shirt met borduring", link.getName());
         assertEquals("279.30", link.getPrice().toString());
@@ -50,7 +50,7 @@ public class DeBijenkorf_NL_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("8678010071", link.getSku());
         assertEquals("Seafolly Splendour triangel bikinitop met bloemendessin", link.getName());
         assertEquals("47.20", link.getPrice().toString());
@@ -64,7 +64,7 @@ public class DeBijenkorf_NL_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("7303090536", link.getSku());
         assertEquals("Godiva Gold Rigid Box assortiment bonbons 34 stuks", link.getName());
         assertEquals("48.95", link.getPrice().toString());

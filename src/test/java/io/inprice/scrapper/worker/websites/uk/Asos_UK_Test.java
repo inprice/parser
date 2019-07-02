@@ -43,7 +43,7 @@ public class Asos_UK_Test {
         setMock(1);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("12382834", link.getSku());
         assertEquals("Lacoste Ampthill in black leather", link.getName());
         assertEquals("103.69", link.getPrice().toString());
@@ -58,7 +58,7 @@ public class Asos_UK_Test {
         setMock(2);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("9021109", link.getSku());
         assertEquals("Nike clear water bottle", link.getName());
         assertEquals("7.60", link.getPrice().toString());
@@ -73,7 +73,7 @@ public class Asos_UK_Test {
         setMock(3);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("11903288", link.getSku());
         assertEquals("Sass & Belle cutie cat toothbrush holder", link.getName());
         assertEquals("8.99", link.getPrice().toString());
@@ -88,7 +88,7 @@ public class Asos_UK_Test {
         setMock(4);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("11837256", link.getSku());
         assertEquals("Liquorish mix and match floral and polka print wrap skirt", link.getName());
         assertEquals("35.95", link.getPrice().toString());

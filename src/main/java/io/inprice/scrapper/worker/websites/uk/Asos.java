@@ -1,6 +1,7 @@
 package io.inprice.scrapper.worker.websites.uk;
 
 import com.mashape.unirest.http.HttpResponse;
+import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.HttpClient;
@@ -30,32 +31,44 @@ public class Asos extends AbstractWebsite {
 
     @Override
     protected JSONObject getJsonData() {
+        Status preStatus = getLinkStatus();
+        setLinkStatus(Status.NO_DATA);
+
         final String sku = getSku();
 
         HttpResponse<String> response = HttpClient.get("https://www.asos.com/api/product/catalogue/v3/stockprice?currency=EUR&store=ROW&productIds=" + sku);
-        if (response.getStatus() == 200 && ! response.getBody().isEmpty()) {
-            JSONArray items = new JSONArray(response.getBody());
-            if (items.length() > 0) {
-                JSONObject parent = items.getJSONObject(0);
+        if (response != null && response.getStatus() > 0 && response.getStatus() < 400) {
 
-                if (parent.has("productPrice")) {
-                    JSONObject pprice = parent.getJSONObject("productPrice");
-                    price = pprice.getJSONObject("current").getBigDecimal("value");
-                }
+            if (response.getBody() != null && ! response.getBody().trim().isEmpty()) {
+                JSONArray items = new JSONArray(response.getBody());
+                if (items.length() > 0) {
+                    JSONObject parent = items.getJSONObject(0);
 
-                if (parent.has("variants")) {
-                    JSONArray variants = parent.getJSONArray("variants");
-                    if (variants.length() > 0) {
-                        for (int i = 0; i < variants.length(); i++) {
-                            JSONObject var = variants.getJSONObject(i);
-                            if (var.getBoolean("isInStock")) {
-                                isAvailable = true;
-                                break;
+                    if (parent.has("productPrice")) {
+                        JSONObject pprice = parent.getJSONObject("productPrice");
+                        price = pprice.getJSONObject("current").getBigDecimal("value");
+                        setLinkStatus(preStatus);
+                    }
+
+                    if (parent.has("variants")) {
+                        JSONArray variants = parent.getJSONArray("variants");
+                        if (variants.length() > 0) {
+                            for (int i = 0; i < variants.length(); i++) {
+                                JSONObject var = variants.getJSONObject(i);
+                                if (var.getBoolean("isInStock")) {
+                                    isAvailable = true;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
+            } else {
+                log.error("Failed to fetch data! Status: READ_ERROR");
+                setLinkStatus(Status.NO_DATA);
             }
+        } else {
+            setLinkStatus(response);
         }
 
         return super.getJsonData();

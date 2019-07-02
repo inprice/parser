@@ -21,7 +21,7 @@ public class Gigas101_ES_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("9893851", link.getSku());
         assertEquals("MANDO INALÁMBRICO DUALSHOCK 4 SONY CUH-ZCT2E WAVE BLUE - VALIDO PARA PS4 - CONECTOR AURICULAR - ALTAVOZ INTEGRADO - PANEL TÁCTIL", link.getName());
         assertEquals("51.80", link.getPrice().toString());
@@ -35,7 +35,7 @@ public class Gigas101_ES_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("ppPOS8058", link.getSku());
         assertEquals("approx Impresora Tiquets appPOS8058 Dual Usb/Corte", link.getName());
         assertEquals("124.80", link.getPrice().toString());
@@ -49,7 +49,7 @@ public class Gigas101_ES_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("WDS100T3XHC", link.getSku());
         assertEquals("Western Digital WD Black SN750 NVMe SSD WDS100T3XHC - Unidad en estado sólido - 1 TB - interno - M.2 2280 - PCI Expr", link.getName());
         assertEquals("300.80", link.getPrice().toString());
@@ -63,7 +63,7 @@ public class Gigas101_ES_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("90YV0AQ1-M0NA00", link.getSku());
         assertEquals("Asus Radeon RX 580 Dual OC 8GB GDDR5", link.getName());
         assertEquals("203.80", link.getPrice().toString());

@@ -23,7 +23,7 @@ public class Ebay_NL_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("311777636467", link.getSku());
         assertEquals("Portable Travel 110lb / 50kg LCD Digital Hanging Luggage Scale Electronic Weight", link.getName());
         assertEquals("7.93", link.getPrice().toString());
@@ -37,7 +37,7 @@ public class Ebay_NL_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("223526308937", link.getSku());
         assertEquals("Blade INDUCTRIX FPV Drone", link.getName());
         assertEquals("67.50", link.getPrice().toString());
@@ -51,7 +51,7 @@ public class Ebay_NL_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("332864473404", link.getSku());
         assertEquals("LAMPIONE STRADALE FARO FARETTO AD ENERGIA SOLARE A LED FOTOVOLTAICO LUCE LED", link.getName());
         assertEquals("22.99", link.getPrice().toString());
@@ -65,7 +65,7 @@ public class Ebay_NL_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("192924322253", link.getSku());
         assertEquals("Outil horloger ancien horloge XIX eme clock Morez Morbier Comtoise Watchmakers 5", link.getName());
         assertEquals("118.00", link.getPrice().toString());

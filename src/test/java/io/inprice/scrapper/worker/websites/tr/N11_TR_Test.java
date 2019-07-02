@@ -22,7 +22,7 @@ public class N11_TR_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("249823652", link.getSku());
         assertEquals("Seaflo Hidrofor Pompası 4.3 lt. / dak 12 V 35 psi", link.getName());
         assertEquals("123.55", link.getPrice().toString());
@@ -36,7 +36,7 @@ public class N11_TR_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("241174632", link.getSku());
         assertEquals("Bel İnceltici Korse Vücut Şekillendirici Doğum Sonrası Toparlayıc", link.getName());
         assertEquals("39.90", link.getPrice().toString());
@@ -50,7 +50,7 @@ public class N11_TR_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("31175655", link.getSku());
         assertEquals("Gemici Çelik Erkek Zincir Kolye 7 mm 56 cm h081", link.getName());
         assertEquals("59.90", link.getPrice().toString());
@@ -64,7 +64,7 @@ public class N11_TR_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("223682414", link.getSku());
         assertEquals("Genç Elitler Serisi Kutulu Özel Set (Ciltli 3 Kitap)", link.getName());
         assertEquals("65.84", link.getPrice().toString());

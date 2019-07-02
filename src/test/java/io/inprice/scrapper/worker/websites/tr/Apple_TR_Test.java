@@ -42,7 +42,7 @@ public class Apple_TR_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("SteelSeries Nimbus Kablosuz Oyun Kumandası", link.getName());
         assertEquals("549.00", link.getPrice().toString());
@@ -59,7 +59,7 @@ public class Apple_TR_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("13 inç MacBook Pro - Uzay Grisi", link.getName());
         assertEquals("11399.00", link.getPrice().toString());
@@ -76,7 +76,7 @@ public class Apple_TR_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("iPhone 8 64 GB Gümüş", link.getName());
         assertEquals("5799.00", link.getPrice().toString());
@@ -93,7 +93,7 @@ public class Apple_TR_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Apple Watch Series 4 GPS, 40 mm Uzay Grisi Alüminyum Kasa ve Siyah Spor Kordon", link.getName());
         assertEquals("3099.00", link.getPrice().toString());

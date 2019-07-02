@@ -42,7 +42,7 @@ public class Apple_IT_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("MacBook Air 13\" - Grigio siderale", link.getName());
         assertEquals("1629.00", link.getPrice().toString());
@@ -59,7 +59,7 @@ public class Apple_IT_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("iPad Pro 11\" Wi-Fi 512GB - Argento", link.getName());
         assertEquals("1289.00", link.getPrice().toString());
@@ -76,7 +76,7 @@ public class Apple_IT_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Apple Watch Series 4 GPS, cassa 40 mm in alluminio color argento e cinturino Sport bianco", link.getName());
         assertEquals("439.00", link.getPrice().toString());
@@ -93,7 +93,7 @@ public class Apple_IT_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Altoparlante Beats Pill+ - Edizione speciale UNDEFEATED - Camouflage", link.getName());
         assertEquals("199.95", link.getPrice().toString());

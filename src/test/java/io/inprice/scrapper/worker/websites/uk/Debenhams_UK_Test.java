@@ -22,7 +22,7 @@ public class Debenhams_UK_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("3310014132", link.getSku());
         assertEquals("Black non-stick aluminium 'Gourmet' 5 piece pan set", link.getName());
         assertEquals("68.00", link.getPrice().toString());
@@ -36,7 +36,7 @@ public class Debenhams_UK_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("1610104181", link.getSku());
         assertEquals("Black Embroidered Mesh Satin Brazilian Knickers", link.getName());
         assertEquals("10.00", link.getPrice().toString());
@@ -50,7 +50,7 @@ public class Debenhams_UK_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("61131_105548", link.getSku());
         assertEquals("Pleasure Dome Topkapi Opal Designer Wallpaper", link.getName());
         assertEquals("12.50", link.getPrice().toString());
@@ -64,7 +64,7 @@ public class Debenhams_UK_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("1710104267", link.getSku());
         assertEquals("My First Talking Ted", link.getName());
         assertEquals("8.80", link.getPrice().toString());

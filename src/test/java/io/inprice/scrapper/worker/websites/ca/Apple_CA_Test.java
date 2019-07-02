@@ -42,7 +42,7 @@ public class Apple_CA_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("21.5-inch iMac with Retina 4K display", link.getName());
         assertEquals("1699.00", link.getPrice().toString());
@@ -59,7 +59,7 @@ public class Apple_CA_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("AirPods with Charging Case", link.getName());
         assertEquals("219.00", link.getPrice().toString());
@@ -76,7 +76,7 @@ public class Apple_CA_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Apple TV 4K 32GB", link.getName());
         assertEquals("229.00", link.getPrice().toString());
@@ -93,7 +93,7 @@ public class Apple_CA_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("10.5-inch iPad Air Wi‑Fi 64GB - Silver", link.getName());
         assertEquals("649.00", link.getPrice().toString());

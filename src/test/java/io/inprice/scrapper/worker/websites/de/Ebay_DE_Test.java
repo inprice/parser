@@ -23,7 +23,7 @@ public class Ebay_DE_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("370503654868", link.getSku());
         assertEquals("SURPLUS DIVISION CARGO SHORT 7FARBEN XS-7XL U.S. Army Bermuda Rider Shorts Walk", link.getName());
         assertEquals("29.90", link.getPrice().toString());
@@ -37,7 +37,7 @@ public class Ebay_DE_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("254158224125", link.getSku());
         assertEquals("Luxus Gold Panzerkette Armband Set Herrenkette Edelstahl 18 Karat vergoldet 60cm", link.getName());
         assertEquals("32.39", link.getPrice().toString());
@@ -51,7 +51,7 @@ public class Ebay_DE_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("143052381051", link.getSku());
         assertEquals("adidas Performance Core 18 Kapuzenpullover Herren NEU", link.getName());
         assertEquals("24.95", link.getPrice().toString());
@@ -65,7 +65,7 @@ public class Ebay_DE_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("292503186932", link.getSku());
         assertEquals("Einhell GE-HH 18 Li T Kit Akku-Heckenschere 3.0 Ah Power-X-Change Strauchschere", link.getName());
         assertEquals("99.95", link.getPrice().toString());

@@ -1,6 +1,7 @@
 package io.inprice.scrapper.worker.websites.ca;
 
 import com.mashape.unirest.http.HttpResponse;
+import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.HttpClient;
@@ -99,15 +100,21 @@ public class Walmart extends AbstractWebsite {
      */
     @Override
     public JSONObject getJsonData() {
+        Status preStatus = getLinkStatus();
+        setLinkStatus(Status.NO_DATA);
+
         final String payload = getPayload();
+
         if (payload != null && ! payload.isEmpty()) {
             HttpResponse<String> response = HttpClient.post(STATIC_URL, payload);
-            if (response != null && response.getStatus() < 400) {
+            if (response != null && response.getStatus() > 0 && response.getStatus() < 400) {
                 JSONObject product = new JSONObject(response.getBody());
 
                 if (product.has("skus") && product.has("offers")) {
                     JSONObject skus = product.getJSONObject("skus");
                     JSONObject offers = product.getJSONObject("offers");
+
+                    setLinkStatus(preStatus);
 
                     if (! skus.isEmpty()) {
                         for (String s : skus.keySet()) {
@@ -124,9 +131,17 @@ public class Walmart extends AbstractWebsite {
                             }
                         }
                     }
+                } else {
+                    log.error("Failed to fetch data! Status: NO_DATA");
                 }
+            } else {
+                setLinkStatus(response);
             }
+        } else {
+            log.error("Failed to create payload, NO_DATA");
+            setLinkStatus(Status.READ_ERROR);
         }
+
         return null;
     }
 

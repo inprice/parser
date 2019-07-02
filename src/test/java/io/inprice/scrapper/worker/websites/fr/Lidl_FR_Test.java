@@ -23,7 +23,7 @@ public class Lidl_FR_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("32120", link.getSku());
         assertEquals("Mini jardin d'intérieur", link.getName());
         assertEquals("7.99", link.getPrice().toString());
@@ -37,7 +37,7 @@ public class Lidl_FR_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("32026", link.getSku());
         assertEquals("Spray solaire transparent", link.getName());
         assertEquals("4.99", link.getPrice().toString());
@@ -51,7 +51,7 @@ public class Lidl_FR_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("32047", link.getSku());
         assertEquals("Perceuse d’établi", link.getName());
         assertEquals("79.99", link.getPrice().toString());
@@ -65,7 +65,7 @@ public class Lidl_FR_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.ACTIVE, link.getStatus());
+        assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("21782", link.getSku());
         assertEquals("Gallia Calisma 2", link.getName());
         assertEquals("13.19", link.getPrice().toString());
