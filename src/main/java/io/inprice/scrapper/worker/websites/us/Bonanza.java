@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.us;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -98,7 +99,7 @@ public class Bonanza extends AbstractWebsite {
             return name.text();
         }
 
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -138,7 +139,7 @@ public class Bonanza extends AbstractWebsite {
             return "Free shipping";
         }
 
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

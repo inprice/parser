@@ -3,13 +3,16 @@ package io.inprice.scrapper.worker.websites.us;
 import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Parser for Target USA
@@ -122,7 +125,7 @@ public class Target extends AbstractWebsite {
         if (product != null && product.has("productId")) {
             return product.getString("productId");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -130,7 +133,7 @@ public class Target extends AbstractWebsite {
         if (product != null && product.has("title")) {
             return product.getString("title");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -178,7 +181,7 @@ public class Target extends AbstractWebsite {
         if (product != null && product.has("manufacturerBrand")) {
             return product.getString("manufacturerBrand");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

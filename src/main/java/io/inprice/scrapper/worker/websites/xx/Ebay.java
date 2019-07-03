@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.xx;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -62,7 +63,7 @@ public class Ebay extends AbstractWebsite {
         if (sku != null) {
             return sku.attr("data-itemid").trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -78,7 +79,7 @@ public class Ebay extends AbstractWebsite {
         if (name != null) {
             return name.attr("etafsharetitle").trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

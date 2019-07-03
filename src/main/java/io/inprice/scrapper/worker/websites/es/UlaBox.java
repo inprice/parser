@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.es;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
 
@@ -41,7 +42,7 @@ public class UlaBox extends AbstractWebsite {
         if (product != null) {
             return product.attr("data-product-id");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -50,7 +51,7 @@ public class UlaBox extends AbstractWebsite {
         if (product != null) {
             return product.attr("data-product-name");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -73,7 +74,7 @@ public class UlaBox extends AbstractWebsite {
         if (shipment != null) {
             return shipment.text().trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -82,7 +83,7 @@ public class UlaBox extends AbstractWebsite {
         if (brand != null) {
             return brand.text().trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

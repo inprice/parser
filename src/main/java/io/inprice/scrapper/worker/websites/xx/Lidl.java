@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.xx;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -52,7 +53,7 @@ public class Lidl extends AbstractWebsite {
         if (json != null && json.has("productid")) {
             return json.getString("productid").trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -60,7 +61,7 @@ public class Lidl extends AbstractWebsite {
         if (json != null && json.has("productname")) {
             return json.getString("productname").trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

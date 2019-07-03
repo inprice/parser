@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.fr;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -61,7 +62,7 @@ public class Laredoute extends AbstractWebsite {
         if (sku != null) {
             return sku.attr("data-prodid");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -69,7 +70,7 @@ public class Laredoute extends AbstractWebsite {
         if (json != null && json.has("name")) {
             return json.getString("name").trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -126,7 +127,7 @@ public class Laredoute extends AbstractWebsite {
 
              */
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -137,7 +138,7 @@ public class Laredoute extends AbstractWebsite {
                 return brand.getString("name");
             }
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

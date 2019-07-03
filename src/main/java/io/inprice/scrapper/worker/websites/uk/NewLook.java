@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.uk;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
 
@@ -36,7 +37,7 @@ public class NewLook extends AbstractWebsite {
         if (code != null) {
             return code.attr("content").trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -45,7 +46,7 @@ public class NewLook extends AbstractWebsite {
         if (title != null) {
             return title.text().trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -68,7 +69,7 @@ public class NewLook extends AbstractWebsite {
         if (shipment != null) {
             return shipment.text().trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -77,7 +78,7 @@ public class NewLook extends AbstractWebsite {
         if (brand != null) {
             return brand.attr("content").trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

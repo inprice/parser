@@ -4,6 +4,7 @@ import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -11,7 +12,6 @@ import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -101,7 +101,7 @@ public class Apple extends AbstractWebsite {
         if (offers != null && offers.has("sku")) {
             return offers.getString("sku");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -109,7 +109,7 @@ public class Apple extends AbstractWebsite {
         if (json != null && json.has("name")) {
             return json.getString("name");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.xx;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -59,7 +60,7 @@ public class MediaMarkt extends AbstractWebsite {
         if (sku != null) {
             return sku.text().trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -68,7 +69,7 @@ public class MediaMarkt extends AbstractWebsite {
         if (name != null) {
             return name.attr("content").trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -111,7 +112,7 @@ public class MediaMarkt extends AbstractWebsite {
             if (desc != null) return desc.text();
         }
 
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -120,7 +121,7 @@ public class MediaMarkt extends AbstractWebsite {
         if (brand != null) {
             return brand.attr("content").trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

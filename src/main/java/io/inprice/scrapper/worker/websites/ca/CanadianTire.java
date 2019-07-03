@@ -3,6 +3,7 @@ package io.inprice.scrapper.worker.websites.ca;
 import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -10,7 +11,8 @@ import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Parser for CanadianTire Canada
@@ -86,7 +88,7 @@ public class CanadianTire extends AbstractWebsite {
         if (sku != null) {
             return sku.attr("data-sku").split(":")[0];
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -95,7 +97,7 @@ public class CanadianTire extends AbstractWebsite {
         if (name != null) {
             return name.attr("content").replaceAll(" \\| Canadian Tire", "");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -129,7 +131,7 @@ public class CanadianTire extends AbstractWebsite {
         if (brand != null) {
             return brand.attr("alt");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

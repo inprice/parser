@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.us;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -49,7 +50,7 @@ public class Etsy extends AbstractWebsite {
         if (sku != null) {
             return sku.attr("data-listing-id").trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -58,7 +59,7 @@ public class Etsy extends AbstractWebsite {
         if (name != null) {
             return name.attr("content").trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -84,7 +85,7 @@ public class Etsy extends AbstractWebsite {
         if (brand != null) {
             return brand.attr("data-to_username");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -119,7 +120,7 @@ public class Etsy extends AbstractWebsite {
         if (brand != null) {
             return brand.attr("data-to_user_display_name");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.xx;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
 
@@ -50,7 +51,7 @@ public class Amazon extends AbstractWebsite {
             return sku.val();
         }
 
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -66,7 +67,7 @@ public class Amazon extends AbstractWebsite {
         if (name != null) {
             return name.text();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     /**
@@ -181,7 +182,7 @@ public class Amazon extends AbstractWebsite {
             return "See all offers";
         }
 
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

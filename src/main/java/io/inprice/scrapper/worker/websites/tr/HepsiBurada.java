@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.tr;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
 
@@ -32,7 +33,7 @@ public class HepsiBurada extends AbstractWebsite {
         if (sku != null) {
             return sku.val().trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -41,7 +42,7 @@ public class HepsiBurada extends AbstractWebsite {
         if (name != null) {
             return name.text().trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -59,7 +60,7 @@ public class HepsiBurada extends AbstractWebsite {
         if (seller != null) {
             return seller.text().trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -79,7 +80,7 @@ public class HepsiBurada extends AbstractWebsite {
         if (brand != null) {
             return brand.attr("content");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

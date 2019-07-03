@@ -3,6 +3,7 @@ package io.inprice.scrapper.worker.websites.au;
 import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -27,14 +28,14 @@ public class AppliancesOnline extends AbstractWebsite {
     }
 
     @Override
-    public String getAlternativeUrl() {
+    protected String getAlternativeUrl() {
         final String indicator = "product/";
         String productName = getUrl().substring(getUrl().indexOf(indicator) + indicator.length());
         return "https://www.appliancesonline.com.au/api/v2/product/slug/" + productName;
     }
 
     @Override
-    public JSONObject getJsonData() {
+    protected JSONObject getJsonData() {
         if (doc != null) return new JSONObject(doc.body().html());
         return null;
     }
@@ -52,7 +53,7 @@ public class AppliancesOnline extends AbstractWebsite {
         if (json != null && json.has("productId")) {
             return ""+json.getInt("productId");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -60,7 +61,7 @@ public class AppliancesOnline extends AbstractWebsite {
         if (json != null && json.has("title")) {
             return json.getString("title");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -89,7 +90,7 @@ public class AppliancesOnline extends AbstractWebsite {
                 return manufacturer.getString("name");
             }
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

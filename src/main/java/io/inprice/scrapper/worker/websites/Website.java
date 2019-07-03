@@ -37,9 +37,6 @@ public interface Website {
     //main url
     String getUrl();
 
-    //alternative url for spa
-    String getAlternativeUrl();
-
     //for test purposes
     Link test(String fileName);
 

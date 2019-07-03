@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.nl;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -66,7 +67,7 @@ public class Bol extends AbstractWebsite {
         if (json != null && json.has("productID")) {
             return json.getString("productID");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -74,7 +75,7 @@ public class Bol extends AbstractWebsite {
         if (json != null && json.has("name")) {
             return json.getString("name");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -104,7 +105,7 @@ public class Bol extends AbstractWebsite {
                 return brand.getString("name");
             }
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

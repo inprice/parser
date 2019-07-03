@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.uk;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -53,7 +54,7 @@ public class Currys extends AbstractWebsite {
         if (product != null && product.has("productSKU")) {
             return product.getString("productSKU");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -61,7 +62,7 @@ public class Currys extends AbstractWebsite {
         if (product != null && product.has("productName")) {
             return product.getString("productName");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -83,7 +84,7 @@ public class Currys extends AbstractWebsite {
         if (shipment != null) {
             return shipment.text().replaceAll("More info", "").trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -91,7 +92,7 @@ public class Currys extends AbstractWebsite {
         if (product != null && product.has("manufacturer")) {
             return product.getString("manufacturer");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

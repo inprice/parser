@@ -3,11 +3,11 @@ package io.inprice.scrapper.worker.websites.it;
 import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -42,7 +42,7 @@ public class VidaXL extends AbstractWebsite {
             HttpResponse<String> response = HttpClient.get("https://www.vidaxl.it/platform/index.php?m=auction&a=getAuctionsList&id=" + auctionId);
             if (response.getStatus() == 200 && ! response.getBody().isEmpty()) {
                 JSONObject auction = new JSONObject(response.getBody());
-                if (auction != null && auction.has("current")) {
+                if (auction.has("current")) {
                     current = auction.getJSONObject("current");
                 }
             }
@@ -69,7 +69,7 @@ public class VidaXL extends AbstractWebsite {
             return code.attr("value").trim();
         }
 
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -84,7 +84,7 @@ public class VidaXL extends AbstractWebsite {
             return title.attr("content");
         }
 
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

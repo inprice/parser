@@ -3,6 +3,7 @@ package io.inprice.scrapper.worker.websites.es;
 import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
@@ -51,7 +52,7 @@ public class Pixmania extends AbstractWebsite {
      * @return String - the reference url
      */
     @Override
-    public String getAlternativeUrl() {
+    protected String getAlternativeUrl() {
         return "https://www.pixmania.es/api/ecrm/session";
     }
 
@@ -145,7 +146,7 @@ public class Pixmania extends AbstractWebsite {
         if (bestOffer != null && bestOffer.has("sku")) {
             return bestOffer.getString("sku");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -153,7 +154,7 @@ public class Pixmania extends AbstractWebsite {
         if (json != null && json.has("name")) {
             return json.getString("name");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -172,7 +173,7 @@ public class Pixmania extends AbstractWebsite {
                 return merchant.getString("name");
             }
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -180,7 +181,7 @@ public class Pixmania extends AbstractWebsite {
         if (bestOffer != null && bestOffer.has("free_shipping")) {
             return "Free shipping: " + bestOffer.getBoolean("free_shipping");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -191,7 +192,7 @@ public class Pixmania extends AbstractWebsite {
                 return merchant.getString("name");
             }
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

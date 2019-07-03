@@ -5,6 +5,7 @@ import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.helpers.Global;
 import io.inprice.scrapper.worker.helpers.UserAgents;
 import org.json.JSONObject;
@@ -59,8 +60,7 @@ public abstract class AbstractWebsite implements Website {
         return link.getUrl();
     }
 
-    @Override
-    public String getAlternativeUrl() {
+    protected String getAlternativeUrl() {
         return null;
     }
 
@@ -165,8 +165,13 @@ public abstract class AbstractWebsite implements Website {
         if (isAvailable()) {
             link.setStatus(Status.AVAILABLE);
         } else {
-            link.setStatus(Status.OUT_OF_STOCK);
-            log.debug("This product is not available!");
+            if (getName() == null || Constants.NOT_AVAILABLE.equals(getName())) {
+                link.setStatus(Status.NOT_SPECIFIC);
+                log.warn("URL doesn't point at a specific page! " + getUrl());
+            } else {
+                link.setStatus(Status.OUT_OF_STOCK);
+                log.debug("This product is not available!");
+            }
         }
     }
 

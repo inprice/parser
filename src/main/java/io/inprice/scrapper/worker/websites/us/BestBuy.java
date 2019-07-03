@@ -2,10 +2,10 @@ package io.inprice.scrapper.worker.websites.us;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class BestBuy extends AbstractWebsite {
         if (json != null && json.has("sku")) {
             return json.getString("sku");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class BestBuy extends AbstractWebsite {
         if (json != null && json.has("name")) {
             return json.getString("name");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -109,7 +109,7 @@ public class BestBuy extends AbstractWebsite {
                 return brand.getString("name");
             }
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

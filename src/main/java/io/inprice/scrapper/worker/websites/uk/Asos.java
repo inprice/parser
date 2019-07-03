@@ -4,6 +4,7 @@ import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -85,7 +86,7 @@ public class Asos extends AbstractWebsite {
         if (sku != null) {
             return sku.text().trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -94,7 +95,7 @@ public class Asos extends AbstractWebsite {
         if (name != null) {
             return name.text().trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -108,7 +109,7 @@ public class Asos extends AbstractWebsite {
         if (seller != null) {
             return seller.text().trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -133,7 +134,7 @@ public class Asos extends AbstractWebsite {
         if (brand != null) {
             return brand.text().trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -12,7 +13,6 @@ import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -163,7 +163,7 @@ public class Walmart extends AbstractWebsite {
         if (preData != null && preData.has("name")) {
             return preData.getString("name");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -180,7 +180,7 @@ public class Walmart extends AbstractWebsite {
             JSONObject sellerInfo = json.getJSONObject("sellerInfo");
             if (sellerInfo.has("en")) return sellerInfo.getString("en");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -188,7 +188,7 @@ public class Walmart extends AbstractWebsite {
         if (getSeller() != null) {
             return "Sold & shipped by " + getSeller();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -199,7 +199,7 @@ public class Walmart extends AbstractWebsite {
                 return brand.getString("name");
             }
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

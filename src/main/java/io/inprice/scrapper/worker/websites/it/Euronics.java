@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.it;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -41,7 +42,7 @@ public class Euronics extends AbstractWebsite {
         if (base != null) {
             return base.attr("productId");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -49,7 +50,7 @@ public class Euronics extends AbstractWebsite {
         if (base != null) {
             return base.attr("productName");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -81,7 +82,7 @@ public class Euronics extends AbstractWebsite {
 
             return sb.toString();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -89,7 +90,7 @@ public class Euronics extends AbstractWebsite {
         if (base != null) {
             return base.attr("brand");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

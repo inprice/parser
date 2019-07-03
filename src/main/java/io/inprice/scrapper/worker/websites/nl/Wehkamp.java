@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.nl;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -71,7 +72,7 @@ public class Wehkamp extends AbstractWebsite {
         if (json != null && json.has("sku")) {
             return json.getString("sku");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -79,7 +80,7 @@ public class Wehkamp extends AbstractWebsite {
         if (json != null && json.has("name")) {
             return json.getString("name");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -106,7 +107,7 @@ public class Wehkamp extends AbstractWebsite {
         if (json != null && json.has("brand")) {
             return json.getJSONObject("brand").getString("name");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -115,7 +116,7 @@ public class Wehkamp extends AbstractWebsite {
         if (shipment != null) {
             return shipment.text().trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

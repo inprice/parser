@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.xx;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -42,7 +43,7 @@ public class Zalando extends AbstractWebsite {
                 }
             }
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -56,7 +57,7 @@ public class Zalando extends AbstractWebsite {
         if (name != null) {
             return name.attr("content").trim();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -88,7 +89,7 @@ public class Zalando extends AbstractWebsite {
         if (brand != null) {
             return brand.text();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

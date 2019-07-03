@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.it;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -53,7 +54,7 @@ public class MediaWorld extends AbstractWebsite {
         if (sku != null) {
             return sku.attr("data-product-sku");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -65,7 +66,7 @@ public class MediaWorld extends AbstractWebsite {
         if (json != null && json.has("name")) {
             return json.getString("name");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -101,7 +102,7 @@ public class MediaWorld extends AbstractWebsite {
             JSONObject brand = json.getJSONObject("brand");
             return brand.getString("name");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

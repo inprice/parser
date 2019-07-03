@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.ca;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.select.Elements;
@@ -64,7 +65,7 @@ public class BestBuy extends AbstractWebsite {
         if (product != null && product.has("sku")) {
             return product.getString("sku");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -72,7 +73,7 @@ public class BestBuy extends AbstractWebsite {
         if (product != null && product.has("name")) {
             return product.getString("name");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -104,7 +105,7 @@ public class BestBuy extends AbstractWebsite {
         if (product != null && product.has("brandName")) {
             return product.getString("brandName");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override

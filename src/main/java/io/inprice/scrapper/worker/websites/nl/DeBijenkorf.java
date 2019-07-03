@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.nl;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -61,7 +62,7 @@ public class DeBijenkorf extends AbstractWebsite {
         if (json != null && json.has("code")) {
             return json.getString("code");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -69,7 +70,7 @@ public class DeBijenkorf extends AbstractWebsite {
         if (json != null && json.has("displayName")) {
             return json.getString("displayName");
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -106,7 +107,7 @@ public class DeBijenkorf extends AbstractWebsite {
         if (shipment != null) {
             return shipment.text();
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
@@ -117,7 +118,7 @@ public class DeBijenkorf extends AbstractWebsite {
                 return brand.getString("name");
             }
         }
-        return "NA";
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
