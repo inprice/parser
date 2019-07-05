@@ -160,18 +160,19 @@ public abstract class AbstractWebsite implements Website {
         }
 
         BigDecimal price = getPrice().setScale(2, RoundingMode.HALF_UP);
-        if (! price.equals(link.getPrice())) link.setPrice(price);
+        link.setPrice(price);
+
+        if ((getPrice() == null || getPrice().compareTo(BigDecimal.ONE) < 0) && (getName() == null || Constants.NOT_AVAILABLE.equals(getName()))) {
+            link.setStatus(Status.NOT_SPECIFIC);
+            log.warn("URL doesn't point at a specific page! " + getUrl());
+            return;
+        }
 
         if (isAvailable()) {
             link.setStatus(Status.AVAILABLE);
         } else {
-            if (getName() == null || Constants.NOT_AVAILABLE.equals(getName())) {
-                link.setStatus(Status.NOT_SPECIFIC);
-                log.warn("URL doesn't point at a specific page! " + getUrl());
-            } else {
-                link.setStatus(Status.OUT_OF_STOCK);
-                log.debug("This product is not available!");
-            }
+            link.setStatus(Status.OUT_OF_STOCK);
+            log.debug("This product is not available!");
         }
     }
 

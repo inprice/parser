@@ -63,10 +63,6 @@ public class Amazon extends AbstractWebsite {
             return name.text();
         }
 
-        name = doc.getElementsByTag("title").first();
-        if (name != null) {
-            return name.text();
-        }
         return Constants.NOT_AVAILABLE;
     }
 

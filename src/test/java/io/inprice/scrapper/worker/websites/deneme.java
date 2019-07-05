@@ -1,21 +1,19 @@
+package io.inprice.scrapper.worker.websites;
+
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.worker.browser.BrowserManager;
 import io.inprice.scrapper.worker.helpers.UserAgents;
-import io.inprice.scrapper.worker.info.Pair;
-import io.inprice.scrapper.worker.websites.Website;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Constructor;
+import java.math.BigDecimal;
 import java.net.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class deneme {
@@ -551,7 +549,7 @@ public class deneme {
             //"https://www.lidl.com/products/310436_C",
             "https://www.lidl.com/products/1031629"
         };
-
+/*
         for (String url: asos_uk) {
             Link link = new Link(url);
             link.setWebsiteClassName("io.inprice.scrapper.worker.websites.uk.Asos");
@@ -566,6 +564,8 @@ public class deneme {
                 log.error("Error in converting message from byte array to Link", e);
             }
         }
+  */
+        System.out.println(new BigDecimal(1).compareTo(BigDecimal.ONE));
     }
 
     private static String getRootDomain(String url) {

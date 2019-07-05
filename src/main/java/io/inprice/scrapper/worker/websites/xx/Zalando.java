@@ -26,6 +26,9 @@ public class Zalando extends AbstractWebsite {
 
     @Override
     public boolean isAvailable() {
+        boolean isAvailable = doc.html().indexOf("\"available\":true") > 0;
+        if (isAvailable) return true;
+
         Element addToCartButton = doc.getElementById("z-pdp-topSection-addToCartButton");
         return (addToCartButton != null);
     }
