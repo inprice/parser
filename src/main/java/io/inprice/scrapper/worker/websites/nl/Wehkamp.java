@@ -34,20 +34,17 @@ public class Wehkamp extends AbstractWebsite {
 
     @Override
     public JSONObject getJsonData() {
-        final String indicator = "\"properties\":";
+        final String props = findAPart(doc.html(),  "\"properties\":", "]", 1);
 
-        int start = doc.html().indexOf(indicator) + indicator.length();
-        int end   = doc.html().indexOf("]", start) + 1;
-
-        if (start > indicator.length() && end > start) {
-            properties = new JSONArray(doc.html().substring(start, end));
+        if (props != null) {
+            properties = new JSONArray(props);
         }
 
         Elements dataEL = doc.select("script[type='application/ld+json']");
         if (dataEL != null && dataEL.size() > 0) {
             for (int i = 0; i < dataEL.size(); i++) {
                 if (dataEL.get(i).dataNodes().get(0).getWholeData().indexOf("brand") > 0) {
-                    JSONObject data = new JSONObject(dataEL.get(i).dataNodes().get(0).getWholeData().replace("\r\n"," ").trim());
+                    JSONObject data = new JSONObject(dataEL.get(i).dataNodes().get(0).getWholeData().replace("\r\n"," "));
                     if (data.has("offers")) {
                         offers = data.getJSONObject("offers");
                     }
@@ -114,7 +111,7 @@ public class Wehkamp extends AbstractWebsite {
     public String getShipment() {
         Element shipment = doc.selectFirst("span.margin-vertical-xsmall.font-weight-light");
         if (shipment != null) {
-            return shipment.text().trim();
+            return shipment.text();
         }
         return Constants.NOT_AVAILABLE;
     }

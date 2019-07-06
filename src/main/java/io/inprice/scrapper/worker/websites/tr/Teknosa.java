@@ -32,7 +32,7 @@ public class Teknosa extends AbstractWebsite {
     public JSONObject getJsonData() {
         Element dataEL = doc.selectFirst("script[type='application/ld+json']");
         if (dataEL != null) {
-            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
+            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
             if (data.has("offers")) {
                 offers = data.getJSONObject("offers");
             }
@@ -60,13 +60,13 @@ public class Teknosa extends AbstractWebsite {
             }
             if (json.has("@id")) {
                 String id = json.getString("@id");
-                if (id != null) return cleanPrice(id);
+                if (id != null) return cleanDigits(id);
             }
         }
 
         Element sku = doc.selectFirst("span.item-number-value");
         if (sku != null) {
-            return sku.text().trim();
+            return sku.text();
         }
 
         return Constants.NOT_AVAILABLE;
@@ -80,7 +80,7 @@ public class Teknosa extends AbstractWebsite {
 
         Element name = doc.selectFirst("div#ProductTitle span.title");
         if (name != null) {
-            return name.text().trim();
+            return name.text();
         }
 
         return Constants.NOT_AVAILABLE;
@@ -98,7 +98,7 @@ public class Teknosa extends AbstractWebsite {
 
         Element price = doc.selectFirst("span.VersionOfferPrice img");
         if (price != null) {
-            return new BigDecimal(cleanPrice(price.attr("alt").trim()));
+            return new BigDecimal(cleanDigits(price.attr("alt")));
         }
 
         return BigDecimal.ZERO;
@@ -115,7 +115,7 @@ public class Teknosa extends AbstractWebsite {
         if (shipment == null) shipment = doc.getElementById("hd3");
 
         if (shipment != null) {
-            return shipment.text().trim();
+            return shipment.text();
         }
         return "Mağazada teslim";
     }
@@ -125,17 +125,17 @@ public class Teknosa extends AbstractWebsite {
         if (json != null) {
             if (json.has("brand")) {
                 String bn = json.getJSONObject("brand").getString("name");
-                if (bn != null && ! bn.trim().isEmpty()) return bn.trim();
+                if (bn != null && ! bn.trim().isEmpty()) return bn;
             }
             if (json.has("schema:brand")) {
                 String bn = json.getString("schema:brand");
-                if (bn != null && ! bn.trim().isEmpty()) return bn.trim();
+                if (bn != null && ! bn.trim().isEmpty()) return bn;
             }
         }
 
         Element brand = doc.selectFirst("div.brand-name a");
         if (brand != null) {
-            return brand.text().trim();
+            return brand.text();
         }
 
         return Constants.NOT_AVAILABLE;
@@ -150,7 +150,7 @@ public class Teknosa extends AbstractWebsite {
             specList = new ArrayList<>();
             for (Element key : specKeys) {
                 Element val = key.selectFirst("td");
-                specList.add(new LinkSpec(val.text().trim(), ""));
+                specList.add(new LinkSpec(val.text(), ""));
             }
         }
 
@@ -165,9 +165,9 @@ public class Teknosa extends AbstractWebsite {
                 Element value = specValues.get(i);
                 Element val = value.selectFirst("td span");
                 if (isEmpty) {
-                    specList.add(new LinkSpec("", val.text().trim()));
+                    specList.add(new LinkSpec("", val.text()));
                 } else {
-                    specList.get(i).setValue(val.text().trim());
+                    specList.get(i).setValue(val.text());
                 }
             }
         }

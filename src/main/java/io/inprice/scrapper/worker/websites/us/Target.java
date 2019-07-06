@@ -37,14 +37,10 @@ public class Target extends AbstractWebsite {
     }
 
     private void setPreLoadData() {
-        final String indicator = "__PRELOADED_STATE__= ";
-        final String html = doc.html();
+        final String preData = findAPart(doc.html(),  "__PRELOADED_STATE__= ", "</script>");
 
-        int start = html.indexOf(indicator) + indicator.length();
-        int end   = html.indexOf("</script>", start);
-
-        if (start > indicator.length() && end > start) {
-            preLoad = new JSONObject(html.substring(start, end));
+        if (preData != null) {
+            preLoad = new JSONObject(preData);
             if (preLoad.has("product")) {
                 JSONObject prod = preLoad.getJSONObject("product");
                 if (prod.has("productDetails")) {
@@ -142,7 +138,7 @@ public class Target extends AbstractWebsite {
             JSONObject priceEL = product.getJSONObject("price");
             if (priceEL.has("price")) {
                 String price = priceEL.getString("price");
-                if (! price.trim().isEmpty()) return new BigDecimal(price.trim());
+                if (! price.trim().isEmpty()) return new BigDecimal(cleanDigits(price));
             }
         }
 

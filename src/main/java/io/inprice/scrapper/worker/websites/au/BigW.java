@@ -36,15 +36,9 @@ public class BigW extends AbstractWebsite {
             }
         }
 
-        final String indicator = "'products': [";
-
-        int start = doc.html().indexOf(indicator) + indicator.length();
-        int end   = doc.html().indexOf("}]", start) + 1;
-
-        if (start > indicator.length() && end > start) {
-            //TODO: the replaceAll approach in here should be used in every point!!!
-
-            return new JSONObject(doc.html().substring(start, end).replaceAll("((?<=(\\{|\\[|\\,|:))\\s*')|('\\s*(?=(\\}|(\\])|(\\,|:))))", "\""));
+        final String prodData = findAPart(doc.html(),  "'products': [", "}]", 1);
+        if (prodData != null) {
+            return new JSONObject(fixQuotes(prodData));
         }
 
         return super.getJsonData();

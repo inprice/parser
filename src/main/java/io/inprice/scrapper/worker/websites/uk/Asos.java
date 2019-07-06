@@ -84,7 +84,7 @@ public class Asos extends AbstractWebsite {
     public String getSku() {
         Element sku = doc.selectFirst("span[itemprop='sku']");
         if (sku != null) {
-            return sku.text().trim();
+            return sku.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -93,7 +93,7 @@ public class Asos extends AbstractWebsite {
     public String getName() {
         Element name = doc.selectFirst("div.product-hero h1");
         if (name != null) {
-            return name.text().trim();
+            return name.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -107,7 +107,7 @@ public class Asos extends AbstractWebsite {
     public String getSeller() {
         Element seller = doc.selectFirst("span[itemprop='seller'] span[itemprop='name']");
         if (seller != null) {
-            return seller.text().trim();
+            return seller.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -122,7 +122,7 @@ public class Asos extends AbstractWebsite {
 
         shipment = doc.getElementById("shippingRestrictionsLink");
         if (shipment != null) {
-            return shipment.text().trim();
+            return shipment.text();
         } else {
             return "See delivery and returns info";
         }
@@ -132,7 +132,7 @@ public class Asos extends AbstractWebsite {
     public String getBrand() {
         Element brand = doc.selectFirst("span[itemprop='brand'] span[itemprop='name']");
         if (brand != null) {
-            return brand.text().trim();
+            return brand.text();
         }
         return Constants.NOT_AVAILABLE;
     }

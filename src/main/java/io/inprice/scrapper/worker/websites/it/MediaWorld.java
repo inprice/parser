@@ -30,7 +30,7 @@ public class MediaWorld extends AbstractWebsite {
     public JSONObject getJsonData() {
         Element dataEL = doc.selectFirst("div.main-content script[type='application/ld+json']");
         if (dataEL != null) {
-            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
+            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
             if (data.has("offers")) {
                 offers = data.getJSONObject("offers");
             }
@@ -61,7 +61,7 @@ public class MediaWorld extends AbstractWebsite {
     public String getName() {
         Element name = doc.selectFirst("meta[property='og:title']");
         if (name != null) {
-            return name.attr("content").trim();
+            return name.attr("content");
         }
         if (json != null && json.has("name")) {
             return json.getString("name");
@@ -75,9 +75,9 @@ public class MediaWorld extends AbstractWebsite {
             return offers.getBigDecimal("price");
         }
 
-        Element name = doc.selectFirst("span[itemprop='price']");
-        if (name != null) {
-            return new BigDecimal(name.attr("content").trim());
+        Element price = doc.selectFirst("span[itemprop='price']");
+        if (price != null) {
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
         return BigDecimal.ZERO;
     }

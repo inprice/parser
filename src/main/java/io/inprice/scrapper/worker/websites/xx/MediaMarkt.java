@@ -29,13 +29,10 @@ public class MediaMarkt extends AbstractWebsite {
 
     @Override
     protected JSONObject getJsonData() {
-        final String indicator = "bezorgkostenDrempel =";
+        final String tresholdForNL = findAPart(doc.html(),  "bezorgkostenDrempel =", ";");
 
-        int start = doc.html().indexOf(indicator) + indicator.length();
-        int end   = doc.html().indexOf(";", start);
-
-        if (start > indicator.length() && end > start) {
-            freeShippingTresholdForNL = new BigDecimal(cleanPrice(doc.html().substring(start, end)));
+        if (tresholdForNL != null) {
+            freeShippingTresholdForNL = new BigDecimal(cleanDigits(tresholdForNL));
         }
 
         return super.getJsonData();
@@ -58,7 +55,7 @@ public class MediaMarkt extends AbstractWebsite {
     public String getSku() {
         Element sku = doc.selectFirst("dd span[itemprop='sku']");
         if (sku != null) {
-            return sku.text().trim();
+            return sku.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -67,25 +64,25 @@ public class MediaMarkt extends AbstractWebsite {
     public String getName() {
         Element name = doc.selectFirst("meta[property='og:title']");
         if (name != null) {
-            return name.attr("content").trim();
+            return name.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
 
     @Override
     public BigDecimal getPrice() {
-        Element name = doc.selectFirst("meta[property='product:price:amount']");
-        if (name != null) {
-            return new BigDecimal(name.attr("content").trim());
+        Element price = doc.selectFirst("meta[property='product:price:amount']");
+        if (price != null) {
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
         return BigDecimal.ZERO;
     }
 
     @Override
     public String getSeller() {
-        Element brand = doc.selectFirst("meta[property='og:site_name']");
-        if (brand != null) {
-            return brand.attr("content").trim();
+        Element seller = doc.selectFirst("meta[property='og:site_name']");
+        if (seller != null) {
+            return seller.attr("content");
         }
         return "Media Markt";
     }
@@ -119,7 +116,7 @@ public class MediaMarkt extends AbstractWebsite {
     public String getBrand() {
         Element brand = doc.selectFirst("meta[property='product:brand']");
         if (brand != null) {
-            return brand.attr("content").trim();
+            return brand.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -136,7 +133,7 @@ public class MediaMarkt extends AbstractWebsite {
         if (specKeys != null && specKeys.size() > 0) {
             specList = new ArrayList<>();
             for (Element key : specKeys) {
-                specList.add(new LinkSpec(key.text().replaceAll(":","").trim(), ""));
+                specList.add(new LinkSpec(key.text().replaceAll(":",""), ""));
             }
         }
 
@@ -150,9 +147,9 @@ public class MediaMarkt extends AbstractWebsite {
             for (int i = 0; i < specList.size(); i++) {
                 Element value = specValues.get(i);
                 if (isEmpty) {
-                    specList.add(new LinkSpec("", value.text().trim()));
+                    specList.add(new LinkSpec("", value.text()));
                 } else {
-                    specList.get(i).setValue(value.text().trim());
+                    specList.get(i).setValue(value.text());
                 }
             }
         }
@@ -162,7 +159,7 @@ public class MediaMarkt extends AbstractWebsite {
             if (specValues != null && specValues.size() > 0) {
                 specList = new ArrayList<>();
                 for (Element spec: specValues) {
-                    specList.add(new LinkSpec("", spec.text().trim()));
+                    specList.add(new LinkSpec("", spec.text()));
                 }
             }
         }

@@ -30,18 +30,15 @@ public class Rakuten extends AbstractWebsite {
 
     @Override
     protected JSONObject getJsonData() {
-        final String indicator = "productDetails =";
+        final String prodData = findAPart(doc.html(),  "productDetails =", "};", 1);
 
-        int start = doc.html().indexOf(indicator) + indicator.length();
-        int end   = doc.html().indexOf("};", start) + 1;
-
-        if (start > indicator.length() && end > start) {
-            return new JSONObject(doc.html().substring(start, end));
+        if (prodData != null) {
+            return new JSONObject(prodData);
         } else {
             Elements dataELs = doc.select("script[type='application/ld+json']");
             if (dataELs != null && dataELs.size() > 0) {
                 for (Element dataEL: dataELs) {
-                    JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
+                    JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
                     if (data.has("@type") && data.getString("@type").equals("Product")) {
                         if (data.has("offers")) {
                             JSONObject offersParent = data.getJSONObject("offers");
@@ -93,7 +90,7 @@ public class Rakuten extends AbstractWebsite {
 
         Element sku = doc.selectFirst("meta[property='product:retailer_item_id']");
         if (sku != null) {
-            return sku.attr("content").trim();
+            return sku.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -101,12 +98,12 @@ public class Rakuten extends AbstractWebsite {
     @Override
     public String getName() {
         if (json != null && json.has("name")) {
-            return json.getString("name").trim();
+            return json.getString("name");
         }
 
         Element name = doc.selectFirst("meta[property='og:title']");
         if (name != null) {
-            return name.attr("content").trim();
+            return name.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -129,7 +126,7 @@ public class Rakuten extends AbstractWebsite {
 
         Element price = doc.selectFirst("meta[property='product:price:amount']");
         if (price != null) {
-            return new BigDecimal(cleanPrice(price.attr("content")));
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
         return BigDecimal.ZERO;
     }
@@ -155,7 +152,7 @@ public class Rakuten extends AbstractWebsite {
 
         Element brand = doc.selectFirst("meta[property='og:description']");
         if (brand != null) {
-            return brand.attr("content").trim();
+            return brand.attr("content");
         }
         return "Rakuten";
     }
@@ -176,14 +173,14 @@ public class Rakuten extends AbstractWebsite {
 
         Element shipping = doc.selectFirst("p.freeShipping");
         if (shipping != null) {
-            return shipping.text().trim();
+            return shipping.text();
         }
 
         shipping = doc.selectFirst("ul.shipping li.value");
         if (shipping == null) shipping = doc.selectFirst("li.shipping_amount span.value");
 
         if (shipping != null) {
-            return shipping.text().trim();
+            return shipping.text();
         }
 
         return Constants.NOT_AVAILABLE;
@@ -205,7 +202,7 @@ public class Rakuten extends AbstractWebsite {
 
         Element brand = doc.selectFirst("meta[property='product:brand']");
         if (brand != null) {
-            return brand.attr("content").trim();
+            return brand.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }

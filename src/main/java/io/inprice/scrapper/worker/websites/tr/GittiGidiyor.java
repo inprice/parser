@@ -27,7 +27,7 @@ public class GittiGidiyor extends AbstractWebsite {
         Element amount = doc.getElementById("VariantProductRemaingCount");
         if (amount != null) {
             try {
-                int realAmount = new Integer(amount.text().trim());
+                int realAmount = new Integer(cleanDigits(amount.text()));
                 return (realAmount > 0);
             } catch (Exception e) {
                 //
@@ -40,7 +40,7 @@ public class GittiGidiyor extends AbstractWebsite {
     public String getSku() {
         Element sku = doc.getElementById("productId");
         if (sku != null) {
-            return sku.val().trim();
+            return sku.val();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -51,7 +51,7 @@ public class GittiGidiyor extends AbstractWebsite {
         if (name == null) name = doc.selectFirst("span.title");
 
         if (name != null) {
-            return name.text().trim();
+            return name.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -60,7 +60,7 @@ public class GittiGidiyor extends AbstractWebsite {
     public BigDecimal getPrice() {
         Element price = doc.selectFirst("[data-price]");
         if (price != null) {
-            return new BigDecimal(cleanPrice(price.attr("data-price").trim()));
+            return new BigDecimal(cleanDigits(price.attr("data-price")));
         }
 
         return BigDecimal.ZERO;
@@ -70,7 +70,7 @@ public class GittiGidiyor extends AbstractWebsite {
     public String getSeller() {
         Element seller = doc.selectFirst(".member-name a strong");
         if (seller != null) {
-            return seller.text().trim();
+            return seller.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -79,7 +79,7 @@ public class GittiGidiyor extends AbstractWebsite {
     public String getShipment() {
         Element shipment = doc.selectFirst(".CargoInfos");
         if (shipment != null) {
-            return shipment.text().trim();
+            return shipment.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -88,7 +88,7 @@ public class GittiGidiyor extends AbstractWebsite {
     public String getBrand() {
         Element brand = doc.selectFirst(".mr10.gt-product-brand-0 a");
         if (brand != null) {
-            return brand.text().trim();
+            return brand.text();
         }
         return Constants.NOT_AVAILABLE;
     }

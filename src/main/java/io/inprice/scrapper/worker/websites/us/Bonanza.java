@@ -57,8 +57,7 @@ public class Bonanza extends AbstractWebsite {
 
                 if (key.equals("Quantity Available")) {
                     try {
-                        String val = cleanPrice(value);
-                        availability = (new Integer(val)) > 0;
+                        availability = (new Integer(cleanDigits(value))) > 0;
                     } catch (Exception e) {
                         //
                     }
@@ -82,7 +81,7 @@ public class Bonanza extends AbstractWebsite {
     public String getSku() {
         Element skuEL = doc.selectFirst("meta[property='product:retailer_item_id']");
         if (skuEL != null) {
-            return skuEL.attr("content").trim();
+            return skuEL.attr("content");
         }
         return sku;
     }
@@ -91,7 +90,7 @@ public class Bonanza extends AbstractWebsite {
     public String getName() {
         Element name = doc.selectFirst("meta[property='og:title']");
         if (name != null) {
-            return name.attr("content").trim();
+            return name.attr("content");
         }
 
         name = doc.selectFirst("span[itemprop='name']");
@@ -106,12 +105,12 @@ public class Bonanza extends AbstractWebsite {
     public BigDecimal getPrice() {
         Element price = doc.selectFirst("meta[property='product:price:amount']");
         if (price != null) {
-            return new BigDecimal(price.attr("content").trim());
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
 
             price = doc.selectFirst("div.item_price");
         if (price != null) {
-            return new BigDecimal(cleanPrice(price.text()));
+            return new BigDecimal(cleanDigits(price.text()));
         }
 
         return BigDecimal.ZERO;
@@ -121,7 +120,7 @@ public class Bonanza extends AbstractWebsite {
     public String getSeller() {
         Element seller = doc.selectFirst("meta[property='wanelo:store:name']");
         if (seller != null) {
-            return seller.attr("content").trim();
+            return seller.attr("content");
         }
 
         seller = doc.selectFirst("div.booth_link a");
@@ -146,7 +145,7 @@ public class Bonanza extends AbstractWebsite {
     public String getBrand() {
         Element brandEL = doc.selectFirst("meta[property='product:brand']");
         if (brandEL != null) {
-            return brandEL.attr("content").trim();
+            return brandEL.attr("content");
         }
         return brand;
     }

@@ -42,7 +42,7 @@ public class BestBuy extends AbstractWebsite {
     public JSONObject getJsonData() {
         Element dataEL = doc.select("div[data-reactroot] script[type='application/ld+json']").last();
         if (dataEL != null) {
-            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
+            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
             if (data.has("offers")) {
                 offers = data.getJSONObject("offers");
             }
@@ -80,7 +80,7 @@ public class BestBuy extends AbstractWebsite {
     @Override
     public BigDecimal getPrice() {
         if (offers != null && offers.has("price")) {
-            return new BigDecimal(cleanPrice(offers.getString("price")));
+            return new BigDecimal(cleanDigits(offers.getString("price")));
         }
         return BigDecimal.ZERO;
     }

@@ -42,7 +42,7 @@ public class CDiscount extends AbstractWebsite {
                 }
             }
             if (dataEL != null) {
-                JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
+                JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
                 if (data.has("offers")) {
                     if (data.has("offers")) {
                         offers = data.getJSONObject("offers");

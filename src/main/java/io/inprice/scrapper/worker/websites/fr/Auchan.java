@@ -31,15 +31,12 @@ public class Auchan extends AbstractWebsite {
      */
     @Override
     public JSONObject getJsonData() {
-        final String html = doc.html();
-        final String indicator = "var product = ";
+        final String prodData = findAPart(doc.html(),  "var product = ", "};", 1);
 
-        final int start = html.indexOf(indicator) + indicator.length();
-        final int end = html.indexOf("};", start) + 1;
-
-        if (start > 0 && end > start) {
-            return new JSONObject(html.substring(start, end));
+        if (prodData != null) {
+            return new JSONObject(prodData);
         }
+
         return super.getJsonData();
     }
 

@@ -29,7 +29,7 @@ public class Zalando_IT_Test {
         assertEquals("103.99", link.getPrice().toString());
         assertEquals("Filippa K", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Consegna standard: Gratis entro 3-6 giorni lavorativi Consegna express: 7,95€ 1-3 giorni lavorativi", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -43,7 +43,7 @@ public class Zalando_IT_Test {
         assertEquals("14.69", link.getPrice().toString());
         assertEquals("Missguided", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Consegna standard: Gratis entro 3-6 giorni lavorativi Consegna express: 7,95€ 1-3 giorni lavorativi", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -57,7 +57,7 @@ public class Zalando_IT_Test {
         assertEquals("8.99", link.getPrice().toString());
         assertEquals("A'PIEU", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Consegna standard: Gratis entro 3-6 giorni lavorativi Consegna express: 7,95€ 1-3 giorni lavorativi", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -71,7 +71,7 @@ public class Zalando_IT_Test {
         assertEquals("79.99", link.getPrice().toString());
         assertEquals("Swarovski", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Consegna standard: Gratis entro 3-6 giorni lavorativi Consegna express: 7,95€ 1-3 giorni lavorativi", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 

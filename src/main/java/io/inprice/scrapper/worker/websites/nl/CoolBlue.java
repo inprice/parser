@@ -32,7 +32,7 @@ public class CoolBlue extends AbstractWebsite {
     public JSONObject getJsonData() {
         Element dataEL = doc.selectFirst("script[type='application/ld+json']");
         if (dataEL != null) {
-            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().replace("\r\n"," ").trim());
+            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().replace("\r\n"," "));
             if (data.has("offers")) {
                 offers = data.getJSONObject("offers");
             }
@@ -91,7 +91,7 @@ public class CoolBlue extends AbstractWebsite {
     public String getShipment() {
         Element shipment = doc.selectFirst("span.js-delivery-information-usp");
         if (shipment != null) {
-            return shipment.text().trim();
+            return shipment.text();
         }
         return Constants.NOT_AVAILABLE;
     }

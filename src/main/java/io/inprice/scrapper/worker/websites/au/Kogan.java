@@ -26,7 +26,7 @@ public class Kogan extends AbstractWebsite {
     public boolean isAvailable() {
         Element available = doc.selectFirst("link[itemProp='availability']");
         if (available != null) {
-            return available.attr("href").trim().contains("InStock");
+            return available.attr("href").contains("InStock");
         }
         return false;
     }
@@ -49,7 +49,7 @@ public class Kogan extends AbstractWebsite {
 
         name = doc.selectFirst("meta[property='og:title']");
         if (name != null) {
-            return name.attr("content").trim();
+            return name.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -58,7 +58,7 @@ public class Kogan extends AbstractWebsite {
     public BigDecimal getPrice() {
         Element price = doc.selectFirst("meta[property='product:price:amount']");
         if (price != null) {
-            return new BigDecimal(cleanPrice(price.attr("content")));
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
         return BigDecimal.ZERO;
     }
@@ -72,7 +72,7 @@ public class Kogan extends AbstractWebsite {
     public String getShipment() {
         Element shipment = doc.selectFirst("div[itemprop='offers'] span[role='tooltip']");
         if (shipment != null) {
-            return shipment.text().trim();
+            return shipment.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -81,7 +81,7 @@ public class Kogan extends AbstractWebsite {
     public String getBrand() {
         Element brand = doc.selectFirst("meta[itemProp='name']");
         if (brand != null) {
-            return brand.attr("content").trim();
+            return brand.attr("content");
         }
         return "Kogan";
     }

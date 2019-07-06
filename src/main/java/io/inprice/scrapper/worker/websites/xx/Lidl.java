@@ -27,14 +27,10 @@ public class Lidl extends AbstractWebsite {
 
     @Override
     public JSONObject getJsonData() {
-        final String indicator = "var dynamic_tm_data = ";
-        final String html = doc.html();
+        final String prodData = findAPart(doc.html(),  "var dynamic_tm_data = ", "};", 1);
 
-        int start = html.indexOf(indicator) + indicator.length();
-        int end   = html.indexOf("};", start) + 1;
-
-        if (start > indicator.length() && end > start) {
-            return new JSONObject(html.substring(start, end));
+        if (prodData != null) {
+            return new JSONObject(prodData);
         }
 
         return null;
@@ -51,7 +47,7 @@ public class Lidl extends AbstractWebsite {
     @Override
     public String getSku() {
         if (json != null && json.has("productid")) {
-            return json.getString("productid").trim();
+            return json.getString("productid");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -59,7 +55,7 @@ public class Lidl extends AbstractWebsite {
     @Override
     public String getName() {
         if (json != null && json.has("productname")) {
-            return json.getString("productname").trim();
+            return json.getString("productname");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -81,7 +77,7 @@ public class Lidl extends AbstractWebsite {
     public String getShipment() {
         Element shipment = doc.selectFirst("div.delivery span");
         if (shipment != null) {
-            return shipment.text().trim();
+            return shipment.text();
         }
         return "In-store pickup";
     }
@@ -89,12 +85,12 @@ public class Lidl extends AbstractWebsite {
     @Override
     public String getBrand() {
         if (json != null && json.has("productbrand")) {
-            return json.getString("productbrand").trim();
+            return json.getString("productbrand");
         }
 
         Element brand = doc.selectFirst("div.brand div.brand__claim");
         if (brand != null && ! brand.text().isEmpty()) {
-            return brand.text().trim();
+            return brand.text();
         }
 
         String[] nameChunks = getName().split("\\s");
@@ -113,7 +109,7 @@ public class Lidl extends AbstractWebsite {
         if (specs != null && specs.size() > 0) {
             specList = new ArrayList<>();
             for (Element spec : specs) {
-                String value = spec.text().trim();
+                String value = spec.text();
                 specList.add(new LinkSpec("", value));
             }
 
@@ -126,15 +122,15 @@ public class Lidl extends AbstractWebsite {
         if (specs != null && specs.size() > 0) {
             specList = new ArrayList<>();
             for (Element spec : specs) {
-                String strSpec = spec.text().trim();
+                String strSpec = spec.text();
                 String key = "";
-                String value = strSpec.trim();
+                String value = strSpec;
 
                 if (strSpec.contains(":")) {
                     String[] specChunks = strSpec.split(":");
                     if (specChunks.length > 1) {
-                        key = specChunks[0].trim();
-                        value = specChunks[1].trim();
+                        key = specChunks[0];
+                        value = specChunks[1];
                     }
                 }
                 specList.add(new LinkSpec(key, value));

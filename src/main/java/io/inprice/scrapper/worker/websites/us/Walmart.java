@@ -36,7 +36,7 @@ public class Walmart extends AbstractWebsite {
     public String getSku() {
         Element sku = doc.selectFirst("meta[itemprop='sku']");
         if (sku != null) {
-            return sku.attr("content").trim();
+            return sku.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -45,16 +45,16 @@ public class Walmart extends AbstractWebsite {
     public String getName() {
         Element name = doc.selectFirst("h1[itemprop='name']");
         if (name != null) {
-            return name.attr("content").trim();
+            return name.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
 
     @Override
     public BigDecimal getPrice() {
-        Element name = doc.selectFirst("span[itemprop='price']");
-        if (name != null) {
-            return new BigDecimal(name.attr("content").trim());
+        Element price = doc.selectFirst("span[itemprop='price']");
+        if (price != null) {
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
         return BigDecimal.ZERO;
     }
@@ -62,9 +62,11 @@ public class Walmart extends AbstractWebsite {
     @Override
     public String getSeller() {
         Element seller = doc.selectFirst("a[data-tl-id='ProductSellerInfo-SellerName']");
+
         if (seller != null) {
-            return seller.text().trim();
+            return seller.text();
         }
+
         return "Walmart";
     }
 
@@ -85,7 +87,7 @@ public class Walmart extends AbstractWebsite {
     public String getBrand() {
         Element brand = doc.selectFirst("span[itemprop='brand']");
         if (brand != null) {
-            return brand.text().trim();
+            return brand.text();
         }
         return Constants.NOT_AVAILABLE;
     }

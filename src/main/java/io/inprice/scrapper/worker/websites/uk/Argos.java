@@ -24,21 +24,15 @@ public class Argos extends AbstractWebsite {
 
     @Override
     public boolean isAvailable() {
-        final String html = doc.html();
-        final String indicator = "\"globallyOutOfStock\":";
-
-        int start = html.indexOf(indicator) + indicator.length();
-        int end = html.indexOf(",", start);
-
-        final String result = html.substring(start, end);
-        return "false".equalsIgnoreCase(result);
+        final String availability = findAPart(doc.html(), "\"globallyOutOfStock\":", ",");
+        return "false".equalsIgnoreCase(availability);
     }
 
     @Override
     public String getSku() {
         Element sku = doc.selectFirst("[itemProp='sku']");
         if (sku != null) {
-            return sku.attr("content").trim();
+            return sku.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -47,7 +41,7 @@ public class Argos extends AbstractWebsite {
     public String getName() {
         Element name = doc.selectFirst("span.product-title");
         if (name != null) {
-            return name.text().trim();
+            return name.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -56,7 +50,7 @@ public class Argos extends AbstractWebsite {
     public BigDecimal getPrice() {
         Element price = doc.selectFirst(".product-price-primary");
         if (price != null) {
-            return new BigDecimal(price.attr("content").trim());
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
         return BigDecimal.ZERO;
     }
@@ -82,17 +76,12 @@ public class Argos extends AbstractWebsite {
     public String getBrand() {
         Element brand = doc.selectFirst("[itemprop='brand']");
         if (brand != null) {
-            return brand.text().trim();
+            return brand.text();
         }
 
-        final String html = doc.html();
-        final String indicator = "\"brand\":\"";
-
-        int start = html.indexOf(indicator) + indicator.length();
-        int end = html.indexOf("\",", start);
-
-        if (end > start) {
-            return html.substring(start, end);
+        final String brandName = findAPart(doc.html(), "\"brand\":\"", "\",");
+        if (brandName != null) {
+            return brandName;
         }
 
         return Constants.NOT_AVAILABLE;

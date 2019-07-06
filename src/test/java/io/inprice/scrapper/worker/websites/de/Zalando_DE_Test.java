@@ -29,7 +29,7 @@ public class Zalando_DE_Test {
         assertEquals("16.05", link.getPrice().toString());
         assertEquals("Tigi", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Standard-Lieferung kostenlos 3-5 Werktage Express 7,90 € Lieferung verfügbar", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -43,7 +43,7 @@ public class Zalando_DE_Test {
         assertEquals("27.95", link.getPrice().toString());
         assertEquals("Esprit", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Standard-Lieferung kostenlos 3-5 Werktage Express 7,90 € Lieferung verfügbar", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -57,7 +57,7 @@ public class Zalando_DE_Test {
         assertEquals("189.95", link.getPrice().toString());
         assertEquals("Guess", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Standard-Lieferung kostenlos 3-5 Werktage Express 7,90 € Lieferung verfügbar", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -71,7 +71,7 @@ public class Zalando_DE_Test {
         assertEquals("12.75", link.getPrice().toString());
         assertEquals("KIOMI", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Standard-Lieferung kostenlos 3-5 Werktage Express 7,90 € Lieferung verfügbar", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 

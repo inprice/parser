@@ -29,7 +29,7 @@ public class Zalando_UK_Test {
         assertEquals("41.90", link.getPrice().toString());
         assertEquals("adidas Originals", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Standard delivery Free 4-6 working days Next day delivery £5.95 order before 2pm", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -43,7 +43,7 @@ public class Zalando_UK_Test {
         assertEquals("36.99", link.getPrice().toString());
         assertEquals("TomShot", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Standard delivery Free 4-6 working days Next day delivery £5.95 order before 2pm", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -57,7 +57,7 @@ public class Zalando_UK_Test {
         assertEquals("69.99", link.getPrice().toString());
         assertEquals("Mango", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Standard delivery Free 4-6 working days Next day delivery £5.95 order before 2pm", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -71,7 +71,7 @@ public class Zalando_UK_Test {
         assertEquals("109.99", link.getPrice().toString());
         assertEquals("Ray-Ban", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Standard delivery Free 4-6 working days Next day delivery £5.95 order before 2pm", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 

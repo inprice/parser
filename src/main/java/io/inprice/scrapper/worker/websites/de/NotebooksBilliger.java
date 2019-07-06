@@ -35,7 +35,7 @@ public class NotebooksBilliger extends AbstractWebsite {
     public String getSku() {
         Element sku = doc.selectFirst("div#product_page_detail");
         if (sku != null) {
-            return sku.attr("data-products-number").trim();
+            return sku.attr("data-products-number");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -44,7 +44,7 @@ public class NotebooksBilliger extends AbstractWebsite {
     public String getName() {
         Element name = doc.selectFirst("meta[property='og:title']");
         if (name != null) {
-            return name.attr("content").trim();
+            return name.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -53,7 +53,7 @@ public class NotebooksBilliger extends AbstractWebsite {
     public BigDecimal getPrice() {
         Element price = doc.getElementById("product_detail_price");
         if (price != null) {
-            return new BigDecimal(cleanPrice(price.attr("content").trim()));
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
 
         return BigDecimal.ZERO;
@@ -68,7 +68,7 @@ public class NotebooksBilliger extends AbstractWebsite {
     public String getShipment() {
         Element shipment = doc.selectFirst("div.sameday img");
         if (shipment != null) {
-            return shipment.attr("alt").trim();
+            return shipment.attr("alt");
         }
         return "Abholung im Geschäft";
     }
@@ -77,20 +77,15 @@ public class NotebooksBilliger extends AbstractWebsite {
     public String getBrand() {
         Element brand = doc.selectFirst("div.product_headline div.image_container img");
         if (brand != null) {
-            String alt = brand.attr("alt").trim();
+            String alt = brand.attr("alt");
             if (! alt.isEmpty()) {
                 return alt.substring(0, alt.lastIndexOf(" "));
             }
         }
 
-        final String indicator = "\"productBrand\":\"";
-        final String html = doc.html();
-
-        int start = html.indexOf(indicator) + indicator.length();
-        int end   = html.indexOf("\"", start);
-
-        if (start > indicator.length() && end > start) {
-            return html.substring(start, end);
+        final String brandName = findAPart(doc.html(), "\"productBrand\":\"", "\"");
+        if (brandName != null) {
+            return brandName;
         }
 
         return Constants.NOT_AVAILABLE;

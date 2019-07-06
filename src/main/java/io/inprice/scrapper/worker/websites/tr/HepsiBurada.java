@@ -31,7 +31,7 @@ public class HepsiBurada extends AbstractWebsite {
     public String getSku() {
         Element sku = doc.selectFirst("#addToCartForm input[name='sku']");
         if (sku != null) {
-            return sku.val().trim();
+            return sku.val();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -40,7 +40,7 @@ public class HepsiBurada extends AbstractWebsite {
     public String getName() {
         Element name = doc.selectFirst("span[itemprop='name']");
         if (name != null) {
-            return name.text().trim();
+            return name.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -49,7 +49,7 @@ public class HepsiBurada extends AbstractWebsite {
     public BigDecimal getPrice() {
         Element price = doc.selectFirst("span[itemprop='price']");
         if (price != null) {
-            return new BigDecimal(cleanPrice(price.attr("content").trim()));
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
         return BigDecimal.ZERO;
     }
@@ -58,7 +58,7 @@ public class HepsiBurada extends AbstractWebsite {
     public String getSeller() {
         Element seller = doc.selectFirst("span.seller a");
         if (seller != null) {
-            return seller.text().trim();
+            return seller.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -89,12 +89,7 @@ public class HepsiBurada extends AbstractWebsite {
     }
 
     private boolean isTrue(String indicator) {
-        final String html = doc.html();
-
-        int start = html.indexOf(indicator) + indicator.length();
-        int end = html.indexOf(",", start);
-
-        final String result = html.substring(start, end);
+        final String result = findAPart(doc.html(), indicator, ",");
         return "true".equalsIgnoreCase(result);
     }
 

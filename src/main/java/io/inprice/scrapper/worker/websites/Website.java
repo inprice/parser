@@ -19,16 +19,16 @@ public interface Website {
     //indicates the availability of the page
     boolean isAvailable();
 
-    String getBrand();
-
-    String getSeller();
-
     //can be used as SKU, CODE, ASIN, PRODUCT-ID, ITEM-ID...
     String getSku();
 
     String getName();
 
     BigDecimal getPrice();
+
+    String getBrand();
+
+    String getSeller();
 
     String getShipment();
 

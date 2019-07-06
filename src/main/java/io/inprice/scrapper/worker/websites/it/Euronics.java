@@ -56,7 +56,7 @@ public class Euronics extends AbstractWebsite {
     @Override
     public BigDecimal getPrice() {
         if (base != null) {
-            return new BigDecimal(base.attr("price"));
+            return new BigDecimal(cleanDigits(base.attr("price")));
         }
         return BigDecimal.ZERO;
     }

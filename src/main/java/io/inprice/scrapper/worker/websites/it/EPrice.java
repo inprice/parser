@@ -37,7 +37,7 @@ public class EPrice extends AbstractWebsite {
     public String getSku() {
         Element sku = doc.selectFirst("meta[itemprop='sku']");
         if (sku != null) {
-            return sku.attr("content").trim();
+            return sku.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -55,7 +55,7 @@ public class EPrice extends AbstractWebsite {
     public BigDecimal getPrice() {
         Element price = doc.selectFirst("span[itemprop='price']");
         if (price != null) {
-            return new BigDecimal(cleanPrice(price.text()));
+            return new BigDecimal(cleanDigits(price.text()));
         }
         return BigDecimal.ZERO;
     }
@@ -64,7 +64,7 @@ public class EPrice extends AbstractWebsite {
     public String getSeller() {
         Element shipment = doc.selectFirst("p.infoSeller a strong");
         if (shipment != null) {
-            return shipment.text().trim();
+            return shipment.text();
         }
         return "ePrice";
     }
@@ -78,7 +78,7 @@ public class EPrice extends AbstractWebsite {
     public String getBrand() {
         Element brand = doc.selectFirst("meta[itemprop='brand']");
         if (brand != null) {
-            return brand.attr("content").trim();
+            return brand.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -108,7 +108,7 @@ public class EPrice extends AbstractWebsite {
                 for (Element spec : specs) {
                     String[] specChunks = spec.text().split("\\.");
                     for (String sp: specChunks) {
-                        specList.add(new LinkSpec("", sp.trim()));
+                        specList.add(new LinkSpec("", sp));
                     }
                 }
             }

@@ -31,7 +31,7 @@ public class Fnac extends AbstractWebsite {
     public JSONObject getJsonData() {
         Element dataEL = doc.selectFirst("script[type='application/ld+json']");
         if (dataEL != null) {
-            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
+            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
             if (data.has("offers")) {
                 offers = data.getJSONObject("offers");
             }
@@ -91,7 +91,7 @@ public class Fnac extends AbstractWebsite {
         if (shipment == null) shipment = doc.selectFirst("div.f-productSpecialsOffers-offerParagraphWrapper");
 
         if (shipment != null) {
-            return shipment.text().trim();
+            return shipment.text();
         }
 
         return Constants.NOT_AVAILABLE;

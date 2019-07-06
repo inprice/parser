@@ -42,7 +42,7 @@ public class Zavvi extends AbstractWebsite {
     public JSONObject getJsonData() {
         Element dataEL = doc.selectFirst("script[type='application/ld+json']");
         if (dataEL != null) {
-            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
+            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
 
             if (data.has("offers")) {
                 JSONArray offersArray = data.getJSONArray("offers");
@@ -78,7 +78,7 @@ public class Zavvi extends AbstractWebsite {
     @Override
     public String getName() {
         if (json != null && json.has("name")) {
-            return json.getString("name").trim();
+            return json.getString("name");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -100,7 +100,7 @@ public class Zavvi extends AbstractWebsite {
     public String getShipment() {
         Element shipment = doc.selectFirst("div.productDeliveryAndReturns_message");
         if (shipment != null) {
-            return shipment.text().trim();
+            return shipment.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -127,9 +127,9 @@ public class Zavvi extends AbstractWebsite {
                 String strValue= null;
 
                 if (key != null) {
-                    strKey = key.text().replaceAll(":", "").trim();
+                    strKey = key.text().replaceAll(":", "");
                 }
-                if (value != null) strValue = value.text().trim();
+                if (value != null) strValue = value.text();
 
                 specList.add(new LinkSpec(strKey, strValue));
             }

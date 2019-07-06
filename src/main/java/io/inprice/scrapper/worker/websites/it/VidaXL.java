@@ -61,12 +61,12 @@ public class VidaXL extends AbstractWebsite {
     public String getSku() {
         Element code = doc.selectFirst("meta[itemprop='sku']");
         if (code != null) {
-            return code.attr("content").trim();
+            return code.attr("content");
         }
 
         code = doc.selectFirst("input[name='hidden_sku']");
         if (code != null) {
-            return code.attr("value").trim();
+            return code.attr("value");
         }
 
         return Constants.NOT_AVAILABLE;
@@ -76,7 +76,7 @@ public class VidaXL extends AbstractWebsite {
     public String getName() {
         Element title = doc.selectFirst("h1[itemprop='name']");
         if (title != null) {
-            return title.text().trim();
+            return title.text();
         }
 
         title = doc.selectFirst("meta[property='og:title']");
@@ -90,12 +90,12 @@ public class VidaXL extends AbstractWebsite {
     @Override
     public BigDecimal getPrice() {
         if (current != null && current.has("price_num")) {
-            return new BigDecimal(current.getString("price_num"));
+            return new BigDecimal(cleanDigits(current.getString("price_num")));
         }
 
         Element price = doc.selectFirst("meta[itemprop='price']");
         if (price != null) {
-            return new BigDecimal(price.attr("content").trim());
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
         return BigDecimal.ZERO;
     }
@@ -134,18 +134,15 @@ public class VidaXL extends AbstractWebsite {
 
         if (sb.length() == 0) sb.append("NA");
 
-        return sb.toString().replaceAll(" Disponibile Non disponibile", "").trim();
+        return sb.toString().replaceAll(" Disponibile Non disponibile", "");
     }
 
     @Override
     public String getBrand() {
-        final String indicator = "\"brand\":\"";
+        final String brand = findAPart(doc.html(),  "\"brand\":\"", "\"");
 
-        int start = doc.html().indexOf(indicator) + indicator.length();
-        int end   = doc.html().indexOf(",\"", start);
-
-        if (start > indicator.length() && end > start) {
-            return doc.html().substring(start, end);
+        if (brand != null) {
+            return brand;
         }
 
         return "VidaXL";

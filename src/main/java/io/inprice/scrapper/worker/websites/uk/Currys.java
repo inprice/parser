@@ -32,7 +32,7 @@ public class Currys extends AbstractWebsite {
     public JSONObject getJsonData() {
         Element dataEL = doc.getElementById("app.digitalData");
         if (dataEL != null) {
-            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
+            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
             if (data.has("product") && ! data.getJSONArray("product").isEmpty()) {
                 product = data.getJSONArray("product").getJSONObject(0);
             }
@@ -82,7 +82,7 @@ public class Currys extends AbstractWebsite {
     public String getShipment() {
         Element shipment = doc.getElementById("delivery");
         if (shipment != null) {
-            return shipment.text().replaceAll("More info", "").trim();
+            return shipment.text().replaceAll("More info", "");
         }
         return Constants.NOT_AVAILABLE;
     }

@@ -56,12 +56,12 @@ public class Ebay extends AbstractWebsite {
     public String getSku() {
         Element sku = doc.getElementById("descItemNumber");
         if (sku != null) {
-            return sku.text().trim();
+            return sku.text();
         }
 
         sku = doc.selectFirst("a[data-itemid]");
         if (sku != null) {
-            return sku.attr("data-itemid").trim();
+            return sku.attr("data-itemid");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -70,14 +70,14 @@ public class Ebay extends AbstractWebsite {
     public String getName() {
         Element name = doc.selectFirst("span#vi-lkhdr-itmTitl");
         if (name == null) name = doc.selectFirst("title");
-        if (name != null) return name.text().trim();
+        if (name != null) return name.text();
 
         name = doc.selectFirst("h1.product-title");
-        if (name != null) return name.text().trim();
+        if (name != null) return name.text();
 
         name = doc.selectFirst("a[data-itemid]");
         if (name != null) {
-            return name.attr("etafsharetitle").trim();
+            return name.attr("etafsharetitle");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -96,22 +96,22 @@ public class Ebay extends AbstractWebsite {
             if (price == null) price = doc.getElementById("prcIsum_bidPrice");
 
             if (price != null) {
-                strPrice = price.attr("content").trim();
+                strPrice = price.attr("content");
             } else {
                 price = doc.getElementById("mm-saleDscPrc");
-                if (price != null) strPrice = price.text().trim();
+                if (price != null) strPrice = price.text();
             }
 
             if (price == null) {
                 price = doc.selectFirst("div.price");
-                if (price != null) strPrice = price.text().trim();
+                if (price != null) strPrice = price.text();
             }
         }
 
         if (strPrice == null)
             return BigDecimal.ZERO;
         else
-            return new BigDecimal(cleanPrice(strPrice));
+            return new BigDecimal(cleanDigits(strPrice));
     }
 
     @Override
@@ -122,14 +122,14 @@ public class Ebay extends AbstractWebsite {
         if (seller != null) {
             String[] sellerChunks = seller.attr("aria-label").split(":");
             if (sellerChunks.length > 1) {
-                value = sellerChunks[1].trim();
+                value = sellerChunks[1];
             }
         } else {
             seller = doc.selectFirst("div.seller-persona a");
             if (seller == null) seller = doc.selectFirst("span.mbg-nw");
 
             if (seller != null) {
-                value = seller.text().trim();
+                value = seller.text();
             }
         }
         return value;
@@ -141,12 +141,12 @@ public class Ebay extends AbstractWebsite {
 
         Element shipment = doc.getElementById("fshippingCost");
         if (shipment != null) {
-            String left = shipment.text().trim();
+            String left = shipment.text();
             String right = "";
 
             shipment = doc.getElementById("fShippingSvc");
             if (shipment != null) {
-                right = shipment.text().trim();
+                right = shipment.text();
             }
             return left + " " + right;
         }
@@ -155,11 +155,11 @@ public class Ebay extends AbstractWebsite {
         if (shipment == null) shipment = doc.selectFirst("span.logistics-cost");
 
         if (shipment != null && shipment.text().trim().length() > 1) {
-            value = shipment.text().trim();
+            value = shipment.text();
         } else {
             shipment = doc.getElementById("shSummary");
             if (shipment != null) {
-                value = shipment.text().trim();
+                value = shipment.text();
             }
         }
 
@@ -207,10 +207,10 @@ public class Ebay extends AbstractWebsite {
             if (specs != null && specs.size() > 0) {
                 specList = new ArrayList<>();
                 for (int i = 0; i < specs.size(); i++) {
-                    String key = specs.get(i).text().trim();
+                    String key = specs.get(i).text();
                     String value = "";
                     if (i < specs.size() - 1) {
-                        value = specs.get(++i).text().trim();
+                        value = specs.get(++i).text();
                     }
                     if (key.matches(BRAND_WORDS)) {
                         brand = value;

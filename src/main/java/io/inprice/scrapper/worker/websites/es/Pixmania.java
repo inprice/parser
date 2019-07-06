@@ -79,7 +79,7 @@ public class Pixmania extends AbstractWebsite {
      */
     private String getToken() {
         if (doc != null) {
-            JSONObject tokenData = new JSONObject(doc.body().text().trim());
+            JSONObject tokenData = new JSONObject(doc.body().text());
             if (tokenData.has("session")) {
                 return tokenData.getJSONObject("session").getString("token");
             }
@@ -205,7 +205,7 @@ public class Pixmania extends AbstractWebsite {
             if (descChunks.length > 0) {
                 specList = new ArrayList<>();
                 for (String desc: descChunks) {
-                    specList.add(new LinkSpec("", desc.trim()));
+                    specList.add(new LinkSpec("", desc));
                 }
             }
         }

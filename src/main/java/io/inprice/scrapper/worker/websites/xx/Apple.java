@@ -40,7 +40,7 @@ public class Apple extends AbstractWebsite {
 
         Element dataEL = doc.selectFirst("script[type='application/ld+json']");
         if (dataEL != null) {
-            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
+            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
             if (data.has("offers")) {
                 JSONArray offersArray = data.getJSONArray("offers");
                 if (! offersArray.isEmpty()) {

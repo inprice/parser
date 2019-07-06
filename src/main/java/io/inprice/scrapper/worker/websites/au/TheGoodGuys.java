@@ -55,7 +55,7 @@ public class TheGoodGuys extends AbstractWebsite {
     public BigDecimal getPrice() {
         Element price = doc.selectFirst("meta[property='og:price:amount']");
         if (price != null) {
-            return new BigDecimal(cleanPrice(price.attr("content").trim()));
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
         return BigDecimal.ZERO;
     }
@@ -74,7 +74,7 @@ public class TheGoodGuys extends AbstractWebsite {
     public String getBrand() {
         Element brand = doc.selectFirst("img.brand_logo_keyftrs");
         if (brand != null) {
-            return brand.attr("alt").trim();
+            return brand.attr("alt");
         }
         return Constants.NOT_AVAILABLE;
     }

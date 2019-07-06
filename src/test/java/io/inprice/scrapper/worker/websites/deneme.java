@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.net.*;
 import java.util.HashMap;
@@ -549,10 +550,10 @@ public class deneme {
             //"https://www.lidl.com/products/310436_C",
             "https://www.lidl.com/products/1031629"
         };
-/*
-        for (String url: asos_uk) {
+
+        for (String url: walmart_ca) {
             Link link = new Link(url);
-            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.uk.Asos");
+            link.setWebsiteClassName("io.inprice.scrapper.worker.websites.ca.Walmart");
             try {
                 Class<Website> clazz = (Class<Website>) Class.forName(link.getWebsiteClassName());
                 Constructor<Website> ctor = clazz.getConstructor(Link.class);
@@ -564,8 +565,7 @@ public class deneme {
                 log.error("Error in converting message from byte array to Link", e);
             }
         }
-  */
-        System.out.println(new BigDecimal(1).compareTo(BigDecimal.ONE));
+
     }
 
     private static String getRootDomain(String url) {

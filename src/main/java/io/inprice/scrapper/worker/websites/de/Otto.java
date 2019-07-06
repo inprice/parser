@@ -42,7 +42,7 @@ public class Otto extends AbstractWebsite {
     public JSONObject getJsonData() {
         Element data = doc.selectFirst("script#productDataJson");
         if (data != null) {
-            JSONObject result = new JSONObject(data.dataNodes().get(0).getWholeData().trim());
+            JSONObject result = new JSONObject(data.dataNodes().get(0).getWholeData());
             if (! result.isEmpty() && result.has("variations")) {
                 JSONObject variations = result.getJSONObject("variations");
                 Set<String> keySet = variations.keySet();
@@ -93,7 +93,7 @@ public class Otto extends AbstractWebsite {
         if (price == null) price = doc.getElementById("normalPriceAmount");
 
         if (price != null) {
-            return new BigDecimal(cleanPrice(price.attr("content").trim()));
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
 
         if (product != null && product.has("displayPrice")) {

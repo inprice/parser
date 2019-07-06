@@ -37,7 +37,7 @@ public class Zalando extends AbstractWebsite {
     public String getSku() {
         Element sku = doc.selectFirst("meta[property='og:url']");
         if (sku != null) {
-            String url = sku.attr("content").trim();
+            String url = sku.attr("content");
             if (! url.isEmpty()) {
                 String[] urlChunks = url.split("-");
                 if (urlChunks.length > 1) {
@@ -53,12 +53,12 @@ public class Zalando extends AbstractWebsite {
     public String getName() {
         Element name = doc.selectFirst("h1[title]");
         if (name != null) {
-            return name.attr("title").trim();
+            return name.attr("title");
         }
 
         name = doc.selectFirst("meta[name='twitter:title']");
         if (name != null) {
-            return name.attr("content").trim();
+            return name.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -67,7 +67,7 @@ public class Zalando extends AbstractWebsite {
     public BigDecimal getPrice() {
         Element price = doc.selectFirst("meta[name='twitter:data1']");
         if (price != null) {
-            return new BigDecimal(cleanPrice(price.attr("content").trim()));
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
         return BigDecimal.ZERO;
     }
@@ -79,11 +79,42 @@ public class Zalando extends AbstractWebsite {
 
     @Override
     public String getShipment() {
-        Element shipment = doc.getElementById("z-pdp-topDeliveryInfo--standard");
-        if (shipment != null) {
-            return shipment.text().trim();
+        final String html = doc.html();
+
+        StringBuilder delivery = new StringBuilder();
+
+        String standard1 = findAPart(html, "\"zalando.prodpres.delivery.available.title\":\"", "\",\"");
+        String standard2 = findAPart(html, "\"zalando.prodpres.delivery.standard.free\":\"", "\",\"");
+        String standard3 = findAPart(html, "\"zalando.prodpres.delivery.available.time\":\"", "\",\"");
+
+        if (standard1 != null) {
+            delivery.append(standard1);
+            delivery.append(" ");
         }
-        return "Standard shipment";
+        if (standard2 != null) {
+            delivery.append(standard2);
+            delivery.append(" ");
+        }
+        if (standard3 != null) {
+            delivery.append(standard3);
+            delivery.append(" ");
+        }
+
+        String express1 = findAPart(html, "\"zalando.prodpres.delivery.express.title\":\"", "\",\"");
+        String express2 = findAPart(html, "\"zalando.prodpres.delivery.express.cost\":\"", "\",\"");
+        String express3 = findAPart(html, "\"zalando.prodpres.delivery.express.time\":\"", "\",\"");
+
+        if (express1 != null) {
+            delivery.append(express1);
+            delivery.append(" ");
+        }
+        if (express2 != null) {
+            delivery.append(express2);
+            delivery.append(" ");
+        }
+        if (express3 != null) delivery.append(express3);
+
+        return delivery.toString(); //"Standard shipment";
     }
 
     @Override
@@ -103,9 +134,9 @@ public class Zalando extends AbstractWebsite {
             specList = new ArrayList<>();
             int i = 0;
             while (i < specs.size()) {
-                String key = specs.get(i++).text().replaceAll(":", "").trim();
+                String key = specs.get(i++).text().replaceAll(":", "");
                 String value = "";
-                if (i < specs.size())  value = specs.get(i++).text().trim();
+                if (i < specs.size())  value = specs.get(i++).text();
                 if (! key.isEmpty() && ! value.isEmpty()) specList.add(new LinkSpec(key, value));
             }
         }

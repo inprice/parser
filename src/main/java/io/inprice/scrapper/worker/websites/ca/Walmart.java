@@ -67,25 +67,18 @@ public class Walmart extends AbstractWebsite {
     public String getPayload() {
         if (doc != null) {
 
-            final String indicator = "\"skus\":[";
-            final String html = doc.html();
+            final String skus = findAPart(doc.html(),  "\"skus\":[\"", "]", -1);
 
-            int start = html.indexOf(indicator) + indicator.length()+1;
-            int end   = html.indexOf("]", start)-1;
-
-            String skus = "";
-            if (start > indicator.length() && end > start) {
-                skus = html.substring(start, end);
-            }
-
-            Element preDataEL = doc.selectFirst("div.js-content script[type='application/ld+json']");
-            if (preDataEL != null) {
-                preData = new JSONObject(preDataEL.dataNodes().get(0).getWholeData().trim());
-                if (preData.has("sku")) {
-                    sku = preData.getString("sku");
-                    String[] urlChunks = getUrl().split("/");
-                    if (urlChunks.length > 0) {
-                        return String.format(STATIC_DATA, urlChunks[urlChunks.length - 1], skus).replaceAll("'", "\"");
+            if (skus != null) {
+                Element preDataEL = doc.selectFirst("div.js-content script[type='application/ld+json']");
+                if (preDataEL != null) {
+                    preData = new JSONObject(preDataEL.dataNodes().get(0).getWholeData());
+                    if (preData.has("sku")) {
+                        sku = preData.getString("sku");
+                        String[] urlChunks = getUrl().split("/");
+                        if (urlChunks.length > 0) {
+                            return String.format(STATIC_DATA, urlChunks[urlChunks.length - 1], skus).replaceAll("'", "\"");
+                        }
                     }
                 }
             }
@@ -204,16 +197,11 @@ public class Walmart extends AbstractWebsite {
 
     @Override
     public List<LinkSpec> getSpecList() {
-        final String body = doc.body().html();
-        final String indicator = "featuresSpecifications";
-
-        int start = body.indexOf(indicator) + indicator.length() + 3;
-        int end = body.indexOf("\",\"type\"");
+        final String features = findAPart(doc.html(), "featuresSpecifications\":\"", "\",\"type\"");
 
         List<LinkSpec> specList = null;
 
-        if (start > indicator.length() && end > start) {
-            String features = body.substring(start, end);
+        if (features != null) {
             String[] specs = features.split("•");
             if (specs.length > 0) {
                 specList = new ArrayList<>();

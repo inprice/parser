@@ -35,7 +35,7 @@ public class NewLook extends AbstractWebsite {
     public String getSku() {
         Element code = doc.selectFirst("meta[itemprop='sku']");
         if (code != null) {
-            return code.attr("content").trim();
+            return code.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -44,7 +44,7 @@ public class NewLook extends AbstractWebsite {
     public String getName() {
         Element title = doc.selectFirst("li.active.list__item span[property='name']");
         if (title != null) {
-            return title.text().trim();
+            return title.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -53,7 +53,7 @@ public class NewLook extends AbstractWebsite {
     public BigDecimal getPrice() {
         Element price = doc.selectFirst("meta[itemprop='price']");
         if (price != null) {
-            return new BigDecimal(price.attr("content").trim());
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
         return BigDecimal.ZERO;
     }
@@ -67,7 +67,7 @@ public class NewLook extends AbstractWebsite {
     public String getShipment() {
         Element shipment = doc.selectFirst("span.product-delivery-link a");
         if (shipment != null) {
-            return shipment.text().trim();
+            return shipment.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -76,7 +76,7 @@ public class NewLook extends AbstractWebsite {
     public String getBrand() {
         Element brand = doc.selectFirst("section[itemprop='brand'] meta[itemprop='name']");
         if (brand != null) {
-            return brand.attr("content").trim();
+            return brand.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }

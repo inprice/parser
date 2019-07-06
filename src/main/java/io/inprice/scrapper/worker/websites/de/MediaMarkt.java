@@ -33,14 +33,10 @@ public class MediaMarkt extends AbstractWebsite {
 
     @Override
     protected JSONObject getJsonData() {
-        final String indicator = "__PRELOADED_STATE__ = ";
-        final String html = doc.html();
+        final String prodData = findAPart(doc.html(), "__PRELOADED_STATE__ = ", "};", 1);
 
-        int start = html.indexOf(indicator) + indicator.length();
-        int end   = html.indexOf("};", start) + 1;
-
-        if (start > indicator.length() && end > start) {
-            JSONObject data = new JSONObject(html.substring(start, end));
+        if (prodData != null) {
+            JSONObject data = new JSONObject(prodData);
             if (data.has("reduxInitialStore")) {
                 JSONObject store = data.getJSONObject("reduxInitialStore");
                 if (store.has("select")) {

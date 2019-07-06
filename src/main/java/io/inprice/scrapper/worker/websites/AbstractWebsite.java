@@ -89,7 +89,7 @@ public abstract class AbstractWebsite implements Website {
             specList = new ArrayList<>();
             for (Element spec : specs) {
                 if (!spec.text().trim().isEmpty()) {
-                    LinkSpec ls = new LinkSpec("", spec.text().trim());
+                    LinkSpec ls = new LinkSpec("", spec.text());
                     if (sep != null && ls.getValue().indexOf(sep) > 0) {
                         String[] specChunks = ls.getValue().split(sep);
                         ls.setKey(specChunks[0]);
@@ -117,15 +117,17 @@ public abstract class AbstractWebsite implements Website {
         return specList;
     }
 
-    protected String cleanPrice(String price) {
+    protected String cleanDigits(String numString) {
+        if (numString == null || numString.trim().isEmpty()) return "0";
+
         StringBuilder sb = new StringBuilder();
-        for (Character ch: price.toCharArray()) {
+        for (Character ch: numString.toCharArray()) {
             if ((ch >= '0' && ch <= '9') || ch == ',' || ch == '.') sb.append(ch);
         }
         String trimmed = sb.toString();
         boolean commaDecimal =  (trimmed.length() > 3 && trimmed.charAt(trimmed.length() - 3) == ',');
 
-        String pure = trimmed.replaceAll("[^\\d.]", "").trim();
+        String pure = trimmed.replaceAll("[^\\d.]", "");
 
         if (commaDecimal) {
             int ix = pure.length()-2;
@@ -133,6 +135,25 @@ public abstract class AbstractWebsite implements Website {
         } else {
             return pure;
         }
+    }
+
+    protected String findAPart(String html, String starting, String ending) {
+        return findAPart(html, starting, ending, 0);
+    }
+
+    protected String findAPart(String html, String starting, String ending, int plus) {
+        int start = html.indexOf(starting) + starting.length();
+        int end = html.indexOf(ending, start) + plus;
+
+        if (start > starting.length() && end > start) {
+            return html.substring(start, end);
+        }
+
+        return null;
+    }
+
+    protected String fixQuotes(String raw) {
+        return raw.replaceAll("((?<=(\\{|\\[|\\,|:))\\s*')|('\\s*(?=(\\}|(\\])|(\\,|:))))", "\"");
     }
 
     private void read() {
@@ -151,11 +172,11 @@ public abstract class AbstractWebsite implements Website {
         if (link.getName() == null
         ||  Status.NEW.equals(link.getStatus())
         ||  Status.RENEWED.equals(link.getStatus())) {
-            link.setSku(getSku());
-            link.setName(getName());
-            link.setSeller(getSeller());
-            link.setShipment(getShipment());
-            link.setBrand(getBrand());
+            if (getSku() != null) link.setSku(fixQuotes(getSku().trim()));
+            if (getName() != null) link.setName(fixQuotes(getName().trim()));
+            if (getBrand() != null) link.setBrand(fixQuotes(getBrand().trim()));
+            if (getSeller() != null) link.setSeller(fixQuotes(getSeller().trim()));
+            if (getShipment() != null) link.setShipment(fixQuotes(getShipment().trim()));
             link.setSpecList(getSpecList());
         }
 

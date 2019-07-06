@@ -31,7 +31,7 @@ public class Laredoute extends AbstractWebsite {
     protected JSONObject getJsonData() {
         Element dataEL = doc.selectFirst("script[type='application/ld+json']");
         if (dataEL != null) {
-            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData().trim());
+            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
             if (data.has("offers")) {
                 offers = data.getJSONObject("offers");
 
@@ -68,21 +68,17 @@ public class Laredoute extends AbstractWebsite {
     @Override
     public String getName() {
         if (json != null && json.has("name")) {
-            return json.getString("name").trim();
+            return json.getString("name");
         }
         return Constants.NOT_AVAILABLE;
     }
 
     @Override
     public BigDecimal getPrice() {
-        final String html = doc.html();
-        final String indicator = "\"SalePriceAfterWithCharges\":";
+        final String price = findAPart(doc.html(),  "\"SalePriceAfterWithCharges\":", ",");
 
-        int start = html.indexOf(indicator) + indicator.length();
-        int end = html.indexOf(",", start);
-
-        if (start > indicator.length() && end > start) {
-            return new BigDecimal(cleanPrice(html.substring(start, end)));
+        if (price != null) {
+            return new BigDecimal(cleanDigits(price));
         }
 
         if (offers != null && offers.has("price")) {
@@ -106,26 +102,7 @@ public class Laredoute extends AbstractWebsite {
     public String getShipment() {
         Element shipment = doc.selectFirst("li.delivery-info-item.delivery-info.delivery-info-content");
         if (shipment != null) {
-            return shipment.text().trim();
-            /*
-            String text = shipment.attr("data-text");
-            String fee = text.replaceAll("<b>", "").replaceAll("</b>", "").replaceAll("\\[", "").replaceAll("]", "");
-            if (fee.contains("DELIVERYPRICE")) {
-
-                final String html = doc.html();
-                final String indicator = "\"FormattedDeliveryFee\":";
-
-                int start = html.indexOf(indicator) + indicator.length();
-                int end = html.indexOf("\",", start);
-
-                if (start > indicator.length() && end > start) {
-                    String expense = html.substring(start, end);
-                    return fee.replaceAll("DELIVERYPRICE", expense).replaceAll("\"", "").trim();
-                }
-            }
-            return fee;
-
-             */
+            return shipment.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -155,7 +132,7 @@ public class Laredoute extends AbstractWebsite {
             if (specChunks.length > 0) {
                 specList = new ArrayList<>(specChunks.length);
                 for (String spec : specChunks) {
-                    specList.add(new LinkSpec("", spec.trim()));
+                    specList.add(new LinkSpec("", spec));
                 }
             }
         }

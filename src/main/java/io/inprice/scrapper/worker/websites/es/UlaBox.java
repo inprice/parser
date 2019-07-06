@@ -27,7 +27,7 @@ public class UlaBox extends AbstractWebsite {
         Element product = doc.selectFirst("div.product-shop");
         if (product != null) {
             try {
-                int quantity = new Integer(product.attr("data-product-qty"));
+                int quantity = new Integer(cleanDigits(product.attr("data-product-qty")));
                 return quantity > 0;
             } catch (Exception e) {
                 //
@@ -58,7 +58,7 @@ public class UlaBox extends AbstractWebsite {
     public BigDecimal getPrice() {
         Element product = doc.selectFirst("div.product-shop");
         if (product != null) {
-            return new BigDecimal(cleanPrice(product.attr("data-price")));
+            return new BigDecimal(cleanDigits(product.attr("data-price")));
         }
         return BigDecimal.ZERO;
     }
@@ -72,7 +72,7 @@ public class UlaBox extends AbstractWebsite {
     public String getShipment() {
         Element shipment = doc.selectFirst("div.value-description");
         if (shipment != null) {
-            return shipment.text().trim();
+            return shipment.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -81,7 +81,7 @@ public class UlaBox extends AbstractWebsite {
     public String getBrand() {
         Element brand = doc.selectFirst("span.milli a.js-pjax");
         if (brand != null) {
-            return brand.text().trim();
+            return brand.text();
         }
         return Constants.NOT_AVAILABLE;
     }

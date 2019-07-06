@@ -29,7 +29,7 @@ public class Zalando_NL_Test {
         assertEquals("27.45", link.getPrice().toString());
         assertEquals("Björn Borg", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Standaard levering gratis 2-5 werkdagen Express € 9,95 Levering beschikbaar", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -43,7 +43,7 @@ public class Zalando_NL_Test {
         assertEquals("14.95", link.getPrice().toString());
         assertEquals("MAGIC Bodyfashion", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Standaard levering gratis 2-5 werkdagen Express € 9,95 Levering beschikbaar", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -57,7 +57,7 @@ public class Zalando_NL_Test {
         assertEquals("103.95", link.getPrice().toString());
         assertEquals("Versus Versace", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Standaard levering gratis 2-5 werkdagen Express € 9,95 Levering beschikbaar", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -71,7 +71,7 @@ public class Zalando_NL_Test {
         assertEquals("89.95", link.getPrice().toString());
         assertEquals("Michael Kors", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Standaard levering gratis 2-5 werkdagen Express € 9,95 Levering beschikbaar", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 

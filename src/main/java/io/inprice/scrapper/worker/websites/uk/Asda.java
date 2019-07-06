@@ -82,7 +82,7 @@ public class Asda extends AbstractWebsite {
     @Override
     public BigDecimal getPrice() {
         if (product != null && product.has("price")) {
-            return new BigDecimal(cleanPrice(product.getString("price")));
+            return new BigDecimal(cleanDigits(product.getString("price")));
         }
 
         return BigDecimal.ZERO;

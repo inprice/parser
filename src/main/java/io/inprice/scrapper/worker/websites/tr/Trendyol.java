@@ -34,7 +34,7 @@ public class Trendyol extends AbstractWebsite {
     public String getSku() {
         String[] nameChunks = getName().split("\\s");
         if (nameChunks.length > 0) {
-            return nameChunks[nameChunks.length-1].trim();
+            return nameChunks[nameChunks.length-1];
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -43,7 +43,7 @@ public class Trendyol extends AbstractWebsite {
     public String getName() {
         Element name = doc.selectFirst("meta[name='twitter:title']");
         if (name != null) {
-            return name.attr("content").trim();
+            return name.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -52,7 +52,7 @@ public class Trendyol extends AbstractWebsite {
     public BigDecimal getPrice() {
         Element price = doc.selectFirst("meta[name='twitter:data1']");
         if (price != null) {
-            return new BigDecimal(cleanPrice(price.attr("content").trim()));
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
         return BigDecimal.ZERO;
     }
@@ -61,14 +61,14 @@ public class Trendyol extends AbstractWebsite {
     public String getSeller() {
         Element seller = doc.selectFirst("span.pr-in-dt-spn");
         if (seller != null) {
-            return seller.text().trim();
+            return seller.text();
         }
 
         seller = doc.selectFirst("meta[name='twitter:description']");
         if (seller != null) {
             String[] sellerChunks = seller.attr("content").split(":");
             if (sellerChunks.length > 0) {
-                return sellerChunks[sellerChunks.length-1].trim();
+                return sellerChunks[sellerChunks.length-1];
             }
         }
 
@@ -93,7 +93,7 @@ public class Trendyol extends AbstractWebsite {
     public String getBrand() {
         Element brand = doc.selectFirst("div.pr-in-cn div.pr-in-br a");
         if (brand != null) {
-            return brand.text().trim();
+            return brand.text();
         }
 
         return getSeller();
@@ -109,7 +109,7 @@ public class Trendyol extends AbstractWebsite {
             for (Element spec : specs) {
                 String[] specChunks = spec.text().split("\\.");
                 for (String sp: specChunks) {
-                    specList.add(new LinkSpec("", sp.trim()));
+                    specList.add(new LinkSpec("", sp));
                 }
             }
         }

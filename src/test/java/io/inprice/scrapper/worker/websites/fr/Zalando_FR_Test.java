@@ -29,7 +29,7 @@ public class Zalando_FR_Test {
         assertEquals("99.95", link.getPrice().toString());
         assertEquals("Fila", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Livraison Standard gratuite 3-6 jours ouvrables Livraison Express 9,95 € 1-2 jours ouvrables en commandant avant 15h", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -43,7 +43,7 @@ public class Zalando_FR_Test {
         assertEquals("22.99", link.getPrice().toString());
         assertEquals("Pier One", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Livraison Standard gratuite 3-6 jours ouvrables Livraison Express 9,95 € 1-2 jours ouvrables en commandant avant 15h", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -57,7 +57,7 @@ public class Zalando_FR_Test {
         assertEquals("150.00", link.getPrice().toString());
         assertEquals("Lauren Ralph Lauren", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Livraison Standard gratuite 3-6 jours ouvrables Livraison Express 9,95 € 1-2 jours ouvrables en commandant avant 15h", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -71,7 +71,7 @@ public class Zalando_FR_Test {
         assertEquals("74.95", link.getPrice().toString());
         assertEquals("Smith Optics", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Livraison Standard gratuite 3-6 jours ouvrables Livraison Express 9,95 € 1-2 jours ouvrables en commandant avant 15h", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 

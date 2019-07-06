@@ -52,7 +52,7 @@ public class HarveyNorman extends AbstractWebsite {
         if (dataEL != null && dataEL.size() > 0) {
             for (int i = 0; i < dataEL.size(); i++) {
                 if (dataEL.get(i).dataNodes().get(0).getWholeData().indexOf("priceCurrency") > 0) {
-                    JSONObject data = new JSONObject(dataEL.get(i).dataNodes().get(0).getWholeData().replace("\r\n"," ").trim());
+                    JSONObject data = new JSONObject(dataEL.get(i).dataNodes().get(0).getWholeData().replace("\r\n"," "));
                     if (data.has("offers")) {
                         JSONArray offers = data.getJSONArray("offers");
                         if (! offers.isEmpty() && offers.length() > 0) {
@@ -118,7 +118,7 @@ public class HarveyNorman extends AbstractWebsite {
     public String getShipment() {
         Element shipment = doc.selectFirst("span.margin-vertical-xsmall.font-weight-light");
         if (shipment != null) {
-            return shipment.text().trim();
+            return shipment.text();
         }
         return "See delivery details";
     }

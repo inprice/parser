@@ -28,7 +28,7 @@ public class Etsy extends AbstractWebsite {
         Element quantity = doc.selectFirst("input[name='quantity']");
         if (quantity != null) {
             try {
-                int qty = new Integer(quantity.attr("value"));
+                int qty = new Integer(cleanDigits(quantity.attr("value")));
                 return qty > 0;
             } catch (Exception e) {
                 //
@@ -48,7 +48,7 @@ public class Etsy extends AbstractWebsite {
 
         sku = doc.selectFirst("h1[data-listing-id]");
         if (sku != null) {
-            return sku.attr("data-listing-id").trim();
+            return sku.attr("data-listing-id");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -57,7 +57,7 @@ public class Etsy extends AbstractWebsite {
     public String getName() {
         Element name = doc.selectFirst("meta[property='og:title']");
         if (name != null) {
-            return name.attr("content").trim();
+            return name.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -66,14 +66,14 @@ public class Etsy extends AbstractWebsite {
     public BigDecimal getPrice() {
         Element price = doc.selectFirst("span.override-listing-price");
         if (price != null) {
-            return new BigDecimal(cleanPrice(price.text().trim()));
+            return new BigDecimal(cleanDigits(price.text()));
         }
 
         price = doc.selectFirst("meta[property='etsymarketplace:price_value']");
         if (price == null) price = doc.selectFirst("meta[property='product:price:amount']");
 
         if (price != null) {
-            return new BigDecimal(price.attr("content"));
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
 
         return BigDecimal.ZERO;
@@ -111,7 +111,7 @@ public class Etsy extends AbstractWebsite {
 
         if (sb.length() == 0) sb.append("NA");
 
-        return sb.toString().trim();
+        return sb.toString();
     }
 
     @Override

@@ -65,7 +65,7 @@ public class MediaWorld extends AbstractWebsite {
     @Override
     public BigDecimal getPrice() {
         if (product != null) {
-            return new BigDecimal(product.attr("data-gtm-price"));
+            return new BigDecimal(cleanDigits(product.attr("data-gtm-price")));
         }
         return BigDecimal.ZERO;
     }
@@ -79,7 +79,7 @@ public class MediaWorld extends AbstractWebsite {
     public String getShipment() {
         Element shipment = doc.selectFirst("p.product-info-shipping");
         if (shipment != null) {
-            return shipment.text().trim();
+            return shipment.text();
         }
         return Constants.NOT_AVAILABLE;
     }

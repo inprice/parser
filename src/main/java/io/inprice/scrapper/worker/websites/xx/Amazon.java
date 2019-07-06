@@ -88,7 +88,7 @@ public class Amazon extends AbstractWebsite {
                     Element decimal = integer.nextElementSibling();
                     if (decimal != null) {
                         strPrice = integer.text().trim() + "." + decimal.text().trim();
-                        return new BigDecimal(cleanPrice(strPrice));
+                        return new BigDecimal(cleanDigits(strPrice));
                     }
                 }
             }
@@ -113,7 +113,7 @@ public class Amazon extends AbstractWebsite {
             } else {
                 price = doc.selectFirst(".price-large");
                 if (price != null) {
-                    String left = cleanPrice(price.text());
+                    String left = cleanDigits(price.text());
                     String right = "00";
                     if (price.nextElementSibling() != null) {
                         right = price.nextElementSibling().text();
@@ -129,10 +129,10 @@ public class Amazon extends AbstractWebsite {
         if (price != null) {
             if (price.text().contains("-")) {
                 String[] priceChunks = price.text().split("-");
-                String first = cleanPrice(priceChunks[0]);
-                String second = cleanPrice(priceChunks[1]);
-                BigDecimal low = new BigDecimal(first);
-                BigDecimal high = new BigDecimal(second);
+                String first = cleanDigits(priceChunks[0]);
+                String second = cleanDigits(priceChunks[1]);
+                BigDecimal low = new BigDecimal(cleanDigits(first));
+                BigDecimal high = new BigDecimal(cleanDigits(second));
                 strPrice = high.add(low).divide(BigDecimal.valueOf(2)).toString();
             } else {
                 strPrice = price.text();
@@ -142,7 +142,7 @@ public class Amazon extends AbstractWebsite {
         if (strPrice == null || strPrice.isEmpty())
             return BigDecimal.ZERO;
         else
-            return new BigDecimal(cleanPrice(strPrice));
+            return new BigDecimal(cleanDigits(strPrice));
     }
 
     @Override
@@ -151,7 +151,7 @@ public class Amazon extends AbstractWebsite {
         if (seller == null) seller = doc.selectFirst("span.mbcMerchantName");
 
         if (seller != null) {
-            return seller.text().trim();
+            return seller.text();
         }
         return "Amazon";
     }
@@ -170,7 +170,7 @@ public class Amazon extends AbstractWebsite {
         if (shipment == null) shipment = doc.getElementById("delivery-message");
 
         if (shipment != null) {
-            return shipment.text().trim();
+            return shipment.text();
         }
 
         shipment = doc.getElementById("buybox-see-all-buying-choices-announce");
@@ -195,7 +195,7 @@ public class Amazon extends AbstractWebsite {
         if (brand == null) brand = doc.selectFirst("span.ac-keyword-link a");
 
         if (brand != null) {
-            return brand.text().trim();
+            return brand.text();
         }
 
         return "Amazon";

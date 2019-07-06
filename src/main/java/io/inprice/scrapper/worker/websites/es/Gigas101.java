@@ -37,7 +37,7 @@ public class Gigas101 extends AbstractWebsite {
     public String getSku() {
         Element sku = doc.selectFirst("meta[property='product:retailer_part_no']");
         if (sku != null) {
-            return sku.attr("content").trim();
+            return sku.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -46,7 +46,7 @@ public class Gigas101 extends AbstractWebsite {
     public String getName() {
         Element name = doc.selectFirst("h1[itemprop='name']");
         if (name != null) {
-            return name.text().trim();
+            return name.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -55,7 +55,7 @@ public class Gigas101 extends AbstractWebsite {
     public BigDecimal getPrice() {
         Element price = doc.selectFirst("meta[property='product:sale_price:amount']");
         if (price != null) {
-            return new BigDecimal(cleanPrice(price.attr("content")));
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
         return BigDecimal.ZERO;
     }
@@ -83,7 +83,7 @@ public class Gigas101 extends AbstractWebsite {
     public String getBrand() {
         Element brand = doc.selectFirst("meta[property='product:brand']");
         if (brand != null) {
-            return brand.attr("content").trim();
+            return brand.attr("content");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -99,7 +99,7 @@ public class Gigas101 extends AbstractWebsite {
             for (Element spec: specs) {
                 Element key = spec.selectFirst("td");
                 Element value = key.nextElementSibling();
-                specList.add(new LinkSpec(key.text().trim(), value.text().trim()));
+                specList.add(new LinkSpec(key.text(), value.text()));
             }
         }
 

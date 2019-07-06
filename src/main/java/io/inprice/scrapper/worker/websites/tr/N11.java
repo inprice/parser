@@ -27,7 +27,7 @@ public class N11 extends AbstractWebsite {
         Element amount = doc.selectFirst("input[class='stockCount']");
         if (amount != null) {
             try {
-                int realAmount = new Integer(amount.val().trim());
+                int realAmount = new Integer(cleanDigits(amount.val()));
                 return (realAmount > 0);
             } catch (Exception e) {
                 //
@@ -40,7 +40,7 @@ public class N11 extends AbstractWebsite {
     public String getSku() {
         Element sku = doc.selectFirst("input[class='productId']");
         if (sku != null) {
-            return sku.val().trim();
+            return sku.val();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -51,7 +51,7 @@ public class N11 extends AbstractWebsite {
         if (name == null) name = doc.selectFirst("h1.pro-title_main");
 
         if (name != null) {
-            return name.text().trim();
+            return name.text();
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -62,7 +62,7 @@ public class N11 extends AbstractWebsite {
         if (price == null) price = doc.selectFirst("ins.price-now");
 
         if (price != null) {
-            return new BigDecimal(cleanPrice(price.attr("content").trim()));
+            return new BigDecimal(cleanDigits(price.attr("content")));
         }
 
         return BigDecimal.ZERO;
@@ -74,11 +74,11 @@ public class N11 extends AbstractWebsite {
 
         Element seller = doc.selectFirst("div.sallerTop h3 a");
         if (seller != null) {
-            value = seller.attr("title").trim();
+            value = seller.attr("title");
         } else {
             seller = doc.selectFirst(".shop-name");
             if (seller != null) {
-                value = seller.text().trim();
+                value = seller.text();
             }
         }
         return value;
@@ -90,7 +90,7 @@ public class N11 extends AbstractWebsite {
         if (shipment == null) shipment = doc.selectFirst(".delivery-info_shipment span");
 
         if (shipment != null) {
-            return shipment.text().replaceAll(":", "").trim();
+            return shipment.text().replaceAll(":", "");
         }
         return Constants.NOT_AVAILABLE;
     }
@@ -108,7 +108,8 @@ public class N11 extends AbstractWebsite {
         }
 
         String[] titleChunks = getName().split("\\s");
-        if (titleChunks.length > 0) return titleChunks[0].trim();
+        if (titleChunks.length > 0) return titleChunks[0];
+
         return Constants.NOT_AVAILABLE;
     }
 

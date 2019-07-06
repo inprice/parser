@@ -29,7 +29,7 @@ public class Zalando_ES_Test {
         assertEquals("38.95", link.getPrice().toString());
         assertEquals("Calvin Klein", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Envío estándar: gratuito entrega en 3-6 días laborables Envío exprés: 7,95 €  entrega en 1-2 días laborables", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -38,12 +38,12 @@ public class Zalando_ES_Test {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
         assertEquals(Status.AVAILABLE, link.getStatus());
-        assertEquals("MQ581F008-O11", link.getSku());
-        assertEquals("SUMMER - Panty", link.getName());
-        assertEquals("14.95", link.getPrice().toString());
-        assertEquals("MAGIC Bodyfashion", link.getBrand());
+        assertEquals("CL612M00S-B11", link.getSku());
+        assertEquals("WALLABEE - Zapatos de vestir", link.getName());
+        assertEquals("135.95", link.getPrice().toString());
+        assertEquals("Clarks Originals", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Envío estándar: gratuito entrega en 3-6 días laborables Envío exprés: 7,95 €  entrega en 1-2 días laborables", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -52,12 +52,12 @@ public class Zalando_ES_Test {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
         assertEquals(Status.AVAILABLE, link.getStatus());
-        assertEquals("VE052L00M-F11", link.getSku());
-        assertEquals("Ring - gold", link.getName());
-        assertEquals("103.95", link.getPrice().toString());
-        assertEquals("Versus Versace", link.getBrand());
+        assertEquals("EV451Q00W-G11", link.getSku());
+        assertEquals("Mochila", link.getName());
+        assertEquals("20.25", link.getPrice().toString());
+        assertEquals("Even&Odd", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Envío estándar: gratuito entrega en 3-6 días laborables Envío exprés: 7,95 €  entrega en 1-2 días laborables", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 
@@ -66,12 +66,12 @@ public class Zalando_ES_Test {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
         assertEquals(Status.AVAILABLE, link.getStatus());
-        assertEquals("1MI22P01E-K11", link.getSku());
-        assertEquals("NEW LOGO - Poloshirt", link.getName());
-        assertEquals("89.95", link.getPrice().toString());
-        assertEquals("Michael Kors", link.getBrand());
+        assertEquals("GP021C0BY-A11", link.getSku());
+        assertEquals("EYELET - Vestido camisero", link.getName());
+        assertEquals("48.95", link.getPrice().toString());
+        assertEquals("GAP", link.getBrand());
         assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard shipment", link.getShipment());
+        assertEquals("Envío estándar: gratuito entrega en 3-6 días laborables Envío exprés: 7,95 €  entrega en 1-2 días laborables", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 

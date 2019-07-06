@@ -30,13 +30,10 @@ public class DeBijenkorf extends AbstractWebsite {
 
     @Override
     protected JSONObject getJsonData() {
-        final String indicator = "Data.product =";
+        final String prodData = findAPart(doc.html(),  "Data.product =", "};", 1);
 
-        int start = doc.html().indexOf(indicator) + indicator.length();
-        int end   = doc.html().indexOf("};", start) + 1;
-
-        if (start > indicator.length() && end > start) {
-            JSONObject data = new JSONObject(doc.html().substring(start, end));
+        if (prodData != null) {
+            JSONObject data = new JSONObject(prodData);
             if (data.has("product")) {
                 JSONObject product = data.getJSONObject("product");
                 if (product.has("currentVariantProduct")) {

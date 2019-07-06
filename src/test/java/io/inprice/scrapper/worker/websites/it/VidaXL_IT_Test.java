@@ -47,7 +47,7 @@ public class VidaXL_IT_Test {
         assertEquals("41192", link.getSku());
         assertEquals("Programmatore timer irrigazione elettronico automatico per orto 1 via", link.getName());
         assertEquals("26.99", link.getPrice().toString());
-        assertEquals("VidaXL", link.getBrand());
+        assertEquals("vidaXL", link.getBrand());
         assertEquals("vidaXL", link.getSeller());
         assertEquals("Tempo di spedizione : 6 giorni lavorativi. Consegna e Reso gratuti. Venduto da: vidaXL", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
@@ -61,7 +61,7 @@ public class VidaXL_IT_Test {
         assertEquals("140654", link.getSku());
         assertEquals("vidaXL Scrostatore Pneumatico ad Aghi", link.getName());
         assertEquals("32.99", link.getPrice().toString());
-        assertEquals("VidaXL", link.getBrand());
+        assertEquals("vidaXL", link.getBrand());
         assertEquals("vidaXL", link.getSeller());
         assertEquals("Tempo di spedizione : 6 giorni lavorativi. Consegna e Reso gratuti. Venduto da: vidaXL", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
