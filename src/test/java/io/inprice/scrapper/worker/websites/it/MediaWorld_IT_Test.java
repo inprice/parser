@@ -17,7 +17,7 @@ public class MediaWorld_IT_Test {
     private final String SITE_NAME = "mediaworld";
     private final String COUNTRY_CODE = "it";
 
-    private final Website site = new io.inprice.scrapper.worker.websites.xx.MediaWorld(new Link());
+    private final MediaWorld site = new MediaWorld(new Link());
 
     @Test
     public void test_product_1() {

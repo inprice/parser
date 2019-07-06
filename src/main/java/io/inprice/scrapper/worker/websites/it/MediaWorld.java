@@ -8,7 +8,6 @@ import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,102 +19,81 @@ import java.util.List;
  */
 public class MediaWorld extends AbstractWebsite {
 
-    private JSONObject offers;
+    private Element product;
 
     public MediaWorld(Link link) {
         super(link);
     }
 
     @Override
-    public JSONObject getJsonData() {
-        Element dataEL = doc.selectFirst("div.main-content script[type='application/ld+json']");
-        if (dataEL != null) {
-            JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
-            if (data.has("offers")) {
-                offers = data.getJSONObject("offers");
-            }
-            return data;
-        }
+    protected JSONObject getJsonData() {
+        product = doc.selectFirst("div.product-detail-main-container");
         return super.getJsonData();
     }
 
     @Override
     public boolean isAvailable() {
-        Element available = doc.selectFirst("div.product-detail-main-container");
-        if (available != null) {
-            return (available.attr("data-gtm-avail").contains("vailable"));
-        }
-        return false;
+        return  (product != null && product.attr("data-gtm-avail2").contains("disponibile"));
     }
 
     @Override
     public String getSku() {
-        Element sku = doc.selectFirst("div[data-product-sku]");
-        if (sku != null) {
-            return sku.attr("data-product-sku");
+        if (product != null) {
+            return product.attr("data-pcode");
         }
         return Constants.NOT_AVAILABLE;
     }
 
     @Override
     public String getName() {
-        Element name = doc.selectFirst("meta[property='og:title']");
-        if (name != null) {
-            return name.attr("content");
-        }
-        if (json != null && json.has("name")) {
-            return json.getString("name");
+        if (product != null) {
+            Element name = product.selectFirst("h1[itemprop='name']");
+            if (name != null) {
+                StringBuilder sb = new StringBuilder(name.text());
+                Element descEL = product.selectFirst("h4.product-short-description");
+                if (descEL != null) {
+                    sb.append(" (");
+                    sb.append(descEL.text().split("\\|")[0].trim());
+                    sb.append(")");
+                }
+                return sb.toString();
+            }
         }
         return Constants.NOT_AVAILABLE;
     }
 
     @Override
     public BigDecimal getPrice() {
-        if (offers != null && offers.has("price")) {
-            return offers.getBigDecimal("price");
-        }
-
-        Element price = doc.selectFirst("span[itemprop='price']");
-        if (price != null) {
-            return new BigDecimal(cleanDigits(price.attr("content")));
+        if (product != null) {
+            return new BigDecimal(cleanDigits(product.attr("data-gtm-price")));
         }
         return BigDecimal.ZERO;
     }
 
     @Override
     public String getSeller() {
-        if (offers != null && offers.has("seller")) {
-            JSONObject seller = offers.getJSONObject("seller");
-            return seller.getString("name");
-        }
         return "Media World";
     }
 
     @Override
     public String getShipment() {
-        return "Ritiro in negozio";
+        Element shipment = doc.selectFirst("p.product-info-shipping");
+        if (shipment != null) {
+            return shipment.text();
+        }
+        return Constants.NOT_AVAILABLE;
     }
 
     @Override
     public String getBrand() {
-        if (json != null && json.has("brand")) {
-            JSONObject brand = json.getJSONObject("brand");
-            return brand.getString("name");
+        if (product != null) {
+            return product.attr("data-gtm-brand");
         }
         return Constants.NOT_AVAILABLE;
     }
 
     @Override
     public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-        Element specs = doc.selectFirst("h2[itemprop='description']");
-        if (specs != null) {
-            specList = new ArrayList<>();
-            String[] specChunks = specs.html().split("<br>");
-            for (String spec: specChunks) {
-                specList.add(new LinkSpec("", spec));
-            }
-        }
-        return specList;
+        return getKeyValueSpecList(doc.select("li.content__Tech__row"), "div.Tech-row__inner__key", "div.Tech-row__inner__value");
     }
 }
