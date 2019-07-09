@@ -45,7 +45,7 @@ class BaseLinkConsumer {
                         try {
                             Class<Website> clazz = (Class<Website>) Class.forName(newState.getWebsiteClassName());
                             Constructor<Website> ctor = clazz.getConstructor(Link.class);
-                            Website website = ctor.newInstance(oldState);
+                            Website website = ctor.newInstance(newState);
                             website.check();
                         } catch (ClassCastException | IllegalAccessException | InstantiationException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException e) {
                             log.error(e);
@@ -67,20 +67,22 @@ class BaseLinkConsumer {
     }
 
     private void sendToQueue(Link oldState, Link newState) {
-        //make active
-        if (! newState.getActivated() && newState.getStatus().equals(Status.AVAILABLE)) {
-            RabbitMQ.publish(Config.RABBITMQ_ACTIVATED_LINKS_QUEUE, Converter.fromObject(newState));
-
-        //change status
-        } else if (! oldState.getStatus().equals(newState.getStatus())) {
-            StatusChange change = new StatusChange(newState, newState.getStatus());
-            RabbitMQ.publish(Config.RABBITMQ_CHANGE_EXCHANGE, Config.RABBITMQ_STATUS_CHANGE_QUEUE, Converter.fromObject(change));
-
-        //change price
-        } else if (! oldState.getPrice().equals(newState.getPrice())) {
-            PriceChange change = new PriceChange(newState.getId(), newState.getProductId(), newState.getPrice());
-            RabbitMQ.publish(Config.RABBITMQ_CHANGE_EXCHANGE, Config.RABBITMQ_PRICE_CHANGE_QUEUE, Converter.fromObject(change));
+        //status change
+        if (! oldState.getStatus().equals(newState.getStatus())) {
+            if (newState.getStatus().equals(Status.AVAILABLE)) {
+                RabbitMQ.publish(Config.RABBITMQ_LINK_EXCHANGE, Config.RABBITMQ_AVAILABLE_LINKS_QUEUE, Converter.fromObject(newState));
+            } else {
+                StatusChange change = new StatusChange(newState, newState.getStatus());
+                RabbitMQ.publish(Config.RABBITMQ_CHANGE_EXCHANGE, Config.RABBITMQ_STATUS_CHANGE_QUEUE, Converter.fromObject(change));
+            }
+        } else {
+            //price change
+            if (oldState.getPrice().compareTo(newState.getPrice()) != 0) {
+                PriceChange change = new PriceChange(newState.getId(), newState.getProductId(), newState.getPrice());
+                RabbitMQ.publish(Config.RABBITMQ_CHANGE_EXCHANGE, Config.RABBITMQ_PRICE_CHANGE_QUEUE, Converter.fromObject(change));
+            }
         }
+
     }
 
 }

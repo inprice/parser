@@ -14,7 +14,9 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.net.*;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class deneme {
@@ -550,7 +552,7 @@ public class deneme {
             //"https://www.lidl.com/products/310436_C",
             "https://www.lidl.com/products/1031629"
         };
-
+/*
         for (String url: walmart_ca) {
             Link link = new Link(url);
             link.setWebsiteClassName("io.inprice.scrapper.worker.websites.ca.Walmart");
@@ -565,7 +567,13 @@ public class deneme {
                 log.error("Error in converting message from byte array to Link", e);
             }
         }
+*/
+        printArray(Arrays.asList("Selam", "Kelam", "Melam"));
+    }
 
+    private static void printArray(List<String> statuses) {
+        System.out.println(statuses);
+        System.out.println("'"+ String.join("', '", statuses) + "'");
     }
 
     private static String getRootDomain(String url) {

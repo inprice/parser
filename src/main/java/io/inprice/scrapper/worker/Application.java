@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker;
 import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.worker.browser.BrowserManager;
 import io.inprice.scrapper.worker.config.Config;
-import io.inprice.scrapper.worker.consumer.ActiveLinksConsumer;
+import io.inprice.scrapper.worker.consumer.AvailableLinksConsumer;
 import io.inprice.scrapper.worker.consumer.FailedLinksConsumer;
 import io.inprice.scrapper.worker.consumer.NewLinksConsumer;
 import io.inprice.scrapper.worker.helpers.Global;
@@ -27,7 +27,7 @@ public class Application {
 		new Thread(() -> {
 			Global.isRunning = true;
 			new NewLinksConsumer().start();
-			new ActiveLinksConsumer().start();
+			new AvailableLinksConsumer().start();
 			new FailedLinksConsumer().start();
 		}, "task-processor").start();
 

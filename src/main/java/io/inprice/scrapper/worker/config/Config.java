@@ -19,7 +19,6 @@ public class Config {
 
 	public static final String RABBITMQ_STATUS_CHANGE_QUEUE;
 	public static final String RABBITMQ_PRICE_CHANGE_QUEUE;
-	public static final String RABBITMQ_ACTIVATED_LINKS_QUEUE;
 
 	// Thread Pools
 	public static final int TPOOLS_WORKER_CAPACITY;
@@ -38,13 +37,12 @@ public class Config {
 
 		//minutely
 		RABBITMQ_NEW_LINKS_QUEUE = getOrDefault("RABBITMQ_NEW_LINKS_QUEUE", "new-links");
-		RABBITMQ_AVAILABLE_LINKS_QUEUE = getOrDefault("RABBITMQ_AVAILABLE_LINKS_QUEUE", "active-links");
-		RABBITMQ_FAILED_LINKS_QUEUE = getOrDefault("RABBITMQ_FAILED_LINKS_QUEUE", "socket-errors");
+		RABBITMQ_AVAILABLE_LINKS_QUEUE = getOrDefault("RABBITMQ_AVAILABLE_LINKS_QUEUE", "available-links");
+		RABBITMQ_FAILED_LINKS_QUEUE = getOrDefault("RABBITMQ_FAILED_LINKS_QUEUE", "failed-links");
 
 		//different
 		RABBITMQ_STATUS_CHANGE_QUEUE = getOrDefault("RABBITMQ_STATUS_CHANGE_QUEUE", "status-change");
 		RABBITMQ_PRICE_CHANGE_QUEUE = getOrDefault("RABBITMQ_PRICE_CHANGE_QUEUE", "price-change");
-		RABBITMQ_ACTIVATED_LINKS_QUEUE = getOrDefault("RABBITMQ_ACTIVATED_LINKS_QUEUE", "activated-links");
 
 		TPOOLS_WORKER_CAPACITY = getOrDefault("TPOOLS_WORKER_CAPACITY", 2);
 		WAITING_TIME_FOR_AWAIT_TERMINATION = getOrDefault("WTF_AWAIT_TERMINATION", 30000L);

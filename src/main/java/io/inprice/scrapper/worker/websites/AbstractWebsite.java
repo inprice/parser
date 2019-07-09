@@ -159,9 +159,7 @@ public abstract class AbstractWebsite implements Website {
     private void read() {
         json = getJsonData();
 
-        /*
-         * getJsonData method may return a network or socket error. thus, we need to check if it is so
-         */
+        //getJsonData method may return a network or socket error. thus, we need to check if it is so
         if (Status.READ_ERROR.equals(link.getStatus())
         ||  Status.NO_DATA.equals(link.getStatus())
         ||  Status.SOCKET_ERROR.equals(link.getStatus())
@@ -169,8 +167,17 @@ public abstract class AbstractWebsite implements Website {
             return;
         }
 
-        if (link.getName() == null
-        ||  Status.NEW.equals(link.getStatus())
+        //price settings
+        BigDecimal price = getPrice().setScale(2, RoundingMode.HALF_UP);
+        link.setPrice(price);
+        if ((getPrice() == null || getPrice().compareTo(BigDecimal.ONE) < 0) && (getName() == null || Constants.NOT_AVAILABLE.equals(getName()))) {
+            link.setStatus(Status.NOT_SPECIFIC);
+            log.warn("URL doesn't point at a specific page! " + getUrl());
+            return;
+        }
+
+        //other settings
+        if (Status.NEW.equals(link.getStatus())
         ||  Status.RENEWED.equals(link.getStatus())) {
             if (getSku() != null) link.setSku(fixQuotes(getSku().trim()));
             if (getName() != null) link.setName(fixQuotes(getName().trim()));
@@ -178,15 +185,6 @@ public abstract class AbstractWebsite implements Website {
             if (getSeller() != null) link.setSeller(fixQuotes(getSeller().trim()));
             if (getShipment() != null) link.setShipment(fixQuotes(getShipment().trim()));
             link.setSpecList(getSpecList());
-        }
-
-        BigDecimal price = getPrice().setScale(2, RoundingMode.HALF_UP);
-        link.setPrice(price);
-
-        if ((getPrice() == null || getPrice().compareTo(BigDecimal.ONE) < 0) && (getName() == null || Constants.NOT_AVAILABLE.equals(getName()))) {
-            link.setStatus(Status.NOT_SPECIFIC);
-            log.warn("URL doesn't point at a specific page! " + getUrl());
-            return;
         }
 
         if (isAvailable()) {
