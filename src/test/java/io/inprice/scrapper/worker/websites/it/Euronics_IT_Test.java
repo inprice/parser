@@ -22,7 +22,7 @@ public class Euronics_IT_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.OUT_OF_STOCK, link.getStatus());
+        assertEquals(Status.NOT_AVAILABLE, link.getStatus());
         assertEquals("eProd182001118", link.getSku());
         assertEquals("ASUS - CERBERUS V2/RED - Nero/Rosso", link.getName());
         assertEquals("0.00", link.getPrice().toString());

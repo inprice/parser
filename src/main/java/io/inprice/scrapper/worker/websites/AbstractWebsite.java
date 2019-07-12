@@ -190,7 +190,7 @@ public abstract class AbstractWebsite implements Website {
         if (isAvailable()) {
             link.setStatus(Status.AVAILABLE);
         } else {
-            link.setStatus(Status.OUT_OF_STOCK);
+            link.setStatus(Status.NOT_AVAILABLE);
             log.debug("This product is not available!");
         }
     }

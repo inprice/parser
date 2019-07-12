@@ -36,7 +36,7 @@ public class Zavvi_UK_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.OUT_OF_STOCK, link.getStatus());
+        assertEquals(Status.NOT_AVAILABLE, link.getStatus());
         assertEquals("12071095", link.getSku());
         assertEquals("Marvel Pop! Advent Calendar (2019)", link.getName());
         assertEquals("49.99", link.getPrice().toString());
@@ -64,7 +64,7 @@ public class Zavvi_UK_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.OUT_OF_STOCK, link.getStatus());
+        assertEquals(Status.NOT_AVAILABLE, link.getStatus());
         assertEquals("12183579", link.getSku());
         assertEquals("Sonic the Hedgehog BOOM8 Series PVC Figure Vol. 02 Sonic (8cm)", link.getName());
         assertEquals("24.99", link.getPrice().toString());

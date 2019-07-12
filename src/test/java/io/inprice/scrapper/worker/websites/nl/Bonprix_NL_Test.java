@@ -23,7 +23,7 @@ public class Bonprix_NL_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.OUT_OF_STOCK, link.getStatus());
+        assertEquals(Status.NOT_AVAILABLE, link.getStatus());
         assertEquals("97447795_29806865", link.getSku());
         assertEquals("Sweatbermuda", link.getName());
         assertEquals("9.99", link.getPrice().toString());

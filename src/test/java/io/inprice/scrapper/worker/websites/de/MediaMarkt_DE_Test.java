@@ -65,7 +65,7 @@ public class MediaMarkt_DE_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.OUT_OF_STOCK, link.getStatus());
+        assertEquals(Status.NOT_AVAILABLE, link.getStatus());
         assertEquals("2519798", link.getSku());
         assertEquals("Kiss - Kissworld-The Best Of Kiss (2LP) [Vinyl]", link.getName());
         assertEquals("22.99", link.getPrice().toString());

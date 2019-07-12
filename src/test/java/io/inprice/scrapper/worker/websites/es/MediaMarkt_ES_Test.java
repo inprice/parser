@@ -23,7 +23,7 @@ public class MediaMarkt_ES_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.OUT_OF_STOCK, link.getStatus());
+        assertEquals(Status.NOT_AVAILABLE, link.getStatus());
         assertEquals("1299751", link.getSku());
         assertEquals("Memoria USB 64 GB - Sandisk 139789 Ultra Flair, USB 3.0, Velocidad hasta 150mb/sg", link.getName());
         assertEquals("9.99", link.getPrice().toString());
@@ -65,7 +65,7 @@ public class MediaMarkt_ES_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.OUT_OF_STOCK, link.getStatus());
+        assertEquals(Status.NOT_AVAILABLE, link.getStatus());
         assertEquals("1405935", link.getSku());
         assertEquals("PS4 Marvel S Spider-Man", link.getName());
         assertEquals("24.90", link.getPrice().toString());

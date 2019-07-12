@@ -86,7 +86,7 @@ public class Walmart_CA_Test {
         setMock(4);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.OUT_OF_STOCK, link.getStatus());
+        assertEquals(Status.NOT_AVAILABLE, link.getStatus());
         assertEquals("6000196486964", link.getSku());
         assertEquals("Scunci No-Slip Silicone Elastics", link.getName());
         assertEquals("0.00", link.getPrice().toString());

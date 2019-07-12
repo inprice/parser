@@ -70,16 +70,16 @@ class BaseLinkConsumer {
         //status change
         if (! oldState.getStatus().equals(newState.getStatus())) {
             if (newState.getStatus().equals(Status.AVAILABLE)) {
-                RabbitMQ.publish(Config.RABBITMQ_LINK_EXCHANGE, Config.RABBITMQ_AVAILABLE_LINKS_QUEUE, Converter.fromObject(newState));
+                RabbitMQ.publish(Config.RABBITMQ_LINK_EXCHANGE, Config.RABBITMQ_AVAILABLE_LINKS_QUEUE, Converter.fromObject(newState)); //the consumer class is in Master, AvailableLinksConsumer
             } else {
                 StatusChange change = new StatusChange(newState, newState.getStatus());
-                RabbitMQ.publish(Config.RABBITMQ_CHANGE_EXCHANGE, Config.RABBITMQ_STATUS_CHANGE_QUEUE, Converter.fromObject(change));
+                RabbitMQ.publish(Config.RABBITMQ_CHANGE_EXCHANGE, Config.RABBITMQ_STATUS_CHANGE_QUEUE, Converter.fromObject(change)); //the consumer class is in Master, StatusChangeConsumer
             }
         } else {
             //price change
             if (oldState.getPrice().compareTo(newState.getPrice()) != 0) {
                 PriceChange change = new PriceChange(newState.getId(), newState.getProductId(), newState.getPrice());
-                RabbitMQ.publish(Config.RABBITMQ_CHANGE_EXCHANGE, Config.RABBITMQ_PRICE_CHANGE_QUEUE, Converter.fromObject(change));
+                RabbitMQ.publish(Config.RABBITMQ_CHANGE_EXCHANGE, Config.RABBITMQ_PRICE_CHANGE_QUEUE, Converter.fromObject(change)); //the consumer class is in Master, LinkPriceChangeConsumer
             }
         }
 
