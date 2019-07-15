@@ -152,19 +152,30 @@ public abstract class AbstractWebsite implements Website {
         return null;
     }
 
+    private String fixLength(String val, int limit) {
+        String newForm = fixQuotes(val.trim());
+        if (! newForm.isEmpty() && newForm.length() > limit)
+            return newForm.substring(0, limit);
+        else
+            return newForm;
+    }
+
     protected String fixQuotes(String raw) {
         return raw.replaceAll("((?<=(\\{|\\[|\\,|:))\\s*')|('\\s*(?=(\\}|(\\])|(\\,|:))))", "\"");
     }
 
     private void read() {
+        Status previousStatus = link.getStatus();
         json = getJsonData();
 
-        //getJsonData method may return a network or socket error. thus, we need to check if it is so
-        if (Status.READ_ERROR.equals(link.getStatus())
-        ||  Status.NO_DATA.equals(link.getStatus())
-        ||  Status.SOCKET_ERROR.equals(link.getStatus())
-        ||  Status.NETWORK_ERROR.equals(link.getStatus())) {
-            return;
+        if (! link.getStatus().equals(previousStatus)) {
+            //getJsonData method may return a network or socket error. thus, we need to check if it is so
+            if (Status.READ_ERROR.equals(link.getStatus())
+            ||  Status.NO_DATA.equals(link.getStatus())
+            ||  Status.SOCKET_ERROR.equals(link.getStatus())
+            ||  Status.NETWORK_ERROR.equals(link.getStatus())) {
+                return;
+            }
         }
 
         //price settings
@@ -179,12 +190,26 @@ public abstract class AbstractWebsite implements Website {
         //other settings
         if (Status.NEW.equals(link.getStatus())
         ||  Status.RENEWED.equals(link.getStatus())) {
-            if (getSku() != null) link.setSku(fixQuotes(getSku().trim()));
-            if (getName() != null) link.setName(fixQuotes(getName().trim()));
-            if (getBrand() != null) link.setBrand(fixQuotes(getBrand().trim()));
-            if (getSeller() != null) link.setSeller(fixQuotes(getSeller().trim()));
-            if (getShipment() != null) link.setShipment(fixQuotes(getShipment().trim()));
-            link.setSpecList(getSpecList());
+            if (getSku() != null) link.setSku(fixLength(getSku(), Constants.LIMIT_OF_SKU));
+            if (getName() != null) link.setName(fixLength(getName(), Constants.LIMIT_OF_NAME));
+            if (getBrand() != null) link.setBrand(fixLength(getBrand(), Constants.LIMIT_OF_BRAND));
+            if (getSeller() != null) link.setSeller(fixLength(getSeller(), Constants.LIMIT_OF_SELLER));
+            if (getShipment() != null) link.setShipment(fixLength(getShipment(), Constants.LIMIT_OF_SHIPMENT));
+
+            //spec list editings
+            List<LinkSpec> specList = getSpecList();
+            if (specList != null && specList.size() > 0) {
+                List<LinkSpec> newList = new ArrayList<>(specList.size());
+                for (LinkSpec ls: specList) {
+                    newList.add(
+                        new LinkSpec(
+                            fixLength(ls.getKey(), Constants.LIMIT_OF_SPEC_KEY),
+                            fixLength(ls.getValue(), Constants.LIMIT_OF_SPEC_VALUE)
+                        )
+                    );
+                }
+                link.setSpecList(newList);
+            }
         }
 
         if (isAvailable()) {
@@ -193,6 +218,8 @@ public abstract class AbstractWebsite implements Website {
             link.setStatus(Status.NOT_AVAILABLE);
             log.debug("This product is not available!");
         }
+
+        log.info("Scrapped! Website: %s, Status: %s", link.getWebsiteClassName(), link.getStatus());
     }
 
     protected Status getLinkStatus() {
@@ -241,17 +268,17 @@ public abstract class AbstractWebsite implements Website {
                     .headers(Global.standardHeaders)
                     .userAgent(UserAgents.findARandomUA())
                     .referrer(UserAgents.findARandomReferer())
-                    .timeout(7 * 1000)
+                    .timeout(5 * 1000)
                     .ignoreContentType(true)
                     .followRedirects(false)
                 .execute();
             doc = response.parse();
             return response.statusCode();
         } catch (HttpStatusException httpe) {
-            log.error("Something went wrong: " + url, httpe);
+            log.error(httpe.getMessage() + " : " + url);
             return httpe.getStatusCode();
         } catch (IOException e) {
-            log.error("Failed to connect to " + url, e);
+            log.error(e.getMessage() + " : " + url);
             return 0;
         }
     }

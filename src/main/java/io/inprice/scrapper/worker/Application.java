@@ -1,11 +1,10 @@
 package io.inprice.scrapper.worker;
 
 import io.inprice.scrapper.common.logging.Logger;
-import io.inprice.scrapper.worker.browser.BrowserManager;
 import io.inprice.scrapper.worker.config.Config;
-import io.inprice.scrapper.worker.consumer.AvailableLinksConsumer;
+import io.inprice.scrapper.worker.consumer.AVAILABLE_Consumer;
 import io.inprice.scrapper.worker.consumer.FailedLinksConsumer;
-import io.inprice.scrapper.worker.consumer.NewLinksConsumer;
+import io.inprice.scrapper.worker.consumer.NEW_Consumer;
 import io.inprice.scrapper.worker.helpers.Global;
 import io.inprice.scrapper.worker.helpers.RabbitMQ;
 import io.inprice.scrapper.worker.helpers.ThreadPools;
@@ -26,8 +25,8 @@ public class Application {
 	public static void main(String[] args) {
 		new Thread(() -> {
 			Global.isRunning = true;
-			new NewLinksConsumer().start();
-			new AvailableLinksConsumer().start();
+			new NEW_Consumer().start();
+			new AVAILABLE_Consumer().start();
 			new FailedLinksConsumer().start();
 		}, "task-processor").start();
 
@@ -38,9 +37,9 @@ public class Application {
 			RabbitMQ.closeChannel();
 			log.info("RabbitMQ is closed.");
 
-			log.info("Browsers are closing...");
-			BrowserManager.closeAllBrowsers();
-			log.info("Browsers are closed.");
+//			log.info("Browsers are closing...");
+//			BrowserManager.closeAllBrowsers();
+//			log.info("Browsers are closed.");
 
 			try {
 				log.info("Thread pool is shutting down...");

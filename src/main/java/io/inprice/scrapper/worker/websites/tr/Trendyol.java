@@ -32,9 +32,12 @@ public class Trendyol extends AbstractWebsite {
 
     @Override
     public String getSku() {
-        String[] nameChunks = getName().split("\\s");
-        if (nameChunks.length > 0) {
-            return nameChunks[nameChunks.length-1];
+        Element canonical = doc.selectFirst("link[rel='canonical']");
+        if (canonical != null) {
+            String[] linkChunks = canonical.attr("href").split("-");
+            if (linkChunks.length > 0) {
+                return linkChunks[linkChunks.length - 1];
+            }
         }
         return Constants.NOT_AVAILABLE;
     }

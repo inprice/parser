@@ -14,8 +14,15 @@ public class Config {
 
 	// Queues
 	public static final String RABBITMQ_NEW_LINKS_QUEUE;
-	public static final String RABBITMQ_AVAILABLE_LINKS_QUEUE;
 	public static final String RABBITMQ_FAILED_LINKS_QUEUE;
+
+	/*
+	 * the difference between AVAILABLE_LINKS_QUEUE and TOBE_AVAILABLE_LINKS_QUEUE is that
+	 * AVAILABLE_LINKS are already in AVAILABLE status
+	 * TOBE_AVAILABLE_LINKS_QUEUE is used when links which are in different status become AVAILABLE
+	 */
+	public static final String RABBITMQ_AVAILABLE_LINKS_QUEUE;
+	public static final String RABBITMQ_TOBE_AVAILABLE_LINKS_QUEUE;
 
 	public static final String RABBITMQ_STATUS_CHANGE_QUEUE;
 	public static final String RABBITMQ_PRICE_CHANGE_QUEUE;
@@ -36,13 +43,14 @@ public class Config {
 		RABBITMQ_CHANGE_EXCHANGE = getOrDefault("RABBITMQ_CHANGE_EXCHANGE", "changes");
 
 		//minutely
-		RABBITMQ_NEW_LINKS_QUEUE = getOrDefault("RABBITMQ_NEW_LINKS_QUEUE", "new-links");
-		RABBITMQ_AVAILABLE_LINKS_QUEUE = getOrDefault("RABBITMQ_AVAILABLE_LINKS_QUEUE", "available-links");
-		RABBITMQ_FAILED_LINKS_QUEUE = getOrDefault("RABBITMQ_FAILED_LINKS_QUEUE", "failed-links");
+		RABBITMQ_NEW_LINKS_QUEUE = getOrDefault("RABBITMQ_NEW_LINKS_QUEUE", "new.links");
+		RABBITMQ_FAILED_LINKS_QUEUE = getOrDefault("RABBITMQ_FAILED_LINKS_QUEUE", "failed.links");
+		RABBITMQ_AVAILABLE_LINKS_QUEUE = getOrDefault("RABBITMQ_AVAILABLE_LINKS_QUEUE", "available.links");
+		RABBITMQ_TOBE_AVAILABLE_LINKS_QUEUE = getOrDefault("RABBITMQ_TOBE_AVAILABLE_LINKS_QUEUE", "tobe-available.links");
 
 		//different
-		RABBITMQ_STATUS_CHANGE_QUEUE = getOrDefault("RABBITMQ_STATUS_CHANGE_QUEUE", "status-change");
-		RABBITMQ_PRICE_CHANGE_QUEUE = getOrDefault("RABBITMQ_PRICE_CHANGE_QUEUE", "price-change");
+		RABBITMQ_STATUS_CHANGE_QUEUE = getOrDefault("RABBITMQ_STATUS_CHANGE_QUEUE", "status.change");
+		RABBITMQ_PRICE_CHANGE_QUEUE = getOrDefault("RABBITMQ_PRICE_CHANGE_QUEUE", "price.change");
 
 		TPOOLS_WORKER_CAPACITY = getOrDefault("TPOOLS_WORKER_CAPACITY", 2);
 		WAITING_TIME_FOR_AWAIT_TERMINATION = getOrDefault("WTF_AWAIT_TERMINATION", 30000L);

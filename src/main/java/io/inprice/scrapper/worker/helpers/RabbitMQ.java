@@ -3,9 +3,9 @@ package io.inprice.scrapper.worker.helpers;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import io.inprice.scrapper.common.helpers.Converter;
 import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.worker.config.Config;
+import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -32,20 +32,23 @@ public class RabbitMQ {
 						channel = connection.createChannel();
 
 						channel.exchangeDeclare(Config.RABBITMQ_LINK_EXCHANGE, "topic");
+						channel.exchangeDeclare(Config.RABBITMQ_CHANGE_EXCHANGE, "topic");
 
 						channel.queueDeclare(Config.RABBITMQ_NEW_LINKS_QUEUE, true, false, false, null);
-						channel.queueDeclare(Config.RABBITMQ_AVAILABLE_LINKS_QUEUE, true, false, false, null);
 						channel.queueDeclare(Config.RABBITMQ_FAILED_LINKS_QUEUE, true, false, false, null);
+						channel.queueDeclare(Config.RABBITMQ_AVAILABLE_LINKS_QUEUE, true, false, false, null);
+						channel.queueDeclare(Config.RABBITMQ_TOBE_AVAILABLE_LINKS_QUEUE, true, false, false, null);
 
 						channel.queueDeclare(Config.RABBITMQ_STATUS_CHANGE_QUEUE, true, false, false, null);
 						channel.queueDeclare(Config.RABBITMQ_PRICE_CHANGE_QUEUE, true, false, false, null);
 
-						channel.queueBind(Config.RABBITMQ_NEW_LINKS_QUEUE, Config.RABBITMQ_LINK_EXCHANGE, "");
-						channel.queueBind(Config.RABBITMQ_AVAILABLE_LINKS_QUEUE, Config.RABBITMQ_LINK_EXCHANGE, "");
-						channel.queueBind(Config.RABBITMQ_FAILED_LINKS_QUEUE, Config.RABBITMQ_LINK_EXCHANGE, "");
+						channel.queueBind(Config.RABBITMQ_NEW_LINKS_QUEUE, Config.RABBITMQ_LINK_EXCHANGE, Config.RABBITMQ_NEW_LINKS_QUEUE + ".#");
+						channel.queueBind(Config.RABBITMQ_FAILED_LINKS_QUEUE, Config.RABBITMQ_LINK_EXCHANGE,  Config.RABBITMQ_FAILED_LINKS_QUEUE + ".#");
+						channel.queueBind(Config.RABBITMQ_AVAILABLE_LINKS_QUEUE, Config.RABBITMQ_LINK_EXCHANGE,  Config.RABBITMQ_AVAILABLE_LINKS_QUEUE + ".#");
+						channel.queueBind(Config.RABBITMQ_TOBE_AVAILABLE_LINKS_QUEUE, Config.RABBITMQ_LINK_EXCHANGE,  Config.RABBITMQ_TOBE_AVAILABLE_LINKS_QUEUE + ".#");
 
-						channel.queueBind(Config.RABBITMQ_STATUS_CHANGE_QUEUE, Config.RABBITMQ_CHANGE_EXCHANGE, "");
-						channel.queueBind(Config.RABBITMQ_PRICE_CHANGE_QUEUE, Config.RABBITMQ_CHANGE_EXCHANGE, "");
+						channel.queueBind(Config.RABBITMQ_STATUS_CHANGE_QUEUE, Config.RABBITMQ_CHANGE_EXCHANGE,  Config.RABBITMQ_STATUS_CHANGE_QUEUE + ".#");
+						channel.queueBind(Config.RABBITMQ_PRICE_CHANGE_QUEUE, Config.RABBITMQ_CHANGE_EXCHANGE,  Config.RABBITMQ_PRICE_CHANGE_QUEUE + ".#");
 					} catch (Exception e) {
 						log.error("Error in opening RabbitMQ channel", e);
 					}
@@ -72,7 +75,7 @@ public class RabbitMQ {
 
 	public static void publish(String exchange, String queue, Serializable message) {
 		try {
-			channel.basicPublish(exchange, queue, null, Converter.fromObject(message));
+			channel.basicPublish(exchange, queue, null, SerializationUtils.serialize(message));
 		} catch (IOException e) {
 			log.error("Failed to send a message to queue", e);
 		}

@@ -19,7 +19,6 @@ public class UserAgents {
     private static final List<String> refererList = new ArrayList<>();
 
     static {
-        log.debug("User-agents are imported...");
         try {
             List<File> filesInFolder = Files.walk(Paths.get("./user-agents"))
                     .filter(Files::isRegularFile)
@@ -27,8 +26,6 @@ public class UserAgents {
                     .collect(Collectors.toList());
 
             filesInFolder.forEach(file -> {
-                log.debug("   %s is imported...", file.getName());
-
                 try {
                     List<String> lines = Files.readAllLines(Paths.get("./user-agents/" + file.getName()));
                     uaList.addAll(lines);
@@ -50,15 +47,11 @@ public class UserAgents {
     }
 
     public static String findARandomUA() {
-        String ua = uaList.get(random(uaList.size()));
-        log.debug("ua: %s", ua);
-        return ua;
+        return uaList.get(random(uaList.size()));
     }
 
     public static String findARandomReferer() {
-        String referer = refererList.get(random(refererList.size()));
-        log.debug("referer: %s", referer);
-        return referer;
+        return refererList.get(random(refererList.size()));
     }
 
     private static int random(int upperBound) {
