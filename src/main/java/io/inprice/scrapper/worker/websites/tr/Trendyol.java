@@ -26,8 +26,8 @@ public class Trendyol extends AbstractWebsite {
 
     @Override
     public boolean isAvailable() {
-        Element soldoutButton = doc.selectFirst("button.add-to-bs.so");
-        return (soldoutButton == null);
+        Element addToBasketBtn = doc.selectFirst("button.add-to-bs");
+        return (addToBasketBtn != null);
     }
 
     @Override

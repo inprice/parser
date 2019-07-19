@@ -42,7 +42,7 @@ public class Fnac_FR_Test {
         assertEquals("Moulinex", link.getBrand());
         assertEquals("FNAC.COM", link.getSeller());
         assertEquals("Livraison gratuite", link.getShipment());
-        assertTrue(link.getSpecList().size() == 0);
+        assertNull(link.getSpecList());
     }
 
     @Test

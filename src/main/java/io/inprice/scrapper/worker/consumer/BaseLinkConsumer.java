@@ -4,7 +4,7 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
-import io.inprice.scrapper.common.info.PriceChange;
+import io.inprice.scrapper.common.info.PriceUpdateInfo;
 import io.inprice.scrapper.common.info.StatusChange;
 import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.meta.Status;
@@ -83,8 +83,8 @@ class BaseLinkConsumer {
         } else {
             //price change
             if (oldState.getPrice().compareTo(newState.getPrice()) != 0) {
-                PriceChange change = new PriceChange(newState.getId(), newState.getProductId(), newState.getPrice());
-                RabbitMQ.publish(Config.RABBITMQ_CHANGE_EXCHANGE, Config.RABBITMQ_PRICE_CHANGE_QUEUE, change); //the consumer class is in Master, LinkPriceChangeConsumer
+                PriceUpdateInfo pui = new PriceUpdateInfo(newState.getId(), newState.getProductId(), newState.getPrice());
+                RabbitMQ.publish(Config.RABBITMQ_CHANGE_EXCHANGE, Config.RABBITMQ_PRICE_CHANGE_QUEUE, pui); //the consumer class is in Master, LinkPriceChangeConsumer
             }
         }
         //else, do nothing. we already set last_check time of the link to indicate that it is cared

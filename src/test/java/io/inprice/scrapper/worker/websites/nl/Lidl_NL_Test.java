@@ -72,8 +72,7 @@ public class Lidl_NL_Test {
         assertEquals("", link.getBrand());
         assertEquals("Lidl", link.getSeller());
         assertEquals("Eerste levering mogelijk vanaf 21-06-2019. Beschikbaarheid De verkoop van de artikelen uit " +
-                "de folder start in de filialen op de aangegeven actiedag. Online verkrijgbare actieartikelen kunnen eerder " +
-                "besteld worden, maar worden pas uitgeleverd vanaf de eerste actiedag. Vragen over artikel beschikbaarheid en actuele aanbiedingen ?", link.getShipment());
+                "de folder start in de filialen op de aangegeven actiedag. O", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 

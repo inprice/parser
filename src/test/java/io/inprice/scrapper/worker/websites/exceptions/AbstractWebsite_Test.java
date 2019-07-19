@@ -22,21 +22,21 @@ import static org.powermock.api.mockito.PowerMockito.spy;
 public class AbstractWebsite_Test {
 
     @Test
-    public void should_set_NOT_SPECIFIC_for_available_products_with_NA_name() {
+    public void should_set_NOT_A_PRODUCT_PAGE_for_available_products_with_NA_name() {
         AbstractWebsite site = new FakeSite(true, Constants.NOT_AVAILABLE, BigDecimal.ZERO, false);
 
         Link link = site.test(null);
 
-        assertEquals(Status.NOT_SPECIFIC, link.getStatus());
+        assertEquals(Status.NOT_A_PRODUCT_PAGE, link.getStatus());
     }
 
     @Test
-    public void should_set_NOT_SPECIFIC_for_unavailable_products_with_NULL_name() {
+    public void should_set_NOT_A_PRODUCT_PAGE_for_unavailable_products_with_NULL_name() {
         AbstractWebsite site = new FakeSite(false, null, BigDecimal.ZERO, false);
 
         Link link = site.test(null);
 
-        assertEquals(Status.NOT_SPECIFIC, link.getStatus());
+        assertEquals(Status.NOT_A_PRODUCT_PAGE, link.getStatus());
     }
 
     @Test

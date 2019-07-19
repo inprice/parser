@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Global {
 
-    public static volatile boolean isRunning;
+    public static volatile boolean isApplicationRunning;
 
     public static Map<String, String> standardHeaders;
 

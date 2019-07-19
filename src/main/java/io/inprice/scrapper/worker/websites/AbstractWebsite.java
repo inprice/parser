@@ -47,12 +47,16 @@ public abstract class AbstractWebsite implements Website {
 
     @Override
     public void check() {
+        long startTime = System.currentTimeMillis();
+
         if (willHtmlBePulled()) {
             createDoc();
             if (link.getHttpStatus() == null || link.getHttpStatus() == 200) read();
         } else {
             read();
         }
+
+        log.debug("Website: %s, Status: %s, Time: %d", link.getWebsiteClassName(), link.getStatus(), (System.currentTimeMillis() - startTime));
     }
 
     @Override
@@ -182,7 +186,7 @@ public abstract class AbstractWebsite implements Website {
         BigDecimal price = getPrice().setScale(2, RoundingMode.HALF_UP);
         link.setPrice(price);
         if ((getPrice() == null || getPrice().compareTo(BigDecimal.ONE) < 0) && (getName() == null || Constants.NOT_AVAILABLE.equals(getName()))) {
-            link.setStatus(Status.NOT_SPECIFIC);
+            link.setStatus(Status.NOT_A_PRODUCT_PAGE);
             log.warn("URL doesn't point at a specific page! " + getUrl());
             return;
         }
@@ -216,10 +220,8 @@ public abstract class AbstractWebsite implements Website {
             link.setStatus(Status.AVAILABLE);
         } else {
             link.setStatus(Status.NOT_AVAILABLE);
-            log.debug("This product is not available!");
+            log.debug("Link with id %d is not available!", link.getId());
         }
-
-        log.info("Scrapped! Website: %s, Status: %s", link.getWebsiteClassName(), link.getStatus());
     }
 
     protected Status getLinkStatus() {
@@ -270,7 +272,7 @@ public abstract class AbstractWebsite implements Website {
                     .referrer(UserAgents.findARandomReferer())
                     .timeout(5 * 1000)
                     .ignoreContentType(true)
-                    .followRedirects(false)
+                    .followRedirects(true)
                 .execute();
             doc = response.parse();
             return response.statusCode();
