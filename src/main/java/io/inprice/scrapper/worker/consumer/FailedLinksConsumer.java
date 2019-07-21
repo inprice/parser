@@ -8,7 +8,7 @@ import io.inprice.scrapper.worker.config.Config;
 public class FailedLinksConsumer extends BaseLinkConsumer {
 
 	public FailedLinksConsumer() {
-		super("Failed links consumer", Config.RABBITMQ_FAILED_LINKS_QUEUE);
+		super("Failed links consumer", Config.MQ_FAILED_LINKS_QUEUE);
 	}
 
 }

@@ -75,16 +75,16 @@ class BaseLinkConsumer {
         //status change
         if (! oldState.getStatus().equals(newState.getStatus())) {
             if (newState.getStatus().equals(Status.AVAILABLE)) {
-                RabbitMQ.publish(Config.RABBITMQ_TOBE_AVAILABLE_LINKS_QUEUE, newState); //the consumer class is in Master, TobeAvailableLinksConsumer
+                RabbitMQ.publish(Config.MQ_TOBE_AVAILABLE_LINKS_QUEUE, newState); //the consumer class is in Master, TobeAvailableLinksConsumer
             } else {
                 StatusChange change = new StatusChange(newState, oldState.getStatus());
-                RabbitMQ.publish(Config.RABBITMQ_CHANGE_EXCHANGE, Config.RABBITMQ_STATUS_CHANGE_QUEUE, change); //the consumer class is in Master, StatusChangeConsumer
+                RabbitMQ.publish(Config.MQ_CHANGE_EXCHANGE, Config.MQ_STATUS_CHANGE_QUEUE, change); //the consumer class is in Master, StatusChangeConsumer
             }
         } else {
             //price change
             if (oldState.getPrice().compareTo(newState.getPrice()) != 0) {
                 PriceUpdateInfo pui = new PriceUpdateInfo(newState.getId(), newState.getProductId(), newState.getPrice());
-                RabbitMQ.publish(Config.RABBITMQ_CHANGE_EXCHANGE, Config.RABBITMQ_PRICE_CHANGE_QUEUE, pui); //the consumer class is in Master, LinkPriceChangeConsumer
+                RabbitMQ.publish(Config.MQ_CHANGE_EXCHANGE, Config.MQ_PRICE_CHANGE_QUEUE, pui); //the consumer class is in Master, LinkPriceChangeConsumer
             }
         }
         //else, do nothing. we already set last_check time of the link to indicate that it is cared

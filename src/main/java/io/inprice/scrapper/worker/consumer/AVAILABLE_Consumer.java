@@ -8,7 +8,7 @@ import io.inprice.scrapper.worker.config.Config;
 public class AVAILABLE_Consumer extends BaseLinkConsumer {
 
 	public AVAILABLE_Consumer() {
-		super("Available links consumer", Config.RABBITMQ_AVAILABLE_LINKS_QUEUE);
+		super("Available links consumer", Config.MQ_AVAILABLE_LINKS_QUEUE);
 	}
 
 }

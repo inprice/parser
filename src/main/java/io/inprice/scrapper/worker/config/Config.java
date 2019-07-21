@@ -3,56 +3,52 @@ package io.inprice.scrapper.worker.config;
 public class Config {
 
 	// RabbitMQ
-	public static final String RABBITMQ_HOST;
-	public static final int RABBITMQ_PORT;
-	public static final String RABBITMQ_USERNAME;
-	public static final String RABBITMQ_PASSWORD;
+	public static final String MQ_HOST;
+	public static final int MQ_PORT;
+	public static final String MQ_USERNAME;
+	public static final String MQ_PASSWORD;
 
 	// Exchange
-	public static final String RABBITMQ_LINK_EXCHANGE;
-	public static final String RABBITMQ_CHANGE_EXCHANGE;
+	public static final String MQ_LINK_EXCHANGE;
+	public static final String MQ_CHANGE_EXCHANGE;
 
 	// Queues
-	public static final String RABBITMQ_NEW_LINKS_QUEUE;
-	public static final String RABBITMQ_FAILED_LINKS_QUEUE;
+	public static final String MQ_NEW_LINKS_QUEUE;
+	public static final String MQ_FAILED_LINKS_QUEUE;
 
 	/*
 	 * the difference between AVAILABLE_LINKS_QUEUE and TOBE_AVAILABLE_LINKS_QUEUE is that
 	 * AVAILABLE_LINKS are already in AVAILABLE status
-	 * TOBE_AVAILABLE_LINKS_QUEUE is used when links which are in different status become AVAILABLE
+	 * TOBE_AVAILABLE_LINKS are in different status and are about to switch to AVAILABLE.
 	 */
-	public static final String RABBITMQ_AVAILABLE_LINKS_QUEUE;
-	public static final String RABBITMQ_TOBE_AVAILABLE_LINKS_QUEUE;
+	public static final String MQ_AVAILABLE_LINKS_QUEUE;
+	public static final String MQ_TOBE_AVAILABLE_LINKS_QUEUE;
 
-	public static final String RABBITMQ_STATUS_CHANGE_QUEUE;
-	public static final String RABBITMQ_PRICE_CHANGE_QUEUE;
-
-	// Thread Pools
-	public static final int TPOOLS_WORKER_CAPACITY;
+	public static final String MQ_STATUS_CHANGE_QUEUE;
+	public static final String MQ_PRICE_CHANGE_QUEUE;
 
 	// Waiting times
 	public static final long WAITING_TIME_FOR_AWAIT_TERMINATION;
 
 	static {
-		RABBITMQ_HOST = getOrDefault("RABBITMQ_HOST", "localhost");
-		RABBITMQ_PORT = getOrDefault("RABBITMQ_PORT", 5672);
-		RABBITMQ_USERNAME = getOrDefault("RABBITMQ_USERNAME", "guest");
-		RABBITMQ_PASSWORD = getOrDefault("RABBITMQ_PASSWORD", "guest");
+		MQ_HOST = getOrDefault("MQ_HOST", "localhost");
+		MQ_PORT = getOrDefault("MQ_PORT", 5672);
+		MQ_USERNAME = getOrDefault("MQ_USERNAME", "guest");
+		MQ_PASSWORD = getOrDefault("MQ_PASSWORD", "guest");
 
-		RABBITMQ_LINK_EXCHANGE = getOrDefault("RABBITMQ_LINK_EXCHANGE", "links");
-		RABBITMQ_CHANGE_EXCHANGE = getOrDefault("RABBITMQ_CHANGE_EXCHANGE", "changes");
+		MQ_LINK_EXCHANGE = getOrDefault("MQ_LINK_EXCHANGE", "links");
+		MQ_CHANGE_EXCHANGE = getOrDefault("MQ_CHANGE_EXCHANGE", "changes");
 
 		//minutely
-		RABBITMQ_NEW_LINKS_QUEUE = getOrDefault("RABBITMQ_NEW_LINKS_QUEUE", "new.links");
-		RABBITMQ_FAILED_LINKS_QUEUE = getOrDefault("RABBITMQ_FAILED_LINKS_QUEUE", "failed.links");
-		RABBITMQ_AVAILABLE_LINKS_QUEUE = getOrDefault("RABBITMQ_AVAILABLE_LINKS_QUEUE", "available.links");
-		RABBITMQ_TOBE_AVAILABLE_LINKS_QUEUE = getOrDefault("RABBITMQ_TOBE_AVAILABLE_LINKS_QUEUE", "tobe-available.links");
+		MQ_NEW_LINKS_QUEUE = getOrDefault("MQ_NEW_LINKS_QUEUE", "new.links");
+		MQ_FAILED_LINKS_QUEUE = getOrDefault("MQ_FAILED_LINKS_QUEUE", "failed.links");
+		MQ_AVAILABLE_LINKS_QUEUE = getOrDefault("MQ_AVAILABLE_LINKS_QUEUE", "available.links");
+		MQ_TOBE_AVAILABLE_LINKS_QUEUE = getOrDefault("MQ_TOBE_AVAILABLE_LINKS_QUEUE", "tobe-available.links");
 
 		//different
-		RABBITMQ_STATUS_CHANGE_QUEUE = getOrDefault("RABBITMQ_STATUS_CHANGE_QUEUE", "status.change");
-		RABBITMQ_PRICE_CHANGE_QUEUE = getOrDefault("RABBITMQ_PRICE_CHANGE_QUEUE", "price.change");
+		MQ_STATUS_CHANGE_QUEUE = getOrDefault("MQ_STATUS_CHANGE_QUEUE", "status.change");
+		MQ_PRICE_CHANGE_QUEUE = getOrDefault("MQ_PRICE_CHANGE_QUEUE", "price.change");
 
-		TPOOLS_WORKER_CAPACITY = getOrDefault("TPOOLS_WORKER_CAPACITY", 2);
 		WAITING_TIME_FOR_AWAIT_TERMINATION = getOrDefault("WTF_AWAIT_TERMINATION", 30000L);
 	}
 
