@@ -3,9 +3,10 @@ package io.inprice.scrapper.worker.helpers;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.worker.config.Config;
 import org.apache.commons.lang3.SerializationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeoutException;
 
 public class RabbitMQ {
 
-	private static final Logger log = new Logger(RabbitMQ.class);
+	private static final Logger log = LoggerFactory.getLogger(RabbitMQ.class);
 
 	private static Channel channel;
 

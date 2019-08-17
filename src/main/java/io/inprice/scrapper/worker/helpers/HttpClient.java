@@ -3,23 +3,24 @@ package io.inprice.scrapper.worker.helpers;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import io.inprice.scrapper.common.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 public class HttpClient {
 
-    protected static final Logger log = new Logger(HttpClient.class);
+    protected static final Logger log = LoggerFactory.getLogger(HttpClient.class);
 
     public static HttpResponse<String> get(String url) {
         HttpResponse<String> response = null;
         try {
             response = Unirest.get(url)
-                    .header("Accept-Language", "en-US,en;q=0.5")
-                    .header("User-Agent", UserAgents.findARandomUA())
-                    .asString();
+                .header("Accept-Language", "en-US,en;q=0.5")
+                .header("User-Agent", UserAgents.findARandomUA())
+                .asString();
         } catch (UnirestException e) {
-            log.error(e);
+            log.error("Error", e);
         }
         return response;
     }
@@ -28,12 +29,12 @@ public class HttpClient {
         HttpResponse<String> response = null;
         try {
             response = Unirest.get(url)
-                    .header("Accept-Language", "en-US,en;q=0.5")
-                    .header("User-Agent", UserAgents.findARandomUA())
-                    .header("Referrer", referrer)
-                    .asString();
+                .header("Accept-Language", "en-US,en;q=0.5")
+                .header("User-Agent", UserAgents.findARandomUA())
+                .header("Referrer", referrer)
+                .asString();
         } catch (UnirestException e) {
-            log.error(e);
+            log.error("Error", e);
         }
         return response;
     }
@@ -42,12 +43,12 @@ public class HttpClient {
         HttpResponse<String> response = null;
         try {
             response = Unirest.get(url)
-                    .headers(headers)
-                    .header("User-Agent", UserAgents.findARandomUA())
-                    .header("Referrer", UserAgents.findARandomReferer())
-                    .asString();
+                .headers(headers)
+                .header("User-Agent", UserAgents.findARandomUA())
+                .header("Referrer", UserAgents.findARandomReferer())
+                .asString();
         } catch (UnirestException e) {
-            log.error(e);
+            log.error("Error", e);
         }
         return response;
     }
@@ -56,11 +57,11 @@ public class HttpClient {
         HttpResponse<String> response = null;
         try {
             response = Unirest.post(url)
-                    .header("User-Agent", UserAgents.findARandomUA())
-                    .header("Referrer", UserAgents.findARandomReferer())
-                    .asString();
+                .header("User-Agent", UserAgents.findARandomUA())
+                .header("Referrer", UserAgents.findARandomReferer())
+                .asString();
         } catch (UnirestException e) {
-            log.error(e);
+            log.error("Error", e);
         }
         return response;
     }
@@ -69,13 +70,13 @@ public class HttpClient {
         HttpResponse<String> response = null;
         try {
             response = Unirest.post(url)
-                    .header("Accept-Language", "en-US,en;q=0.5")
-                    .header("User-Agent", UserAgents.findARandomUA())
-                    .header("Referrer", UserAgents.findARandomReferer())
-                    .body(data)
-                    .asString();
+                .header("Accept-Language", "en-US,en;q=0.5")
+                .header("User-Agent", UserAgents.findARandomUA())
+                .header("Referrer", UserAgents.findARandomReferer())
+                .body(data)
+                .asString();
         } catch (UnirestException e) {
-            log.error(e);
+            log.error("Error", e);
         }
         return response;
     }

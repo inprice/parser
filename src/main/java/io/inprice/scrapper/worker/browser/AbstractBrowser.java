@@ -1,15 +1,15 @@
 package io.inprice.scrapper.worker.browser;
 
-import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.worker.helpers.UserAgents;
 import io.inprice.scrapper.worker.info.Pair;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Date;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractBrowser {
 
-    private static final Logger log = new Logger(AbstractBrowser.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractBrowser.class);
 
     private static PhantomJSDriver driver;
 
@@ -40,12 +40,12 @@ public abstract class AbstractBrowser {
         addSpecificCapabilities(caps);
 
         caps.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS,
-                new String[] {
-                        "--web-security=false",
-                        "--ssl-protocol=any",
-                        "--ignore-ssl-errors=true",
-                        "--webdriver-loglevel=NONE"
-                }
+            new String[] {
+                "--web-security=false",
+                "--ssl-protocol=any",
+                "--ignore-ssl-errors=true",
+                "--webdriver-loglevel=NONE"
+            }
         );
 
         PhantomJSDriverService service = new PhantomJSDriverService.Builder()
@@ -62,7 +62,7 @@ public abstract class AbstractBrowser {
         driver.get(url);
 
         long end = new Date().getTime();
-        log.info("Caller: %s, Time: %d", getName(), (end-start));
+        log.info("Caller: {}, Time: {}", getName(), (end-start));
         final String result = driver.getPageSource();
 
         return new Pair(200, result);

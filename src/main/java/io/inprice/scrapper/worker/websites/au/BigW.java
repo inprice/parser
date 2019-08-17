@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites.au;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.utils.StringUtils;
 import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
@@ -38,7 +39,7 @@ public class BigW extends AbstractWebsite {
 
         final String prodData = findAPart(doc.html(),  "'products': [", "}]", 1);
         if (prodData != null) {
-            return new JSONObject(fixQuotes(prodData));
+            return new JSONObject(StringUtils.fixQuotes(prodData));
         }
 
         return super.getJsonData();

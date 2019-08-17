@@ -1,12 +1,13 @@
 package io.inprice.scrapper.worker;
 
-import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.worker.consumer.AVAILABLE_Consumer;
 import io.inprice.scrapper.worker.consumer.FailedLinksConsumer;
 import io.inprice.scrapper.worker.consumer.NEW_Consumer;
 import io.inprice.scrapper.worker.helpers.Global;
 import io.inprice.scrapper.worker.helpers.RabbitMQ;
 import io.inprice.scrapper.worker.helpers.ThreadPools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Entry point of the application.
@@ -17,7 +18,7 @@ import io.inprice.scrapper.worker.helpers.ThreadPools;
  */
 public class Application {
 
-	private static final Logger log = new Logger(Application.class);
+	private static final Logger log = LoggerFactory.getLogger(Application.class);
 
 	public static void main(String[] args) {
 		new Thread(() -> {

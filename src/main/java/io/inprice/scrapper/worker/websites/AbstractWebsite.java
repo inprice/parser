@@ -1,10 +1,10 @@
 package io.inprice.scrapper.worker.websites;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.utils.StringUtils;
 import io.inprice.scrapper.worker.helpers.Constants;
 import io.inprice.scrapper.worker.helpers.Global;
 import io.inprice.scrapper.worker.helpers.UserAgents;
@@ -15,6 +15,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +28,7 @@ import java.util.List;
 
 public abstract class AbstractWebsite implements Website {
 
-    protected static final Logger log = new Logger(AbstractWebsite.class);
+    protected static final Logger log = LoggerFactory.getLogger(AbstractWebsite.class);
 
     private Link link;
 
@@ -56,7 +58,7 @@ public abstract class AbstractWebsite implements Website {
             read();
         }
 
-        log.debug("Website: %s, Status: %s, Time: %d", link.getWebsiteClassName(), link.getStatus(), (System.currentTimeMillis() - startTime));
+        log.debug("Website: {}, Status: {}, Time: {}", link.getWebsiteClassName(), link.getStatus(), (System.currentTimeMillis() - startTime));
     }
 
     @Override
@@ -78,7 +80,7 @@ public abstract class AbstractWebsite implements Website {
             }
             read();
         } catch (Exception e) {
-            log.error(e);
+            log.error("Error", e);
         }
         return link;
     }
@@ -157,15 +159,11 @@ public abstract class AbstractWebsite implements Website {
     }
 
     private String fixLength(String val, int limit) {
-        String newForm = fixQuotes(val.trim());
+        String newForm = StringUtils.fixQuotes(val.trim());
         if (! newForm.isEmpty() && newForm.length() > limit)
             return newForm.substring(0, limit);
         else
             return newForm;
-    }
-
-    protected String fixQuotes(String raw) {
-        return raw.replaceAll("((?<=(\\{|\\[|\\,|:))\\s*')|('\\s*(?=(\\}|(\\])|(\\,|:))))", "\"");
     }
 
     private void read() {
@@ -220,7 +218,7 @@ public abstract class AbstractWebsite implements Website {
             link.setStatus(Status.AVAILABLE);
         } else {
             link.setStatus(Status.NOT_AVAILABLE);
-            log.debug("Link with id %d is not available!", link.getId());
+            log.debug("Link with id {} is not available!", link.getId());
         }
     }
 
@@ -240,7 +238,7 @@ public abstract class AbstractWebsite implements Website {
     protected void setLinkStatus(HttpResponse<String> response) {
         if (response != null) {
             final Status status = (response.getStatus() == 0 ? Status.SOCKET_ERROR : Status.NETWORK_ERROR);
-            log.error("Failed to fetch data! Status: %s, Http Status: %d", status.name(), response.getStatus());
+            log.error("Failed to fetch data! Status: {}, Http Status: {}", status.name(), response.getStatus());
             setLinkStatus(status, response.getStatus());
         } else {
             log.error("Response is null!");

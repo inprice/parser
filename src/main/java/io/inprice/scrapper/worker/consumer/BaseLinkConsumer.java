@@ -6,7 +6,6 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import io.inprice.scrapper.common.info.PriceUpdateInfo;
 import io.inprice.scrapper.common.info.StatusChange;
-import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.config.Config;
@@ -14,13 +13,15 @@ import io.inprice.scrapper.worker.helpers.RabbitMQ;
 import io.inprice.scrapper.worker.helpers.ThreadPools;
 import io.inprice.scrapper.worker.websites.Website;
 import org.apache.commons.lang3.SerializationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 
 class BaseLinkConsumer {
 
-    private static final Logger log = new Logger(BaseLinkConsumer.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseLinkConsumer.class);
 
     private static final String BASE_PACKAGE = "io.inprice.scrapper.worker.websites.";
 
@@ -33,7 +34,7 @@ class BaseLinkConsumer {
     }
 
     public void start() {
-        log.info("%s is running.", name);
+        log.info("{} is running.", name);
 
         final Consumer consumer = new DefaultConsumer(RabbitMQ.getChannel()) {
             @Override
@@ -52,7 +53,7 @@ class BaseLinkConsumer {
                                 Website website = ctor.newInstance(newState);
                                 website.check();
                             } catch (Exception e) {
-                                log.error(e);
+                                log.error("Error", e);
                                 newState.setStatus(Status.CLASS_PROBLEM);
                             }
                         }
@@ -83,7 +84,7 @@ class BaseLinkConsumer {
         } else {
             //price change
             if (oldState.getPrice().compareTo(newState.getPrice()) != 0) {
-                PriceUpdateInfo pui = new PriceUpdateInfo(newState.getId(), newState.getProductId(), newState.getPrice());
+                PriceUpdateInfo pui = new PriceUpdateInfo(newState);
                 RabbitMQ.publish(Config.MQ_CHANGE_EXCHANGE, Config.MQ_PRICE_CHANGE_QUEUE, pui); //the consumer class is in Master, LinkPriceChangeConsumer
             }
         }

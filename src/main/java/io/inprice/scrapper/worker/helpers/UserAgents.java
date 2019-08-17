@@ -1,6 +1,7 @@
 package io.inprice.scrapper.worker.helpers;
 
-import io.inprice.scrapper.common.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class UserAgents {
 
-    private static final Logger log = new Logger(UserAgents.class);
+    private static final Logger log = LoggerFactory.getLogger(UserAgents.class);
 
     private static final List<String> uaList = new ArrayList<>();
     private static final List<String> refererList = new ArrayList<>();
@@ -30,7 +31,7 @@ public class UserAgents {
                     List<String> lines = Files.readAllLines(Paths.get("./user-agents/" + file.getName()));
                     uaList.addAll(lines);
                 } catch (Exception e) {
-                    log.warn("   %s has problem...", file.getName());
+                    log.warn("   {} has problem...", file.getName());
                     e.printStackTrace();
                 }
             });

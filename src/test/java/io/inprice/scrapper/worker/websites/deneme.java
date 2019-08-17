@@ -3,17 +3,17 @@ package io.inprice.scrapper.worker.websites;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import io.inprice.scrapper.common.logging.Logger;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.UserAgents;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Constructor;
-import java.math.BigDecimal;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class deneme {
 
-    private static final Logger log = new Logger(deneme.class);
+    private static final Logger log = LoggerFactory.getLogger(deneme.class);
 
     public static void main(String... args) {
 
