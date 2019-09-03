@@ -2,7 +2,7 @@ package io.inprice.scrapper.worker.websites.de;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -72,7 +72,7 @@ public class MediaMarkt extends AbstractWebsite {
         if (article != null && article.has("articleId")) {
             return article.getString("articleId");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -80,7 +80,7 @@ public class MediaMarkt extends AbstractWebsite {
         if (article != null && article.has("title")) {
             return article.getString("title");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -118,7 +118,7 @@ public class MediaMarkt extends AbstractWebsite {
             }
         }
 
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -126,7 +126,7 @@ public class MediaMarkt extends AbstractWebsite {
         if (article != null && article.has("manufacturer")) {
             return article.getString("manufacturer");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

@@ -2,7 +2,7 @@ package io.inprice.scrapper.worker.websites.xx;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -92,7 +92,7 @@ public class Rakuten extends AbstractWebsite {
         if (sku != null) {
             return sku.attr("content");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -105,7 +105,7 @@ public class Rakuten extends AbstractWebsite {
         if (name != null) {
             return name.attr("content");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -183,7 +183,7 @@ public class Rakuten extends AbstractWebsite {
             return shipping.text();
         }
 
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -204,7 +204,7 @@ public class Rakuten extends AbstractWebsite {
         if (brand != null) {
             return brand.attr("content");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -37,7 +37,7 @@ public class Asos extends AbstractWebsite {
 
         final String sku = getSku();
 
-        HttpResponse<String> response = HttpClient.get("https://www.asos.com/api/product/catalogue/v3/stockprice?currency=EUR&store=ROW&productIds=" + sku);
+        HttpResponse<String> response = httpClient.get("https://www.asos.com/api/product/catalogue/v3/stockprice?currency=EUR&store=ROW&productIds=" + sku);
         if (response != null && response.getStatus() > 0 && response.getStatus() < 400) {
 
             if (response.getBody() != null && ! response.getBody().trim().isEmpty()) {
@@ -86,7 +86,7 @@ public class Asos extends AbstractWebsite {
         if (sku != null) {
             return sku.text();
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -95,7 +95,7 @@ public class Asos extends AbstractWebsite {
         if (name != null) {
             return name.text();
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -109,7 +109,7 @@ public class Asos extends AbstractWebsite {
         if (seller != null) {
             return seller.text();
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class Asos extends AbstractWebsite {
         if (brand != null) {
             return brand.text();
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

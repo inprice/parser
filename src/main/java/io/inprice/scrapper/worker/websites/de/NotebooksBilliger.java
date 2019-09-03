@@ -2,7 +2,7 @@ package io.inprice.scrapper.worker.websites.de;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
 
@@ -37,7 +37,7 @@ public class NotebooksBilliger extends AbstractWebsite {
         if (sku != null) {
             return sku.attr("data-products-number");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class NotebooksBilliger extends AbstractWebsite {
         if (name != null) {
             return name.attr("content");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -88,7 +88,7 @@ public class NotebooksBilliger extends AbstractWebsite {
             return brandName;
         }
 
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

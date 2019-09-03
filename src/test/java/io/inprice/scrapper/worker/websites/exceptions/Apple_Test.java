@@ -8,41 +8,40 @@ import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(HttpClient.class)
+@RunWith(MockitoJUnitRunner.class)
 public class Apple_Test {
 
     private final String SITE_NAME = "apple";
     private final String COUNTRY_CODE = "au";
 
-    private final Website site;
+    @Mock
+    private HttpResponse mockResponse;
 
-    private final HttpResponse mockResponse = PowerMockito.mock(HttpResponse.class);
+    @Mock
+    private HttpClient httpClient;
 
-    public Apple_Test() {
-        Link link = new Link();
-        link.setUrl(String.format("https://www.apple.com/%s/shop/", COUNTRY_CODE));
-        site = new io.inprice.scrapper.worker.websites.xx.Apple(link);
-
-        PowerMockito.mockStatic(HttpClient.class);
-    }
+    private final Website site =
+        new io.inprice.scrapper.worker.websites.xx.Apple(
+            new Link(
+                String.format("https://www.apple.com/%s/shop/", COUNTRY_CODE)
+            )
+        );
 
     @Test
     public void test_for_no_data() {
         when(mockResponse.getStatus()).thenReturn(200);
         when(mockResponse.getBody()).thenReturn(null);
-        when(HttpClient.get(anyString(), anyString())).thenReturn(mockResponse);
+        when(httpClient.get(anyString(), anyString())).thenReturn(mockResponse);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
         assertEquals(Status.NO_DATA, link.getStatus());
     }
@@ -58,9 +57,9 @@ public class Apple_Test {
     public void test_for_socket_error() {
         when(mockResponse.getStatus()).thenReturn(0);
         when(mockResponse.getBody()).thenReturn(null);
-        when(HttpClient.get(anyString(), anyString())).thenReturn(mockResponse);
+        when(httpClient.get(anyString(), anyString())).thenReturn(mockResponse);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
         assertTrue(link.getHttpStatus() == 0);
         assertEquals(Status.SOCKET_ERROR, link.getStatus());
@@ -70,9 +69,9 @@ public class Apple_Test {
     public void test_for_network_error() {
         when(mockResponse.getStatus()).thenReturn(400);
         when(mockResponse.getBody()).thenReturn(null);
-        when(HttpClient.get(anyString(), anyString())).thenReturn(mockResponse);
+        when(httpClient.get(anyString(), anyString())).thenReturn(mockResponse);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
         assertTrue(link.getHttpStatus() == 400);
         assertEquals(Status.NETWORK_ERROR, link.getStatus());

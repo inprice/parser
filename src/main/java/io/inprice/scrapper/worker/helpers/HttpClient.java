@@ -3,15 +3,16 @@ package io.inprice.scrapper.worker.helpers;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import io.inprice.scrapper.common.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 public class HttpClient {
 
-    protected static final Logger log = new Logger(HttpClient.class);
+    protected static final Logger log = LoggerFactory.getLogger(HttpClient.class);
 
-    public static HttpResponse<String> get(String url) {
+    public HttpResponse<String> get(String url) {
         HttpResponse<String> response = null;
         try {
             response = Unirest.get(url)
@@ -19,12 +20,12 @@ public class HttpClient {
                     .header("User-Agent", UserAgents.findARandomUA())
                     .asString();
         } catch (UnirestException e) {
-            log.error(e);
+            log.error("Failed to make a GET request", e);
         }
         return response;
     }
 
-    public static HttpResponse<String> get(String url, String referrer) {
+    public HttpResponse<String> get(String url, String referrer) {
         HttpResponse<String> response = null;
         try {
             response = Unirest.get(url)
@@ -33,12 +34,12 @@ public class HttpClient {
                     .header("Referrer", referrer)
                     .asString();
         } catch (UnirestException e) {
-            log.error(e);
+            log.error("Failed to make a GET request with a referrer", e);
         }
         return response;
     }
 
-    public static HttpResponse<String> get(String url, Map<String, String> headers) {
+    public HttpResponse<String> get(String url, Map<String, String> headers) {
         HttpResponse<String> response = null;
         try {
             response = Unirest.get(url)
@@ -47,12 +48,12 @@ public class HttpClient {
                     .header("Referrer", UserAgents.findARandomReferer())
                     .asString();
         } catch (UnirestException e) {
-            log.error(e);
+            log.error("Failed to make a GET request with headers", e);
         }
         return response;
     }
 
-    public static HttpResponse<String> post(String url) {
+    public HttpResponse<String> post(String url) {
         HttpResponse<String> response = null;
         try {
             response = Unirest.post(url)
@@ -60,12 +61,12 @@ public class HttpClient {
                     .header("Referrer", UserAgents.findARandomReferer())
                     .asString();
         } catch (UnirestException e) {
-            log.error(e);
+            log.error("Failed to make a POST request", e);
         }
         return response;
     }
 
-    public static HttpResponse<String> post(String url, String data) {
+    public HttpResponse<String> post(String url, String data) {
         HttpResponse<String> response = null;
         try {
             response = Unirest.post(url)
@@ -75,7 +76,7 @@ public class HttpClient {
                     .body(data)
                     .asString();
         } catch (UnirestException e) {
-            log.error(e);
+            log.error("Failed to make a POST request with data", e);
         }
         return response;
     }

@@ -1,12 +1,13 @@
 package io.inprice.scrapper.worker.websites;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.logging.Logger;
+import io.inprice.scrapper.common.helpers.Beans;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.helpers.Global;
+import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.helpers.UserAgents;
 import org.json.JSONObject;
 import org.jsoup.Connection;
@@ -15,6 +16,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,8 +29,9 @@ import java.util.List;
 
 public abstract class AbstractWebsite implements Website {
 
-    protected static final Logger log = new Logger(AbstractWebsite.class);
+    protected static final Logger log = LoggerFactory.getLogger(AbstractWebsite.class);
 
+    protected HttpClient httpClient = Beans.getSingleton(HttpClient.class);
     private Link link;
 
     protected Document doc;
@@ -56,7 +60,7 @@ public abstract class AbstractWebsite implements Website {
             read();
         }
 
-        log.debug("Website: %s, Status: %s, Time: %d", link.getWebsiteClassName(), link.getStatus(), (System.currentTimeMillis() - startTime));
+        log.debug("Website: {}, Status: {}, Time: {}", link.getWebsiteClassName(), link.getStatus(), (System.currentTimeMillis() - startTime));
     }
 
     @Override
@@ -70,6 +74,12 @@ public abstract class AbstractWebsite implements Website {
 
     @Override
     public Link test(String fileName) {
+        return test(fileName, null);
+    }
+
+    @Override
+    public Link test(String fileName, HttpClient httpClient) {
+        if (httpClient != null) this.httpClient = httpClient;
         try {
             if (willHtmlBePulled()) {
                 URL path = ClassLoader.getSystemResource(fileName);
@@ -78,7 +88,7 @@ public abstract class AbstractWebsite implements Website {
             }
             read();
         } catch (Exception e) {
-            log.error(e);
+            log.error("Failed to fetch the page during test!", e);
         }
         return link;
     }
@@ -185,7 +195,7 @@ public abstract class AbstractWebsite implements Website {
         //price settings
         BigDecimal price = getPrice().setScale(2, RoundingMode.HALF_UP);
         link.setPrice(price);
-        if ((getPrice() == null || getPrice().compareTo(BigDecimal.ONE) < 0) && (getName() == null || Constants.NOT_AVAILABLE.equals(getName()))) {
+        if ((getPrice() == null || getPrice().compareTo(BigDecimal.ONE) < 0) && (getName() == null || Consts.Words.NOT_AVAILABLE.equals(getName()))) {
             link.setStatus(Status.NOT_A_PRODUCT_PAGE);
             log.warn("URL doesn't point at a specific page! " + getUrl());
             return;
@@ -194,21 +204,21 @@ public abstract class AbstractWebsite implements Website {
         //other settings
         if (Status.NEW.equals(link.getStatus())
         ||  Status.RENEWED.equals(link.getStatus())) {
-            if (getSku() != null) link.setSku(fixLength(getSku(), Constants.LIMIT_OF_SKU));
-            if (getName() != null) link.setName(fixLength(getName(), Constants.LIMIT_OF_NAME));
-            if (getBrand() != null) link.setBrand(fixLength(getBrand(), Constants.LIMIT_OF_BRAND));
-            if (getSeller() != null) link.setSeller(fixLength(getSeller(), Constants.LIMIT_OF_SELLER));
-            if (getShipment() != null) link.setShipment(fixLength(getShipment(), Constants.LIMIT_OF_SHIPMENT));
+            if (getSku() != null) link.setSku(fixLength(getSku(), Consts.Limits.SKU));
+            if (getName() != null) link.setName(fixLength(getName(), Consts.Limits.NAME));
+            if (getBrand() != null) link.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
+            if (getSeller() != null) link.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
+            if (getShipment() != null) link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
 
-            //spec list editings
+            //spec list editing
             List<LinkSpec> specList = getSpecList();
             if (specList != null && specList.size() > 0) {
                 List<LinkSpec> newList = new ArrayList<>(specList.size());
                 for (LinkSpec ls: specList) {
                     newList.add(
                         new LinkSpec(
-                            fixLength(ls.getKey(), Constants.LIMIT_OF_SPEC_KEY),
-                            fixLength(ls.getValue(), Constants.LIMIT_OF_SPEC_VALUE)
+                            fixLength(ls.getKey(), Consts.Limits.SPEC_KEY),
+                            fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)
                         )
                     );
                 }
@@ -220,7 +230,7 @@ public abstract class AbstractWebsite implements Website {
             link.setStatus(Status.AVAILABLE);
         } else {
             link.setStatus(Status.NOT_AVAILABLE);
-            log.debug("Link with id %d is not available!", link.getId());
+            log.debug("Link with id {} is not available!", link.getId());
         }
     }
 
@@ -240,7 +250,7 @@ public abstract class AbstractWebsite implements Website {
     protected void setLinkStatus(HttpResponse<String> response) {
         if (response != null) {
             final Status status = (response.getStatus() == 0 ? Status.SOCKET_ERROR : Status.NETWORK_ERROR);
-            log.error("Failed to fetch data! Status: %s, Http Status: %d", status.name(), response.getStatus());
+            log.error("Failed to fetch data! Status: {}, Http Status: {}", status.name(), response.getStatus());
             setLinkStatus(status, response.getStatus());
         } else {
             log.error("Response is null!");

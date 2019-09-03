@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.it;
 import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
@@ -39,7 +39,7 @@ public class VidaXL extends AbstractWebsite {
     protected JSONObject getJsonData() {
         String auctionId = getAuctionId();
         if (auctionId != null) {
-            HttpResponse<String> response = HttpClient.get("https://www.vidaxl.it/platform/index.php?m=auction&a=getAuctionsList&id=" + auctionId);
+            HttpResponse<String> response = httpClient.get("https://www.vidaxl.it/platform/index.php?m=auction&a=getAuctionsList&id=" + auctionId);
             if (response.getStatus() == 200 && ! response.getBody().isEmpty()) {
                 JSONObject auction = new JSONObject(response.getBody());
                 if (auction.has("current")) {
@@ -69,7 +69,7 @@ public class VidaXL extends AbstractWebsite {
             return code.attr("value");
         }
 
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -84,7 +84,7 @@ public class VidaXL extends AbstractWebsite {
             return title.attr("content");
         }
 
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

@@ -2,6 +2,7 @@ package io.inprice.scrapper.worker.websites;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.worker.helpers.HttpClient;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -39,5 +40,8 @@ public interface Website {
 
     //for test purposes
     Link test(String fileName);
+
+    //for test purposes
+    Link test(String fileName, HttpClient httpClient);
 
 }

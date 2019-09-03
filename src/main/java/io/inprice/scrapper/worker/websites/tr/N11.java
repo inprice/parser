@@ -2,7 +2,7 @@ package io.inprice.scrapper.worker.websites.tr;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
 
@@ -42,7 +42,7 @@ public class N11 extends AbstractWebsite {
         if (sku != null) {
             return sku.val();
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class N11 extends AbstractWebsite {
         if (name != null) {
             return name.text();
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -92,7 +92,7 @@ public class N11 extends AbstractWebsite {
         if (shipment != null) {
             return shipment.text().replaceAll(":", "");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -110,7 +110,7 @@ public class N11 extends AbstractWebsite {
         String[] titleChunks = getName().split("\\s");
         if (titleChunks.length > 0) return titleChunks[0];
 
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

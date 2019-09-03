@@ -1,6 +1,7 @@
 package io.inprice.scrapper.worker.browser;
 
-import io.inprice.scrapper.common.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import io.inprice.scrapper.worker.helpers.UserAgents;
 import io.inprice.scrapper.worker.info.Pair;
 import org.openqa.selenium.Platform;
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractBrowser {
 
-    private static final Logger log = new Logger(AbstractBrowser.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractBrowser.class);
 
     private static PhantomJSDriver driver;
 
@@ -40,12 +41,12 @@ public abstract class AbstractBrowser {
         addSpecificCapabilities(caps);
 
         caps.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS,
-                new String[] {
-                        "--web-security=false",
-                        "--ssl-protocol=any",
-                        "--ignore-ssl-errors=true",
-                        "--webdriver-loglevel=NONE"
-                }
+            new String[] {
+                "--web-security=false",
+                "--ssl-protocol=any",
+                "--ignore-ssl-errors=true",
+                "--webdriver-loglevel=NONE"
+            }
         );
 
         PhantomJSDriverService service = new PhantomJSDriverService.Builder()
@@ -62,7 +63,7 @@ public abstract class AbstractBrowser {
         driver.get(url);
 
         long end = new Date().getTime();
-        log.info("Caller: %s, Time: %d", getName(), (end-start));
+        log.info("Caller: {}, Time: {}", getName(), (end-start));
         final String result = driver.getPageSource();
 
         return new Pair(200, result);

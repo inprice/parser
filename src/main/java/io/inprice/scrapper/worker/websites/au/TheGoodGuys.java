@@ -2,7 +2,7 @@ package io.inprice.scrapper.worker.websites.au;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
 
@@ -39,7 +39,7 @@ public class TheGoodGuys extends AbstractWebsite {
         if (sku != null) {
             return sku.val();
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class TheGoodGuys extends AbstractWebsite {
         if (name != null) {
             return name.text();
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -76,7 +76,7 @@ public class TheGoodGuys extends AbstractWebsite {
         if (brand != null) {
             return brand.attr("alt");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

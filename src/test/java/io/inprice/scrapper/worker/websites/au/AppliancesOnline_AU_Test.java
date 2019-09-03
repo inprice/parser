@@ -9,9 +9,10 @@ import io.inprice.scrapper.worker.helpers.HttpClient;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,33 +21,30 @@ import java.io.InputStreamReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(HttpClient.class)
+@RunWith(MockitoJUnitRunner.class)
 public class AppliancesOnline_AU_Test {
 
     private final String SITE_NAME = "appliancesonline";
     private final String COUNTRY_CODE = "au";
 
-    private final AppliancesOnline site = spy(new AppliancesOnline(new Link()));
-    private final HttpResponse response = mock(HttpResponse.class);
+    @Mock
+    private HttpResponse mockResponse;
 
-    public AppliancesOnline_AU_Test() {
-        PowerMockito.mockStatic(HttpClient.class);
+    @Mock
+    private HttpClient httpClient;
 
-        when(site.willHtmlBePulled()).thenReturn(false);
-
-        when(response.getStatus()).thenReturn(0);
-        when(response.getBody()).thenReturn(null);
-        when(HttpClient.get(anyString())).thenReturn(response);
-    }
+    @Spy
+    private final AppliancesOnline site =
+        new AppliancesOnline(
+            new Link()
+        );
 
     @Test
     public void test_product_1() {
-        when(site.getJsonData()).thenReturn(getJsonDataFromFile(1));
-
-        Link link = site.test(null);
+        setMock(1);
+        Link link = site.test(null, httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("1562", link.getSku());
@@ -60,9 +58,8 @@ public class AppliancesOnline_AU_Test {
 
     @Test
     public void test_product_2() {
-        when(site.getJsonData()).thenReturn(getJsonDataFromFile(2));
-
-        Link link = site.test(null);
+        setMock(2);
+        Link link = site.test(null, httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("2708", link.getSku());
@@ -76,9 +73,8 @@ public class AppliancesOnline_AU_Test {
 
     @Test
     public void test_product_3() {
-        when(site.getJsonData()).thenReturn(getJsonDataFromFile(3));
-
-        Link link = site.test(null);
+        setMock(3);
+        Link link = site.test(null, httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("39819", link.getSku());
@@ -92,9 +88,8 @@ public class AppliancesOnline_AU_Test {
 
     @Test
     public void test_product_4() {
-        when(site.getJsonData()).thenReturn(getJsonDataFromFile(4));
-
-        Link link = site.test(null);
+        setMock(4);
+        Link link = site.test(null, httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("56789", link.getSku());
@@ -116,6 +111,15 @@ public class AppliancesOnline_AU_Test {
         }
 
         return new JSONObject(data);
+    }
+
+    private void setMock(int no) {
+        when(site.getJsonData()).thenReturn(getJsonDataFromFile(no));
+        when(site.willHtmlBePulled()).thenReturn(false);
+
+        when(mockResponse.getStatus()).thenReturn(0);
+        when(mockResponse.getBody()).thenReturn(null);
+        when(httpClient.get(anyString())).thenReturn(mockResponse);
     }
 
 }

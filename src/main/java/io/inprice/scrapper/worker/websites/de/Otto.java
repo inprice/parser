@@ -2,7 +2,7 @@ package io.inprice.scrapper.worker.websites.de;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -76,7 +76,7 @@ public class Otto extends AbstractWebsite {
         if (json != null && json.has("id")) {
             return json.getString("id");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -84,7 +84,7 @@ public class Otto extends AbstractWebsite {
         if (product != null && product.has("name")) {
             return product.getString("name");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -119,7 +119,7 @@ public class Otto extends AbstractWebsite {
                 return var.getString("displayName");
             }
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -127,7 +127,7 @@ public class Otto extends AbstractWebsite {
         if (json != null && json.has("brand")) {
             return json.getString("brand");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

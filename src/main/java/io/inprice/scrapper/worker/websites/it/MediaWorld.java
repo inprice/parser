@@ -2,7 +2,7 @@ package io.inprice.scrapper.worker.websites.it;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -41,7 +41,7 @@ public class MediaWorld extends AbstractWebsite {
         if (product != null) {
             return product.attr("data-pcode");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class MediaWorld extends AbstractWebsite {
                 return sb.toString();
             }
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class MediaWorld extends AbstractWebsite {
         if (shipment != null) {
             return shipment.text();
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -89,7 +89,7 @@ public class MediaWorld extends AbstractWebsite {
         if (product != null) {
             return product.attr("data-gtm-brand");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

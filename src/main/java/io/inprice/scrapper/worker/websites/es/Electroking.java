@@ -2,7 +2,7 @@ package io.inprice.scrapper.worker.websites.es;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.jsoup.nodes.Element;
 
@@ -42,7 +42,7 @@ public class Electroking extends AbstractWebsite {
         if (sku != null) {
             return sku.text();
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Electroking extends AbstractWebsite {
         if (name != null) {
             return name.text();
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

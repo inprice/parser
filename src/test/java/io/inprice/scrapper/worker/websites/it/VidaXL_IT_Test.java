@@ -7,13 +7,11 @@ import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
-import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,26 +20,29 @@ import java.io.InputStreamReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(HttpClient.class)
+@RunWith(MockitoJUnitRunner.class)
 public class VidaXL_IT_Test {
 
     private final String SITE_NAME = "vidaxl";
     private final String COUNTRY_CODE = "it";
 
-    private final VidaXL site = spy(new VidaXL(new Link()));
-    private final HttpResponse response = mock(HttpResponse.class);
+    @Mock
+    private HttpResponse mockResponse;
 
-    public VidaXL_IT_Test() {
-        PowerMockito.mockStatic(HttpClient.class);
-    }
+    @Mock
+    private HttpClient httpClient;
+
+    @Spy
+    private final VidaXL site =
+        new VidaXL(
+            new Link()
+        );
 
     @Test
     public void test_product_1() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("41192", link.getSku());
@@ -55,7 +56,7 @@ public class VidaXL_IT_Test {
 
     @Test
     public void test_product_2() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("140654", link.getSku());
@@ -69,11 +70,11 @@ public class VidaXL_IT_Test {
 
     @Test
     public void test_product_3() {
-        when(response.getStatus()).thenReturn(200);
-        when(response.getBody()).thenReturn(getJsonFromFile(3));
-        when(HttpClient.get(anyString())).thenReturn(response);
+        when(mockResponse.getStatus()).thenReturn(200);
+        when(mockResponse.getBody()).thenReturn(getJsonFromFile(3));
+        when(httpClient.get(anyString())).thenReturn(mockResponse);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("41296", link.getSku());
@@ -87,11 +88,11 @@ public class VidaXL_IT_Test {
 
     @Test
     public void test_product_4() {
-        when(response.getStatus()).thenReturn(200);
-        when(response.getBody()).thenReturn(getJsonFromFile(4));
-        when(HttpClient.get(anyString())).thenReturn(response);
+        when(mockResponse.getStatus()).thenReturn(200);
+        when(mockResponse.getBody()).thenReturn(getJsonFromFile(4));
+        when(httpClient.get(anyString())).thenReturn(mockResponse);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("141679", link.getSku());

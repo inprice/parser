@@ -8,9 +8,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,21 +20,20 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(HttpClient.class)
+@RunWith(MockitoJUnitRunner.class)
 public class Lidl_US_Test {
 
-    private final HttpResponse mockResponse = PowerMockito.mock(HttpResponse.class);
+    @Mock
+    private HttpResponse mockResponse;
 
-    public Lidl_US_Test() {
-        PowerMockito.mockStatic(HttpClient.class);
-    }
+    @Mock
+    private HttpClient httpClient;
 
     @Test
     public void test_product_1() {
         setMocks(1);
 
-        Link link = new Lidl(new Link("https://www.lidl.com/products/285939_A")).test(null);
+        Link link = new Lidl(new Link("https://www.lidl.com/products/285939_A")).test(null, httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("285939_A", link.getSku());
@@ -51,7 +49,7 @@ public class Lidl_US_Test {
     public void test_product_2() {
         setMocks(2);
 
-        Link link = new Lidl(new Link("https://www.lidl.com/products/311073_A")).test(null);
+        Link link = new Lidl(new Link("https://www.lidl.com/products/311073_A")).test(null, httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("311073_A", link.getSku());
@@ -67,7 +65,7 @@ public class Lidl_US_Test {
     public void test_product_3() {
         setMocks(3);
 
-        Link link = new Lidl(new Link("https://www.lidl.com/products/310436_C")).test(null);
+        Link link = new Lidl(new Link("https://www.lidl.com/products/310436_C")).test(null, httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("310436_C", link.getSku());
@@ -83,7 +81,7 @@ public class Lidl_US_Test {
     public void test_product_4() {
         setMocks(4);
 
-        Link link = new Lidl(new Link("https://www.lidl.com/products/1031629")).test(null);
+        Link link = new Lidl(new Link("https://www.lidl.com/products/1031629")).test(null, httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("1031629", link.getSku());
@@ -106,7 +104,7 @@ public class Lidl_US_Test {
 
         when(mockResponse.getStatus()).thenReturn(200);
         when(mockResponse.getBody()).thenReturn(data);
-        when(HttpClient.get(anyString())).thenReturn(mockResponse);
+        when(httpClient.get(anyString())).thenReturn(mockResponse);
     }
 
 }

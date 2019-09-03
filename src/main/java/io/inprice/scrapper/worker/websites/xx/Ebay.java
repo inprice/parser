@@ -2,7 +2,7 @@ package io.inprice.scrapper.worker.websites.xx;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -63,7 +63,7 @@ public class Ebay extends AbstractWebsite {
         if (sku != null) {
             return sku.attr("data-itemid");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -79,7 +79,7 @@ public class Ebay extends AbstractWebsite {
         if (name != null) {
             return name.attr("etafsharetitle");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -186,7 +186,7 @@ public class Ebay extends AbstractWebsite {
                 Elements tds = row.select("td");
                 if (tds != null && tds.size() > 0) {
                     String key = "";
-                    String value = "";
+                    String value;
                     for (int i = 0; i < tds.size(); i++) {
                         if (i % 2 == 0) {
                             key = tds.get(i).text();

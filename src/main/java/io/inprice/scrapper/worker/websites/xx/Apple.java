@@ -4,8 +4,7 @@ import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
-import io.inprice.scrapper.worker.helpers.HttpClient;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -52,7 +51,7 @@ public class Apple extends AbstractWebsite {
                             final String sku = offers.getString("sku");
                             final String rootDomain = getUrl().substring(0, index);
 
-                            HttpResponse<String> response = HttpClient.get(rootDomain + "/shop/delivery-message?parts.0=" + sku, REFERRER);
+                            HttpResponse<String> response = httpClient.get(rootDomain + "/shop/delivery-message?parts.0=" + sku, REFERRER);
                             if (response != null && response.getStatus() > 0 && response.getStatus() < 400) {
                                 if (response.getBody() != null && ! response.getBody().trim().isEmpty()) {
                                     JSONObject shipment = new JSONObject(response.getBody());
@@ -101,7 +100,7 @@ public class Apple extends AbstractWebsite {
         if (offers != null && offers.has("sku")) {
             return offers.getString("sku");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -109,7 +108,7 @@ public class Apple extends AbstractWebsite {
         if (json != null && json.has("name")) {
             return json.getString("name");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

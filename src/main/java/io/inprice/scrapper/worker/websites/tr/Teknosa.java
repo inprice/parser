@@ -2,7 +2,7 @@ package io.inprice.scrapper.worker.websites.tr;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -69,7 +69,7 @@ public class Teknosa extends AbstractWebsite {
             return sku.text();
         }
 
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class Teknosa extends AbstractWebsite {
             return name.text();
         }
 
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -138,7 +138,7 @@ public class Teknosa extends AbstractWebsite {
             return brand.text();
         }
 
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
