@@ -8,11 +8,7 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import org.json.JSONObject;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,22 +19,19 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class AppliancesOnline_AU_Test {
 
     private final String SITE_NAME = "appliancesonline";
     private final String COUNTRY_CODE = "au";
 
-    @Mock
-    private HttpResponse mockResponse;
+    private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
+    private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
-    @Mock
-    private HttpClient httpClient;
-
-    @Spy
     private final AppliancesOnline site =
-        new AppliancesOnline(
-            new Link()
+        Mockito.spy(
+            new AppliancesOnline(
+                new Link()
+            )
         );
 
     @Test

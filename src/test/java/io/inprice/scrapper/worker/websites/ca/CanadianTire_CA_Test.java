@@ -8,10 +8,7 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,20 +17,15 @@ import java.io.InputStreamReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class CanadianTire_CA_Test {
 
     private final String SITE_NAME = "canadiantire";
     private final String COUNTRY_CODE = "ca";
 
-    @Mock
-    private HttpResponse mockResponse;
-
-    @Mock
-    private HttpClient httpClient;
+    private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
+    private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
     private final CanadianTire site =
         new CanadianTire(

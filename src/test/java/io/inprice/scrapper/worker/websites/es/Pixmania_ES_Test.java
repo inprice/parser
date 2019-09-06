@@ -8,10 +8,7 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,22 +21,19 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.anyMap;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class Pixmania_ES_Test {
 
     private final String SITE_NAME = "pixmania";
     private final String COUNTRY_CODE = "es";
 
-    @Mock
-    private HttpResponse mockResponse;
+    private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
+    private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
-    @Mock
-    private HttpClient httpClient;
-
-    @Spy
     private final Pixmania site =
-        new Pixmania(
-            new Link()
+        Mockito.spy(
+            new Pixmania(
+                new Link()
+            )
         );
 
     @Test

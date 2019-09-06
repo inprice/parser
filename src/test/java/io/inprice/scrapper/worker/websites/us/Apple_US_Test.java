@@ -7,25 +7,19 @@ import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class Apple_US_Test {
 
     private final String SITE_NAME = "apple";
     private final String COUNTRY_CODE = "us";
 
-    @Mock
-    private HttpResponse mockResponse;
-
-    @Mock
-    private HttpClient httpClient;
+    private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
+    private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
     private final Website site =
         new io.inprice.scrapper.worker.websites.xx.Apple(

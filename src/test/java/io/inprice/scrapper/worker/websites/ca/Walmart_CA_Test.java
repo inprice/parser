@@ -8,10 +8,7 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,22 +18,19 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class Walmart_CA_Test {
 
     private final String SITE_NAME = "walmart";
     private final String COUNTRY_CODE = "ca";
 
-    @Mock
-    private HttpResponse mockResponse;
+    private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
+    private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
-    @Mock
-    private HttpClient httpClient;
-
-    @Spy
     private final Walmart site =
-        new Walmart(
-            new Link()
+        Mockito.spy(
+            new Walmart(
+                new Link()
+            )
         );
 
     @Test

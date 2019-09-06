@@ -8,10 +8,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,22 +20,20 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class VidaXL_IT_Test {
 
     private final String SITE_NAME = "vidaxl";
     private final String COUNTRY_CODE = "it";
 
-    @Mock
-    private HttpResponse mockResponse;
-
-    @Mock
-    private HttpClient httpClient;
+    private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
+    private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
     @Spy
     private final VidaXL site =
-        new VidaXL(
-            new Link()
+        Mockito.spy(
+            new VidaXL(
+                new Link()
+            )
         );
 
     @Test

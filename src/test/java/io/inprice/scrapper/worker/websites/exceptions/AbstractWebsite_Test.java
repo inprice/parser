@@ -11,8 +11,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.powermock.api.mockito.PowerMockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 public class AbstractWebsite_Test {
 
@@ -35,10 +35,10 @@ public class AbstractWebsite_Test {
     }
 
     @Test
-    public void should_set_SOCKET_ERROR() throws Exception {
+    public void should_set_SOCKET_ERROR() {
         FakeSite site = spy(new FakeSite(false, null, BigDecimal.ZERO));
 
-        doReturn(0).when(site, "openDocument");
+        doReturn(0).when(site).openDocument();
 
         site.check();
 
@@ -46,10 +46,10 @@ public class AbstractWebsite_Test {
     }
 
     @Test
-    public void should_set_NETWORK_ERROR() throws Exception {
+    public void should_set_NETWORK_ERROR() {
         FakeSite site = spy(new FakeSite(false, null, BigDecimal.ZERO));
 
-        doReturn(400).when(site, "openDocument");
+        doReturn(400).when(site).openDocument();
 
         site.check();
 
@@ -80,6 +80,11 @@ public class AbstractWebsite_Test {
 
         public Link getLink() {
             return link;
+        }
+
+        @Override
+        protected int openDocument() {
+            return super.openDocument();
         }
 
         @Override

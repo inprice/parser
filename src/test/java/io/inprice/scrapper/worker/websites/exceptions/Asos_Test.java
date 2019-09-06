@@ -7,33 +7,26 @@ import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.uk.Asos;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class Asos_Test {
 
     private final String SITE_NAME = "asos";
     private final String COUNTRY_CODE = "uk";
 
-    @Mock
-    private HttpResponse mockResponse;
+    private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
+    private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
-    @Mock
-    private HttpClient httpClient;
-
-    @Spy
     private final Asos site =
-        new Asos(
-            new Link()
+        Mockito.spy(
+            new Asos(
+                new Link()
+            )
         );
 
     @Test
