@@ -6,7 +6,7 @@ package io.inprice.scrapper.worker.consumer;
 public class AVAILABLE_Consumer extends BaseLinkConsumer {
 
 	public AVAILABLE_Consumer() {
-		super("Available links consumer", properties.getMQ_AvailableLinksQueue());
+		super("Available links consumer", properties.getQueue_AvailableLinks());
 	}
 
 }

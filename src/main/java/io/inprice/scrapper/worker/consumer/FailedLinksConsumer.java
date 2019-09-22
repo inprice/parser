@@ -6,7 +6,7 @@ package io.inprice.scrapper.worker.consumer;
 public class FailedLinksConsumer extends BaseLinkConsumer {
 
 	public FailedLinksConsumer() {
-		super("Failed links consumer", properties.getMQ_FailedLinksQueue());
+		super("Failed links consumer", properties.getQueue_FailedLinks());
 	}
 
 }

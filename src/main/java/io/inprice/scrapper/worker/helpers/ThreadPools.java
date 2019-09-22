@@ -31,7 +31,7 @@ public class ThreadPools {
 		for (ExecutorService pool: registry) {
 			try {
 				pool.shutdown();
-				pool.awaitTermination(properties.getWTF_AwaitTermination(), TimeUnit.MILLISECONDS);
+				pool.awaitTermination(properties.getWT_ForAwaitTermination(), TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
 				log.error("Thread pool termination is interrupted.", e);
 			}

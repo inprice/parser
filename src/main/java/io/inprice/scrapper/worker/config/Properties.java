@@ -55,8 +55,20 @@ public class Properties {
 		return prop.getProperty("mq.exchange.change", "changes");
 	}
 
-	public String getMQ_NewLinksQueue() {
-		return prop.getProperty("mq.queue.new-links", "new-links");
+	public String getRoutingKey_TobeAvailableLinks() {
+		return prop.getProperty("routingKey.for.tobe-available-links", "tobe-available-links");
+	}
+
+	public String getRoutingKey_StatusChange() {
+		return prop.getProperty("routingKey.for.status-change", "status-change");
+	}
+
+	public String getRoutingKey_PriceChange() {
+		return prop.getProperty("routingKey.for.price-change", "price-change");
+	}
+
+	public String getQueue_NewLinks() {
+		return prop.getProperty("queue.of.new-links", "new-links");
 	}
 
 	/*
@@ -64,28 +76,16 @@ public class Properties {
 	 * AVAILABLE_LINKS are already in AVAILABLE status
 	 * TOBE_AVAILABLE_LINKS are in different status and are about to switch to AVAILABLE.
 	 */
-	public String getMQ_AvailableLinksQueue() {
-		return prop.getProperty("mq.queue.available-links", "available-links");
+	public String getQueue_AvailableLinks() {
+		return prop.getProperty("queue.of.available-links", "available-links");
 	}
 
-	public String getMQ_TobeAvailableLinksQueue() {
-		return prop.getProperty("mq.queue.tobe-available-links", "tobe-available-links");
+	public String getQueue_FailedLinks() {
+		return prop.getProperty("queue.of.failed-links", "failed-links");
 	}
 
-	public String getMQ_FailedLinksQueue() {
-		return prop.getProperty("mq.queue.failed-links", "failed-links");
-	}
-
-	public String getMQ_StatusChangeQueue() {
-		return prop.getProperty("mq.queue.status-change", "status-change");
-	}
-
-	public String getMQ_PriceChangeQueue() {
-		return prop.getProperty("mq.queue.price-change", "price-change");
-	}
-
-	public int getWTF_AwaitTermination() {
-		return getOrDefault("wtf.await-termination", 30000);
+	public int getWT_ForAwaitTermination() {
+		return getOrDefault("wt.for.await-termination", 30000);
 	}
 
 	private int getOrDefault(String key, int defauld) {
