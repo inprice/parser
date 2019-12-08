@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.ca;
 import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -63,7 +63,7 @@ public class CanadianTire extends AbstractWebsite {
      */
     @Override
     public JSONObject getJsonData() {
-        HttpResponse<String> response = HttpClient.get("https://www.canadiantire.ca/ESB/PriceAvailability?" + getPayload());
+        HttpResponse<String> response = httpClient.get("https://www.canadiantire.ca/ESB/PriceAvailability?" + getPayload());
         if (response != null && response.getStatus() < 400) {
             JSONArray data = new JSONArray(response.getBody());
             if (! data.isEmpty()) {
@@ -88,7 +88,7 @@ public class CanadianTire extends AbstractWebsite {
         if (sku != null) {
             return sku.attr("data-sku").split(":")[0];
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -97,7 +97,7 @@ public class CanadianTire extends AbstractWebsite {
         if (name != null) {
             return name.attr("content").replaceAll(" \\| Canadian Tire", "");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -131,7 +131,7 @@ public class CanadianTire extends AbstractWebsite {
         if (brand != null) {
             return brand.attr("alt");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

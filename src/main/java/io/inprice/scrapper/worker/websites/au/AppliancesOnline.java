@@ -3,8 +3,7 @@ package io.inprice.scrapper.worker.websites.au;
 import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
-import io.inprice.scrapper.worker.helpers.HttpClient;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -53,7 +52,7 @@ public class AppliancesOnline extends AbstractWebsite {
         if (json != null && json.has("productId")) {
             return ""+json.getInt("productId");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -61,7 +60,7 @@ public class AppliancesOnline extends AbstractWebsite {
         if (json != null && json.has("title")) {
             return json.getString("title");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -90,14 +89,14 @@ public class AppliancesOnline extends AbstractWebsite {
                 return manufacturer.getString("name");
             }
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
     public List<LinkSpec> getSpecList() {
         List<LinkSpec> specList = null;
 
-        HttpResponse<String> response = HttpClient.get("https://www.appliancesonline.com.au/api/v2/product/specifications/id/" + json.getInt("productId"));
+        HttpResponse<String> response = httpClient.get("https://www.appliancesonline.com.au/api/v2/product/specifications/id/" + json.getInt("productId"));
 
         if (response.getStatus() == 200 && ! response.getBody().isEmpty()) {
             JSONObject specs = new JSONObject(response.getBody());

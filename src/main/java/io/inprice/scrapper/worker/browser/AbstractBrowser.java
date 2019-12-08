@@ -1,15 +1,16 @@
 package io.inprice.scrapper.worker.browser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import io.inprice.scrapper.worker.helpers.UserAgents;
 import io.inprice.scrapper.worker.info.Pair;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Date;

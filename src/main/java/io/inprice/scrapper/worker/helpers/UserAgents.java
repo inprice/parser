@@ -2,7 +2,6 @@ package io.inprice.scrapper.worker.helpers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,7 +30,7 @@ public class UserAgents {
                     List<String> lines = Files.readAllLines(Paths.get("./user-agents/" + file.getName()));
                     uaList.addAll(lines);
                 } catch (Exception e) {
-                    log.warn("   {} has problem...", file.getName());
+                    log.warn("  {} has problem...", file.getName());
                     e.printStackTrace();
                 }
             });

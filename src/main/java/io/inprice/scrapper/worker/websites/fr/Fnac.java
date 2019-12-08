@@ -2,7 +2,7 @@ package io.inprice.scrapper.worker.websites.fr;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -55,7 +55,7 @@ public class Fnac extends AbstractWebsite {
             if (json.has("sku")) return json.getString("sku");
             if (json.has("prid")) return ""+json.getInt("prid");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class Fnac extends AbstractWebsite {
         if (json != null && json.has("name")) {
             return json.getString("name");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class Fnac extends AbstractWebsite {
             return shipment.text();
         }
 
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -105,7 +105,7 @@ public class Fnac extends AbstractWebsite {
                 return brand.getString("name");
             }
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

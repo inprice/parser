@@ -3,27 +3,22 @@ package io.inprice.scrapper.worker.websites.exceptions;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.powermock.api.mockito.PowerMockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(AbstractWebsite.class)
 public class AbstractWebsite_Test {
 
     @Test
     public void should_set_NOT_A_PRODUCT_PAGE_for_available_products_with_NA_name() {
-        AbstractWebsite site = new FakeSite(true, Constants.NOT_AVAILABLE, BigDecimal.ZERO, false);
+        AbstractWebsite site = new FakeSite(true, Consts.Words.NOT_AVAILABLE, BigDecimal.ZERO, false);
 
         Link link = site.test(null);
 
@@ -40,10 +35,10 @@ public class AbstractWebsite_Test {
     }
 
     @Test
-    public void should_set_SOCKET_ERROR() throws Exception {
+    public void should_set_SOCKET_ERROR() {
         FakeSite site = spy(new FakeSite(false, null, BigDecimal.ZERO));
 
-        doReturn(0).when(site, "openDocument");
+        doReturn(0).when(site).openDocument();
 
         site.check();
 
@@ -51,10 +46,10 @@ public class AbstractWebsite_Test {
     }
 
     @Test
-    public void should_set_NETWORK_ERROR() throws Exception {
+    public void should_set_NETWORK_ERROR() {
         FakeSite site = spy(new FakeSite(false, null, BigDecimal.ZERO));
 
-        doReturn(400).when(site, "openDocument");
+        doReturn(400).when(site).openDocument();
 
         site.check();
 
@@ -88,6 +83,11 @@ public class AbstractWebsite_Test {
         }
 
         @Override
+        protected int openDocument() {
+            return super.openDocument();
+        }
+
+        @Override
         public boolean willHtmlBePulled() {
             return willHtmlBePulled;
         }
@@ -99,17 +99,17 @@ public class AbstractWebsite_Test {
 
         @Override
         public String getBrand() {
-            return Constants.NOT_AVAILABLE;
+            return Consts.Words.NOT_AVAILABLE;
         }
 
         @Override
         public String getSeller() {
-            return Constants.NOT_AVAILABLE;
+            return Consts.Words.NOT_AVAILABLE;
         }
 
         @Override
         public String getSku() {
-            return Constants.NOT_AVAILABLE;
+            return Consts.Words.NOT_AVAILABLE;
         }
 
         @Override
@@ -124,7 +124,7 @@ public class AbstractWebsite_Test {
 
         @Override
         public String getShipment() {
-            return Constants.NOT_AVAILABLE;
+            return Consts.Words.NOT_AVAILABLE;
         }
 
         @Override

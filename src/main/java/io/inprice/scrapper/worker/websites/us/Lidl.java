@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.us;
 import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -42,7 +42,7 @@ public class Lidl extends AbstractWebsite {
 
         if (index > 0 && urlChunks.length > 1) {
             sku = urlChunks[urlChunks.length-1];
-            HttpResponse<String> response = HttpClient.get(url + sku);
+            HttpResponse<String> response = httpClient.get(url + sku);
             if (response.getStatus() < 400) {
                 return new JSONObject(response.getBody());
             }
@@ -72,7 +72,7 @@ public class Lidl extends AbstractWebsite {
         if (json != null && json.has("name")) {
             return json.getString("name");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -104,7 +104,7 @@ public class Lidl extends AbstractWebsite {
                 return brands.getString(0);
             }
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

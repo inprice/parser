@@ -8,40 +8,37 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(HttpClient.class)
 public class Asda_UK_Test {
 
     private final String SITE_NAME = "asda";
     private final String COUNTRY_CODE = "uk";
 
-    private final Asda site = spy(new Asda(new Link()));
-    private final HttpResponse response = mock(HttpResponse.class);
+    private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
+    private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
-    public Asda_UK_Test() {
-        PowerMockito.mockStatic(HttpClient.class);
-    }
+    private final Asda site =
+        Mockito.spy(
+            new Asda(
+                new Link()
+            )
+        );
 
     @Test
     public void test_product_1() {
         final String prodId = "1000034704516";
 
         setMock(1, prodId);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(prodId, link.getSku());
@@ -57,7 +54,7 @@ public class Asda_UK_Test {
         final String prodId = "910000317601";
 
         setMock(2, prodId);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(prodId, link.getSku());
@@ -73,7 +70,7 @@ public class Asda_UK_Test {
         final String prodId = "1000122184231";
 
         setMock(3, prodId);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(prodId, link.getSku());
@@ -89,7 +86,7 @@ public class Asda_UK_Test {
         final String prodId = "910001116620";
 
         setMock(4, prodId);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(prodId, link.getSku());
@@ -112,9 +109,9 @@ public class Asda_UK_Test {
         when(site.getUrl()).thenReturn("https://groceries.asda.com/" + prodId);
         when(site.willHtmlBePulled()).thenReturn(false);
 
-        when(response.getStatus()).thenReturn(200);
-        when(response.getBody()).thenReturn(data);
-        when(HttpClient.get(anyString())).thenReturn(response);
+        when(mockResponse.getStatus()).thenReturn(200);
+        when(mockResponse.getBody()).thenReturn(data);
+        when(httpClient.get(anyString())).thenReturn(mockResponse);
     }
 
 }

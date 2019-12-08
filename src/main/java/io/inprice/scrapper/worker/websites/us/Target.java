@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.us;
 import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -84,7 +84,7 @@ public class Target extends AbstractWebsite {
     }
 
     private void setPriceData() {
-        HttpResponse<String> response = HttpClient.get("https://redsky.target.com/web/pdp_location/v1/tcin/" + getSku() + "?" + getPayload());
+        HttpResponse<String> response = httpClient.get("https://redsky.target.com/web/pdp_location/v1/tcin/" + getSku() + "?" + getPayload());
         if (response != null && response.getStatus() < 400) {
             JSONObject priceEL = new JSONObject(response.getBody());
             if (! priceEL.isEmpty()) {
@@ -121,7 +121,7 @@ public class Target extends AbstractWebsite {
         if (product != null && product.has("productId")) {
             return product.getString("productId");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -129,7 +129,7 @@ public class Target extends AbstractWebsite {
         if (product != null && product.has("title")) {
             return product.getString("title");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -177,7 +177,7 @@ public class Target extends AbstractWebsite {
         if (product != null && product.has("manufacturerBrand")) {
             return product.getString("manufacturerBrand");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

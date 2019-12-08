@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.uk;
 import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -39,7 +39,7 @@ public class Asda extends AbstractWebsite {
         if (urlChunks.length > 1) {
             String productId = urlChunks[urlChunks.length-1];
             if (productId.matches("\\d+")) {
-                HttpResponse<String> response = HttpClient.get("https://groceries.asda.com/api/items/view?itemid=" + productId);
+                HttpResponse<String> response = httpClient.get("https://groceries.asda.com/api/items/view?itemid=" + productId);
                 if (response.getStatus() == 200 && ! response.getBody().isEmpty()) {
                     JSONObject prod = new JSONObject(response.getBody());
                     if (prod.has("items")) {
@@ -68,7 +68,7 @@ public class Asda extends AbstractWebsite {
         if (product != null && product.has("id")) {
             return product.getString("id");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -76,7 +76,7 @@ public class Asda extends AbstractWebsite {
         if (product != null && product.has("name")) {
             return product.getString("name");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -103,7 +103,7 @@ public class Asda extends AbstractWebsite {
         if (product != null && product.has("brandName")) {
             return product.getString("brandName");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

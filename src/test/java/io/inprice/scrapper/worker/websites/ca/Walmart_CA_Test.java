@@ -8,10 +8,7 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,27 +16,27 @@ import java.io.InputStreamReader;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(HttpClient.class)
 public class Walmart_CA_Test {
 
     private final String SITE_NAME = "walmart";
     private final String COUNTRY_CODE = "ca";
 
-    private final Walmart site = spy(new Walmart(new Link()));
-    private final HttpResponse response = mock(HttpResponse.class);
+    private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
+    private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
-    public Walmart_CA_Test() {
-        PowerMockito.mockStatic(HttpClient.class);
-        when(site.getUrl()).thenReturn("");
-    }
+    private final Walmart site =
+        Mockito.spy(
+            new Walmart(
+                new Link()
+            )
+        );
 
     @Test
     public void test_product_1() {
         setMock(1);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("6000199211475", link.getSku());
@@ -54,7 +51,7 @@ public class Walmart_CA_Test {
     @Test
     public void test_product_2() {
         setMock(2);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("6000187311310", link.getSku());
@@ -69,7 +66,7 @@ public class Walmart_CA_Test {
     @Test
     public void test_product_3() {
         setMock(3);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals("6000188988578", link.getSku());
@@ -84,7 +81,7 @@ public class Walmart_CA_Test {
     @Test
     public void test_product_4() {
         setMock(4);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
         assertEquals(Status.NOT_AVAILABLE, link.getStatus());
         assertEquals("6000196486964", link.getSku());
@@ -105,9 +102,11 @@ public class Walmart_CA_Test {
             e.printStackTrace();
         }
 
-        when(response.getStatus()).thenReturn(200);
-        when(response.getBody()).thenReturn(data);
-        when(HttpClient.post(anyString(), anyString())).thenReturn(response);
+        when(site.getUrl()).thenReturn("");
+
+        when(mockResponse.getStatus()).thenReturn(200);
+        when(mockResponse.getBody()).thenReturn(data);
+        when(httpClient.post(anyString(), anyString())).thenReturn(mockResponse);
     }
 
 }

@@ -1,17 +1,14 @@
 package io.inprice.scrapper.worker.websites.au;
 
-import io.inprice.scrapper.worker.websites.Helpers;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-
-import static org.junit.Assert.*;
-
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
+import org.junit.Test;
 
-@RunWith(JUnit4.class)
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 public class Amazon_AU_Test {
 
     private final String SITE_NAME = "amazon";

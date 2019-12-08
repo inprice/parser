@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.es;
 import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
@@ -117,7 +117,7 @@ public class Pixmania extends AbstractWebsite {
             final Map<String, String> payload = getPayload();
             if (payload != null) {
 
-                HttpResponse<String> response = HttpClient.get(String.format("https://www.pixmania.es/api/pcm/products/%s", productId), payload);
+                HttpResponse<String> response = httpClient.get(String.format("https://www.pixmania.es/api/pcm/products/%s", productId), payload);
                 if (response != null && response.getStatus() < 400) {
                     JSONObject data = new JSONObject(response.getBody());
                     if (data.has("product")) {
@@ -146,7 +146,7 @@ public class Pixmania extends AbstractWebsite {
         if (bestOffer != null && bestOffer.has("sku")) {
             return bestOffer.getString("sku");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -154,7 +154,7 @@ public class Pixmania extends AbstractWebsite {
         if (json != null && json.has("name")) {
             return json.getString("name");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -173,7 +173,7 @@ public class Pixmania extends AbstractWebsite {
                 return merchant.getString("name");
             }
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -181,7 +181,7 @@ public class Pixmania extends AbstractWebsite {
         if (bestOffer != null && bestOffer.has("free_shipping")) {
             return "Free shipping: " + bestOffer.getBoolean("free_shipping");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -192,7 +192,7 @@ public class Pixmania extends AbstractWebsite {
                 return merchant.getString("name");
             }
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

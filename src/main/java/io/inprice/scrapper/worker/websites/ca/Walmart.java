@@ -4,7 +4,7 @@ import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.meta.Status;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -99,7 +99,7 @@ public class Walmart extends AbstractWebsite {
         final String payload = getPayload();
 
         if (payload != null && ! payload.isEmpty()) {
-            HttpResponse<String> response = HttpClient.post(STATIC_URL, payload);
+            HttpResponse<String> response = httpClient.post(STATIC_URL, payload);
             if (response != null && response.getStatus() > 0 && response.getStatus() < 400) {
                 JSONObject product = new JSONObject(response.getBody());
 
@@ -156,7 +156,7 @@ public class Walmart extends AbstractWebsite {
         if (preData != null && preData.has("name")) {
             return preData.getString("name");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -173,7 +173,7 @@ public class Walmart extends AbstractWebsite {
             JSONObject sellerInfo = json.getJSONObject("sellerInfo");
             if (sellerInfo.has("en")) return sellerInfo.getString("en");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -181,7 +181,7 @@ public class Walmart extends AbstractWebsite {
         if (getSeller() != null) {
             return "Sold & shipped by " + getSeller();
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -192,7 +192,7 @@ public class Walmart extends AbstractWebsite {
                 return brand.getString("name");
             }
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

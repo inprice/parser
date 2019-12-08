@@ -7,40 +7,33 @@ import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(HttpClient.class)
 public class Apple_UK_Test {
 
     private final String SITE_NAME = "apple";
     private final String COUNTRY_CODE = "uk";
 
-    private final Website site;
+    private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
+    private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
-    private final HttpResponse mockResponse = PowerMockito.mock(HttpResponse.class);
-
-    public Apple_UK_Test() {
-        Link link = new Link();
-        link.setUrl(String.format("https://www.apple.com/%s/shop/", COUNTRY_CODE));
-        site = new io.inprice.scrapper.worker.websites.xx.Apple(link);
-
-        PowerMockito.mockStatic(HttpClient.class);
-    }
+    private final Website site =
+        new io.inprice.scrapper.worker.websites.xx.Apple(
+            new Link(
+                String.format("https://www.apple.com/%s/shop/", COUNTRY_CODE)
+            )
+        );
 
     @Test
     public void test_product_1() {
         final String sku = "MV752ZM/A";
         setMocks(sku);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
@@ -57,7 +50,7 @@ public class Apple_UK_Test {
         final String sku = "MRY62B/A";
         setMocks(sku);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
@@ -74,7 +67,7 @@ public class Apple_UK_Test {
         final String sku = "MU6K2B/A";
         setMocks(sku);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
@@ -91,7 +84,7 @@ public class Apple_UK_Test {
         final String sku = "HLL52ZM/A";
         setMocks(sku);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
         assertEquals(Status.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
@@ -155,7 +148,7 @@ public class Apple_UK_Test {
 
         when(mockResponse.getStatus()).thenReturn(200);
         when(mockResponse.getBody()).thenReturn(SHIPMENT_DATA);
-        when(HttpClient.get(anyString(), anyString())).thenReturn(mockResponse);
+        when(httpClient.get(anyString(), anyString())).thenReturn(mockResponse);
     }
 
 }

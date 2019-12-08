@@ -1,13 +1,13 @@
 package io.inprice.scrapper.worker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import io.inprice.scrapper.worker.consumer.AVAILABLE_Consumer;
 import io.inprice.scrapper.worker.consumer.FailedLinksConsumer;
 import io.inprice.scrapper.worker.consumer.NEW_Consumer;
 import io.inprice.scrapper.worker.helpers.Global;
 import io.inprice.scrapper.worker.helpers.RabbitMQ;
 import io.inprice.scrapper.worker.helpers.ThreadPools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Entry point of the application.

@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.au;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.browser.BrowserManager;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.info.Pair;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -76,7 +76,7 @@ public class HarveyNorman extends AbstractWebsite {
         if (json != null && json.has("sku")) {
             return json.getString("sku");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -84,7 +84,7 @@ public class HarveyNorman extends AbstractWebsite {
         if (json != null && json.has("name")) {
             return json.getString("name");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -111,7 +111,7 @@ public class HarveyNorman extends AbstractWebsite {
         if (json != null && json.has("brand")) {
             return json.getJSONObject("brand").getString("name");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override

@@ -2,8 +2,7 @@ package io.inprice.scrapper.worker.websites.au;
 
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
-import io.inprice.scrapper.common.utils.StringUtils;
-import io.inprice.scrapper.worker.helpers.Constants;
+import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -39,7 +38,7 @@ public class BigW extends AbstractWebsite {
 
         final String prodData = findAPart(doc.html(),  "'products': [", "}]", 1);
         if (prodData != null) {
-            return new JSONObject(StringUtils.fixQuotes(prodData));
+            return new JSONObject(fixQuotes(prodData));
         }
 
         return super.getJsonData();
@@ -57,7 +56,7 @@ public class BigW extends AbstractWebsite {
         if (code != null) {
             return code.attr("data-productcode");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
@@ -65,7 +64,7 @@ public class BigW extends AbstractWebsite {
         if (json != null && json.has("name")) {
             return json.getString("name");
         }
-        return Constants.NOT_AVAILABLE;
+        return Consts.Words.NOT_AVAILABLE;
     }
 
     @Override
