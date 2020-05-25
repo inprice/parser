@@ -22,113 +22,113 @@ import java.util.List;
  */
 public class Wehkamp extends AbstractWebsite {
 
-    /*
-     * holds price info set in getJsonData()
-     */
-    private JSONObject offers;
-    private JSONArray properties;
+  /*
+   * holds price info set in getJsonData()
+   */
+  private JSONObject offers;
+  private JSONArray properties;
 
-    public Wehkamp(Link link) {
-        super(link);
+  public Wehkamp(Link link) {
+    super(link);
+  }
+
+  @Override
+  public JSONObject getJsonData() {
+    final String props = findAPart(doc.html(), "\"properties\":", "]", 1);
+
+    if (props != null) {
+      properties = new JSONArray(props);
     }
 
-    @Override
-    public JSONObject getJsonData() {
-        final String props = findAPart(doc.html(),  "\"properties\":", "]", 1);
-
-        if (props != null) {
-            properties = new JSONArray(props);
+    Elements dataEL = doc.select("script[type='application/ld+json']");
+    if (dataEL != null && dataEL.size() > 0) {
+      for (int i = 0; i < dataEL.size(); i++) {
+        if (dataEL.get(i).dataNodes().get(0).getWholeData().indexOf("brand") > 0) {
+          JSONObject data = new JSONObject(dataEL.get(i).dataNodes().get(0).getWholeData().replace("\r\n", " "));
+          if (data.has("offers")) {
+            offers = data.getJSONObject("offers");
+          }
+          return data;
         }
+      }
+    }
+    return super.getJsonData();
+  }
 
-        Elements dataEL = doc.select("script[type='application/ld+json']");
-        if (dataEL != null && dataEL.size() > 0) {
-            for (int i = 0; i < dataEL.size(); i++) {
-                if (dataEL.get(i).dataNodes().get(0).getWholeData().indexOf("brand") > 0) {
-                    JSONObject data = new JSONObject(dataEL.get(i).dataNodes().get(0).getWholeData().replace("\r\n"," "));
-                    if (data.has("offers")) {
-                        offers = data.getJSONObject("offers");
-                    }
-                    return data;
-                }
-            }
-        }
-        return super.getJsonData();
+  @Override
+  public boolean isAvailable() {
+    if (offers != null && offers.has("availability")) {
+      String availability = offers.getString("availability");
+      return availability.contains("InStock") || availability.contains("PreOrder");
+    }
+    return false;
+  }
+
+  @Override
+  public String getSku() {
+    if (json != null && json.has("sku")) {
+      return json.getString("sku");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public String getName() {
+    if (json != null && json.has("name")) {
+      return json.getString("name");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public BigDecimal getPrice() {
+    if (offers != null && offers.has("price")) {
+      return offers.getBigDecimal("price");
+    }
+    return BigDecimal.ZERO;
+  }
+
+  @Override
+  public String getSeller() {
+    if (offers != null && offers.has("seller")) {
+      JSONObject seller = offers.getJSONObject("seller");
+      if (seller.has("name")) {
+        return seller.getString("name");
+      }
+    }
+    return "Wehkamp";
+  }
+
+  @Override
+  public String getBrand() {
+    if (json != null && json.has("brand")) {
+      return json.getJSONObject("brand").getString("name");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public String getShipment() {
+    Element shipment = doc.selectFirst("span.margin-vertical-xsmall.font-weight-light");
+    if (shipment != null) {
+      return shipment.text();
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
+
+    if (properties != null && properties.length() > 0) {
+      specList = new ArrayList<>();
+      for (int i = 0; i < properties.length(); i++) {
+        JSONObject prop = properties.getJSONObject(i);
+        specList.add(new LinkSpec(prop.getString("label"), prop.getString("value")));
+      }
     }
 
-    @Override
-    public boolean isAvailable() {
-        if (offers != null && offers.has("availability")) {
-            String availability = offers.getString("availability");
-            return availability.contains("InStock") || availability.contains("PreOrder");
-        }
-        return false;
-    }
-
-    @Override
-    public String getSku() {
-        if (json != null && json.has("sku")) {
-            return json.getString("sku");
-        }
-        return Consts.Words.NOT_AVAILABLE;
-    }
-
-    @Override
-    public String getName() {
-        if (json != null && json.has("name")) {
-            return json.getString("name");
-        }
-        return Consts.Words.NOT_AVAILABLE;
-    }
-
-    @Override
-    public BigDecimal getPrice() {
-        if (offers != null && offers.has("price")) {
-            return offers.getBigDecimal("price");
-        }
-        return BigDecimal.ZERO;
-    }
-
-    @Override
-    public String getSeller() {
-        if (offers != null && offers.has("seller")) {
-            JSONObject seller = offers.getJSONObject("seller");
-            if (seller.has("name")) {
-                return seller.getString("name");
-            }
-        }
-        return "Wehkamp";
-    }
-
-    @Override
-    public String getBrand() {
-        if (json != null && json.has("brand")) {
-            return json.getJSONObject("brand").getString("name");
-        }
-        return Consts.Words.NOT_AVAILABLE;
-    }
-
-    @Override
-    public String getShipment() {
-        Element shipment = doc.selectFirst("span.margin-vertical-xsmall.font-weight-light");
-        if (shipment != null) {
-            return shipment.text();
-        }
-        return Consts.Words.NOT_AVAILABLE;
-    }
-
-    @Override
-    public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-
-        if (properties != null && properties.length() > 0) {
-            specList = new ArrayList<>();
-            for (int i = 0; i < properties.length(); i++) {
-                JSONObject prop = properties.getJSONObject(i);
-                specList.add(new LinkSpec(prop.getString("label"), prop.getString("value")));
-            }
-        }
-
-        return specList;
-    }
+    return specList;
+  }
 
 }

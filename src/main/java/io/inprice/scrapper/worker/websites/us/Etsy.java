@@ -19,113 +19,115 @@ import java.util.List;
  */
 public class Etsy extends AbstractWebsite {
 
-    public Etsy(Link link) {
-        super(link);
+  public Etsy(Link link) {
+    super(link);
+  }
+
+  @Override
+  public boolean isAvailable() {
+    Element quantity = doc.selectFirst("input[name='quantity']");
+    if (quantity != null) {
+      try {
+        int qty = new Integer(cleanDigits(quantity.attr("value")));
+        return qty > 0;
+      } catch (Exception e) {
+        //
+      }
     }
 
-    @Override
-    public boolean isAvailable() {
-        Element quantity = doc.selectFirst("input[name='quantity']");
-        if (quantity != null) {
-            try {
-                int qty = new Integer(cleanDigits(quantity.attr("value")));
-                return qty > 0;
-            } catch (Exception e) {
-                //
-            }
-        }
+    Elements availabilities = doc.select("select#inventory-variation-select-quantity option");
+    return (availabilities != null && availabilities.size() > 0);
+  }
 
-        Elements availabilities = doc.select("select#inventory-variation-select-quantity option");
-        return  (availabilities != null && availabilities.size() > 0);
+  @Override
+  public String getSku() {
+    Element sku = doc.selectFirst("input[name='listing_id']");
+    if (sku != null) {
+      return sku.attr("value");
     }
 
-    @Override
-    public String getSku() {
-        Element sku = doc.selectFirst("input[name='listing_id']");
-        if (sku != null) {
-            return sku.attr("value");
-        }
+    sku = doc.selectFirst("h1[data-listing-id]");
+    if (sku != null) {
+      return sku.attr("data-listing-id");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
 
-        sku = doc.selectFirst("h1[data-listing-id]");
-        if (sku != null) {
-            return sku.attr("data-listing-id");
-        }
-        return Consts.Words.NOT_AVAILABLE;
+  @Override
+  public String getName() {
+    Element name = doc.selectFirst("meta[property='og:title']");
+    if (name != null) {
+      return name.attr("content");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public BigDecimal getPrice() {
+    Element price = doc.selectFirst("span.override-listing-price");
+    if (price != null) {
+      return new BigDecimal(cleanDigits(price.text()));
     }
 
-    @Override
-    public String getName() {
-        Element name = doc.selectFirst("meta[property='og:title']");
-        if (name != null) {
-            return name.attr("content");
-        }
-        return Consts.Words.NOT_AVAILABLE;
+    price = doc.selectFirst("meta[property='etsymarketplace:price_value']");
+    if (price == null)
+      price = doc.selectFirst("meta[property='product:price:amount']");
+
+    if (price != null) {
+      return new BigDecimal(cleanDigits(price.attr("content")));
     }
 
-    @Override
-    public BigDecimal getPrice() {
-        Element price = doc.selectFirst("span.override-listing-price");
-        if (price != null) {
-            return new BigDecimal(cleanDigits(price.text()));
-        }
+    return BigDecimal.ZERO;
+  }
 
-        price = doc.selectFirst("meta[property='etsymarketplace:price_value']");
-        if (price == null) price = doc.selectFirst("meta[property='product:price:amount']");
+  @Override
+  public String getSeller() {
+    Element brand = doc.selectFirst("a[aria-label='Contact the shop']");
+    if (brand != null) {
+      return brand.attr("data-to_username");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
 
-        if (price != null) {
-            return new BigDecimal(cleanDigits(price.attr("content")));
-        }
-
-        return BigDecimal.ZERO;
+  @Override
+  public String getShipment() {
+    StringBuilder sb = new StringBuilder();
+    Element shipment = doc.selectFirst("div.js-estimated-delivery div");
+    if (shipment != null) {
+      sb.append(shipment.text().trim());
+      sb.append(". ");
     }
 
-    @Override
-    public String getSeller() {
-        Element brand = doc.selectFirst("a[aria-label='Contact the shop']");
-        if (brand != null) {
-            return brand.attr("data-to_username");
-        }
-        return Consts.Words.NOT_AVAILABLE;
+    shipment = doc.selectFirst("div.js-ships-from");
+    if (shipment != null) {
+      sb.append(shipment.text().trim());
+      sb.append(". ");
     }
 
-    @Override
-    public String getShipment() {
-        StringBuilder sb = new StringBuilder();
-        Element shipment = doc.selectFirst("div.js-estimated-delivery div");
-        if (shipment != null) {
-            sb.append(shipment.text().trim());
-            sb.append(". ");
-        }
-
-        shipment = doc.selectFirst("div.js-ships-from");
-        if (shipment != null) {
-            sb.append(shipment.text().trim());
-            sb.append(". ");
-        }
-
-        shipment = doc.selectFirst("div.shipping-cost");
-        if (shipment != null) {
-            sb.append(shipment.text().trim());
-            sb.append(". ");
-        }
-
-        if (sb.length() == 0) sb.append("NA");
-
-        return sb.toString();
+    shipment = doc.selectFirst("div.shipping-cost");
+    if (shipment != null) {
+      sb.append(shipment.text().trim());
+      sb.append(". ");
     }
 
-    @Override
-    public String getBrand() {
-        Element brand = doc.selectFirst("a[aria-label='Contact the shop']");
-        if (brand != null) {
-            return brand.attr("data-to_user_display_name");
-        }
-        return Consts.Words.NOT_AVAILABLE;
-    }
+    if (sb.length() == 0)
+      sb.append("NA");
 
-    @Override
-    public List<LinkSpec> getSpecList() {
-        return getValueOnlySpecList(doc.select("div.listing-page-overview-component p"));
+    return sb.toString();
+  }
+
+  @Override
+  public String getBrand() {
+    Element brand = doc.selectFirst("a[aria-label='Contact the shop']");
+    if (brand != null) {
+      return brand.attr("data-to_user_display_name");
     }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public List<LinkSpec> getSpecList() {
+    return getValueOnlySpecList(doc.select("div.listing-page-overview-component p"));
+  }
 
 }

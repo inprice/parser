@@ -20,103 +20,103 @@ import java.util.List;
  */
 public class Trendyol extends AbstractWebsite {
 
-    public Trendyol(Link link) {
-        super(link);
+  public Trendyol(Link link) {
+    super(link);
+  }
+
+  @Override
+  public boolean isAvailable() {
+    Element addToBasketBtn = doc.selectFirst("button.add-to-bs");
+    return (addToBasketBtn != null);
+  }
+
+  @Override
+  public String getSku() {
+    Element canonical = doc.selectFirst("link[rel='canonical']");
+    if (canonical != null) {
+      String[] linkChunks = canonical.attr("href").split("-");
+      if (linkChunks.length > 0) {
+        return linkChunks[linkChunks.length - 1];
+      }
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public String getName() {
+    Element name = doc.selectFirst("meta[name='twitter:title']");
+    if (name != null) {
+      return name.attr("content");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public BigDecimal getPrice() {
+    Element price = doc.selectFirst("meta[name='twitter:data1']");
+    if (price != null) {
+      return new BigDecimal(cleanDigits(price.attr("content")));
+    }
+    return BigDecimal.ZERO;
+  }
+
+  @Override
+  public String getSeller() {
+    Element seller = doc.selectFirst("span.pr-in-dt-spn");
+    if (seller != null) {
+      return seller.text();
     }
 
-    @Override
-    public boolean isAvailable() {
-        Element addToBasketBtn = doc.selectFirst("button.add-to-bs");
-        return (addToBasketBtn != null);
+    seller = doc.selectFirst("meta[name='twitter:description']");
+    if (seller != null) {
+      String[] sellerChunks = seller.attr("content").split(":");
+      if (sellerChunks.length > 0) {
+        return sellerChunks[sellerChunks.length - 1];
+      }
     }
 
-    @Override
-    public String getSku() {
-        Element canonical = doc.selectFirst("link[rel='canonical']");
-        if (canonical != null) {
-            String[] linkChunks = canonical.attr("href").split("-");
-            if (linkChunks.length > 0) {
-                return linkChunks[linkChunks.length - 1];
-            }
-        }
-        return Consts.Words.NOT_AVAILABLE;
+    return "Trendyol";
+  }
+
+  @Override
+  public String getShipment() {
+    Element shipment = doc.selectFirst("div.stamp.crg div");
+    if (shipment != null) {
+      return "Kargo Bedava";
     }
 
-    @Override
-    public String getName() {
-        Element name = doc.selectFirst("meta[name='twitter:title']");
-        if (name != null) {
-            return name.attr("content");
-        }
-        return Consts.Words.NOT_AVAILABLE;
+    shipment = doc.selectFirst("span.pr-in-dt-spn");
+    if (shipment != null) {
+      return shipment.text().trim() + " tarafından gönderilecektir.";
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public String getBrand() {
+    Element brand = doc.selectFirst("div.pr-in-cn div.pr-in-br a");
+    if (brand != null) {
+      return brand.text();
     }
 
-    @Override
-    public BigDecimal getPrice() {
-        Element price = doc.selectFirst("meta[name='twitter:data1']");
-        if (price != null) {
-            return new BigDecimal(cleanDigits(price.attr("content")));
+    return getSeller();
+  }
+
+  @Override
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
+
+    Elements specs = doc.select("div.pr-in-dt-cn ul span li");
+    if (specs != null && specs.size() > 0) {
+      specList = new ArrayList<>();
+      for (Element spec : specs) {
+        String[] specChunks = spec.text().split("\\.");
+        for (String sp : specChunks) {
+          specList.add(new LinkSpec("", sp));
         }
-        return BigDecimal.ZERO;
+      }
     }
-
-    @Override
-    public String getSeller() {
-        Element seller = doc.selectFirst("span.pr-in-dt-spn");
-        if (seller != null) {
-            return seller.text();
-        }
-
-        seller = doc.selectFirst("meta[name='twitter:description']");
-        if (seller != null) {
-            String[] sellerChunks = seller.attr("content").split(":");
-            if (sellerChunks.length > 0) {
-                return sellerChunks[sellerChunks.length-1];
-            }
-        }
-
-        return "Trendyol";
-    }
-
-    @Override
-    public String getShipment() {
-        Element shipment = doc.selectFirst("div.stamp.crg div");
-        if (shipment != null) {
-            return "Kargo Bedava";
-        }
-
-        shipment = doc.selectFirst("span.pr-in-dt-spn");
-        if (shipment != null) {
-            return shipment.text().trim() + " tarafından gönderilecektir.";
-        }
-        return Consts.Words.NOT_AVAILABLE;
-    }
-
-    @Override
-    public String getBrand() {
-        Element brand = doc.selectFirst("div.pr-in-cn div.pr-in-br a");
-        if (brand != null) {
-            return brand.text();
-        }
-
-        return getSeller();
-    }
-
-    @Override
-    public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-
-        Elements specs = doc.select("div.pr-in-dt-cn ul span li");
-        if (specs != null && specs.size() > 0) {
-            specList = new ArrayList<>();
-            for (Element spec : specs) {
-                String[] specChunks = spec.text().split("\\.");
-                for (String sp: specChunks) {
-                    specList.add(new LinkSpec("", sp));
-                }
-            }
-        }
-        return specList;
-    }
+    return specList;
+  }
 
 }

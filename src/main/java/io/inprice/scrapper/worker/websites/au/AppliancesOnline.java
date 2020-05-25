@@ -22,122 +22,124 @@ import java.util.List;
  */
 public class AppliancesOnline extends AbstractWebsite {
 
-    public AppliancesOnline(Link link) {
-        super(link);
+  public AppliancesOnline(Link link) {
+    super(link);
+  }
+
+  @Override
+  protected String getAlternativeUrl() {
+    final String indicator = "product/";
+    String productName = getUrl().substring(getUrl().indexOf(indicator) + indicator.length());
+    return "https://www.appliancesonline.com.au/api/v2/product/slug/" + productName;
+  }
+
+  @Override
+  protected JSONObject getJsonData() {
+    if (doc != null)
+      return new JSONObject(doc.body().html());
+    return null;
+  }
+
+  @Override
+  public boolean isAvailable() {
+    if (json != null && json.has("available")) {
+      return json.getBoolean("available");
     }
+    return false;
+  }
 
-    @Override
-    protected String getAlternativeUrl() {
-        final String indicator = "product/";
-        String productName = getUrl().substring(getUrl().indexOf(indicator) + indicator.length());
-        return "https://www.appliancesonline.com.au/api/v2/product/slug/" + productName;
+  @Override
+  public String getSku() {
+    if (json != null && json.has("productId")) {
+      return "" + json.getInt("productId");
     }
+    return Consts.Words.NOT_AVAILABLE;
+  }
 
-    @Override
-    protected JSONObject getJsonData() {
-        if (doc != null) return new JSONObject(doc.body().html());
-        return null;
+  @Override
+  public String getName() {
+    if (json != null && json.has("title")) {
+      return json.getString("title");
     }
+    return Consts.Words.NOT_AVAILABLE;
+  }
 
-    @Override
-    public boolean isAvailable() {
-        if (json != null && json.has("available")) {
-            return json.getBoolean("available");
-        }
-        return false;
+  @Override
+  public BigDecimal getPrice() {
+    if (json != null && json.has("price")) {
+      return json.getBigDecimal("price");
     }
+    return BigDecimal.ZERO;
+  }
 
-    @Override
-    public String getSku() {
-        if (json != null && json.has("productId")) {
-            return ""+json.getInt("productId");
-        }
-        return Consts.Words.NOT_AVAILABLE;
+  @Override
+  public String getSeller() {
+    return "Appliance Online";
+  }
+
+  @Override
+  public String getShipment() {
+    return "Check delivery cost";
+  }
+
+  @Override
+  public String getBrand() {
+    if (json != null && json.has("manufacturer")) {
+      JSONObject manufacturer = json.getJSONObject("manufacturer");
+      if (manufacturer.has("name")) {
+        return manufacturer.getString("name");
+      }
     }
+    return Consts.Words.NOT_AVAILABLE;
+  }
 
-    @Override
-    public String getName() {
-        if (json != null && json.has("title")) {
-            return json.getString("title");
-        }
-        return Consts.Words.NOT_AVAILABLE;
-    }
+  @Override
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
-    @Override
-    public BigDecimal getPrice() {
-        if (json != null && json.has("price")) {
-            return json.getBigDecimal("price");
-        }
-        return BigDecimal.ZERO;
-    }
+    HttpResponse<String> response = httpClient
+        .get("https://www.appliancesonline.com.au/api/v2/product/specifications/id/" + json.getInt("productId"));
 
-    @Override
-    public String getSeller() {
-        return "Appliance Online";
-    }
+    if (response.getStatus() == 200 && !response.getBody().isEmpty()) {
+      JSONObject specs = new JSONObject(response.getBody());
+      if (specs.has("groupedAttributes")) {
+        JSONObject groupedAttributes = specs.getJSONObject("groupedAttributes");
+        if (!groupedAttributes.isEmpty()) {
 
-    @Override
-    public String getShipment() {
-        return "Check delivery cost";
-    }
+          specList = new ArrayList<>();
+          Iterator<String> keys = groupedAttributes.keys();
 
-    @Override
-    public String getBrand() {
-        if (json != null && json.has("manufacturer")) {
-            JSONObject manufacturer = json.getJSONObject("manufacturer");
-            if (manufacturer.has("name")) {
-                return manufacturer.getString("name");
-            }
-        }
-        return Consts.Words.NOT_AVAILABLE;
-    }
+          while (keys.hasNext()) {
+            String key = keys.next();
+            JSONObject attrs = groupedAttributes.getJSONObject(key);
+            if (attrs.has("attributes")) {
 
-    @Override
-    public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
+              JSONArray array = attrs.getJSONArray("attributes");
 
-        HttpResponse<String> response = httpClient.get("https://www.appliancesonline.com.au/api/v2/product/specifications/id/" + json.getInt("productId"));
+              if (array.length() > 0) {
+                for (int i = 0; i < array.length(); i++) {
+                  JSONObject attr = array.getJSONObject(i);
 
-        if (response.getStatus() == 200 && ! response.getBody().isEmpty()) {
-            JSONObject specs = new JSONObject(response.getBody());
-            if (specs.has("groupedAttributes")) {
-                JSONObject groupedAttributes = specs.getJSONObject("groupedAttributes");
-                if (! groupedAttributes.isEmpty()) {
+                  String name = attr.getString("displayName");
+                  String value = attr.getString("value");
+                  String type = attr.getString("inputType");
 
-                    specList = new ArrayList<>();
-                    Iterator<String> keys = groupedAttributes.keys();
+                  if ("boolean".equals(type)) {
+                    if ("1".equals(value))
+                      value = "Yes";
+                    else
+                      value = "No";
+                  }
 
-                    while (keys.hasNext()) {
-                        String key = keys.next();
-                        JSONObject attrs = groupedAttributes.getJSONObject(key);
-                        if (attrs.has("attributes")) {
-
-                            JSONArray array = attrs.getJSONArray("attributes");
-
-                            if (array.length() > 0) {
-                                for (int i = 0; i < array.length(); i++) {
-                                    JSONObject attr = array.getJSONObject(i);
-
-                                    String name  = attr.getString("displayName");
-                                    String value = attr.getString("value");
-                                    String type  = attr.getString("inputType");
-
-                                    if ("boolean".equals(type)) {
-                                        if ("1".equals(value))
-                                            value = "Yes";
-                                        else
-                                            value = "No";
-                                    }
-
-                                    specList.add(new LinkSpec(name, value));
-                                }
-                            }
-                        }
-                    }
+                  specList.add(new LinkSpec(name, value));
                 }
+              }
             }
+          }
         }
-
-        return specList;
+      }
     }
+
+    return specList;
+  }
 }

@@ -15,8 +15,8 @@ import java.util.List;
 /**
  * Parser for Bonanza USA
  *
- * The data is in two parts:
- *  - in html body
+ * The data is in two parts: 
+ *  - in html body 
  *  - price is handled via a rest call
  *
  *
@@ -24,134 +24,136 @@ import java.util.List;
  */
 public class Bonanza extends AbstractWebsite {
 
-    /*
-     * The following data can only be gathered over spec list
-     */
-    private String sku = "NA";
-    private String brand = "NA";
-    private boolean availability;
-    private List<LinkSpec> specList;
+  /*
+   * The following data can only be gathered over spec list
+   */
+  private String sku = "NA";
+  private String brand = "NA";
+  private boolean availability;
+  private List<LinkSpec> specList;
 
-    public Bonanza(Link link) {
-        super(link);
+  public Bonanza(Link link) {
+    super(link);
+  }
+
+  /**
+   * This method is used as a initial data loader using product's spec list. Class
+   * level variables are set over the spec list here.
+   *
+   * @return nothing!
+   */
+  @Override
+  protected JSONObject getJsonData() {
+    Elements specs = doc.select("table.extended_info_table tr.extended_info_row");
+    if (specs != null && specs.size() > 0) {
+      specList = new ArrayList<>();
+      for (Element spec : specs) {
+        String key = spec.selectFirst("td.extended_info_label").text().replaceAll(":", "");
+        String value = spec.selectFirst("p.extended_info_value_content").text();
+        specList.add(new LinkSpec(key, value));
+
+        if (key.equals("Item number"))
+          sku = value;
+        if (key.equals("Brand"))
+          brand = value;
+
+        if (key.equals("Quantity Available")) {
+          try {
+            availability = (new Integer(cleanDigits(value))) > 0;
+          } catch (Exception e) {
+            //
+          }
+        }
+      }
+    }
+    return super.getJsonData();
+  }
+
+  @Override
+  public boolean isAvailable() {
+    Element available = doc.selectFirst("meta[property='og:availability']");
+    if (available != null) {
+      return "instock".equals(available.attr("content"));
     }
 
-    /**
-     * This method is used as a initial data loader using product's spec list.
-     * Class level variables are set over the spec list here.
-     *
-     * @return nothing!
-     */
-    @Override
-    protected JSONObject getJsonData() {
-        Elements specs = doc.select("table.extended_info_table tr.extended_info_row");
-        if (specs != null && specs.size() > 0) {
-            specList = new ArrayList<>();
-            for (Element spec : specs) {
-                String key = spec.selectFirst("td.extended_info_label").text().replaceAll(":", "");
-                String value = spec.selectFirst("p.extended_info_value_content").text();
-                specList.add(new LinkSpec(key, value));
+    return availability;
+  }
 
-                if (key.equals("Item number")) sku = value;
-                if (key.equals("Brand")) brand = value;
+  @Override
+  public String getSku() {
+    Element skuEL = doc.selectFirst("meta[property='product:retailer_item_id']");
+    if (skuEL != null) {
+      return skuEL.attr("content");
+    }
+    return sku;
+  }
 
-                if (key.equals("Quantity Available")) {
-                    try {
-                        availability = (new Integer(cleanDigits(value))) > 0;
-                    } catch (Exception e) {
-                        //
-                    }
-                }
-            }
-        }
-        return super.getJsonData();
+  @Override
+  public String getName() {
+    Element name = doc.selectFirst("meta[property='og:title']");
+    if (name != null) {
+      return name.attr("content");
     }
 
-    @Override
-    public boolean isAvailable() {
-        Element available = doc.selectFirst("meta[property='og:availability']");
-        if (available != null) {
-            return "instock".equals(available.attr("content"));
-        }
-
-        return availability;
+    name = doc.selectFirst("span[itemprop='name']");
+    if (name != null) {
+      return name.text();
     }
 
-    @Override
-    public String getSku() {
-        Element skuEL = doc.selectFirst("meta[property='product:retailer_item_id']");
-        if (skuEL != null) {
-            return skuEL.attr("content");
-        }
-        return sku;
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public BigDecimal getPrice() {
+    Element price = doc.selectFirst("meta[property='product:price:amount']");
+    if (price != null) {
+      return new BigDecimal(cleanDigits(price.attr("content")));
     }
 
-    @Override
-    public String getName() {
-        Element name = doc.selectFirst("meta[property='og:title']");
-        if (name != null) {
-            return name.attr("content");
-        }
-
-        name = doc.selectFirst("span[itemprop='name']");
-        if (name != null) {
-            return name.text();
-        }
-
-        return Consts.Words.NOT_AVAILABLE;
+    price = doc.selectFirst("div.item_price");
+    if (price != null) {
+      return new BigDecimal(cleanDigits(price.text()));
     }
 
-    @Override
-    public BigDecimal getPrice() {
-        Element price = doc.selectFirst("meta[property='product:price:amount']");
-        if (price != null) {
-            return new BigDecimal(cleanDigits(price.attr("content")));
-        }
+    return BigDecimal.ZERO;
+  }
 
-            price = doc.selectFirst("div.item_price");
-        if (price != null) {
-            return new BigDecimal(cleanDigits(price.text()));
-        }
-
-        return BigDecimal.ZERO;
+  @Override
+  public String getSeller() {
+    Element seller = doc.selectFirst("meta[property='wanelo:store:name']");
+    if (seller != null) {
+      return seller.attr("content");
     }
 
-    @Override
-    public String getSeller() {
-        Element seller = doc.selectFirst("meta[property='wanelo:store:name']");
-        if (seller != null) {
-            return seller.attr("content");
-        }
-
-        seller = doc.selectFirst("div.booth_link a");
-        if (seller != null) {
-            return seller.text();
-        }
-
-        return "Bonanza";
+    seller = doc.selectFirst("div.booth_link a");
+    if (seller != null) {
+      return seller.text();
     }
 
-    @Override
-    public String getShipment() {
-        Element shipment = doc.selectFirst("div.free_shipping");
-        if (shipment != null) {
-            return "Free shipping";
-        }
+    return "Bonanza";
+  }
 
-        return Consts.Words.NOT_AVAILABLE;
+  @Override
+  public String getShipment() {
+    Element shipment = doc.selectFirst("div.free_shipping");
+    if (shipment != null) {
+      return "Free shipping";
     }
 
-    @Override
-    public String getBrand() {
-        Element brandEL = doc.selectFirst("meta[property='product:brand']");
-        if (brandEL != null) {
-            return brandEL.attr("content");
-        }
-        return brand;
-    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
 
-    @Override
-    public List<LinkSpec> getSpecList() {
-        return specList;
+  @Override
+  public String getBrand() {
+    Element brandEL = doc.selectFirst("meta[property='product:brand']");
+    if (brandEL != null) {
+      return brandEL.attr("content");
     }
+    return brand;
+  }
+
+  @Override
+  public List<LinkSpec> getSpecList() {
+    return specList;
+  }
 }

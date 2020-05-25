@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Debug API",
+      "request": "launch",
+      "projectName": "worker",
+      "mainClass": "io.inprice.scrapper.worker.Application",
+      "env": {
+        "APP_ENV": "dev",
+        "APP_WAITING_TIME": 30,
+        "MQ_HOST": "localhost",
+        "MQ_PORT": 5672,
+        "MQ_USERNAME": "guest",
+        "MQ_PASSWORD": "guest",
+        "MQ_EXCHANGE_LINKS": "links",
+        "MQ_EXCHANGE_CHANGES": "changes",
+        "MQ_EXCHANGE_DEAD_LETTER": "dead-letters",
+        "MQ_ROUTING_DELETED_LINKS": "deleted-links",
+        "MQ_ROUTING_TOBE_AVAILABLE_LINKS": "tobe-available-links",
+        "MQ_ROUTING_STATUS_CHANGES": "status-changes",
+        "MQ_ROUTING_PRICE_CHANGES": "price-changes",
+        "MQ_QUEUE_NEW_LINKS": "new-links",
+        "MQ_QUEUE_AVAILABLE_LINKS": "available-links",
+        "MQ_QUEUE_FAILED_LINKS": "failed-links"
+      }
+    }
+  ]
+}

@@ -1,24 +1,25 @@
 package io.inprice.scrapper.worker.websites;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.worker.helpers.UserAgents;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Constructor;
-import java.math.BigDecimal;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.worker.helpers.UserAgents;
 
 public class deneme {
 

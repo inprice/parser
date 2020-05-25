@@ -19,3 +19,8 @@ hs_err_pid*
 
 .idea/
 .iml
+.history
+
+.classpath
+.project
+.settings

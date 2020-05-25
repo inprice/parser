@@ -20,114 +20,114 @@ import java.util.List;
  */
 public class Auchan extends AbstractWebsite {
 
-    public Auchan(Link link) {
-        super(link);
+  public Auchan(Link link) {
+    super(link);
+  }
+
+  /**
+   * Returns json object which holds all the necessity data
+   *
+   * @return json - product data
+   */
+  @Override
+  public JSONObject getJsonData() {
+    final String prodData = findAPart(doc.html(), "var product = ", "};", 1);
+
+    if (prodData != null) {
+      return new JSONObject(prodData);
     }
 
-    /**
-     * Returns json object which holds all the necessity data
-     *
-     * @return json - product data
-     */
-    @Override
-    public JSONObject getJsonData() {
-        final String prodData = findAPart(doc.html(),  "var product = ", "};", 1);
+    return super.getJsonData();
+  }
 
-        if (prodData != null) {
-            return new JSONObject(prodData);
-        }
+  @Override
+  public boolean isAvailable() {
+    if (json != null && json.has("productAvailability")) {
+      return json.getBoolean("productAvailability");
+    }
+    return false;
+  }
 
-        return super.getJsonData();
+  @Override
+  public String getSku() {
+    if (json != null && json.has("code")) {
+      return json.getString("code");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public String getName() {
+    if (json != null && json.has("name")) {
+      return json.getString("name");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public BigDecimal getPrice() {
+    if (json != null && json.has("price")) {
+      JSONObject price = json.getJSONObject("price");
+      if (price.has("value")) {
+        return price.getBigDecimal("value");
+      }
+    }
+    return BigDecimal.ZERO;
+  }
+
+  @Override
+  public String getSeller() {
+    if (json != null && json.has("vendor")) {
+      JSONObject vendor = json.getJSONObject("vendor");
+      if (vendor.has("merchantName")) {
+        return vendor.getString("merchantName");
+      }
+    }
+    return "Auchan";
+  }
+
+  @Override
+  public String getShipment() {
+    Element shipping = doc.selectFirst("li.product-deliveryInformations--deliveryItem");
+    if (shipping != null) {
+      return shipping.text();
     }
 
-    @Override
-    public boolean isAvailable() {
-        if (json != null && json.has("productAvailability")) {
-            return json.getBoolean("productAvailability");
-        }
-        return false;
+    return "In-store pickup";
+  }
+
+  @Override
+  public String getBrand() {
+    if (json != null && json.has("brandName")) {
+      if (!"null".equals(json.get("brandName").toString())) {
+        return json.getString("brandName");
+      }
     }
 
-    @Override
-    public String getSku() {
-        if (json != null && json.has("code")) {
-            return json.getString("code");
-        }
-        return Consts.Words.NOT_AVAILABLE;
+    Element brand = doc.selectFirst("meta[itemprop='brand']");
+    if (brand != null) {
+      return brand.attr("content");
     }
 
-    @Override
-    public String getName() {
-        if (json != null && json.has("name")) {
-            return json.getString("name");
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
+
+    if (json != null && json.has("extendedDescription")) {
+      String desc = json.get("extendedDescription").toString();
+      if (!desc.isEmpty()) {
+        specList = new ArrayList<>();
+        String[] descChunks = desc.split("<br/>");
+        for (String dsc : descChunks) {
+          specList.add(new LinkSpec("", dsc));
         }
-        return Consts.Words.NOT_AVAILABLE;
+      }
     }
 
-    @Override
-    public BigDecimal getPrice() {
-        if (json != null && json.has("price")) {
-            JSONObject price = json.getJSONObject("price");
-            if (price.has("value")) {
-                return price.getBigDecimal("value");
-            }
-        }
-        return BigDecimal.ZERO;
-    }
-
-    @Override
-    public String getSeller() {
-        if (json != null && json.has("vendor")) {
-            JSONObject vendor = json.getJSONObject("vendor");
-            if (vendor.has("merchantName")) {
-                return vendor.getString("merchantName");
-            }
-        }
-        return "Auchan";
-    }
-
-    @Override
-    public String getShipment() {
-        Element shipping = doc.selectFirst("li.product-deliveryInformations--deliveryItem");
-        if (shipping != null) {
-            return shipping.text();
-        }
-
-        return "In-store pickup";
-    }
-
-    @Override
-    public String getBrand() {
-        if (json != null && json.has("brandName")) {
-            if (!"null".equals(json.get("brandName").toString())) {
-                return json.getString("brandName");
-            }
-        }
-
-        Element brand = doc.selectFirst("meta[itemprop='brand']");
-        if (brand != null) {
-            return brand.attr("content");
-        }
-
-        return Consts.Words.NOT_AVAILABLE;
-    }
-
-    @Override
-    public List<LinkSpec> getSpecList() {
-        List<LinkSpec> specList = null;
-
-        if (json != null && json.has("extendedDescription")) {
-            String desc = json.get("extendedDescription").toString();
-            if (! desc.isEmpty()) {
-                specList = new ArrayList<>();
-                String[] descChunks = desc.split("<br/>");
-                for (String dsc: descChunks) {
-                    specList.add(new LinkSpec("", dsc));
-                }
-            }
-        }
-
-        return specList;
-    }
+    return specList;
+  }
 
 }

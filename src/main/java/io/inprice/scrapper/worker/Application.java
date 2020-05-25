@@ -18,30 +18,30 @@ import io.inprice.scrapper.worker.helpers.ThreadPools;
  */
 public class Application {
 
-	private static final Logger log = LoggerFactory.getLogger(Application.class);
+  private static final Logger log = LoggerFactory.getLogger(Application.class);
 
-	public static void main(String[] args) {
-		new Thread(() -> {
-			Global.isApplicationRunning = true;
+  public static void main(String[] args) {
+    new Thread(() -> {
+      Global.isApplicationRunning = true;
 
-			new NEW_Consumer().start();
-			new AVAILABLE_Consumer().start();
-			new FailedLinksConsumer().start();
+      new NEW_Consumer().start();
+      new AVAILABLE_Consumer().start();
+      new FailedLinksConsumer().start();
 
-		}, "app-starter").start();
+    }, "app-starter").start();
 
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			log.info("APPLICATION IS TERMINATING...");
-			Global.isApplicationRunning = false;
+    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+      log.info("APPLICATION IS TERMINATING...");
+      Global.isApplicationRunning = false;
 
-			log.info(" - Thread pools are shutting down...");
-			ThreadPools.shutdown();
+      log.info(" - Thread pools are shutting down...");
+      ThreadPools.shutdown();
 
-			log.info(" - RabbitMQ connection is closing...");
-			RabbitMQ.closeChannel();
+      log.info(" - RabbitMQ connection is closing...");
+      RabbitMQ.closeChannel();
 
-			log.info("ALL SERVICES IS DONE.");
-		},"shutdown-hook"));
-	}
+      log.info("ALL SERVICES IS DONE.");
+    }, "shutdown-hook"));
+  }
 
 }

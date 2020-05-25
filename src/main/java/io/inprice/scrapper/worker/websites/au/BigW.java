@@ -19,79 +19,79 @@ import java.util.List;
  */
 public class BigW extends AbstractWebsite {
 
-    private String brand = "NA";
-    private List<LinkSpec> specList;
+  private String brand = "NA";
+  private List<LinkSpec> specList;
 
-    public BigW(Link link) {
-        super(link);
+  public BigW(Link link) {
+    super(link);
+  }
+
+  @Override
+  protected JSONObject getJsonData() {
+    specList = getKeyValueSpecList(doc.select("div.tab-Specification li"), "div.meta", "div.subMeta");
+    for (LinkSpec spec : specList) {
+      if (spec.getKey().contains("Brand")) {
+        brand = spec.getValue();
+        break;
+      }
     }
 
-    @Override
-    protected JSONObject getJsonData() {
-        specList = getKeyValueSpecList(doc.select("div.tab-Specification li"), "div.meta", "div.subMeta");
-        for (LinkSpec spec: specList) {
-            if (spec.getKey().contains("Brand")) {
-                brand = spec.getValue();
-                break;
-            }
-        }
-
-        final String prodData = findAPart(doc.html(),  "'products': [", "}]", 1);
-        if (prodData != null) {
-            return new JSONObject(fixQuotes(prodData));
-        }
-
-        return super.getJsonData();
+    final String prodData = findAPart(doc.html(), "'products': [", "}]", 1);
+    if (prodData != null) {
+      return new JSONObject(fixQuotes(prodData));
     }
 
-    @Override
-    public boolean isAvailable() {
-        Element increaeBtn = doc.getElementById("increase_quantity_JS");
-        return (increaeBtn != null);
-    }
+    return super.getJsonData();
+  }
 
-    @Override
-    public String getSku() {
-        Element code = doc.selectFirst("div[data-productcode]");
-        if (code != null) {
-            return code.attr("data-productcode");
-        }
-        return Consts.Words.NOT_AVAILABLE;
-    }
+  @Override
+  public boolean isAvailable() {
+    Element increaeBtn = doc.getElementById("increase_quantity_JS");
+    return (increaeBtn != null);
+  }
 
-    @Override
-    public String getName() {
-        if (json != null && json.has("name")) {
-            return json.getString("name");
-        }
-        return Consts.Words.NOT_AVAILABLE;
+  @Override
+  public String getSku() {
+    Element code = doc.selectFirst("div[data-productcode]");
+    if (code != null) {
+      return code.attr("data-productcode");
     }
+    return Consts.Words.NOT_AVAILABLE;
+  }
 
-    @Override
-    public BigDecimal getPrice() {
-        if (json != null && json.has("price")) {
-            return json.getBigDecimal("price");
-        }
-        return BigDecimal.ZERO;
+  @Override
+  public String getName() {
+    if (json != null && json.has("name")) {
+      return json.getString("name");
     }
+    return Consts.Words.NOT_AVAILABLE;
+  }
 
-    @Override
-    public String getSeller() {
-        return "Big W";
+  @Override
+  public BigDecimal getPrice() {
+    if (json != null && json.has("price")) {
+      return json.getBigDecimal("price");
     }
+    return BigDecimal.ZERO;
+  }
 
-    @Override
-    public String getShipment() {
-        return "In-store pickup";
-    }
+  @Override
+  public String getSeller() {
+    return "Big W";
+  }
 
-    @Override
-    public String getBrand() {
-        return brand;
-    }
+  @Override
+  public String getShipment() {
+    return "In-store pickup";
+  }
 
-    @Override
-    public List<LinkSpec> getSpecList() {
-        return specList;
-    }
+  @Override
+  public String getBrand() {
+    return brand;
+  }
+
+  @Override
+  public List<LinkSpec> getSpecList() {
+    return specList;
+  }
 }

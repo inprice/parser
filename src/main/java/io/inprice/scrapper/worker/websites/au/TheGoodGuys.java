@@ -18,69 +18,69 @@ import java.util.List;
  */
 public class TheGoodGuys extends AbstractWebsite {
 
-    public TheGoodGuys(Link link) {
-        super(link);
+  public TheGoodGuys(Link link) {
+    super(link);
+  }
+
+  @Override
+  public boolean isAvailable() {
+    Element available = doc.getElementById("add2CartBtn");
+    return (available != null);
+  }
+
+  @Override
+  public String getSku() {
+    Element sku = doc.selectFirst("span.titleItems_model_digit");
+    if (sku != null) {
+      return sku.text();
     }
 
-    @Override
-    public boolean isAvailable() {
-        Element available = doc.getElementById("add2CartBtn");
-        return  (available != null);
+    sku = doc.getElementById("mainProductId");
+    if (sku != null) {
+      return sku.val();
     }
+    return Consts.Words.NOT_AVAILABLE;
+  }
 
-    @Override
-    public String getSku() {
-        Element sku = doc.selectFirst("span.titleItems_model_digit");
-        if (sku != null) {
-            return sku.text();
-        }
-
-        sku = doc.getElementById("mainProductId");
-        if (sku != null) {
-            return sku.val();
-        }
-        return Consts.Words.NOT_AVAILABLE;
+  @Override
+  public String getName() {
+    Element name = doc.selectFirst("h1.titleItems_head");
+    if (name != null) {
+      return name.text();
     }
+    return Consts.Words.NOT_AVAILABLE;
+  }
 
-    @Override
-    public String getName() {
-        Element name = doc.selectFirst("h1.titleItems_head");
-        if (name != null) {
-            return name.text();
-        }
-        return Consts.Words.NOT_AVAILABLE;
+  @Override
+  public BigDecimal getPrice() {
+    Element price = doc.selectFirst("meta[property='og:price:amount']");
+    if (price != null) {
+      return new BigDecimal(cleanDigits(price.attr("content")));
     }
+    return BigDecimal.ZERO;
+  }
 
-    @Override
-    public BigDecimal getPrice() {
-        Element price = doc.selectFirst("meta[property='og:price:amount']");
-        if (price != null) {
-            return new BigDecimal(cleanDigits(price.attr("content")));
-        }
-        return BigDecimal.ZERO;
-    }
+  @Override
+  public String getSeller() {
+    return "TheGoodGuys";
+  }
 
-    @Override
-    public String getSeller() {
-        return "TheGoodGuys";
-    }
+  @Override
+  public String getShipment() {
+    return "Check delivery cost";
+  }
 
-    @Override
-    public String getShipment() {
-        return "Check delivery cost";
+  @Override
+  public String getBrand() {
+    Element brand = doc.selectFirst("img.brand_logo_keyftrs");
+    if (brand != null) {
+      return brand.attr("alt");
     }
+    return Consts.Words.NOT_AVAILABLE;
+  }
 
-    @Override
-    public String getBrand() {
-        Element brand = doc.selectFirst("img.brand_logo_keyftrs");
-        if (brand != null) {
-            return brand.attr("alt");
-        }
-        return Consts.Words.NOT_AVAILABLE;
-    }
-
-    @Override
-    public List<LinkSpec> getSpecList() {
-        return getKeyValueSpecList(doc.select("section#keyftr li"), "small", "h2");
-    }
+  @Override
+  public List<LinkSpec> getSpecList() {
+    return getKeyValueSpecList(doc.select("section#keyftr li"), "small", "h2");
+  }
 }
