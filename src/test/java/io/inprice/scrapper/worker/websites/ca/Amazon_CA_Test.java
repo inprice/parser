@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.websites.ca;
 
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
@@ -20,7 +20,7 @@ public class Amazon_CA_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("B00006J6WX", link.getSku());
         assertEquals("Brita Water Filter Pitcher Advanced Replacement Filters, 1 Count", link.getName());
         assertEquals("7.48", link.getPrice().toString());
@@ -34,7 +34,7 @@ public class Amazon_CA_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("B00LH3DMUO", link.getSku());
         assertEquals("AmazonBasics AAA Performance Alkaline Batteries (36 Count)", link.getName());
         assertEquals("16.16", link.getPrice().toString());
@@ -48,7 +48,7 @@ public class Amazon_CA_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("B00HYMXL8K", link.getSku());
         assertEquals("South Shore Furniture Cuddly Changing Table with Removable Changing Station, Pure White", link.getName());
         assertEquals("145.00", link.getPrice().toString());
@@ -62,7 +62,7 @@ public class Amazon_CA_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("B07QHWTVFT", link.getSku());
         assertEquals("Lifelike Toys for Women - Large Size - 36 Speeds - USB Rechargeable - Perfect Size & Party Gifts", link.getName());
         assertEquals("28.80", link.getPrice().toString());

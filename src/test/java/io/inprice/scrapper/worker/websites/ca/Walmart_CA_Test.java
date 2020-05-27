@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.ca;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
@@ -18,6 +18,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Walmart_CA_Test {
 
     private final String SITE_NAME = "walmart";
@@ -38,7 +39,7 @@ public class Walmart_CA_Test {
         setMock(1);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("6000199211475", link.getSku());
         assertEquals("hometrends Tuscany Cuddle Chair", link.getName());
         assertEquals("224.00", link.getPrice().toString());
@@ -53,7 +54,7 @@ public class Walmart_CA_Test {
         setMock(2);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("6000187311310", link.getSku());
         assertEquals("Armor All Complete Car Care Kit", link.getName());
         assertEquals("21.97", link.getPrice().toString());
@@ -68,7 +69,7 @@ public class Walmart_CA_Test {
         setMock(3);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("6000188988578", link.getSku());
         assertEquals("Trudeau Maison Misto Party Grill", link.getName());
         assertEquals("35.00", link.getPrice().toString());
@@ -83,7 +84,7 @@ public class Walmart_CA_Test {
         setMock(4);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(Status.NOT_AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.NOT_AVAILABLE, link.getStatus());
         assertEquals("6000196486964", link.getSku());
         assertEquals("Scunci No-Slip Silicone Elastics", link.getName());
         assertEquals("0.00", link.getPrice().toString());

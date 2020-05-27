@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.websites.de;
 
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
@@ -20,7 +20,7 @@ public class Amazon_DE_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("B07HDSP11B", link.getSku());
         assertEquals("Vogelgaleria Sepiaschalen in verschiedenen Größen", link.getName());
         assertEquals("10.99", link.getPrice().toString());
@@ -34,7 +34,7 @@ public class Amazon_DE_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("B06ZXQV6P8", link.getSku());
         assertEquals("Amazon Echo (2. Gen.), Intelligenter Lautsprecher mit Alexa, Anthrazit Stoff", link.getName());
         assertEquals("79.99", link.getPrice().toString());
@@ -48,7 +48,7 @@ public class Amazon_DE_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("B07JFVSJNW", link.getSku());
         assertEquals("Victrola Pro Automatischer Plattenspieler USB Vinyl-zu-MP3-Aufnahme - Silber", link.getName());
         assertEquals("116.28", link.getPrice().toString());
@@ -62,7 +62,7 @@ public class Amazon_DE_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("B0095FMJE6", link.getSku());
         assertEquals("Tassimo Jacobs Caffè Crema Classico XL, 5er Pack Kaffee T Discs (5 x 16 Getränke)", link.getName());
         assertEquals("21.95", link.getPrice().toString());

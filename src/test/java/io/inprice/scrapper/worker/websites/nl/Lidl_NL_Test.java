@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.websites.nl;
 
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
@@ -20,7 +20,7 @@ public class Lidl_NL_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("19356", link.getSku());
         assertEquals("Heren sportshort", link.getName());
         assertEquals("5.99", link.getPrice().toString());
@@ -34,7 +34,7 @@ public class Lidl_NL_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("19352", link.getSku());
         assertEquals("Activity-tracker", link.getName());
         assertEquals("39.99", link.getPrice().toString());
@@ -48,7 +48,7 @@ public class Lidl_NL_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("19419", link.getSku());
         assertEquals("Jersey hoeslaken", link.getName());
         assertEquals("8.99", link.getPrice().toString());
@@ -62,7 +62,7 @@ public class Lidl_NL_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("100257246", link.getSku());
         assertEquals("FLORABEST® Relaxstoel", link.getName());
         assertEquals("39.99", link.getPrice().toString());

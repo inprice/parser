@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.websites.de;
 
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
@@ -20,7 +20,7 @@ public class MediaMarkt_DE_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("2251315", link.getSku());
         assertEquals("LELO EARL GOLD Analplug", link.getName());
         assertEquals("1399.00", link.getPrice().toString());
@@ -34,7 +34,7 @@ public class MediaMarkt_DE_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("1255714", link.getSku());
         assertEquals("KOPP 120913004 TSD Steckdosenleiste", link.getName());
         assertEquals("4.99", link.getPrice().toString());
@@ -48,7 +48,7 @@ public class MediaMarkt_DE_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("2183219", link.getSku());
         assertEquals("GOPRO 3661-164, Dualladegerät + Akku, GoPro HERO5 Black, GoPro HERO6 Black, GoPro Hero7 Black, Schwarz", link.getName());
         assertEquals("57.99", link.getPrice().toString());
@@ -62,7 +62,7 @@ public class MediaMarkt_DE_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.NOT_AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.NOT_AVAILABLE, link.getStatus());
         assertEquals("2519798", link.getSku());
         assertEquals("Kiss - Kissworld-The Best Of Kiss (2LP) [Vinyl]", link.getName());
         assertEquals("22.99", link.getPrice().toString());

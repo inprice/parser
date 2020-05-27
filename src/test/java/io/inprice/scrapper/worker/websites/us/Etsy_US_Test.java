@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.websites.us;
 
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.websites.Helpers;
 import org.junit.Test;
@@ -19,7 +19,7 @@ public class Etsy_US_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("635397975", link.getSku());
         assertEquals("Wood wall Art, orange white art, reclaimed, 3D wood mosaic, modern wood art, abstract painting", link.getName());
         assertEquals("399.20", link.getPrice().toString());
@@ -33,7 +33,7 @@ public class Etsy_US_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("279237258", link.getSku());
         assertEquals("Purple pencil dress, Cocktail Stand collar Cheongsam Dress, Office Keyhole Fitted Wiggle Asian dress, Chinese Mandarin Dress TAVROVSKA", link.getName());
         assertEquals("69.89", link.getPrice().toString());
@@ -47,7 +47,7 @@ public class Etsy_US_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("462818186", link.getSku());
         assertEquals("Mint to Be Wedding Favor Stickers - 12 personalized favor labels, Tic Tac box stickers for mint favors, wedding or bridal shower gifts", link.getName());
         assertEquals("7.00", link.getPrice().toString());
@@ -61,7 +61,7 @@ public class Etsy_US_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("717993801", link.getSku());
         assertEquals("50pcs Silver Lava Rock Natural Gemstone Beads 7-8mm Round 16 Inches Strand", link.getName());
         assertEquals("9.99", link.getPrice().toString());

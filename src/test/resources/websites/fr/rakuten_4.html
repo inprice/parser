@@ -27,10 +27,10 @@
 
 
 
-<title>Rakuten - Google Chromecast 3... - Achat et vente d'occasion ou neuf - DVD, VHS, Jeux Vidéo, Consoles, PC, CD, Disques, Livres, BD, Vidéos</title>
+<title>Rakuten - Google Chromecast 3... - Achat et vente d'occasion ou neuf - DVD, VHS, Jeux Vidï¿½o, Consoles, PC, CD, Disques, Livres, BD, Vidï¿½os</title>
 
 
-<meta name="description" content="Rakuten. Achetez et Vendez au meilleur prix. Découvrez l'Achat-Vente Garanti !" />
+<meta name="description" content="Rakuten. Achetez et Vendez au meilleur prix. Dï¿½couvrez l'Achat-Vente Garanti !" />
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 
@@ -84,7 +84,7 @@
 
     
 
-    <!-- ATTENTION l'ordre des imports des CSS ne doit pas être modifié sans l'accord de la Maquette -->
+    <!-- ATTENTION l'ordre des imports des CSS ne doit pas ï¿½tre modifiï¿½ sans l'accord de la Maquette -->
     
 
 
@@ -383,8 +383,8 @@ PM.Context.put('PrdID', "3513226278", true);</script><!-- to delete next release
     name = name.replace(/( )|(")|(\')|(\?)/gi, '_');
     name = name.replace(/(\[)|(\])|(\/)/gi, '');
     name = name.replace(/(&)/gi, 'et');
-    name = name.replace(/(é)/gi, 'e');
-    name = name.replace(/(à)/gi, 'a');
+    name = name.replace(/(ï¿½)/gi, 'e');
+    name = name.replace(/(ï¿½)/gi, 'a');
 
     // Code d'envoi
     var testVersion = null;
@@ -398,9 +398,9 @@ PM.Context.put('PrdID', "3513226278", true);</script><!-- to delete next release
     }
 
     if(testVersion)
-      console.log('Execution du test Content Square numéro '+ id +' "'+ name +'". Version : ' + testVersion);
+      console.log('Execution du test Content Square numï¿½ro '+ id +' "'+ name +'". Version : ' + testVersion);
     else
-      console.log('Execution du test Content Square numéro '+ id +' "'+ name +'"');
+      console.log('Execution du test Content Square numï¿½ro '+ id +' "'+ name +'"');
   };
 
   CS.loadRgpdAds = function() {
@@ -495,7 +495,7 @@ PM.Context.put('PrdID', "3513226278", true);</script><!-- to delete next release
         }
 
         if(window.deferDfpAds){
-            // custom event qui sera fired lors de la creation du cookie ac ads à true qui declenche l'appel à  displayAd
+            // custom event qui sera fired lors de la creation du cookie ac ads ï¿½ true qui declenche l'appel ï¿½  displayAd
 
             $j(window).on( "loadDfpAds", function() {
                 loadDFPAds();
@@ -595,7 +595,7 @@ PM.Context.put('PrdID', "3513226278", true);</script><!-- to delete next release
 
   <div id="legalNotificationEltId" class="globalNotification information" style="display:none;">
     <p class="txtIcon_L_16">
-      En utilisant Rakuten, vous acceptez l'utilisation des cookies permettant de vous proposer des contenus personnalisés et de réaliser des statistiques.
+      En utilisant Rakuten, vous acceptez l'utilisation des cookies permettant de vous proposer des contenus personnalisï¿½s et de rï¿½aliser des statistiques.
       <a href="/newhelp/vie-privee-et-cookies/#xtatc=PUB-[Legal]-[BandeauCookies]-[EnSavoirPlus]-[Lien]" id="legalNotificationknowMoreEltId" target="_blank" rel="nofollow">
         En savoir plus</a>.
     </p>
@@ -800,7 +800,7 @@ PM.Context.put('PrdID', "3513226278", true);</script><!-- to delete next release
 
 
 
-<!-- DIV temporaire pour stocker le contenu si le DOM n'est pas encore chargé -->
+<!-- DIV temporaire pour stocker le contenu si le DOM n'est pas encore chargï¿½ -->
 <div id="bannerTmp" style="display: none;"></div>
 
 <script type="text/javascript">
@@ -828,14 +828,14 @@ PM.Context.put('PrdID', "3513226278", true);</script><!-- to delete next release
           
           var addBannerContent = function(data) {
               isCallbackDone = true;
-              // Si l'élément DOM conteneur cible de la bannière est chargé (header boutique)
-              // Nous y insérons l'html de la bannière à la fin de celui-ci
+              // Si l'ï¿½lï¿½ment DOM conteneur cible de la banniï¿½re est chargï¿½ (header boutique)
+              // Nous y insï¿½rons l'html de la banniï¿½re ï¿½ la fin de celui-ci
               if(getBannerContainer().length){
                   isBannerAdded = true;
                   setBannerContent(data.responseText);
               }
-              // Sinon nous stockons le résultat dans une div temporaire,
-              // l'html de la bannière sera alors inséré dans le conteneur cible une fois le DOM chargé
+              // Sinon nous stockons le rï¿½sultat dans une div temporaire,
+              // l'html de la banniï¿½re sera alors insï¿½rï¿½ dans le conteneur cible une fois le DOM chargï¿½
               else {
                   getBannerTmpContainer().html(data.responseText);
               }
@@ -844,8 +844,8 @@ PM.Context.put('PrdID', "3513226278", true);</script><!-- to delete next release
           
           
           PM.Event.add(window, PM.Event.Type.INIT, function(){
-              // Si le contenu de la bannière n'a pas été ajouté au conteneur cible
-              // nous récupérons le contenu de notre DIV temporaire et nous l'ajoutons au conteneur cible
+              // Si le contenu de la banniï¿½re n'a pas ï¿½tï¿½ ajoutï¿½ au conteneur cible
+              // nous rï¿½cupï¿½rons le contenu de notre DIV temporaire et nous l'ajoutons au conteneur cible
               if(isCallbackDone && ! isBannerAdded){
                   setBannerContent(getBannerTmpContainer().html());
               }
@@ -939,13 +939,13 @@ PM.Context.put('PrdID', "3513226278", true);</script><!-- to delete next release
           <div class="fld_full globalSearchCat">
             <p class="fld_slct">
               <label class="fld_lbl" for="nomDuChamp_-1_1">
-                <span>Catégorie : </span>
+                <span>Catï¿½gorie : </span>
               </label>
-              <!-- La liste des catégories affichée est celle du select natif, mais le bouton de ce select est masqué.
-              A la place du bouton, on affiche le span#hasSelectValue qui contient texte de de l'option sélectionnée -->
+              <!-- La liste des catï¿½gories affichï¿½e est celle du select natif, mais le bouton de ce select est masquï¿½.
+              A la place du bouton, on affiche le span#hasSelectValue qui contient texte de de l'option sï¿½lectionnï¿½e -->
               <span id="hasSelectValue" class="hasSelectValue">sur&nbsp;Rakuten</span>
               <select class="slct_input" id="globalSearchCatSlct" name="dropdownCategory">
-                <!-- /!\ Il faut des espaces insécables (&nbsp;) pour chaque espace, sous peine de bug sous IE -->
+                <!-- /!\ Il faut des espaces insï¿½cables (&nbsp;) pour chaque espace, sous peine de bug sous IE -->
                 <option selected="selected" value="brand">sur&nbsp;Rakuten</option>
                 <option value="shop">chez&nbsp;Boulanger</option>
               </select>
@@ -954,7 +954,7 @@ PM.Context.put('PrdID', "3513226278", true);</script><!-- to delete next release
           <div class="fld_full globalSearchText">
             <p class="fld_txt">
               <label class="fld_lbl" for="nomDuChamp_-1_0">
-                <span>Mots-clé, code-barres ou pseudo vendeur :</span>
+                <span>Mots-clï¿½, code-barres ou pseudo vendeur :</span>
               </label>
               <input class="txt_input ac_input" data-inp="s" type="text" value="" placeholder="Rechercher un produit" id="globalSearch" name="globalSearch" autocomplete="off" autocorrect="off" />
              </p>
@@ -965,14 +965,14 @@ PM.Context.put('PrdID', "3513226278", true);</script><!-- to delete next release
         </div>
 
         <script type="text/javascript">
-          // Ce script gère l'ui du formulaire de recherche
+          // Ce script gï¿½re l'ui du formulaire de recherche
 
           var pmGlobalSearchCatSlct =  $j('#globalSearchCatSlct')
             , fakeBtn =  $j('#hasSelectValue')
             , fldFull = $j('.globalSearchCat')
             , searchTextInput = $j('#globalSearch');
 
-          // Paramétrage du champ de recherche
+          // Paramï¿½trage du champ de recherche
           PM.Header.Search.settings = {
               shopSearchServletUrl: '/boutique/Boulanger/kw/',
               brandSearchServletUrl: 's',
@@ -982,7 +982,7 @@ PM.Context.put('PrdID', "3513226278", true);</script><!-- to delete next release
               
           }
 
-          // Met à jour le texte de #hasSelectValue avec le nom de la catégorie choisie
+          // Met ï¿½ jour le texte de #hasSelectValue avec le nom de la catï¿½gorie choisie
           function writeSearchCat() {
             var catName = $j(pmGlobalSearchCatSlct).children('option:selected').text();
             fakeBtn.text(catName);
@@ -990,7 +990,7 @@ PM.Context.put('PrdID', "3513226278", true);</script><!-- to delete next release
           // Initialisation du texte du bouton
           writeSearchCat();
           $j('#globalSearch').attr("value", "");
-          // Mise à jour du texte du bouton lors du changement de catégorie
+          // Mise ï¿½ jour du texte du bouton lors du changement de catï¿½gorie
           pmGlobalSearchCatSlct.on('change keyup', function() {
             writeSearchCat();
           });
@@ -1004,7 +1004,7 @@ PM.Context.put('PrdID', "3513226278", true);</script><!-- to delete next release
             fldFull.removeClass('focus');
           });
 
-          // Focus sur le champ de recherche lors de la sélection d'une catégorie
+          // Focus sur le champ de recherche lors de la sï¿½lection d'une catï¿½gorie
           pmGlobalSearchCatSlct.on('change', function() {
             $j('#globalSearch').unautocomplete();
             var alias = $j(pmGlobalSearchCatSlct).children('option:selected').attr("value");
@@ -1252,13 +1252,13 @@ PM.Context.put('PrdID', "3513226278", true);</script><!-- to delete next release
 
     <script type="text/javascript">
 
-    PM.Header.Search.autocompleteCategoriesInfo = $j.parseJSON('{"art-collection":{"urlValue":"Art-Collection","label":"Art &amp; Collection"},"tel-pdagps":{"urlValue":"Tel-PDA_GPS","label":"GPS"},"enfantjeuxdepleinair-356553":{"urlValue":"Enfant_jeux-plein-air","label":"Jeux de plein air"},"charcuterieq32014":{"urlValue":"Vin-Saveur_charcuterie","label":"Charcuterie"},"musiquepartitions-paroles":{"urlValue":"Musique_Partitions-Song-books","label":"Partitions, paroles"},"informatiqueordinateur-portable":{"urlValue":"Informatique_Ordinateur-portable","label":"Ordinateur portable"},"jouetsenfantcourderecreation-414595":{"urlValue":"Enfant_jouets_cour-recreation","label":"Cour de récréation"},"jouetsenfantmusiqueetmultimedia-413555":{"urlValue":"Enfant_jouets_musique-multimedia","label":"Musique et multimédia"},"livreslangues-353696":{"urlValue":"Livres_Langues","label":"Langues"},"sportsloisirsaccessoiresmoto":{"urlValue":"auto-moto_accessoires-moto","label":"Accessoires et pièces moto"},"artcollectionbuvards-356702":{"urlValue":"Art-Collection_Buvard","label":"Buvards"},"imagesonchainehifi-355437":{"urlValue":"Hifi_chaine-hifi","label":"Chaîne Hi-Fi"},"sportsloisirsaccessoiresauto":{"urlValue":"auto-moto_accessoires-auto","label":"Accessoires auto"},"artcollectionmilitaria-356799":{"urlValue":"Art-Collection_militaria","label":"Militaria"},"tel-pdamontre-connecte":{"urlValue":"Tel-PDA_montres-bracelets-connectes","label":"Montres et bracelets connectés"},"bricolagedomotique-453003":{"urlValue":"bricolage_domotique","label":"Domotique"},"tuning":{"urlValue":"auto-moto_tuning-personnalisation","label":"Tuning, Personnalisation"},"informatiqueordinateur-bureau":{"urlValue":"Informatique_Ordinateur-de-bureau","label":"Ordinateur de bureau"},"sportsloisirsraquette":{"urlValue":"Loisirs_sports-de-raquette","label":"Sports de raquette"},"tel-pdaaccessoires-mobiles-pda":{"urlValue":"Tel-PDA_Accessoires-mobiles","label":"Accessoires mobiles"},"bricolageoutillageelectroportatif-427043":{"urlValue":"bricolage_outillage-electroportatif","label":"Outillage électroportatif"},"image-sonebook":{"urlValue":"Hifi_EBook","label":"Liseuse"},"musiquecdprecommande-398119":{"urlValue":"Musique_CDenprecommande","label":"CD pré-commande"},"maisonelectroanim-444283":{"urlValue":"Maison_animalerie","label":"Animalerie"},"musique":{"urlValue":"Musique","label":"Musique"},"artcollectionobjetspublicitaires-356762":{"urlValue":"Art-Collection_objet-publicitaire","label":"Objets publicitaires"},"jardinmobilier-jardin":{"urlValue":"jardin_mobilier-de-jardin","label":"Mobilier de jardin"},"donsassociations":{"urlValue":"Art-Collection_dons","label":"Dons Associations"},"musiquecordesfrottees-417659":{"urlValue":"Musique_Instruments-de-Musique_cordes-frottees","label":"Cordes frottées"},"imagesontelescope-355401":{"urlValue":"Hifi_telescope","label":"Télescope"},"vin-saveur":{"urlValue":"Vin-Saveur","label":"Vins &amp; Gastronomie"},"informatiquereseau":{"urlValue":"Informatique_reseau","label":"Réseau"},"pueri-411564":{"urlValue":"Enfant_Puericulture","label":"Puériculture"},"livresdeveloppementdurable-353627":{"urlValue":"Livres_Developpement-Durable","label":"Développement durable"},"bricolageplomberieetsanitaire-427317":{"urlValue":"bricolage_plomberie-et-sanitaire","label":"Plomberie et Sanitaire"},"informatiquecomposantscarte-son":{"urlValue":"Informatique_composants_carte-son","label":"Carte son"},"image-sonaccessoires":{"urlValue":"Hifi_accessoire-audio-video","label":"Accessoires image &amp; son"},"puerisoins":{"urlValue":"Enfant_Puericulture_toilette-soins","label":"Toilette et soins"},"informatiquetablette":{"urlValue":"Informatique_tablette","label":"Tablette"},"informatiquecomposantswatercooling":{"urlValue":"Informatique_composants_watercooling","label":"Ventirad &amp; Watercooling"},"artcollectionaffiches-356661":{"urlValue":"Art-Collection_Affiches","label":"Affiches"},"informatiquecomposantsmemoire-vive":{"urlValue":"Informatique_composants_memoire-vive","label":"Mémoire RAM"},"imagesonjumelles-355394":{"urlValue":"Hifi_jumelles","label":"Jumelles"},"maisongroselectro-379155":{"urlValue":"Maison_Electromenager","label":"Gros électroménager"},"informatiquedisque-dur-externe":{"urlValue":"Informatique_disques-durs-externes","label":"Disque dur externe"},"modemodehomme-355915":{"urlValue":"Mode_Mode-homme","label":"Mode homme"},"sportsloisirscombat":{"urlValue":"Loisirs_sports-de-combat","label":"Sports de combat"},"imagesonlecteurgraveurcd-355449":{"urlValue":"Hifi_lecteur-graveur-cd","label":"Lecteur &amp; Graveur CD"},"artcollectioninsolites-356817":{"urlValue":"Art-Collection_insolite","label":"Insolites"},"enfantjouets-educatifs":{"urlValue":"Enfant_jouets_jeux-educatifs-interactifs","label":"Jeux éducatifs et interactifs"},"livresbdethumour-435803":{"urlValue":"Livres_BD-et-humour","label":"BD et humour"},"musiquecordespincees-417660":{"urlValue":"Musique_Instruments-de-Musique_cordes-pincees","label":"Cordes pincées"},"jeux-videofigurines":{"urlValue":"Jeux-Video-et-Consoles_Figurines","label":"Figurines"},"modesacs440043":{"urlValue":"Mode_bagageries-maroquinerie","label":"Sacs - Bagages"},"livrescuisine-353622":{"urlValue":"Livres_Cuisine","label":"Cuisine"},"enfantjouets-413542":{"urlValue":"Enfant_jouets","label":"Jouets"},"tel-pdapda":{"urlValue":"Tel-PDA_PDA","label":"PDA"},"informatiquecomposantscarte-graphique":{"urlValue":"Informatique_composants_carte-graphique","label":"Carte graphique"},"livresscolaires":{"urlValue":"Livres_Manuels-scolaires","label":"Manuels scolaires"},"informatiqueperipherique":{"urlValue":"Informatique_Peripheriques","label":"Périphériques"},"jouetsenfantjeuxcreatifs-414060":{"urlValue":"Enfant_jouets_jeux-creatifs","label":"Jeux créatifs"},"jouetsenfantjouetenbois-414853":{"urlValue":"Enfant_jouets_jouet-en-bois","label":"Jouet en bois"},"jeux-videoaccessoires-jeuxvideo":{"urlValue":"Jeux-Video-et-Consoles_Accessoires-Jeux-Video","label":"Accessoires Jeux Vidéo"},"maisonrepassagecouture":{"urlValue":"Maison_repassage-couture","label":"Repassage &amp; Couture"},"musiquedisque-vinyle":{"urlValue":"Musique_Vinyle","label":"Disque vinyle"},"livreshistoirepolitique":{"urlValue":"Livres_Histoire-actualite-politique","label":"Histoire, actualité, politique"},"modelotsdevitements-356005":{"urlValue":"Mode_Lots-de-Vetements","label":"Lots de Vêtements"},"bricolageelectriciteeteclairage-427382":{"urlValue":"bricolage_electricite","label":"Electricité et éclairage"},"services":{"urlValue":"services-priceminister_services","label":"Services"},"informatique":{"urlValue":"Informatique","label":"Informatique &amp; Tablettes"},"informatiquescanner":{"urlValue":"Informatique_Scanners","label":"Scanners"},"epiceriesaleeq32014":{"urlValue":"Vin-Saveur_epicerie-salee","label":"Epicerie salée"},"image-sonampli":{"urlValue":"Hifi_amplificateur","label":"Ampli"},"modemontre":{"urlValue":"Mode_montres","label":"Montres"},"entretienlavage":{"urlValue":"auto-moto_entretien-lavage","label":"Entretien, Lavage"},"jeux-videojeux-video":{"urlValue":"Jeux-Video-et-Consoles_Jeux-Video","label":"Jeux Vidéo"},"puerisecurite":{"urlValue":"Enfant_Puericulture_securite-babyphone","label":"Sécurité et babyphone"},"informatiquecomposantsventilateurs-boitier":{"urlValue":"Informatique_composants_ventilateurs-boitier","label":"Ventilateurs boîtier"},"image-sonprojecteur":{"urlValue":"Hifi_projecteur","label":"Vidéoprojecteur"},"boissonq32014":{"urlValue":"Vin-Saveur_boisson","label":"Boisson sans alcool"},"informatiqueaccessoires":{"urlValue":"Informatique_Accessoires","label":"Accessoires"},"sportsloisirsfootball-411797":{"urlValue":"Loisirs_sport-collectif_football","label":"Football"},"modechaussures":{"urlValue":"Mode_chaussures","label":"Chaussures"},"luminairescatmanoct2014":{"urlValue":"Maison_luminaire","label":"Luminaires"},"epicessaucesetcondimentsq32014":{"urlValue":"Vin-Saveur_epices-sauces-et-condiments","label":"Epices, sauces et condiments"},"modebijouxdeclinaison":{"urlValue":"Mode_bijoux","label":"Bijoux"},"videodvd-a-droits-locatifs":{"urlValue":"Video_DVD-a-droits-locatifs","label":"DVD à droits locatifs"},"videodvd-autres-zones":{"urlValue":"Video_DVD-autres-zones","label":"DVD autres zones"},"tel-pda":{"urlValue":"Tel-PDA","label":"Téléphonie &amp; GPS"},"jouetsenfantjeuxdeveil-413554":{"urlValue":"Enfant_jouets_eveil","label":"Jeux d&#39;éveil"},"tel-pdatel-mobiles":{"urlValue":"Tel-PDA_Telephones-mobiles","label":"Téléphones mobiles"},"artcollectioncartespostales-356687":{"urlValue":"Art-Collection_Carte-postale","label":"Cartes postales"},"artcollectionlettres-356704":{"urlValue":"Art-Collection_Lettre","label":"Lettres"},"videodvd-zone-2":{"urlValue":"Video_DVD-Zone-2","label":"DVD Zone 2"},"imagesoncablesatellitetnt-355307":{"urlValue":"Hifi_cable-satellite-tnt","label":"Câble, Satellite &amp; TNT"},"sportsloisirsautressports-411801":{"urlValue":"Loisirs_sport-collectif_autres-sports","label":"Autres sports"},"videodvd-zone-1":{"urlValue":"Video_DVD-Zone-1","label":"DVD Zone 1"},"sportsloisirsurbannew":{"urlValue":"Loisirs_glisse-urbaine","label":"Glisse urbaine"},"modevitementdematernite-355980":{"urlValue":"Mode_Vetement-de-maternite","label":"Vêtement de maternité"},"livresartetculture-353603":{"urlValue":"Livres_Art-et-culture","label":"Art et culture"},"maisonmobilier-437263":{"urlValue":"Maison_mobilier","label":"Mobilier"},"livressciencesappliquees-353738":{"urlValue":"Livres_Sciences-appliquees","label":"Sciences appliquées"},"jouetsenfantmagie-413551":{"urlValue":"Enfant_jouets_magie","label":"Magie"},"maisonelectromenagerplantes-355844":{"urlValue":"jardin_plante","label":"Plantes et Traitements"},"enceintespc":{"urlValue":"Informatique_Enceintes-PC","label":"Enceintes PC"},"catmane-cig":{"urlValue":"Mode_e-cigarette","label":"Cigarette électronique"},"informatiquecomposants-processeur":{"urlValue":"Informatique_composants_processeur","label":"Processeur d&#39;ordinateur"},"imagesoncamescope-355316":{"urlValue":"Hifi_camera","label":"Caméscope"},"sportsloisirsescaladeetalpinisme-409070":{"urlValue":"Loisirs_sport-hiver-montagne_escalade-alpinisme","label":"Escalade et alpinisme"},"epiceriesucreeq32014":{"urlValue":"Vin-Saveur_epicerie-sucree","label":"Epicerie sucrée"},"image-sonaudioportable":{"urlValue":"Hifi_audio-portable","label":"MP3 - Audio portable"},"sportsloisirsequitation":{"urlValue":"Loisirs_equitation","label":"Équitation"},"auto-moto":{"urlValue":"auto-moto","label":"Auto-Moto"},"pueripoussette":{"urlValue":"Enfant_Puericulture_poussette","label":"Poussette"},"livresscienceshumaines-353748":{"urlValue":"Livres_Sciences-humaines-et-spiritualite","label":"Sciences humaines"},"imagesonobjectifsphoto-355361":{"urlValue":"Hifi_objectif","label":"Objectifs photo"},"jardinpiscine":{"urlValue":"jardin_piscine","label":"Piscine &amp; spa"},"livresdictionnaire-353634":{"urlValue":"Livres_Dictionnaire-et-reference","label":"Dictionnaire"},"sportsloisirshandball-411800":{"urlValue":"Loisirs_sport-collectif_handball","label":"Handball"},"sportsloisirsrugby-411798":{"urlValue":"Loisirs_sport-collectif_rugby","label":"Rugby"},"tel-pdatel-fixes":{"urlValue":"Tel-PDA_Telephones-fixes","label":"Téléphones fixes"},"chauffageclimatisation":{"urlValue":"Maison_chauffage-climatisation","label":"Chauffage et Climatisation"},"decofestivecatmanoct2014":{"urlValue":"Maison_deco-festive","label":"Décoration festive"},"modeaccessoiresmode":{"urlValue":"Mode_accessoire-mode","label":"Accessoires de mode"},"modeparfum":{"urlValue":"Mode_parfums","label":"Parfums"},"servicespriceminister":{"urlValue":"services-priceminister","label":"Services Priceminister"},"vod":{"urlValue":"Video_VOD","label":"VOD"},"video":{"urlValue":"Video","label":"DVD &amp; Blu-Ray"},"automotoequipementpilote":{"urlValue":"auto-moto_equipement-du-pilote","label":"Équipement du pilote"},"artcollectionautographes-356776":{"urlValue":"Art-Collection_Autographes","label":"Autographes"},"musiqueinstrumentsevent-417661":{"urlValue":"Musique_Instruments-de-Musique_instruments-a-vent","label":"Instruments à vent"},"tel-pdarecepteurs-radiomessagerie":{"urlValue":"Tel-PDA_Recepteurs-de-Radiomessagerie","label":"Récepteurs de Radiomessagerie"},"serveurnas":{"urlValue":"Informatique_serveur-nas","label":"Serveur NAS"},"modemodeenfant-355947":{"urlValue":"Mode_Mode-enfant","label":"Mode enfant"},"videolot-de-videos":{"urlValue":"Video_Lot-de-Videos","label":"Lots de Vidéos"},"sportsloisirsairsoft":{"urlValue":"Loisirs_airsoft-paintball","label":"Airsoft - Paintball"},"informatiqueclavier":{"urlValue":"Informatique_Clavier","label":"Clavier"},"modedeguisement-364887":{"urlValue":"Mode_Deguisement","label":"Déguisement"},"artcollectionpeinture-356634":{"urlValue":"Art-Collection_peinture","label":"Peinture"},"sportsloisirsprecision":{"urlValue":"Loisirs_sport-tir-precision","label":"Sports de tir et précision"},"videovideo-en-pre-commande":{"urlValue":"Video_Video-en-pre-commande","label":"Vidéo en précommande"},"imagesoncasquesmicros-355486":{"urlValue":"Hifi_casques-micros","label":"Casques"},"sportsloisirshiver":{"urlValue":"Loisirs_sport-hiver-montagne","label":"Sports d&#39;hiver et de montagne"},"modevitementdesport-356160":{"urlValue":"Mode_vetement-sport","label":"Vêtement de sport"},"maisonaspirernettoyerbalyer":{"urlValue":"Maison_aspirer-nettoyer-balayer","label":"Aspirer Nettoyer et balayer"},"sportsloisirsaerien":{"urlValue":"Loisirs_sports-aeriens","label":"Sports aériens"},"livreslivresenlangueetrangere-353827":{"urlValue":"Livres_livre-langue-etrangere","label":"Livres en langue étrangère"},"maisonelectrosoinscorps":{"urlValue":"Maison_soins-du-corps","label":"Soins du corps"},"informatiqueimprimante":{"urlValue":"Informatique_Imprimante","label":"Imprimante"},"tel-pdarepondeurs":{"urlValue":"Tel-PDA_Repondeurs","label":"Répondeurs"},"sportsloisirsskietsnowboard-409068":{"urlValue":"Loisirs_sport-hiver-montagne_ski-snowboard","label":"Ski et Snowboard"},"informatiquecomposantscarte-tv":{"urlValue":"Informatique_composants_carte-tv","label":"Tuner &amp; Carte TV"},"sportsloisirsbilletterie-356468":{"urlValue":"Loisirs_billetterie","label":"Billetterie"},"bricolage":{"urlValue":"bricolage","label":"Bricolage"},"videohd-dvd":{"urlValue":"Video_HD-DVD","label":"HD-DVD"},"artcollectiongravures-356671":{"urlValue":"Art-Collection_Gravure","label":"Gravures"},"informatiquelogiciels":{"urlValue":"Informatique_Logiciels","label":"Logiciels"},"image-sontelevision":{"urlValue":"Hifi_Television","label":"Télévision"},"videovhs":{"urlValue":"Video_VHS","label":"VHS"},"jouetsenfantpoupee-413548":{"urlValue":"Enfant_jouets_poupee","label":"Poupée"},"enfantjeuxdecafe-356544":{"urlValue":"Enfant_jeux-cafe","label":"Jeux de café"},"sportsloisirscoffretcadeau-356430":{"urlValue":"Loisirs_activite-loisirs","label":"Coffret cadeau"},"enfantpeluche-362117":{"urlValue":"Enfant_jouets_peluche","label":"Peluche"},"livressante-353729":{"urlValue":"Livres_Sante-Medecine","label":"Santé"},"musiquecollectiongoodies-354074":{"urlValue":"Musique_goodies","label":"Collection, Goodies"},"artcollectionphilatelie-356734":{"urlValue":"Art-Collection_Philatelie","label":"Philatélie"},"enfantjouets-figurine":{"urlValue":"Enfant_jouets_figurine","label":"Figurine"},"puerichambre":{"urlValue":"Enfant_Puericulture_chambre-decoration-bebe","label":"Chambre et décoration bébé"},"livrestourisme-353768":{"urlValue":"Livres_Tourisme","label":"Tourisme"},"livrestoutpouremballervosventes-353889":{"urlValue":"Livres_materiel-conditionnement","label":"Tout pour emballer vos ventes"},"videoblu-ray":{"urlValue":"Video_Blu-Ray","label":"Blu-Ray"},"modelunettedesoleil":{"urlValue":"Mode_lunettes-de-soleil","label":"Lunettes de soleil"},"informatiqueaccessoiresstockage":{"urlValue":"Informatique_Accessoires-stockage","label":"Accessoires de stockage"},"imagesonappareilsphotoargentiques-355345":{"urlValue":"Hifi_photo-argentique","label":"Appareils photo argentiques"},"sportsloisirsautressports-409071":{"urlValue":"Loisirs_sport-hiver-montagne_autres-sports","label":"Autres sports"},"sportsloisirsbilletsdetransport-356476":{"urlValue":"Loisirs_billet-transport","label":"Billets de transport"},"informatiquecomposantsdisque-dur":{"urlValue":"Informatique_composants_disque-dur","label":"Disque dur interne"},"livres":{"urlValue":"Livres","label":"Livres"},"modemodefemme-355882":{"urlValue":"Mode_Mode-femme","label":"Mode femme"},"livresnature-353721":{"urlValue":"Livres_Nature-et-animaux","label":"Nature"},"sportsloisirsfitness":{"urlValue":"Loisirs_musculation-fitness","label":"Musculation et fitness"},"image-sonenceintes":{"urlValue":"Hifi_enceintes","label":"Enceintes"},"sportsloisirsrandonneeetcamping-409069":{"urlValue":"Loisirs_sport-hiver-montagne_randonnee-camping","label":"Randonnée et Camping"},"musiquelotsdedisquesetmusique-354087":{"urlValue":"Musique_Lot-Musique","label":"Lots de disques et musique"},"maisonelectroustensilecuisine":{"urlValue":"Maison_ustensile-de-cuisine","label":"Ustensile de cuisine"},"informatiquecomposantsboitier":{"urlValue":"Informatique_composants_boitier","label":"Boîtiers PC"},"imagesonphotonumerique":{"urlValue":"Hifi_photo-numerique","label":"Appareils photo numériques"},"puerisorties":{"urlValue":"Enfant_Puericulture_sorties-promenades","label":"Sorties et promenades"},"artcollectionphotographies-356646":{"urlValue":"Art-Collection_Photographies","label":"Photographies"},"musiqueguitaresetbasses-417656":{"urlValue":"Musique_Instruments-de-Musique_guitares-et-basses","label":"Guitares et basses"},"livreslivresanciens":{"urlValue":"Livres_Livre-ancien","label":"Livres anciens"},"informatiquecomposantslecteur-graveur-cd-rom-et-dvd":{"urlValue":"Informatique_composants_lecteur-graveur-Cd-rom-et-DVD","label":"Lecteur/Graveur"},"maisonelectroaccessoireselectro":{"urlValue":"Maison_accessoires-electromenager","label":"Accessoires électroménager"},"jouetsenfantpuzzle-414904":{"urlValue":"Enfant_jouets_puzzle","label":"Puzzle"},"sportsloisirscyclisme":{"urlValue":"Loisirs_cyclisme","label":"Vélo"},"sportsloisirsscooteretminimoto-356353":{"urlValue":"Loisirs_cycles","label":"Scooter et Mini moto"},"informatiquecleusb":{"urlValue":"Informatique_Cle-USB","label":"Clé USB"},"maisonelectromenagervin-355756":{"urlValue":"Vin-Saveur_Vin","label":"Vin"},"artcollectionautocollants-356769":{"urlValue":"Art-Collection_Autocollant","label":"Autocollants"},"imagesonflashphoto-355379":{"urlValue":"Hifi_flash","label":"Flash et éclairage"},"image-sonsono-dj-homestudio":{"urlValue":"Hifi_sono-DJ-home-studio","label":"Sono, DJ, Home Studio"},"enfantjouets-construction":{"urlValue":"Enfant_jouets_construction","label":"Jeux de construction"},"jouetsenfantvehiculesradiocommandesetminiatures-413553":{"urlValue":"Enfant_jouets_vehicules-radiocommandes-miniatures","label":"Véhicules radiocommandés et miniatures"},"artcollectioncalendriers-356783":{"urlValue":"Art-Collection_Calendrier","label":"Calendriers"},"jeux-videocartes-jeux":{"urlValue":"Jeux-Video-et-Consoles_Cartes-de-jeux","label":"Cartes de jeux"},"jeux-videoconsoles":{"urlValue":"Jeux-Video-et-Consoles_Consoles","label":"Consoles"},"pneus":{"urlValue":"auto-moto_pneus","label":"Pneus"},"sportsloisirsgolf":{"urlValue":"Loisirs_golf","label":"Golf"},"artcollectionobjetsecollectionner-356753":{"urlValue":"Art-Collection_Objets-a-collectionner","label":"Objets à collectionner"},"enfantmodelisme":{"urlValue":"Enfant_modelisme","label":"Modélisme"},"sportsloisirscollectif":{"urlValue":"Loisirs_sport-collectif","label":"Sports collectifs"},"sportsloisirsbasketball-411799":{"urlValue":"Loisirs_sport-collectif_basketball","label":"Basketball"},"modeaccessoireschaussures":{"urlValue":"Mode_accessoires-chaussures","label":"Accessoires chaussures"},"enfantjouets-playmobil":{"urlValue":"Enfant_jouets_playmobil","label":"Playmobil"},"huilesadditifs":{"urlValue":"auto-moto_huiles-additifs","label":"Huiles, Additifs"},"livresprintondemand-387075":{"urlValue":"Livres_print-on-demand","label":"Print on demand"},"maisonelectromenagercidre-355780":{"urlValue":"Vin-Saveur_Cidre","label":"Cidre"},"image-sontuner-radio":{"urlValue":"Hifi_tuner-radio","label":"Radio"},"bricolagetravauxetamenagement-402792":{"urlValue":"bricolage_machine-et-accessoire-de-travaux","label":"Travaux et aménagement"},"maisonelectromenagerspiritueux-355796":{"urlValue":"Vin-Saveur_Spiritueux","label":"Spiritueux"},"modesextoys-356302":{"urlValue":"Mode_sex-toys","label":"Sex toys"},"livresparascolaires":{"urlValue":"Livres_Soutien-scolaire-parascolaire","label":"Parascolaire"},"bricolagequincaillerie-427210":{"urlValue":"bricolage_quincaillerie","label":"Quincaillerie"},"livreslivresenprecommande-398102":{"urlValue":"Livres_Pre-commande","label":"Livres en précommande"},"enfant":{"urlValue":"Enfant","label":"Jouets &amp; Enfant"},"musiquecassettes-autressupports":{"urlValue":"Musique_mini-disque-video-disque-cassette","label":"Cassettes et autres supports"},"jeuxvideojeuxvideoenprecommande-398115":{"urlValue":"Jeux-Video-et-Consoles_Jeux-video-en-pre-commande","label":"Jeux vidéo en précommande"},"jeuxvideolotsconsoleetjeuxvideo-354429":{"urlValue":"Jeux-Video-et-Consoles_lot-console-et-jeux-video","label":"Lots Console et Jeux Vidéo"},"peinture":{"urlValue":"bricolage_peinture","label":"Peinture"},"informatiquenetbook":{"urlValue":"Informatique_netbook","label":"Netbook"},"enfantjouets-lego":{"urlValue":"Enfant_jouets_lego","label":"Lego"},"informatiquecomposantscarte-mere":{"urlValue":"Informatique_composants_carte-mere","label":"Carte mère"},"accpneus":{"urlValue":"auto-moto_accessoires-pneus","label":"Accessoires pneus"},"sportsloisirspechasse":{"urlValue":"Loisirs_peche-chasse","label":"Pêche et chasse"},"informatiquebatteriechargeurs-380157":{"urlValue":"Informatique_Batterie","label":"Batterie et chargeurs"},"maisonelectroarttable":{"urlValue":"Maison_arts-de-la-table","label":"Art de la table"},"automotosonoauto":{"urlValue":"auto-moto_sono-auto","label":"Sonorisation auto"},"jouetsenfantcassetite-414560":{"urlValue":"Enfant_jouets_casse-tete","label":"Casse-tête"},"informatiqueecran":{"urlValue":"Informatique_Ecran","label":"Ecran"},"mode":{"urlValue":"Mode","label":"Mode &amp; Beauté"},"jardinoutillage-jardin":{"urlValue":"jardin_outillage-jardin","label":"Outillage de jardin"},"maison":{"urlValue":"Maison","label":"Maison &amp; Electroménager"},"bricolagemateriaux-402793":{"urlValue":"bricolage_materiaux","label":"Matériaux"},"informatiquecd-dvd":{"urlValue":"Informatique_CD-DVD-Vierge","label":"CD/DVD Vierges"},"puerieveil":{"urlValue":"Enfant_Puericulture_eveil","label":"Éveil"},"piecesauto":{"urlValue":"auto-moto_pieces-auto","label":"Pièces auto"},"modelingerie-356011":{"urlValue":"Mode_Lingerie","label":"Lingerie"},"artcollectionactionstitres-356790":{"urlValue":"Art-Collection_Actions-Titres","label":"Actions - Titres"},"livresrevue-353905":{"urlValue":"Livres_Revues","label":"Revue"},"hifihomecinema":{"urlValue":"Hifi_home-cinema","label":"Ensemble home cinema"},"imagesonlecteurdvd-355281":{"urlValue":"Hifi_lecteur-dvd","label":"Lecteur DVD"},"maisonelectrochampagne":{"urlValue":"Vin-Saveur_Champagne","label":"Champagne"},"bricolageoutillageemain-427123":{"urlValue":"bricolage_outillage-a-main","label":"Outillage à main"},"sportsloisirsloisirscreatifs":{"urlValue":"Loisirs_loisirs-creatifs","label":"Loisirs créatifs"},"artcollectiontickets-356781":{"urlValue":"Art-Collection_Ticket","label":"Tuning, Personnalisation"},"decorationcatmanoct2014":{"urlValue":"Maison_deco-interieur","label":"Décoration"},"maisonlingedemaison":{"urlValue":"Maison_linge-maison","label":"Linge de maison"},"musiquepianosetclaviers-417657":{"urlValue":"Musique_Instruments-de-Musique_piano-et-clavier","label":"Pianos et Claviers"},"tel-pdacalculatrices":{"urlValue":"Tel-PDA_Calculatrices","label":"Calculatrices"},"produitslaitiersq32014":{"urlValue":"Vin-Saveur_produits-laitiers","label":"Produits laitiers"},"musiquecd":{"urlValue":"Musique_CD","label":"CD"},"informatiquecomposantsmontage-video":{"urlValue":"Informatique_composants_montage-video","label":"Montage &amp; acquisition vidéo"},"petitdejeunerq32014":{"urlValue":"Vin-Saveur_petit-dejeuner","label":"Petit déjeuner"},"enfantdoudou-362075":{"urlValue":"Enfant_jouets_doudou","label":"Doudou"},"jeux-video":{"urlValue":"Jeux-Video-et-Consoles","label":"Jeux vidéo &amp; Consoles"},"composantssept2013":{"urlValue":"Informatique_composants","label":"Composants"},"informatiquecartememoire":{"urlValue":"Informatique_Carte-memoire","label":"Carte mémoire"},"image-son":{"urlValue":"Hifi","label":"Image &amp; Son"},"informatiquecomposantsalimentations-ordinateur":{"urlValue":"Informatique_composants_alimentations-ordinateur","label":"Alimentation d&#39;ordinateur"},"livresebooks-414940":{"urlValue":"Livres_ebooks","label":"eBooks"},"jeux-videojeuxrole-jeuxfigurines":{"urlValue":"Jeux-Video-et-Consoles_Jeux-de-role-et-jeux-de-figurines","label":"Jeux de rôle et  jeux de figurines"},"livresjeunesse-353686":{"urlValue":"Livres_Enfant-jeunesse","label":"Jeunesse"},"informatiquesouris":{"urlValue":"Informatique_Souris","label":"Souris et pavés tactiles"},"musiquebatteriesetpercussions-417658":{"urlValue":"Musique_Instruments-de-Musique_batterie-et-percussion","label":"Batteries et Percussions"},"enfantjeuxdesociete-356529":{"urlValue":"Enfant_jeux-societe","label":"Jeux de société"},"jouetsenfantjeuxdimitation-413546":{"urlValue":"Enfant_jouets_imitation","label":"Jeux d&#39;imitation"},"livresabonnementpresse":{"urlValue":"Livres_Abonnements-Presse","label":"Abonnements Presse"},"maisonelectromenagerbiere-355788":{"urlValue":"Vin-Saveur_Biere","label":"Bière"},"livreseconomieetentreprise-353648":{"urlValue":"Livres_Economie-et-entreprise","label":"Economie et entreprise"},"livressportetloisirs-353759":{"urlValue":"Livres_Sport-et-loisirs","label":"Sport et loisirs"},"informatiqueconsommables":{"urlValue":"Informatique_Consommables","label":"Consommables imprimante"},"puerirepas":{"urlValue":"Enfant_Puericulture_repas","label":"Repas"},"sportsloisirsnautique":{"urlValue":"Loisirs_sport-nautique","label":"Sports nautiques"},"musiqueinstruments-musique":{"urlValue":"Musique_Instruments-de-Musique","label":"Instruments de Musique"},"informatiquecables-380175":{"urlValue":"Informatique_Cable","label":"Câbles"},"livreslitterature-424763":{"urlValue":"Livres_Litterature","label":"Littérature"},"artcollectionnumismatique-356711":{"urlValue":"Art-Collection_Numismatique","label":"Numismatique"},"livresinformatique-353679":{"urlValue":"Livres_Informatique-Internet","label":"Informatique"},"jardinerie":{"urlValue":"jardin","label":"Jardin &amp; Piscine"},"informatiquecomposantslecteur-carte-memoire":{"urlValue":"Informatique_composants_lecteur-carte-memoire","label":"Lecteur carte mémoire"},"modechaussuresdesport-356126":{"urlValue":"Mode_chaussures-sport","label":"Chaussures de sport"},"2015cosmetique":{"urlValue":"Mode_Cosmetique-Produit-de-beaute","label":"Hygiène, Santé &amp; Beauté"},"lotlivres":{"urlValue":"Livres_Lot-de-Livres","label":"Lots de Livres et de Revues"},"livresfournitures":{"urlValue":"Livres_Fournitures-papeterie","label":"Fournitures Papeterie"},"jeuxvideoreparationjeuxrayes-354431":{"urlValue":"Jeux-Video-et-Consoles_Reparation-Jeux-rayes","label":"Réparation Jeux rayés"},"livresautrescategories-353778":{"urlValue":"Livres_Autres","label":"Autres catégories"},"sportsloisirsrunning":{"urlValue":"Loisirs_running","label":"Running"},"maisonpetit-electro-379195":{"urlValue":"Maison_Petit-Electromenager","label":"Petit électroménager"},"sports-loisirs":{"urlValue":"Loisirs","label":"Sports &amp; Loisirs"},"livresdroit-353641":{"urlValue":"Livres_Droit","label":"Droit"},"artcollectionfactures-356795":{"urlValue":"Art-Collection_facture","label":"Factures"}}');
+    PM.Header.Search.autocompleteCategoriesInfo = $j.parseJSON('{"art-collection":{"urlValue":"Art-Collection","label":"Art &amp; Collection"},"tel-pdagps":{"urlValue":"Tel-PDA_GPS","label":"GPS"},"enfantjeuxdepleinair-356553":{"urlValue":"Enfant_jeux-plein-air","label":"Jeux de plein air"},"charcuterieq32014":{"urlValue":"Vin-Saveur_charcuterie","label":"Charcuterie"},"musiquepartitions-paroles":{"urlValue":"Musique_Partitions-Song-books","label":"Partitions, paroles"},"informatiqueordinateur-portable":{"urlValue":"Informatique_Ordinateur-portable","label":"Ordinateur portable"},"jouetsenfantcourderecreation-414595":{"urlValue":"Enfant_jouets_cour-recreation","label":"Cour de rï¿½crï¿½ation"},"jouetsenfantmusiqueetmultimedia-413555":{"urlValue":"Enfant_jouets_musique-multimedia","label":"Musique et multimï¿½dia"},"livreslangues-353696":{"urlValue":"Livres_Langues","label":"Langues"},"sportsloisirsaccessoiresmoto":{"urlValue":"auto-moto_accessoires-moto","label":"Accessoires et piï¿½ces moto"},"artcollectionbuvards-356702":{"urlValue":"Art-Collection_Buvard","label":"Buvards"},"imagesonchainehifi-355437":{"urlValue":"Hifi_chaine-hifi","label":"Chaï¿½ne Hi-Fi"},"sportsloisirsaccessoiresauto":{"urlValue":"auto-moto_accessoires-auto","label":"Accessoires auto"},"artcollectionmilitaria-356799":{"urlValue":"Art-Collection_militaria","label":"Militaria"},"tel-pdamontre-connecte":{"urlValue":"Tel-PDA_montres-bracelets-connectes","label":"Montres et bracelets connectï¿½s"},"bricolagedomotique-453003":{"urlValue":"bricolage_domotique","label":"Domotique"},"tuning":{"urlValue":"auto-moto_tuning-personnalisation","label":"Tuning, Personnalisation"},"informatiqueordinateur-bureau":{"urlValue":"Informatique_Ordinateur-de-bureau","label":"Ordinateur de bureau"},"sportsloisirsraquette":{"urlValue":"Loisirs_sports-de-raquette","label":"Sports de raquette"},"tel-pdaaccessoires-mobiles-pda":{"urlValue":"Tel-PDA_Accessoires-mobiles","label":"Accessoires mobiles"},"bricolageoutillageelectroportatif-427043":{"urlValue":"bricolage_outillage-electroportatif","label":"Outillage ï¿½lectroportatif"},"image-sonebook":{"urlValue":"Hifi_EBook","label":"Liseuse"},"musiquecdprecommande-398119":{"urlValue":"Musique_CDenprecommande","label":"CD prï¿½-commande"},"maisonelectroanim-444283":{"urlValue":"Maison_animalerie","label":"Animalerie"},"musique":{"urlValue":"Musique","label":"Musique"},"artcollectionobjetspublicitaires-356762":{"urlValue":"Art-Collection_objet-publicitaire","label":"Objets publicitaires"},"jardinmobilier-jardin":{"urlValue":"jardin_mobilier-de-jardin","label":"Mobilier de jardin"},"donsassociations":{"urlValue":"Art-Collection_dons","label":"Dons Associations"},"musiquecordesfrottees-417659":{"urlValue":"Musique_Instruments-de-Musique_cordes-frottees","label":"Cordes frottï¿½es"},"imagesontelescope-355401":{"urlValue":"Hifi_telescope","label":"Tï¿½lescope"},"vin-saveur":{"urlValue":"Vin-Saveur","label":"Vins &amp; Gastronomie"},"informatiquereseau":{"urlValue":"Informatique_reseau","label":"Rï¿½seau"},"pueri-411564":{"urlValue":"Enfant_Puericulture","label":"Puï¿½riculture"},"livresdeveloppementdurable-353627":{"urlValue":"Livres_Developpement-Durable","label":"Dï¿½veloppement durable"},"bricolageplomberieetsanitaire-427317":{"urlValue":"bricolage_plomberie-et-sanitaire","label":"Plomberie et Sanitaire"},"informatiquecomposantscarte-son":{"urlValue":"Informatique_composants_carte-son","label":"Carte son"},"image-sonaccessoires":{"urlValue":"Hifi_accessoire-audio-video","label":"Accessoires image &amp; son"},"puerisoins":{"urlValue":"Enfant_Puericulture_toilette-soins","label":"Toilette et soins"},"informatiquetablette":{"urlValue":"Informatique_tablette","label":"Tablette"},"informatiquecomposantswatercooling":{"urlValue":"Informatique_composants_watercooling","label":"Ventirad &amp; Watercooling"},"artcollectionaffiches-356661":{"urlValue":"Art-Collection_Affiches","label":"Affiches"},"informatiquecomposantsmemoire-vive":{"urlValue":"Informatique_composants_memoire-vive","label":"Mï¿½moire RAM"},"imagesonjumelles-355394":{"urlValue":"Hifi_jumelles","label":"Jumelles"},"maisongroselectro-379155":{"urlValue":"Maison_Electromenager","label":"Gros ï¿½lectromï¿½nager"},"informatiquedisque-dur-externe":{"urlValue":"Informatique_disques-durs-externes","label":"Disque dur externe"},"modemodehomme-355915":{"urlValue":"Mode_Mode-homme","label":"Mode homme"},"sportsloisirscombat":{"urlValue":"Loisirs_sports-de-combat","label":"Sports de combat"},"imagesonlecteurgraveurcd-355449":{"urlValue":"Hifi_lecteur-graveur-cd","label":"Lecteur &amp; Graveur CD"},"artcollectioninsolites-356817":{"urlValue":"Art-Collection_insolite","label":"Insolites"},"enfantjouets-educatifs":{"urlValue":"Enfant_jouets_jeux-educatifs-interactifs","label":"Jeux ï¿½ducatifs et interactifs"},"livresbdethumour-435803":{"urlValue":"Livres_BD-et-humour","label":"BD et humour"},"musiquecordespincees-417660":{"urlValue":"Musique_Instruments-de-Musique_cordes-pincees","label":"Cordes pincï¿½es"},"jeux-videofigurines":{"urlValue":"Jeux-Video-et-Consoles_Figurines","label":"Figurines"},"modesacs440043":{"urlValue":"Mode_bagageries-maroquinerie","label":"Sacs - Bagages"},"livrescuisine-353622":{"urlValue":"Livres_Cuisine","label":"Cuisine"},"enfantjouets-413542":{"urlValue":"Enfant_jouets","label":"Jouets"},"tel-pdapda":{"urlValue":"Tel-PDA_PDA","label":"PDA"},"informatiquecomposantscarte-graphique":{"urlValue":"Informatique_composants_carte-graphique","label":"Carte graphique"},"livresscolaires":{"urlValue":"Livres_Manuels-scolaires","label":"Manuels scolaires"},"informatiqueperipherique":{"urlValue":"Informatique_Peripheriques","label":"Pï¿½riphï¿½riques"},"jouetsenfantjeuxcreatifs-414060":{"urlValue":"Enfant_jouets_jeux-creatifs","label":"Jeux crï¿½atifs"},"jouetsenfantjouetenbois-414853":{"urlValue":"Enfant_jouets_jouet-en-bois","label":"Jouet en bois"},"jeux-videoaccessoires-jeuxvideo":{"urlValue":"Jeux-Video-et-Consoles_Accessoires-Jeux-Video","label":"Accessoires Jeux Vidï¿½o"},"maisonrepassagecouture":{"urlValue":"Maison_repassage-couture","label":"Repassage &amp; Couture"},"musiquedisque-vinyle":{"urlValue":"Musique_Vinyle","label":"Disque vinyle"},"livreshistoirepolitique":{"urlValue":"Livres_Histoire-actualite-politique","label":"Histoire, actualitï¿½, politique"},"modelotsdevitements-356005":{"urlValue":"Mode_Lots-de-Vetements","label":"Lots de Vï¿½tements"},"bricolageelectriciteeteclairage-427382":{"urlValue":"bricolage_electricite","label":"Electricitï¿½ et ï¿½clairage"},"services":{"urlValue":"services-priceminister_services","label":"Services"},"informatique":{"urlValue":"Informatique","label":"Informatique &amp; Tablettes"},"informatiquescanner":{"urlValue":"Informatique_Scanners","label":"Scanners"},"epiceriesaleeq32014":{"urlValue":"Vin-Saveur_epicerie-salee","label":"Epicerie salï¿½e"},"image-sonampli":{"urlValue":"Hifi_amplificateur","label":"Ampli"},"modemontre":{"urlValue":"Mode_montres","label":"Montres"},"entretienlavage":{"urlValue":"auto-moto_entretien-lavage","label":"Entretien, Lavage"},"jeux-videojeux-video":{"urlValue":"Jeux-Video-et-Consoles_Jeux-Video","label":"Jeux Vidï¿½o"},"puerisecurite":{"urlValue":"Enfant_Puericulture_securite-babyphone","label":"Sï¿½curitï¿½ et babyphone"},"informatiquecomposantsventilateurs-boitier":{"urlValue":"Informatique_composants_ventilateurs-boitier","label":"Ventilateurs boï¿½tier"},"image-sonprojecteur":{"urlValue":"Hifi_projecteur","label":"Vidï¿½oprojecteur"},"boissonq32014":{"urlValue":"Vin-Saveur_boisson","label":"Boisson sans alcool"},"informatiqueaccessoires":{"urlValue":"Informatique_Accessoires","label":"Accessoires"},"sportsloisirsfootball-411797":{"urlValue":"Loisirs_sport-collectif_football","label":"Football"},"modechaussures":{"urlValue":"Mode_chaussures","label":"Chaussures"},"luminairescatmanoct2014":{"urlValue":"Maison_luminaire","label":"Luminaires"},"epicessaucesetcondimentsq32014":{"urlValue":"Vin-Saveur_epices-sauces-et-condiments","label":"Epices, sauces et condiments"},"modebijouxdeclinaison":{"urlValue":"Mode_bijoux","label":"Bijoux"},"videodvd-a-droits-locatifs":{"urlValue":"Video_DVD-a-droits-locatifs","label":"DVD ï¿½ droits locatifs"},"videodvd-autres-zones":{"urlValue":"Video_DVD-autres-zones","label":"DVD autres zones"},"tel-pda":{"urlValue":"Tel-PDA","label":"Tï¿½lï¿½phonie &amp; GPS"},"jouetsenfantjeuxdeveil-413554":{"urlValue":"Enfant_jouets_eveil","label":"Jeux d&#39;ï¿½veil"},"tel-pdatel-mobiles":{"urlValue":"Tel-PDA_Telephones-mobiles","label":"Tï¿½lï¿½phones mobiles"},"artcollectioncartespostales-356687":{"urlValue":"Art-Collection_Carte-postale","label":"Cartes postales"},"artcollectionlettres-356704":{"urlValue":"Art-Collection_Lettre","label":"Lettres"},"videodvd-zone-2":{"urlValue":"Video_DVD-Zone-2","label":"DVD Zone 2"},"imagesoncablesatellitetnt-355307":{"urlValue":"Hifi_cable-satellite-tnt","label":"Cï¿½ble, Satellite &amp; TNT"},"sportsloisirsautressports-411801":{"urlValue":"Loisirs_sport-collectif_autres-sports","label":"Autres sports"},"videodvd-zone-1":{"urlValue":"Video_DVD-Zone-1","label":"DVD Zone 1"},"sportsloisirsurbannew":{"urlValue":"Loisirs_glisse-urbaine","label":"Glisse urbaine"},"modevitementdematernite-355980":{"urlValue":"Mode_Vetement-de-maternite","label":"Vï¿½tement de maternitï¿½"},"livresartetculture-353603":{"urlValue":"Livres_Art-et-culture","label":"Art et culture"},"maisonmobilier-437263":{"urlValue":"Maison_mobilier","label":"Mobilier"},"livressciencesappliquees-353738":{"urlValue":"Livres_Sciences-appliquees","label":"Sciences appliquï¿½es"},"jouetsenfantmagie-413551":{"urlValue":"Enfant_jouets_magie","label":"Magie"},"maisonelectromenagerplantes-355844":{"urlValue":"jardin_plante","label":"Plantes et Traitements"},"enceintespc":{"urlValue":"Informatique_Enceintes-PC","label":"Enceintes PC"},"catmane-cig":{"urlValue":"Mode_e-cigarette","label":"Cigarette ï¿½lectronique"},"informatiquecomposants-processeur":{"urlValue":"Informatique_composants_processeur","label":"Processeur d&#39;ordinateur"},"imagesoncamescope-355316":{"urlValue":"Hifi_camera","label":"Camï¿½scope"},"sportsloisirsescaladeetalpinisme-409070":{"urlValue":"Loisirs_sport-hiver-montagne_escalade-alpinisme","label":"Escalade et alpinisme"},"epiceriesucreeq32014":{"urlValue":"Vin-Saveur_epicerie-sucree","label":"Epicerie sucrï¿½e"},"image-sonaudioportable":{"urlValue":"Hifi_audio-portable","label":"MP3 - Audio portable"},"sportsloisirsequitation":{"urlValue":"Loisirs_equitation","label":"ï¿½quitation"},"auto-moto":{"urlValue":"auto-moto","label":"Auto-Moto"},"pueripoussette":{"urlValue":"Enfant_Puericulture_poussette","label":"Poussette"},"livresscienceshumaines-353748":{"urlValue":"Livres_Sciences-humaines-et-spiritualite","label":"Sciences humaines"},"imagesonobjectifsphoto-355361":{"urlValue":"Hifi_objectif","label":"Objectifs photo"},"jardinpiscine":{"urlValue":"jardin_piscine","label":"Piscine &amp; spa"},"livresdictionnaire-353634":{"urlValue":"Livres_Dictionnaire-et-reference","label":"Dictionnaire"},"sportsloisirshandball-411800":{"urlValue":"Loisirs_sport-collectif_handball","label":"Handball"},"sportsloisirsrugby-411798":{"urlValue":"Loisirs_sport-collectif_rugby","label":"Rugby"},"tel-pdatel-fixes":{"urlValue":"Tel-PDA_Telephones-fixes","label":"Tï¿½lï¿½phones fixes"},"chauffageclimatisation":{"urlValue":"Maison_chauffage-climatisation","label":"Chauffage et Climatisation"},"decofestivecatmanoct2014":{"urlValue":"Maison_deco-festive","label":"Dï¿½coration festive"},"modeaccessoiresmode":{"urlValue":"Mode_accessoire-mode","label":"Accessoires de mode"},"modeparfum":{"urlValue":"Mode_parfums","label":"Parfums"},"servicespriceminister":{"urlValue":"services-priceminister","label":"Services Priceminister"},"vod":{"urlValue":"Video_VOD","label":"VOD"},"video":{"urlValue":"Video","label":"DVD &amp; Blu-Ray"},"automotoequipementpilote":{"urlValue":"auto-moto_equipement-du-pilote","label":"ï¿½quipement du pilote"},"artcollectionautographes-356776":{"urlValue":"Art-Collection_Autographes","label":"Autographes"},"musiqueinstrumentsevent-417661":{"urlValue":"Musique_Instruments-de-Musique_instruments-a-vent","label":"Instruments ï¿½ vent"},"tel-pdarecepteurs-radiomessagerie":{"urlValue":"Tel-PDA_Recepteurs-de-Radiomessagerie","label":"Rï¿½cepteurs de Radiomessagerie"},"serveurnas":{"urlValue":"Informatique_serveur-nas","label":"Serveur NAS"},"modemodeenfant-355947":{"urlValue":"Mode_Mode-enfant","label":"Mode enfant"},"videolot-de-videos":{"urlValue":"Video_Lot-de-Videos","label":"Lots de Vidï¿½os"},"sportsloisirsairsoft":{"urlValue":"Loisirs_airsoft-paintball","label":"Airsoft - Paintball"},"informatiqueclavier":{"urlValue":"Informatique_Clavier","label":"Clavier"},"modedeguisement-364887":{"urlValue":"Mode_Deguisement","label":"Dï¿½guisement"},"artcollectionpeinture-356634":{"urlValue":"Art-Collection_peinture","label":"Peinture"},"sportsloisirsprecision":{"urlValue":"Loisirs_sport-tir-precision","label":"Sports de tir et prï¿½cision"},"videovideo-en-pre-commande":{"urlValue":"Video_Video-en-pre-commande","label":"Vidï¿½o en prï¿½commande"},"imagesoncasquesmicros-355486":{"urlValue":"Hifi_casques-micros","label":"Casques"},"sportsloisirshiver":{"urlValue":"Loisirs_sport-hiver-montagne","label":"Sports d&#39;hiver et de montagne"},"modevitementdesport-356160":{"urlValue":"Mode_vetement-sport","label":"Vï¿½tement de sport"},"maisonaspirernettoyerbalyer":{"urlValue":"Maison_aspirer-nettoyer-balayer","label":"Aspirer Nettoyer et balayer"},"sportsloisirsaerien":{"urlValue":"Loisirs_sports-aeriens","label":"Sports aï¿½riens"},"livreslivresenlangueetrangere-353827":{"urlValue":"Livres_livre-langue-etrangere","label":"Livres en langue ï¿½trangï¿½re"},"maisonelectrosoinscorps":{"urlValue":"Maison_soins-du-corps","label":"Soins du corps"},"informatiqueimprimante":{"urlValue":"Informatique_Imprimante","label":"Imprimante"},"tel-pdarepondeurs":{"urlValue":"Tel-PDA_Repondeurs","label":"Rï¿½pondeurs"},"sportsloisirsskietsnowboard-409068":{"urlValue":"Loisirs_sport-hiver-montagne_ski-snowboard","label":"Ski et Snowboard"},"informatiquecomposantscarte-tv":{"urlValue":"Informatique_composants_carte-tv","label":"Tuner &amp; Carte TV"},"sportsloisirsbilletterie-356468":{"urlValue":"Loisirs_billetterie","label":"Billetterie"},"bricolage":{"urlValue":"bricolage","label":"Bricolage"},"videohd-dvd":{"urlValue":"Video_HD-DVD","label":"HD-DVD"},"artcollectiongravures-356671":{"urlValue":"Art-Collection_Gravure","label":"Gravures"},"informatiquelogiciels":{"urlValue":"Informatique_Logiciels","label":"Logiciels"},"image-sontelevision":{"urlValue":"Hifi_Television","label":"Tï¿½lï¿½vision"},"videovhs":{"urlValue":"Video_VHS","label":"VHS"},"jouetsenfantpoupee-413548":{"urlValue":"Enfant_jouets_poupee","label":"Poupï¿½e"},"enfantjeuxdecafe-356544":{"urlValue":"Enfant_jeux-cafe","label":"Jeux de cafï¿½"},"sportsloisirscoffretcadeau-356430":{"urlValue":"Loisirs_activite-loisirs","label":"Coffret cadeau"},"enfantpeluche-362117":{"urlValue":"Enfant_jouets_peluche","label":"Peluche"},"livressante-353729":{"urlValue":"Livres_Sante-Medecine","label":"Santï¿½"},"musiquecollectiongoodies-354074":{"urlValue":"Musique_goodies","label":"Collection, Goodies"},"artcollectionphilatelie-356734":{"urlValue":"Art-Collection_Philatelie","label":"Philatï¿½lie"},"enfantjouets-figurine":{"urlValue":"Enfant_jouets_figurine","label":"Figurine"},"puerichambre":{"urlValue":"Enfant_Puericulture_chambre-decoration-bebe","label":"Chambre et dï¿½coration bï¿½bï¿½"},"livrestourisme-353768":{"urlValue":"Livres_Tourisme","label":"Tourisme"},"livrestoutpouremballervosventes-353889":{"urlValue":"Livres_materiel-conditionnement","label":"Tout pour emballer vos ventes"},"videoblu-ray":{"urlValue":"Video_Blu-Ray","label":"Blu-Ray"},"modelunettedesoleil":{"urlValue":"Mode_lunettes-de-soleil","label":"Lunettes de soleil"},"informatiqueaccessoiresstockage":{"urlValue":"Informatique_Accessoires-stockage","label":"Accessoires de stockage"},"imagesonappareilsphotoargentiques-355345":{"urlValue":"Hifi_photo-argentique","label":"Appareils photo argentiques"},"sportsloisirsautressports-409071":{"urlValue":"Loisirs_sport-hiver-montagne_autres-sports","label":"Autres sports"},"sportsloisirsbilletsdetransport-356476":{"urlValue":"Loisirs_billet-transport","label":"Billets de transport"},"informatiquecomposantsdisque-dur":{"urlValue":"Informatique_composants_disque-dur","label":"Disque dur interne"},"livres":{"urlValue":"Livres","label":"Livres"},"modemodefemme-355882":{"urlValue":"Mode_Mode-femme","label":"Mode femme"},"livresnature-353721":{"urlValue":"Livres_Nature-et-animaux","label":"Nature"},"sportsloisirsfitness":{"urlValue":"Loisirs_musculation-fitness","label":"Musculation et fitness"},"image-sonenceintes":{"urlValue":"Hifi_enceintes","label":"Enceintes"},"sportsloisirsrandonneeetcamping-409069":{"urlValue":"Loisirs_sport-hiver-montagne_randonnee-camping","label":"Randonnï¿½e et Camping"},"musiquelotsdedisquesetmusique-354087":{"urlValue":"Musique_Lot-Musique","label":"Lots de disques et musique"},"maisonelectroustensilecuisine":{"urlValue":"Maison_ustensile-de-cuisine","label":"Ustensile de cuisine"},"informatiquecomposantsboitier":{"urlValue":"Informatique_composants_boitier","label":"Boï¿½tiers PC"},"imagesonphotonumerique":{"urlValue":"Hifi_photo-numerique","label":"Appareils photo numï¿½riques"},"puerisorties":{"urlValue":"Enfant_Puericulture_sorties-promenades","label":"Sorties et promenades"},"artcollectionphotographies-356646":{"urlValue":"Art-Collection_Photographies","label":"Photographies"},"musiqueguitaresetbasses-417656":{"urlValue":"Musique_Instruments-de-Musique_guitares-et-basses","label":"Guitares et basses"},"livreslivresanciens":{"urlValue":"Livres_Livre-ancien","label":"Livres anciens"},"informatiquecomposantslecteur-graveur-cd-rom-et-dvd":{"urlValue":"Informatique_composants_lecteur-graveur-Cd-rom-et-DVD","label":"Lecteur/Graveur"},"maisonelectroaccessoireselectro":{"urlValue":"Maison_accessoires-electromenager","label":"Accessoires ï¿½lectromï¿½nager"},"jouetsenfantpuzzle-414904":{"urlValue":"Enfant_jouets_puzzle","label":"Puzzle"},"sportsloisirscyclisme":{"urlValue":"Loisirs_cyclisme","label":"Vï¿½lo"},"sportsloisirsscooteretminimoto-356353":{"urlValue":"Loisirs_cycles","label":"Scooter et Mini moto"},"informatiquecleusb":{"urlValue":"Informatique_Cle-USB","label":"Clï¿½ USB"},"maisonelectromenagervin-355756":{"urlValue":"Vin-Saveur_Vin","label":"Vin"},"artcollectionautocollants-356769":{"urlValue":"Art-Collection_Autocollant","label":"Autocollants"},"imagesonflashphoto-355379":{"urlValue":"Hifi_flash","label":"Flash et ï¿½clairage"},"image-sonsono-dj-homestudio":{"urlValue":"Hifi_sono-DJ-home-studio","label":"Sono, DJ, Home Studio"},"enfantjouets-construction":{"urlValue":"Enfant_jouets_construction","label":"Jeux de construction"},"jouetsenfantvehiculesradiocommandesetminiatures-413553":{"urlValue":"Enfant_jouets_vehicules-radiocommandes-miniatures","label":"Vï¿½hicules radiocommandï¿½s et miniatures"},"artcollectioncalendriers-356783":{"urlValue":"Art-Collection_Calendrier","label":"Calendriers"},"jeux-videocartes-jeux":{"urlValue":"Jeux-Video-et-Consoles_Cartes-de-jeux","label":"Cartes de jeux"},"jeux-videoconsoles":{"urlValue":"Jeux-Video-et-Consoles_Consoles","label":"Consoles"},"pneus":{"urlValue":"auto-moto_pneus","label":"Pneus"},"sportsloisirsgolf":{"urlValue":"Loisirs_golf","label":"Golf"},"artcollectionobjetsecollectionner-356753":{"urlValue":"Art-Collection_Objets-a-collectionner","label":"Objets ï¿½ collectionner"},"enfantmodelisme":{"urlValue":"Enfant_modelisme","label":"Modï¿½lisme"},"sportsloisirscollectif":{"urlValue":"Loisirs_sport-collectif","label":"Sports collectifs"},"sportsloisirsbasketball-411799":{"urlValue":"Loisirs_sport-collectif_basketball","label":"Basketball"},"modeaccessoireschaussures":{"urlValue":"Mode_accessoires-chaussures","label":"Accessoires chaussures"},"enfantjouets-playmobil":{"urlValue":"Enfant_jouets_playmobil","label":"Playmobil"},"huilesadditifs":{"urlValue":"auto-moto_huiles-additifs","label":"Huiles, Additifs"},"livresprintondemand-387075":{"urlValue":"Livres_print-on-demand","label":"Print on demand"},"maisonelectromenagercidre-355780":{"urlValue":"Vin-Saveur_Cidre","label":"Cidre"},"image-sontuner-radio":{"urlValue":"Hifi_tuner-radio","label":"Radio"},"bricolagetravauxetamenagement-402792":{"urlValue":"bricolage_machine-et-accessoire-de-travaux","label":"Travaux et amï¿½nagement"},"maisonelectromenagerspiritueux-355796":{"urlValue":"Vin-Saveur_Spiritueux","label":"Spiritueux"},"modesextoys-356302":{"urlValue":"Mode_sex-toys","label":"Sex toys"},"livresparascolaires":{"urlValue":"Livres_Soutien-scolaire-parascolaire","label":"Parascolaire"},"bricolagequincaillerie-427210":{"urlValue":"bricolage_quincaillerie","label":"Quincaillerie"},"livreslivresenprecommande-398102":{"urlValue":"Livres_Pre-commande","label":"Livres en prï¿½commande"},"enfant":{"urlValue":"Enfant","label":"Jouets &amp; Enfant"},"musiquecassettes-autressupports":{"urlValue":"Musique_mini-disque-video-disque-cassette","label":"Cassettes et autres supports"},"jeuxvideojeuxvideoenprecommande-398115":{"urlValue":"Jeux-Video-et-Consoles_Jeux-video-en-pre-commande","label":"Jeux vidï¿½o en prï¿½commande"},"jeuxvideolotsconsoleetjeuxvideo-354429":{"urlValue":"Jeux-Video-et-Consoles_lot-console-et-jeux-video","label":"Lots Console et Jeux Vidï¿½o"},"peinture":{"urlValue":"bricolage_peinture","label":"Peinture"},"informatiquenetbook":{"urlValue":"Informatique_netbook","label":"Netbook"},"enfantjouets-lego":{"urlValue":"Enfant_jouets_lego","label":"Lego"},"informatiquecomposantscarte-mere":{"urlValue":"Informatique_composants_carte-mere","label":"Carte mï¿½re"},"accpneus":{"urlValue":"auto-moto_accessoires-pneus","label":"Accessoires pneus"},"sportsloisirspechasse":{"urlValue":"Loisirs_peche-chasse","label":"Pï¿½che et chasse"},"informatiquebatteriechargeurs-380157":{"urlValue":"Informatique_Batterie","label":"Batterie et chargeurs"},"maisonelectroarttable":{"urlValue":"Maison_arts-de-la-table","label":"Art de la table"},"automotosonoauto":{"urlValue":"auto-moto_sono-auto","label":"Sonorisation auto"},"jouetsenfantcassetite-414560":{"urlValue":"Enfant_jouets_casse-tete","label":"Casse-tï¿½te"},"informatiqueecran":{"urlValue":"Informatique_Ecran","label":"Ecran"},"mode":{"urlValue":"Mode","label":"Mode &amp; Beautï¿½"},"jardinoutillage-jardin":{"urlValue":"jardin_outillage-jardin","label":"Outillage de jardin"},"maison":{"urlValue":"Maison","label":"Maison &amp; Electromï¿½nager"},"bricolagemateriaux-402793":{"urlValue":"bricolage_materiaux","label":"Matï¿½riaux"},"informatiquecd-dvd":{"urlValue":"Informatique_CD-DVD-Vierge","label":"CD/DVD Vierges"},"puerieveil":{"urlValue":"Enfant_Puericulture_eveil","label":"ï¿½veil"},"piecesauto":{"urlValue":"auto-moto_pieces-auto","label":"Piï¿½ces auto"},"modelingerie-356011":{"urlValue":"Mode_Lingerie","label":"Lingerie"},"artcollectionactionstitres-356790":{"urlValue":"Art-Collection_Actions-Titres","label":"Actions - Titres"},"livresrevue-353905":{"urlValue":"Livres_Revues","label":"Revue"},"hifihomecinema":{"urlValue":"Hifi_home-cinema","label":"Ensemble home cinema"},"imagesonlecteurdvd-355281":{"urlValue":"Hifi_lecteur-dvd","label":"Lecteur DVD"},"maisonelectrochampagne":{"urlValue":"Vin-Saveur_Champagne","label":"Champagne"},"bricolageoutillageemain-427123":{"urlValue":"bricolage_outillage-a-main","label":"Outillage ï¿½ main"},"sportsloisirsloisirscreatifs":{"urlValue":"Loisirs_loisirs-creatifs","label":"Loisirs crï¿½atifs"},"artcollectiontickets-356781":{"urlValue":"Art-Collection_Ticket","label":"Tuning, Personnalisation"},"decorationcatmanoct2014":{"urlValue":"Maison_deco-interieur","label":"Dï¿½coration"},"maisonlingedemaison":{"urlValue":"Maison_linge-maison","label":"Linge de maison"},"musiquepianosetclaviers-417657":{"urlValue":"Musique_Instruments-de-Musique_piano-et-clavier","label":"Pianos et Claviers"},"tel-pdacalculatrices":{"urlValue":"Tel-PDA_Calculatrices","label":"Calculatrices"},"produitslaitiersq32014":{"urlValue":"Vin-Saveur_produits-laitiers","label":"Produits laitiers"},"musiquecd":{"urlValue":"Musique_CD","label":"CD"},"informatiquecomposantsmontage-video":{"urlValue":"Informatique_composants_montage-video","label":"Montage &amp; acquisition vidï¿½o"},"petitdejeunerq32014":{"urlValue":"Vin-Saveur_petit-dejeuner","label":"Petit dï¿½jeuner"},"enfantdoudou-362075":{"urlValue":"Enfant_jouets_doudou","label":"Doudou"},"jeux-video":{"urlValue":"Jeux-Video-et-Consoles","label":"Jeux vidï¿½o &amp; Consoles"},"composantssept2013":{"urlValue":"Informatique_composants","label":"Composants"},"informatiquecartememoire":{"urlValue":"Informatique_Carte-memoire","label":"Carte mï¿½moire"},"image-son":{"urlValue":"Hifi","label":"Image &amp; Son"},"informatiquecomposantsalimentations-ordinateur":{"urlValue":"Informatique_composants_alimentations-ordinateur","label":"Alimentation d&#39;ordinateur"},"livresebooks-414940":{"urlValue":"Livres_ebooks","label":"eBooks"},"jeux-videojeuxrole-jeuxfigurines":{"urlValue":"Jeux-Video-et-Consoles_Jeux-de-role-et-jeux-de-figurines","label":"Jeux de rï¿½le et  jeux de figurines"},"livresjeunesse-353686":{"urlValue":"Livres_Enfant-jeunesse","label":"Jeunesse"},"informatiquesouris":{"urlValue":"Informatique_Souris","label":"Souris et pavï¿½s tactiles"},"musiquebatteriesetpercussions-417658":{"urlValue":"Musique_Instruments-de-Musique_batterie-et-percussion","label":"Batteries et Percussions"},"enfantjeuxdesociete-356529":{"urlValue":"Enfant_jeux-societe","label":"Jeux de sociï¿½tï¿½"},"jouetsenfantjeuxdimitation-413546":{"urlValue":"Enfant_jouets_imitation","label":"Jeux d&#39;imitation"},"livresabonnementpresse":{"urlValue":"Livres_Abonnements-Presse","label":"Abonnements Presse"},"maisonelectromenagerbiere-355788":{"urlValue":"Vin-Saveur_Biere","label":"Biï¿½re"},"livreseconomieetentreprise-353648":{"urlValue":"Livres_Economie-et-entreprise","label":"Economie et entreprise"},"livressportetloisirs-353759":{"urlValue":"Livres_Sport-et-loisirs","label":"Sport et loisirs"},"informatiqueconsommables":{"urlValue":"Informatique_Consommables","label":"Consommables imprimante"},"puerirepas":{"urlValue":"Enfant_Puericulture_repas","label":"Repas"},"sportsloisirsnautique":{"urlValue":"Loisirs_sport-nautique","label":"Sports nautiques"},"musiqueinstruments-musique":{"urlValue":"Musique_Instruments-de-Musique","label":"Instruments de Musique"},"informatiquecables-380175":{"urlValue":"Informatique_Cable","label":"Cï¿½bles"},"livreslitterature-424763":{"urlValue":"Livres_Litterature","label":"Littï¿½rature"},"artcollectionnumismatique-356711":{"urlValue":"Art-Collection_Numismatique","label":"Numismatique"},"livresinformatique-353679":{"urlValue":"Livres_Informatique-Internet","label":"Informatique"},"jardinerie":{"urlValue":"jardin","label":"Jardin &amp; Piscine"},"informatiquecomposantslecteur-carte-memoire":{"urlValue":"Informatique_composants_lecteur-carte-memoire","label":"Lecteur carte mï¿½moire"},"modechaussuresdesport-356126":{"urlValue":"Mode_chaussures-sport","label":"Chaussures de sport"},"2015cosmetique":{"urlValue":"Mode_Cosmetique-Produit-de-beaute","label":"Hygiï¿½ne, Santï¿½ &amp; Beautï¿½"},"lotlivres":{"urlValue":"Livres_Lot-de-Livres","label":"Lots de Livres et de Revues"},"livresfournitures":{"urlValue":"Livres_Fournitures-papeterie","label":"Fournitures Papeterie"},"jeuxvideoreparationjeuxrayes-354431":{"urlValue":"Jeux-Video-et-Consoles_Reparation-Jeux-rayes","label":"Rï¿½paration Jeux rayï¿½s"},"livresautrescategories-353778":{"urlValue":"Livres_Autres","label":"Autres catï¿½gories"},"sportsloisirsrunning":{"urlValue":"Loisirs_running","label":"Running"},"maisonpetit-electro-379195":{"urlValue":"Maison_Petit-Electromenager","label":"Petit ï¿½lectromï¿½nager"},"sports-loisirs":{"urlValue":"Loisirs","label":"Sports &amp; Loisirs"},"livresdroit-353641":{"urlValue":"Livres_Droit","label":"Droit"},"artcollectionfactures-356795":{"urlValue":"Art-Collection_facture","label":"Factures"}}');
 
-  // Ultra laid : définition d'une variable globale utilisée apparemment dans certains contenus IG !!??
-  // TODO : apprendre à utiliser le contexte velocity
+  // Ultra laid : dï¿½finition d'une variable globale utilisï¿½e apparemment dans certains contenus IG !!??
+  // TODO : apprendre ï¿½ utiliser le contexte velocity
   is_request_secure = true;
 
-  // Input de recherche : application de la valeur par défaut
+  // Input de recherche : application de la valeur par dï¿½faut
   
 
   // Mise en place de l'autocomplete (suite)
@@ -1308,7 +1308,7 @@ PM.Context.put('PrdID', "3513226278", true);</script><!-- to delete next release
       <!-- *** START: PROFIL VENDEUR *** -->
       
       
-      <div id="location" class="location"><div><a href="/nav/Hifi"><span>Image & Son </span></a></div> &gt; <div><a href="/nav/Hifi_cable-satellite-tnt"><span>  Câble, Satellite & TNT</span></a></div> &gt; <div><a href="/nav/Hifi_cable-satellite-tnt/f2/recepteur-multimedia"><span>                Récepteur multimédia numérique</span></a></div> &gt; <a href="/offer/buy/3513226278/google-chromecast-recepteur-multimedia-numerique.html"rel="nofollow">Google Chromecast 3...</a> &gt; <script type="application/ld+json">{"@context": "http://schema.org","@type": "BreadcrumbList","itemListElement":[{ "@type": "ListItem","position":"1","item":{"name":"Image & Son","@id": "/nav/Hifi"  }},{ "@type": "ListItem","position":"2","item":{"name":"Câble, Satellite & TNT","@id": "/nav/Hifi_cable-satellite-tnt"  }},{ "@type": "ListItem","position":"3","item":{"name":"Récepteur multimédia numérique","@id": "/nav/Hifi_cable-satellite-tnt/f2/recepteur-multimedia"  }},{ "@type": "ListItem","position":"4","item":{"name":"Google Chromecast 3...","@id": "/offer/buy/3513226278/google-chromecast-recepteur-multimedia-numerique.html"  }}]}</script></div>
+      <div id="location" class="location"><div><a href="/nav/Hifi"><span>Image & Son </span></a></div> &gt; <div><a href="/nav/Hifi_cable-satellite-tnt"><span>  Cï¿½ble, Satellite & TNT</span></a></div> &gt; <div><a href="/nav/Hifi_cable-satellite-tnt/f2/recepteur-multimedia"><span>                Rï¿½cepteur multimï¿½dia numï¿½rique</span></a></div> &gt; <a href="/offer/buy/3513226278/google-chromecast-recepteur-multimedia-numerique.html"rel="nofollow">Google Chromecast 3...</a> &gt; <script type="application/ld+json">{"@context": "http://schema.org","@type": "BreadcrumbList","itemListElement":[{ "@type": "ListItem","position":"1","item":{"name":"Image & Son","@id": "/nav/Hifi"  }},{ "@type": "ListItem","position":"2","item":{"name":"Cï¿½ble, Satellite & TNT","@id": "/nav/Hifi_cable-satellite-tnt"  }},{ "@type": "ListItem","position":"3","item":{"name":"Rï¿½cepteur multimï¿½dia numï¿½rique","@id": "/nav/Hifi_cable-satellite-tnt/f2/recepteur-multimedia"  }},{ "@type": "ListItem","position":"4","item":{"name":"Google Chromecast 3...","@id": "/offer/buy/3513226278/google-chromecast-recepteur-multimedia-numerique.html"  }}]}</script></div>
       
       <div class="pm_seller">
         <span class="sellerName">
@@ -1488,7 +1488,7 @@ PriceMarathon.prototype.matchContextToAttributes = function(distincAttrsList, ca
     switch(type) {
       case 'ismember':
           if(typeof this.context.club_member_status === 'object') {
-            value = this.context.club_member_status.value;
+            value = this.context.club_member_LinkStatus.value;
           } else if (typeof this.context.club_member_status !== 'undefined'){
             value = this.context.club_member_status;
           } else {
@@ -1511,7 +1511,7 @@ PriceMarathon.prototype.matchContextToAttributes = function(distincAttrsList, ca
         break;
       case 'pgs':
           if(typeof this.context.rsp_pgs_status === 'object') {
-            value = this.context.rsp_pgs_status.value;
+            value = this.context.rsp_pgs_LinkStatus.value;
           } else if (typeof this.context.pgs !== 'undefined'){
             value = this.context.pgs;
           } else {
@@ -1699,7 +1699,7 @@ PriceMarathon.prototype.matchContextToAttributes = function(distincAttrsList, ca
     switch(type) {
       case 'ismember':
           if(typeof this.context.club_member_status === 'object') {
-            value = this.context.club_member_status.value;
+            value = this.context.club_member_LinkStatus.value;
           } else if (typeof this.context.club_member_status !== 'undefined'){
             value = this.context.club_member_status;
           } else {
@@ -1722,7 +1722,7 @@ PriceMarathon.prototype.matchContextToAttributes = function(distincAttrsList, ca
         break;
       case 'pgs':
           if(typeof this.context.rsp_pgs_status === 'object') {
-            value = this.context.rsp_pgs_status.value;
+            value = this.context.rsp_pgs_LinkStatus.value;
           } else if (typeof this.context.pgs !== 'undefined'){
             value = this.context.pgs;
           } else {
@@ -1942,7 +1942,7 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
   <div class="nav scrolling_menu">
       <ul class="nav_menu">
                                                                                   <li class="menu_item  first_child   ">
-                 <a href="/recent/Boulanger" rel="nofollow" class="menu_lnk"><span>Nouveautés</span></a>
+                 <a href="/recent/Boulanger" rel="nofollow" class="menu_lnk"><span>Nouveautï¿½s</span></a>
         </li>
   
                           
@@ -1966,16 +1966,16 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                                         
                                                       <li class="menu_item ">
                                             <div class="menu_content">
-                            <a href="/boutique/Boulanger/nav/Maison" rel="nofollow" class="menu_lnk"><span>Maison & Electroménager</span></a>
+                            <a href="/boutique/Boulanger/nav/Maison" rel="nofollow" class="menu_lnk"><span>Maison & Electromï¿½nager</span></a>
                             <ul class="sub_menu">
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Maison_Electromenager" rel="nofollow" class="sub_menu_lnk  "> Gros électroménager <span class="nb_results">(1699)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Maison_Electromenager" rel="nofollow" class="sub_menu_lnk  "> Gros ï¿½lectromï¿½nager <span class="nb_results">(1699)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Maison_accessoires-electromenager" rel="nofollow" class="sub_menu_lnk  "> Accessoires électroménager <span class="nb_results">(1173)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Maison_accessoires-electromenager" rel="nofollow" class="sub_menu_lnk  "> Accessoires ï¿½lectromï¿½nager <span class="nb_results">(1173)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Maison_Petit-Electromenager" rel="nofollow" class="sub_menu_lnk  "> Petit électroménager <span class="nb_results">(1168)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Maison_Petit-Electromenager" rel="nofollow" class="sub_menu_lnk  "> Petit ï¿½lectromï¿½nager <span class="nb_results">(1168)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
                                     <a href="/boutique/Boulanger/nav/Maison_soins-du-corps" rel="nofollow" class="sub_menu_lnk  "> Soins du corps <span class="nb_results">(696)</span></a>    
@@ -1996,7 +1996,7 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                                     <a href="/boutique/Boulanger/nav/Maison_animalerie" rel="nofollow" class="sub_menu_lnk  "> Animalerie <span class="nb_results">(4)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Maison" rel="nofollow" class="sub_menu_lnk  see_more"> Voir toutes les catégories </a>    
+                                    <a href="/boutique/Boulanger/nav/Maison" rel="nofollow" class="sub_menu_lnk  see_more"> Voir toutes les catï¿½gories </a>    
                                 </li>
                                                             </ul>
                         </div>
@@ -2024,16 +2024,16 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                                     <a href="/boutique/Boulanger/nav/Informatique_Ecran" rel="nofollow" class="sub_menu_lnk  "> Ecran <span class="nb_results">(163)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Informatique_Cable" rel="nofollow" class="sub_menu_lnk  "> Câbles <span class="nb_results">(157)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Informatique_Cable" rel="nofollow" class="sub_menu_lnk  "> Cï¿½bles <span class="nb_results">(157)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
                                     <a href="/boutique/Boulanger/nav/Informatique_tablette" rel="nofollow" class="sub_menu_lnk  "> Tablette <span class="nb_results">(123)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Informatique_reseau" rel="nofollow" class="sub_menu_lnk  "> Réseau <span class="nb_results">(119)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Informatique_reseau" rel="nofollow" class="sub_menu_lnk  "> Rï¿½seau <span class="nb_results">(119)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Informatique" rel="nofollow" class="sub_menu_lnk  see_more"> Voir toutes les catégories </a>    
+                                    <a href="/boutique/Boulanger/nav/Informatique" rel="nofollow" class="sub_menu_lnk  see_more"> Voir toutes les catï¿½gories </a>    
                                 </li>
                                                             </ul>
                         </div>
@@ -2046,7 +2046,7 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                                     <a href="/boutique/Boulanger/nav/Hifi_casques-micros" rel="nofollow" class="sub_menu_lnk  "> Casques <span class="nb_results">(327)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Hifi_accessoire-photo-video" rel="nofollow" class="sub_menu_lnk  "> Accessoires photo vidéo <span class="nb_results">(296)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Hifi_accessoire-photo-video" rel="nofollow" class="sub_menu_lnk  "> Accessoires photo vidï¿½o <span class="nb_results">(296)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
                                     <a href="/boutique/Boulanger/nav/Hifi_accessoire-audio-video" rel="nofollow" class="sub_menu_lnk  "> Accessoires image & son <span class="nb_results">(294)</span></a>    
@@ -2055,7 +2055,7 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                                     <a href="/boutique/Boulanger/nav/Hifi_enceintes" rel="nofollow" class="sub_menu_lnk  "> Enceintes <span class="nb_results">(220)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Hifi_photo-numerique" rel="nofollow" class="sub_menu_lnk  "> Appareils photo numériques <span class="nb_results">(178)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Hifi_photo-numerique" rel="nofollow" class="sub_menu_lnk  "> Appareils photo numï¿½riques <span class="nb_results">(178)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
                                     <a href="/boutique/Boulanger/nav/Hifi_objectif" rel="nofollow" class="sub_menu_lnk  "> Objectifs photo <span class="nb_results">(177)</span></a>    
@@ -2067,29 +2067,29 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                                     <a href="/boutique/Boulanger/nav/Hifi_sono-DJ-home-studio" rel="nofollow" class="sub_menu_lnk  "> Sono, DJ, Home Studio <span class="nb_results">(91)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Hifi_camera" rel="nofollow" class="sub_menu_lnk  "> Caméscope <span class="nb_results">(86)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Hifi_camera" rel="nofollow" class="sub_menu_lnk  "> Camï¿½scope <span class="nb_results">(86)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Hifi" rel="nofollow" class="sub_menu_lnk  see_more"> Voir toutes les catégories </a>    
+                                    <a href="/boutique/Boulanger/nav/Hifi" rel="nofollow" class="sub_menu_lnk  see_more"> Voir toutes les catï¿½gories </a>    
                                 </li>
                                                             </ul>
                         </div>
                                     </li>
                               <li class="menu_item ">
                                             <div class="menu_content">
-                            <a href="/boutique/Boulanger/nav/Tel-PDA" rel="nofollow" class="menu_lnk"><span>Téléphonie & GPS</span></a>
+                            <a href="/boutique/Boulanger/nav/Tel-PDA" rel="nofollow" class="menu_lnk"><span>Tï¿½lï¿½phonie & GPS</span></a>
                             <ul class="sub_menu">
                                                                 <li class="sub_menu_item">
                                     <a href="/boutique/Boulanger/nav/Tel-PDA_Accessoires-mobiles" rel="nofollow" class="sub_menu_lnk  "> Accessoires mobiles <span class="nb_results">(1831)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Tel-PDA_Telephones-mobiles" rel="nofollow" class="sub_menu_lnk  "> Téléphones mobiles <span class="nb_results">(311)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Tel-PDA_Telephones-mobiles" rel="nofollow" class="sub_menu_lnk  "> Tï¿½lï¿½phones mobiles <span class="nb_results">(311)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Tel-PDA_montres-bracelets-connectes" rel="nofollow" class="sub_menu_lnk  "> Montres et bracelets connectés <span class="nb_results">(154)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Tel-PDA_montres-bracelets-connectes" rel="nofollow" class="sub_menu_lnk  "> Montres et bracelets connectï¿½s <span class="nb_results">(154)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Tel-PDA_Telephones-fixes" rel="nofollow" class="sub_menu_lnk  "> Téléphones fixes <span class="nb_results">(145)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Tel-PDA_Telephones-fixes" rel="nofollow" class="sub_menu_lnk  "> Tï¿½lï¿½phones fixes <span class="nb_results">(145)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
                                     <a href="/boutique/Boulanger/nav/Tel-PDA_GPS" rel="nofollow" class="sub_menu_lnk  "> GPS <span class="nb_results">(64)</span></a>    
@@ -2098,26 +2098,26 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                                     <a href="/boutique/Boulanger/nav/Tel-PDA_Calculatrices" rel="nofollow" class="sub_menu_lnk  "> Calculatrices <span class="nb_results">(23)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Tel-PDA_Recepteurs-de-Radiomessagerie" rel="nofollow" class="sub_menu_lnk  "> Récepteurs de Radiomessagerie <span class="nb_results">(6)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Tel-PDA_Recepteurs-de-Radiomessagerie" rel="nofollow" class="sub_menu_lnk  "> Rï¿½cepteurs de Radiomessagerie <span class="nb_results">(6)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
                                     <a href="/boutique/Boulanger/nav/Tel-PDA_PDA" rel="nofollow" class="sub_menu_lnk  "> PDA <span class="nb_results">(4)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Tel-PDA_Repondeurs" rel="nofollow" class="sub_menu_lnk  "> Répondeurs <span class="nb_results">(2)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Tel-PDA_Repondeurs" rel="nofollow" class="sub_menu_lnk  "> Rï¿½pondeurs <span class="nb_results">(2)</span></a>    
                                 </li>
                                                             </ul>
                         </div>
                                     </li>
                               <li class="menu_item ">
                                             <div class="menu_content">
-                            <a href="/boutique/Boulanger/nav/Jeux-Video-et-Consoles" rel="nofollow" class="menu_lnk"><span>Jeux vidéo & Consoles</span></a>
+                            <a href="/boutique/Boulanger/nav/Jeux-Video-et-Consoles" rel="nofollow" class="menu_lnk"><span>Jeux vidï¿½o & Consoles</span></a>
                             <ul class="sub_menu">
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Jeux-Video-et-Consoles_Accessoires-Jeux-Video" rel="nofollow" class="sub_menu_lnk  "> Accessoires Jeux Vidéo <span class="nb_results">(300)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Jeux-Video-et-Consoles_Accessoires-Jeux-Video" rel="nofollow" class="sub_menu_lnk  "> Accessoires Jeux Vidï¿½o <span class="nb_results">(300)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Jeux-Video-et-Consoles_Jeux-Video" rel="nofollow" class="sub_menu_lnk  "> Jeux Vidéo <span class="nb_results">(216)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Jeux-Video-et-Consoles_Jeux-Video" rel="nofollow" class="sub_menu_lnk  "> Jeux Vidï¿½o <span class="nb_results">(216)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
                                     <a href="/boutique/Boulanger/nav/Jeux-Video-et-Consoles_Consoles" rel="nofollow" class="sub_menu_lnk  "> Consoles <span class="nb_results">(20)</span></a>    
@@ -2126,7 +2126,7 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                                     <a href="/boutique/Boulanger/nav/Jeux-Video-et-Consoles_Figurines" rel="nofollow" class="sub_menu_lnk  "> Figurines <span class="nb_results">(4)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Jeux-Video-et-Consoles_Jeux-video-en-pre-commande" rel="nofollow" class="sub_menu_lnk  "> Jeux vidéo en précommande <span class="nb_results">(1)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Jeux-Video-et-Consoles_Jeux-video-en-pre-commande" rel="nofollow" class="sub_menu_lnk  "> Jeux vidï¿½o en prï¿½commande <span class="nb_results">(1)</span></a>    
                                 </li>
                                                             </ul>
                         </div>
@@ -2136,13 +2136,13 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                             <a href="/boutique/Boulanger/nav/bricolage" rel="nofollow" class="menu_lnk"><span>Bricolage</span></a>
                             <ul class="sub_menu">
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/bricolage_electricite" rel="nofollow" class="sub_menu_lnk  "> Electricité et éclairage <span class="nb_results">(216)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/bricolage_electricite" rel="nofollow" class="sub_menu_lnk  "> Electricitï¿½ et ï¿½clairage <span class="nb_results">(216)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
                                     <a href="/boutique/Boulanger/nav/bricolage_domotique" rel="nofollow" class="sub_menu_lnk  "> Domotique <span class="nb_results">(77)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/bricolage_outillage-a-main" rel="nofollow" class="sub_menu_lnk  "> Outillage à main <span class="nb_results">(26)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/bricolage_outillage-a-main" rel="nofollow" class="sub_menu_lnk  "> Outillage ï¿½ main <span class="nb_results">(26)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
                                     <a href="/boutique/Boulanger/nav/bricolage_quincaillerie" rel="nofollow" class="sub_menu_lnk  "> Quincaillerie <span class="nb_results">(23)</span></a>    
@@ -2151,13 +2151,13 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                                     <a href="/boutique/Boulanger/nav/bricolage_plomberie-et-sanitaire" rel="nofollow" class="sub_menu_lnk  "> Plomberie et Sanitaire <span class="nb_results">(10)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/bricolage_machine-et-accessoire-de-travaux" rel="nofollow" class="sub_menu_lnk  "> Travaux et aménagement <span class="nb_results">(8)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/bricolage_machine-et-accessoire-de-travaux" rel="nofollow" class="sub_menu_lnk  "> Travaux et amï¿½nagement <span class="nb_results">(8)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/bricolage_outillage-electroportatif" rel="nofollow" class="sub_menu_lnk  "> Outillage électroportatif <span class="nb_results">(7)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/bricolage_outillage-electroportatif" rel="nofollow" class="sub_menu_lnk  "> Outillage ï¿½lectroportatif <span class="nb_results">(7)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/bricolage_materiaux" rel="nofollow" class="sub_menu_lnk  "> Matériaux <span class="nb_results">(5)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/bricolage_materiaux" rel="nofollow" class="sub_menu_lnk  "> Matï¿½riaux <span class="nb_results">(5)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
                                     <a href="/boutique/Boulanger/nav/bricolage_peinture" rel="nofollow" class="sub_menu_lnk  "> Peinture <span class="nb_results">(2)</span></a>    
@@ -2173,16 +2173,16 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                                     <a href="/boutique/Boulanger/nav/Enfant_jouets" rel="nofollow" class="sub_menu_lnk  "> Jouets <span class="nb_results">(87)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Enfant_Puericulture" rel="nofollow" class="sub_menu_lnk  "> Puériculture <span class="nb_results">(71)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Enfant_Puericulture" rel="nofollow" class="sub_menu_lnk  "> Puï¿½riculture <span class="nb_results">(71)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Enfant_modelisme" rel="nofollow" class="sub_menu_lnk  "> Modélisme <span class="nb_results">(28)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Enfant_modelisme" rel="nofollow" class="sub_menu_lnk  "> Modï¿½lisme <span class="nb_results">(28)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Enfant_jeux-societe" rel="nofollow" class="sub_menu_lnk  "> Jeux de société <span class="nb_results">(5)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Enfant_jeux-societe" rel="nofollow" class="sub_menu_lnk  "> Jeux de sociï¿½tï¿½ <span class="nb_results">(5)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Enfant_jeux-cafe" rel="nofollow" class="sub_menu_lnk  "> Jeux de café <span class="nb_results">(1)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Enfant_jeux-cafe" rel="nofollow" class="sub_menu_lnk  "> Jeux de cafï¿½ <span class="nb_results">(1)</span></a>    
                                 </li>
                                                             </ul>
                         </div>
@@ -2201,7 +2201,7 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                                     <a href="/boutique/Boulanger/nav/Loisirs_glisse-urbaine" rel="nofollow" class="sub_menu_lnk  "> Glisse urbaine <span class="nb_results">(31)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Loisirs_cyclisme" rel="nofollow" class="sub_menu_lnk  "> Vélo <span class="nb_results">(21)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Loisirs_cyclisme" rel="nofollow" class="sub_menu_lnk  "> Vï¿½lo <span class="nb_results">(21)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
                                     <a href="/boutique/Boulanger/nav/Loisirs_running" rel="nofollow" class="sub_menu_lnk  "> Running <span class="nb_results">(20)</span></a>    
@@ -2210,7 +2210,7 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                                     <a href="/boutique/Boulanger/nav/Loisirs_sport-hiver-montagne" rel="nofollow" class="sub_menu_lnk  "> Sports d'hiver et de montagne <span class="nb_results">(18)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Loisirs_loisirs-creatifs" rel="nofollow" class="sub_menu_lnk  "> Loisirs créatifs <span class="nb_results">(4)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Loisirs_loisirs-creatifs" rel="nofollow" class="sub_menu_lnk  "> Loisirs crï¿½atifs <span class="nb_results">(4)</span></a>    
                                 </li>
                                                             </ul>
                         </div>
@@ -2230,10 +2230,10 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                                     </li>
                               <li class="menu_item ">
                                             <div class="menu_content">
-                            <a href="/boutique/Boulanger/nav/Mode" rel="nofollow" class="menu_lnk"><span>Mode & Beauté</span></a>
+                            <a href="/boutique/Boulanger/nav/Mode" rel="nofollow" class="menu_lnk"><span>Mode & Beautï¿½</span></a>
                             <ul class="sub_menu">
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Mode_Cosmetique-Produit-de-beaute" rel="nofollow" class="sub_menu_lnk  "> Hygiène, Santé & Beauté <span class="nb_results">(73)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Mode_Cosmetique-Produit-de-beaute" rel="nofollow" class="sub_menu_lnk  "> Hygiï¿½ne, Santï¿½ & Beautï¿½ <span class="nb_results">(73)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
                                     <a href="/boutique/Boulanger/nav/Mode_parfums" rel="nofollow" class="sub_menu_lnk  "> Parfums <span class="nb_results">(6)</span></a>    
@@ -2255,16 +2255,16 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                                     <a href="/boutique/Boulanger/nav/auto-moto_sono-auto" rel="nofollow" class="sub_menu_lnk  "> Sonorisation auto <span class="nb_results">(19)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/auto-moto_pieces-auto" rel="nofollow" class="sub_menu_lnk  "> Pièces auto <span class="nb_results">(5)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/auto-moto_pieces-auto" rel="nofollow" class="sub_menu_lnk  "> Piï¿½ces auto <span class="nb_results">(5)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
                                     <a href="/boutique/Boulanger/nav/auto-moto_accessoires-auto" rel="nofollow" class="sub_menu_lnk  "> Accessoires auto <span class="nb_results">(2)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/auto-moto_equipement-du-pilote" rel="nofollow" class="sub_menu_lnk  "> Équipement du pilote <span class="nb_results">(2)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/auto-moto_equipement-du-pilote" rel="nofollow" class="sub_menu_lnk  "> ï¿½quipement du pilote <span class="nb_results">(2)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/auto-moto_accessoires-moto" rel="nofollow" class="sub_menu_lnk  "> Accessoires et pièces moto <span class="nb_results">(1)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/auto-moto_accessoires-moto" rel="nofollow" class="sub_menu_lnk  "> Accessoires et piï¿½ces moto <span class="nb_results">(1)</span></a>    
                                 </li>
                                                             </ul>
                         </div>
@@ -2277,14 +2277,14 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
                                     <a href="/boutique/Boulanger/nav/Vin-Saveur_boisson" rel="nofollow" class="sub_menu_lnk  "> Boisson sans alcool <span class="nb_results">(6)</span></a>    
                                 </li>
                                                                 <li class="sub_menu_item">
-                                    <a href="/boutique/Boulanger/nav/Vin-Saveur_petit-dejeuner" rel="nofollow" class="sub_menu_lnk  "> Petit déjeuner <span class="nb_results">(1)</span></a>    
+                                    <a href="/boutique/Boulanger/nav/Vin-Saveur_petit-dejeuner" rel="nofollow" class="sub_menu_lnk  "> Petit dï¿½jeuner <span class="nb_results">(1)</span></a>    
                                 </li>
                                                             </ul>
                         </div>
                                     </li>
                                       
                                                                                             <li class="menu_item  ">
-                 <a href="/recent/Boulanger" rel="nofollow" class="menu_lnk"><span>Nouveautés</span></a>
+                 <a href="/recent/Boulanger" rel="nofollow" class="menu_lnk"><span>Nouveautï¿½s</span></a>
         </li>
   
                           
@@ -2312,7 +2312,7 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
   </div>
 </div>
 <script type="text/javascript">
-      // Gère l'évènement "touch"
+      // Gï¿½re l'ï¿½vï¿½nement "touch"
     PM.PMCSJS.DropdownMenu.handleTouchEvent();
     
   
@@ -2390,7 +2390,7 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
    <div class="fn">
      
      
-     <h1 itemprop="name">Google Chromecast 3 - Récepteur multimédia numérique </h1>
+     <h1 itemprop="name">Google Chromecast 3 - Rï¿½cepteur multimï¿½dia numï¿½rique </h1>
      
       <span class="hbis">
           
@@ -2411,7 +2411,7 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
 
         <a href="javascript:PM.PopUp.open('/image?action=slideshow&aid=4312231996&galimageid=318428164&imagestype=PRODUCT_ADVERT&kcid=100008013&kckw=&productid=3513226278',PM.PopUp.Type.DEFAULT, 840, 710)"
            title="Voir en grand">
-          <img src="https://static.fr.shopping.rakuten.com/rakuten-static-deliver/app/509.0.1/20180814/static/front/brand/www/images/default/structure/blank.gif" pagespeed_no_defer="" alt="Google Chromecast 3 - Récepteur multimédia numérique" width="270" data-pm-lazy-src="https://pmcdn.priceminister.com/photo/google-chromecast-recepteur-multimedia-numerique-1219963045_ML.jpg" itemprop="image" title="Google Chromecast 3 - Récepteur multimédia numérique" class="photo" height="270"/>
+          <img src="https://static.fr.shopping.rakuten.com/rakuten-static-deliver/app/509.0.1/20180814/static/front/brand/www/images/default/structure/blank.gif" pagespeed_no_defer="" alt="Google Chromecast 3 - Rï¿½cepteur multimï¿½dia numï¿½rique" width="270" data-pm-lazy-src="https://pmcdn.priceminister.com/photo/google-chromecast-recepteur-multimedia-numerique-1219963045_ML.jpg" itemprop="image" title="Google Chromecast 3 - Rï¿½cepteur multimï¿½dia numï¿½rique" class="photo" height="270"/>
         </a>
 
       
@@ -2439,15 +2439,15 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
       
       
       <li class="fwk_elmt">
-      <div class="productMemo btn btnFlat memo3513226278" id="memo3513226278" title="Ajouter à ma liste">
-  <span class="txtIcon_L_16 noTextIcon memoPicto memo">Ajouter à ma liste</span>
+      <div class="productMemo btn btnFlat memo3513226278" id="memo3513226278" title="Ajouter ï¿½ ma liste">
+  <span class="txtIcon_L_16 noTextIcon memoPicto memo">Ajouter ï¿½ ma liste</span>
 </div>
 <script type="text/javascript">
-  PM.Util.handleParam('memo', 'submit', PM.Memo.Picto.afterAuthenticate.bindObj(null, {"actionParamName" : "skipkmadding","startXitiTag" : "FPB::PictoMemo::","memoAddTag" : "Ajouter","memoDeleteTag" : "Retirer","xitiLevel2" : PM.Statistics.Xtn2.FPB,"pictoIdentifier" : "memo3513226278","addingEdito" : "Ajouter à ma liste","deleteEdito" : "Supprimer de ma liste"}));
+  PM.Util.handleParam('memo', 'submit', PM.Memo.Picto.afterAuthenticate.bindObj(null, {"actionParamName" : "skipkmadding","startXitiTag" : "FPB::PictoMemo::","memoAddTag" : "Ajouter","memoDeleteTag" : "Retirer","xitiLevel2" : PM.Statistics.Xtn2.FPB,"pictoIdentifier" : "memo3513226278","addingEdito" : "Ajouter ï¿½ ma liste","deleteEdito" : "Supprimer de ma liste"}));
 </script>
 <script type="text/javascript">
   (function(){
-      var jsonContext = {"actionParamName" : "skipkmadding","startXitiTag" : "FPB::PictoMemo::","memoAddTag" : "Ajouter","memoDeleteTag" : "Retirer","xitiLevel2" : PM.Statistics.Xtn2.FPB,"pictoIdentifier" : "memo3513226278","addingEdito" : "Ajouter à ma liste","deleteEdito" : "Supprimer de ma liste"};
+      var jsonContext = {"actionParamName" : "skipkmadding","startXitiTag" : "FPB::PictoMemo::","memoAddTag" : "Ajouter","memoDeleteTag" : "Retirer","xitiLevel2" : PM.Statistics.Xtn2.FPB,"pictoIdentifier" : "memo3513226278","addingEdito" : "Ajouter ï¿½ ma liste","deleteEdito" : "Supprimer de ma liste"};
       PM.Event.add("memo3513226278", "click", function(e){PM.Util.preventDefault(e); PM.Memo.Picto.update(PM.BT.ub(47,'memo',63,'action',61,'memoupdateajax',38,'productId',61,'3513226278'), jsonContext, false)});
   })()
 </script>
@@ -2525,16 +2525,16 @@ PriceMarathon.prototype.convertRspToEuro = function(pId,pClass,display) {
 <img src="https://static.fr.shopping.rakuten.com/rakuten-static-deliver/app/509.0.1/20180814/static/front/brand/www/images/i18n/fr/logo_1Euro.gif" alt="logo euro.com" height="36" width="59" />
 </p>
 <p class="edito">
-Payez vos achats en 3, 5, 10 ou 20 fois en petites mensualités ou au comptant avec 1euro.com.</p>
+Payez vos achats en 3, 5, 10 ou 20 fois en petites mensualitï¿½s ou au comptant avec 1euro.com.</p>
 <ul class="lnkList">
-  <li><a href="javascript: PM.PopUp.open('/evt/mode_paiement', PM.PopUp.Type.HELP,920, 1227)">Voir nos facilités de paiement</a></li>
+  <li><a href="javascript: PM.PopUp.open('/evt/mode_paiement', PM.PopUp.Type.HELP,920, 1227)">Voir nos facilitï¿½s de paiement</a></li>
 </ul>
                 </div>                          
             
       
       <br>
         <p class="secondaryText">
-      Un crédit vous engage et doit être remboursé. Vérifiez vos capacités de remboursement avant de vous engager. 
+      Un crï¿½dit vous engage et doit ï¿½tre remboursï¿½. Vï¿½rifiez vos capacitï¿½s de remboursement avant de vous engager. 
       </p>
          
                   
@@ -2572,10 +2572,10 @@ Payez vos achats en 3, 5, 10 ou 20 fois en petites mensualités ou au comptant av
       <!-- end : purchase_area -->
       
 
-      <!-- begin : détail annonce -->
+      <!-- begin : dï¿½tail annonce -->
       
       <ul class="offer_details" style="margin-left: 290px;">
-        <!-- état produit -->
+        <!-- ï¿½tat produit -->
         <li class="condition  first_child">
           <span class="value">Produit Neuf</span>
         </li>
@@ -2587,12 +2587,12 @@ Payez vos achats en 3, 5, 10 ou 20 fois en petites mensualités ou au comptant av
           
           
           <li class="shipping"  last_child>
-            <span class="label">Expédition <span class="hlp">(<a onclick="new PM.Alert('/offer?action=shippingtypedescription&advertId=4312231996', {evalScripts: true, isAjax: true, hasMargin: true, clickOutsideClose: true, width: '772px', isModal: true, isBlocker: true, useTable: false}); return false;" href="#" alt="aide" class="hlp" rel="nofollow">?</a>)</span> :</span>
+            <span class="label">Expï¿½dition <span class="hlp">(<a onclick="new PM.Alert('/offer?action=shippingtypedescription&advertId=4312231996', {evalScripts: true, isAjax: true, hasMargin: true, clickOutsideClose: true, width: '772px', isModal: true, isBlocker: true, useTable: false}); return false;" href="#" alt="aide" class="hlp" rel="nofollow">?</a>)</span> :</span>
             <ul class="value">
            
                 
                 <li class="expressDelivery  first_child">
-                  Recommandé -
+                  Recommandï¿½ -
                 
               </li>
            
@@ -2609,7 +2609,7 @@ Payez vos achats en 3, 5, 10 ou 20 fois en petites mensualités ou au comptant av
           <span class="label">Retrait :</span> Gratuit en magasin
           
       </ul>
-      <!-- end : détail annonce -->
+      <!-- end : dï¿½tail annonce -->
       
       <!-- begin : actions -->
       
@@ -2670,7 +2670,7 @@ Payez vos achats en 3, 5, 10 ou 20 fois en petites mensualités ou au comptant av
       <a href="javascript:PM.PopUp.open(&#39;/sponsorship?action=register&amp;productid=3513226278&amp;referralform=true&amp;ssk=e55de12529a0e24cb6c7a9e532812a2e9f4d58e04bdcff7ab8d08448ff1c1082&#39;,PM.PopUp.Type.CUSTOM, 560, 575)" rel="nofollow">
                   <span>Parrainage</span>
       </a>
-    <p><span class="a"><b><i>Envoyez cette page à un ami et&nbsp;gagnez&nbsp;7&nbsp;&euro;</i></b></span></p>
+    <p><span class="a"><b><i>Envoyez cette page ï¿½ un ami et&nbsp;gagnez&nbsp;7&nbsp;&euro;</i></b></span></p>
   </li>
 
   
@@ -2708,7 +2708,7 @@ Payez vos achats en 3, 5, 10 ou 20 fois en petites mensualités ou au comptant av
 <script type="text/javascript">
   // tags click de nav
   var mainDiv = PM.Dom.getById("fpp_da");
-  PM.Debug.store("mise en place tags click de nav sur la fpp/da personnalisée");
+  PM.Debug.store("mise en place tags click de nav sur la fpp/da personnalisï¿½e");
   PM.Event.add($j(".fn h1 a",                           mainDiv), "click", PM.Statistics.tagClick.bindObj(null, PM.Statistics.Xtn2.FPDA, 'DACustom::RechercheTitle::RechercheGlobale', PM.Statistics.Type.NAVIGATION));
   PM.Event.add($j(".fn span.hbis a",                    mainDiv), "click", PM.Statistics.tagClick.bindObj(null, PM.Statistics.Xtn2.FPDA, 'DACustom::RechercheCaptionTitre::RechercheGlobale', PM.Statistics.Type.NAVIGATION));
   PM.Event.add($j(".product_photo a, .see_photos a",    mainDiv), "click", PM.Statistics.tagClick.bindObj(null, PM.Statistics.Xtn2.FPDA, 'DACustom::PhotoProduit::FPA::Diaporama', PM.Statistics.Type.NAVIGATION));
@@ -3038,7 +3038,7 @@ function shutPopinAction(description){
 
 
 <div class="section offer_details">
-  <h2 class="titleBlock">Informations complémentaires</h2>
+  <h2 class="titleBlock">Informations complï¿½mentaires</h2>
 
 
   
@@ -3049,7 +3049,7 @@ function shutPopinAction(description){
         </span>
         
         <ins>-</ins>
-        Produit neuf garanti 2 ans. Livrable sous 3 à 5 jours à domicile* ou en retrait magasin Boulanger sous 2 heures** Colissimo offert dès 20 euros d'achats pour les produits de moins de 30 kg et TV de moins de 101 cm. Livraison et mise en service offertes dès 300 euros d'achats pour les produits de plus de 30 kg et TV de plus de 101 cm. Livraison en France métropolitaine (y compris en Corse) * Sous réserve de disponibilité immédiate en stock. ** Sous réserve de disponibilité dans le magasin choisi.
+        Produit neuf garanti 2 ans. Livrable sous 3 ï¿½ 5 jours ï¿½ domicile* ou en retrait magasin Boulanger sous 2 heures** Colissimo offert dï¿½s 20 euros d'achats pour les produits de moins de 30 kg et TV de moins de 101 cm. Livraison et mise en service offertes dï¿½s 300 euros d'achats pour les produits de plus de 30 kg et TV de plus de 101 cm. Livraison en France mï¿½tropolitaine (y compris en Corse) * Sous rï¿½serve de disponibilitï¿½ immï¿½diate en stock. ** Sous rï¿½serve de disponibilitï¿½ dans le magasin choisi.
       
       </p>
       
@@ -3059,7 +3059,7 @@ function shutPopinAction(description){
     
   
     <div class="custom_details">
-      Alimentation : USB HDMI : 2.0b Poids (grammes) : 40 gAutres : Câble d&#39;alimentation, adaptateur 
+      Alimentation : USB HDMI : 2.0b Poids (grammes) : 40 gAutres : Cï¿½ble d&#39;alimentation, adaptateur 
     </div>
   
   
@@ -3069,9 +3069,9 @@ function shutPopinAction(description){
     
     
     <div class="shipping_country">
-      <span class="label">Pays d'expédition :</span> <span class="value">France</span>
+      <span class="label">Pays d'expï¿½dition :</span> <span class="value">France</span>
       <a href="javascript:PM.PopUp.open('/help/hb/popup/true#hb_shipping', PM.PopUp.Type.HELP, 500, 650);"
-        ><img src="https://static.fr.shopping.rakuten.com/rakuten-static-deliver/app/509.0.1/20180814/static/front/brand/www/images/default/structure/blank.gif" pagespeed_no_defer="" width="13" alt="France" data-pm-lazy-src="https://static.fr.shopping.rakuten.com/rakuten-static-deliver/app/509.0.1/20180814/static/front/brand/www/images/default/flag/france.gif" title="Vendeur expédiant depuis la France métropolitaine" height="9"/>
+        ><img src="https://static.fr.shopping.rakuten.com/rakuten-static-deliver/app/509.0.1/20180814/static/front/brand/www/images/default/structure/blank.gif" pagespeed_no_defer="" width="13" alt="France" data-pm-lazy-src="https://static.fr.shopping.rakuten.com/rakuten-static-deliver/app/509.0.1/20180814/static/front/brand/www/images/default/flag/france.gif" title="Vendeur expï¿½diant depuis la France mï¿½tropolitaine" height="9"/>
       </a>
     </div>
     
@@ -3080,11 +3080,11 @@ function shutPopinAction(description){
     
     <div class="shipping">
   
-      <span class="label">Expédition <span class="hlp">(<a onclick="new PM.Alert('/offer?action=shippingtypedescription&advertId=4312231996', {evalScripts: true, isAjax: true, hasMargin: true, clickOutsideClose: true, width: '772px', isModal: true, isBlocker: true, useTable: false}); return false;" href="#" alt="aide" class="hlp" rel="nofollow">?</a>)</span> :</span>
+      <span class="label">Expï¿½dition <span class="hlp">(<a onclick="new PM.Alert('/offer?action=shippingtypedescription&advertId=4312231996', {evalScripts: true, isAjax: true, hasMargin: true, clickOutsideClose: true, width: '772px', isModal: true, isBlocker: true, useTable: false}); return false;" href="#" alt="aide" class="hlp" rel="nofollow">?</a>)</span> :</span>
       <ul class="value">
      
         <li class="shipping15 first_child">
-          Recommandé -
+          Recommandï¿½ -
         </li>
    
         <li class="shipping100 last_child">
@@ -3113,11 +3113,11 @@ function shutPopinAction(description){
   <h2 class="titleBlock">Fiche Technique</h2>
 
    
-      <ul class="contributors"><li class="sub"><span class="label">Fabricant&nbsp;: </span><em class="value"><a class="ft_link" href="/s/google">Google</a></em></li>    <li class="sub"><span class="label">Référence fabricant&nbsp;: </span><em class="value">GA00439-FR</em></li>
+      <ul class="contributors"><li class="sub"><span class="label">Fabricant&nbsp;: </span><em class="value"><a class="ft_link" href="/s/google">Google</a></em></li>    <li class="sub"><span class="label">Rï¿½fï¿½rence fabricant&nbsp;: </span><em class="value">GA00439-FR</em></li>
 
 
-<p>Produit soumis à la Rémunération Pour Copie Privée.&nbsp;<a href="javascript:void PM.BT.ubw('http',58,47,47,'www',46,'culturecommunication',46,'gouv',46,'fr',47,'Politiques-ministerielles',47,'Propriete-litteraire-et-artistique',47,'Commission-pour-la-remuneration-de-la-copie-privee',47,'Notice-explicative-pour-les-acquereurs-de-supports')">En savoir plus</a></p>
-<p><a href="javascript:void PM.BT.ubw('http',58,47,47,'www',46,'culturecommunication',46,'gouv',46,'fr',47,'Politiques-ministerielles',47,'Propriete-litteraire-et-artistique',47,'Commission-pour-la-remuneration-de-la-copie-privee',47,'Questions-pratiques',47,'Les-montants-de-la-Remuneration-pour-Copie-Privee')">Voir le montant de la Rémunération Pour Copie Privée</a></p></ul>
+<p>Produit soumis ï¿½ la Rï¿½munï¿½ration Pour Copie Privï¿½e.&nbsp;<a href="javascript:void PM.BT.ubw('http',58,47,47,'www',46,'culturecommunication',46,'gouv',46,'fr',47,'Politiques-ministerielles',47,'Propriete-litteraire-et-artistique',47,'Commission-pour-la-remuneration-de-la-copie-privee',47,'Notice-explicative-pour-les-acquereurs-de-supports')">En savoir plus</a></p>
+<p><a href="javascript:void PM.BT.ubw('http',58,47,47,'www',46,'culturecommunication',46,'gouv',46,'fr',47,'Politiques-ministerielles',47,'Propriete-litteraire-et-artistique',47,'Commission-pour-la-remuneration-de-la-copie-privee',47,'Questions-pratiques',47,'Les-montants-de-la-Remuneration-pour-Copie-Privee')">Voir le montant de la Rï¿½munï¿½ration Pour Copie Privï¿½e</a></p></ul>
  
 
   
@@ -3141,7 +3141,7 @@ function shutPopinAction(description){
          
       
       <div class="spec_table">
-      <p class="table_caption">Général</p>
+      <p class="table_caption">Gï¿½nï¿½ral</p>
         <table class="spec_table_ctn">
 
               
@@ -3156,7 +3156,7 @@ function shutPopinAction(description){
             <tr class="odd last_child">
         
               <th class="label first_child"><span>Type de Produit</span></th>
-              <td class="value last_child"><span>Récepteur multimédia numérique</span></td>
+              <td class="value last_child"><span>Rï¿½cepteur multimï¿½dia numï¿½rique</span></td>
         
             </tr>   
         
@@ -3171,7 +3171,7 @@ function shutPopinAction(description){
          
       
       <div class="spec_table">
-      <p class="table_caption">Système audio</p>
+      <p class="table_caption">Systï¿½me audio</p>
         <table class="spec_table_ctn">
 
               
@@ -3185,8 +3185,8 @@ function shutPopinAction(description){
 
             <tr class="odd first_child">
         
-              <th class="label first_child"><span>Chaînes audio</span></th>
-              <td class="value last_child"><span>Stéreo</span></td>
+              <th class="label first_child"><span>Chaï¿½nes audio</span></th>
+              <td class="value last_child"><span>Stï¿½reo</span></td>
         
             </tr>   
         
@@ -3198,7 +3198,7 @@ function shutPopinAction(description){
             <tr class="even">
         
               <th class="label first_child"><span>Fonction</span></th>
-              <td class="value last_child"><span>Lecteur réseau</span></td>
+              <td class="value last_child"><span>Lecteur rï¿½seau</span></td>
         
             </tr>   
         
@@ -3210,7 +3210,7 @@ function shutPopinAction(description){
             <tr class="odd">
         
               <th class="label first_child"><span>Source</span></th>
-              <td class="value last_child"><span>Réseau</span></td>
+              <td class="value last_child"><span>Rï¿½seau</span></td>
         
             </tr>   
         
@@ -3221,7 +3221,7 @@ function shutPopinAction(description){
 
             <tr class="even">
         
-              <th class="label first_child"><span>Résolutions prises en charge</span></th>
+              <th class="label first_child"><span>Rï¿½solutions prises en charge</span></th>
               <td class="value last_child"><span>1920 x 1080</span></td>
         
             </tr>   
@@ -3234,7 +3234,7 @@ function shutPopinAction(description){
             <tr class="odd last_child">
         
               <th class="label first_child"><span>Fonctions</span></th>
-              <td class="value last_child"><span>Micrologiciel évolutif, à bus USB, commande à distance depuis un smartphone</span></td>
+              <td class="value last_child"><span>Micrologiciel ï¿½volutif, ï¿½ bus USB, commande ï¿½ distance depuis un smartphone</span></td>
         
             </tr>   
         
@@ -3249,7 +3249,7 @@ function shutPopinAction(description){
          
       
       <div class="spec_table">
-      <p class="table_caption">Multimédia réseau et Internet</p>
+      <p class="table_caption">Multimï¿½dia rï¿½seau et Internet</p>
         <table class="spec_table_ctn">
 
               
@@ -3324,7 +3324,7 @@ function shutPopinAction(description){
             <tr class="odd last_child">
         
               <th class="label first_child"><span>Accessoires inclus</span></th>
-              <td class="value last_child"><span>Adaptateur secteur, Câble d'alimentaion USB</span></td>
+              <td class="value last_child"><span>Adaptateur secteur, Cï¿½ble d'alimentaion USB</span></td>
         
             </tr>   
         
@@ -3435,12 +3435,12 @@ function shutPopinAction(description){
     
   </div>
   
-  <h3>Les questions déjà posées</h3>
+  <h3>Les questions dï¿½jï¿½ posï¿½es</h3>
   <p class="edito">
      Il y a <span class="value">14</span> questions sur  cette annonce. 
   </p>
   
-  <!--liste des questions réponses -->
+  <!--liste des questions rï¿½ponses -->
   <ul class="q_a_list">
   
     <li class="
@@ -3453,15 +3453,15 @@ function shutPopinAction(description){
         </dt>
         <dd class="first_child last_child">
           <blockquote class="comment">Bonjour
-Cela marche avec l¿iphone x ?</blockquote>
+Cela marche avec lï¿½iphone x ?</blockquote>
         </dd>
       </dl>
       <dl class="p_answer">
         <dt class="seller">
-          Réponse de <span class="strong">Boulanger</span>&nbsp;:
+          Rï¿½ponse de <span class="strong">Boulanger</span>&nbsp;:
         </dt>
         <dd class="first_child last_child">
-            <blockquote class="comment">Bonjour, les deux produits sont en effet bien compatibles. Cordialement, Baptiste de l'équipe 
+            <blockquote class="comment">Bonjour, les deux produits sont en effet bien compatibles. Cordialement, Baptiste de l'ï¿½quipe 
 Boulanger</blockquote>
         </dd>
       </dl>
@@ -3481,13 +3481,13 @@ Boulanger</blockquote>
       </dl>
       <dl class="p_answer">
         <dt class="seller">
-          Réponse de <span class="strong">Boulanger</span>&nbsp;:
+          Rï¿½ponse de <span class="strong">Boulanger</span>&nbsp;:
         </dt>
         <dd class="first_child last_child">
-            <blockquote class="comment">Bonjour Aurélien,
-Ce modèle ne prend pas en charge la 4K, si toutefois vous souhaitez cette caractéristique, vous pouvez choisir le 
-modèle Ultra à 79¿.
-L'équipe Boulanger</blockquote>
+            <blockquote class="comment">Bonjour Aurï¿½lien,
+Ce modï¿½le ne prend pas en charge la 4K, si toutefois vous souhaitez cette caractï¿½ristique, vous pouvez choisir le 
+modï¿½le Ultra ï¿½ 79ï¿½.
+L'ï¿½quipe Boulanger</blockquote>
         </dd>
       </dl>
     </li>
@@ -3503,20 +3503,20 @@ L'équipe Boulanger</blockquote>
         <dd class="first_child last_child">
           <blockquote class="comment">Bonjour
 
-En commandant chez rakuten un Google chromecast, est ce que les 3 mois offerts à molotov TV sont offerts comme sur le site ou non ?
+En commandant chez rakuten un Google chromecast, est ce que les 3 mois offerts ï¿½ molotov TV sont offerts comme sur le site ou non ?
 
 Cordialement </blockquote>
         </dd>
       </dl>
       <dl class="p_answer">
         <dt class="seller">
-          Réponse de <span class="strong">Boulanger</span>&nbsp;:
+          Rï¿½ponse de <span class="strong">Boulanger</span>&nbsp;:
         </dt>
         <dd class="first_child last_child">
             <blockquote class="comment">Bonjour,
-Je suis navré mais après vérification aucune offre n'est faite pour l'achat d'un Chromecast sur le 
+Je suis navrï¿½ mais aprï¿½s vï¿½rification aucune offre n'est faite pour l'achat d'un Chromecast sur le 
 site de Rakuten.
-L'équipe Boulanger</blockquote>
+L'ï¿½quipe Boulanger</blockquote>
         </dd>
       </dl>
     </li>
@@ -3535,12 +3535,12 @@ L'équipe Boulanger</blockquote>
       </dl>
       <dl class="p_answer">
         <dt class="seller">
-          Réponse de <span class="strong">Boulanger</span>&nbsp;:
+          Rï¿½ponse de <span class="strong">Boulanger</span>&nbsp;:
         </dt>
         <dd class="first_child last_child">
-            <blockquote class="comment">Bonjour mugiwara594, je suis navrée mais nous ne pouvons accepter cela. Nos prix peuvent varier 
+            <blockquote class="comment">Bonjour mugiwara594, je suis navrï¿½e mais nous ne pouvons accepter cela. Nos prix peuvent varier 
 selon les promotions. 
-L'équipe Boulanger.</blockquote>
+L'ï¿½quipe Boulanger.</blockquote>
         </dd>
       </dl>
     </li>
@@ -3554,19 +3554,19 @@ L'équipe Boulanger.</blockquote>
           Question de <span class="strong">ysmin</span>&nbsp;:
         </dt>
         <dd class="first_child last_child">
-          <blockquote class="comment">Bonjour, j'aimerai juste m'assurer que je peux regarder netflix et my canal sur ma télé via mon ipad?? Merci</blockquote>
+          <blockquote class="comment">Bonjour, j'aimerai juste m'assurer que je peux regarder netflix et my canal sur ma tï¿½lï¿½ via mon ipad?? Merci</blockquote>
         </dd>
       </dl>
       <dl class="p_answer">
         <dt class="seller">
-          Réponse de <span class="strong">Boulanger</span>&nbsp;:
+          Rï¿½ponse de <span class="strong">Boulanger</span>&nbsp;:
         </dt>
         <dd class="first_child last_child">
             <blockquote class="comment">Bonjour, 
 la chromecast est fait pour cet usage en particulier, donc pas de soucis. Il suffit de bien 
 configurer le device via l'application Google Home. 
-Bonne journée, 
-L'équipe Boulanger</blockquote>
+Bonne journï¿½e, 
+L'ï¿½quipe Boulanger</blockquote>
         </dd>
       </dl>
     </li>
@@ -3580,19 +3580,19 @@ L'équipe Boulanger</blockquote>
           Question de <span class="strong">ysmin</span>&nbsp;:
         </dt>
         <dd class="first_child last_child">
-          <blockquote class="comment">Bonsoir jai un abonbement canal+, est ce que ça marche avec my canal? Pour voir sur une 2eme tv? Merci</blockquote>
+          <blockquote class="comment">Bonsoir jai un abonbement canal+, est ce que ï¿½a marche avec my canal? Pour voir sur une 2eme tv? Merci</blockquote>
         </dd>
       </dl>
       <dl class="p_answer">
         <dt class="seller">
-          Réponse de <span class="strong">Boulanger</span>&nbsp;:
+          Rï¿½ponse de <span class="strong">Boulanger</span>&nbsp;:
         </dt>
         <dd class="first_child last_child">
             <blockquote class="comment">Bonjour, 
 cette passerelle est utilisable avec Chromecast via un support tiers et de ce fait vous pouvez 
-tout à fait l'utiliser pour visionner MyCanal avec. 
+tout ï¿½ fait l'utiliser pour visionner MyCanal avec. 
 Nous restons disponible si besoin, 
-L'équipe Boulanger</blockquote>
+L'ï¿½quipe Boulanger</blockquote>
         </dd>
       </dl>
     </li>
@@ -3611,11 +3611,11 @@ L'équipe Boulanger</blockquote>
       </dl>
       <dl class="p_answer">
         <dt class="seller">
-          Réponse de <span class="strong">Boulanger</span>&nbsp;:
+          Rï¿½ponse de <span class="strong">Boulanger</span>&nbsp;:
         </dt>
         <dd class="first_child last_child">
             <blockquote class="comment">Bonjour BOOKSO6, je vous confirme que la Chromecast 3 est bien compatible avec iOS 12.1.3. Merci pour 
-votre confiance, à bientôt ! - L'équipe Boulanger</blockquote>
+votre confiance, ï¿½ bientï¿½t ! - L'ï¿½quipe Boulanger</blockquote>
         </dd>
       </dl>
     </li>
@@ -3629,17 +3629,17 @@ votre confiance, à bientôt ! - L'équipe Boulanger</blockquote>
           Question de <span class="strong">karnamai</span>&nbsp;:
         </dt>
         <dd class="first_child last_child">
-          <blockquote class="comment">bonjour est ce l vrai Chromecast qui passe par google cast ou bien un site chinois qu on doit télécharger puis caster,et aussi fait elle du cast ou du mirroring uniquement ? merci</blockquote>
+          <blockquote class="comment">bonjour est ce l vrai Chromecast qui passe par google cast ou bien un site chinois qu on doit tï¿½lï¿½charger puis caster,et aussi fait elle du cast ou du mirroring uniquement ? merci</blockquote>
         </dd>
       </dl>
       <dl class="p_answer">
         <dt class="seller">
-          Réponse de <span class="strong">Boulanger</span>&nbsp;:
+          Rï¿½ponse de <span class="strong">Boulanger</span>&nbsp;:
         </dt>
         <dd class="first_child last_child">
             <blockquote class="comment">Bonjour,
 Ce produit est le vrai Chromecast, je vous rassure. Il a la fonction du cast et du mirroring.
-L'équipe Boulanger</blockquote>
+L'ï¿½quipe Boulanger</blockquote>
         </dd>
       </dl>
     </li>
@@ -3653,16 +3653,16 @@ L'équipe Boulanger</blockquote>
           Question de <span class="strong">psg76620</span>&nbsp;:
         </dt>
         <dd class="first_child last_child">
-          <blockquote class="comment">Bonjour, je vous remercie pour votre réponse. Mais pour le câble hdmi dont vous parlez, n'importe quel câble hdmi ferait l affaire ou il faut acheter un hdmi spécial ? Merci je suis vraiment intéressé par ce produit.</blockquote>
+          <blockquote class="comment">Bonjour, je vous remercie pour votre rï¿½ponse. Mais pour le cï¿½ble hdmi dont vous parlez, n'importe quel cï¿½ble hdmi ferait l affaire ou il faut acheter un hdmi spï¿½cial ? Merci je suis vraiment intï¿½ressï¿½ par ce produit.</blockquote>
         </dd>
       </dl>
       <dl class="p_answer">
         <dt class="seller">
-          Réponse de <span class="strong">Boulanger</span>&nbsp;:
+          Rï¿½ponse de <span class="strong">Boulanger</span>&nbsp;:
         </dt>
         <dd class="first_child last_child">
-            <blockquote class="comment">Juste un câble HDMI quelconque fonctionnera. :)
-L'équipe Boulanger</blockquote>
+            <blockquote class="comment">Juste un cï¿½ble HDMI quelconque fonctionnera. :)
+L'ï¿½quipe Boulanger</blockquote>
         </dd>
       </dl>
     </li>
@@ -3676,23 +3676,23 @@ L'équipe Boulanger</blockquote>
           Question de <span class="strong">psg76620</span>&nbsp;:
         </dt>
         <dd class="first_child last_child">
-          <blockquote class="comment">Bonjour , le Google chromecast est il compatible avec le Google home ? Du genre allumer sa TV ou lancer Netflix depuis son Google home grâce à ce chromecast ? Merci de répondre cordialement</blockquote>
+          <blockquote class="comment">Bonjour , le Google chromecast est il compatible avec le Google home ? Du genre allumer sa TV ou lancer Netflix depuis son Google home grï¿½ce ï¿½ ce chromecast ? Merci de rï¿½pondre cordialement</blockquote>
         </dd>
       </dl>
       <dl class="p_answer">
         <dt class="seller">
-          Réponse de <span class="strong">Boulanger</span>&nbsp;:
+          Rï¿½ponse de <span class="strong">Boulanger</span>&nbsp;:
         </dt>
         <dd class="first_child last_child">
             <blockquote class="comment">Bonjour psg76620, 
 
-Je vous confirme que oui cela est possible. Il faut une prise HDMI spécifique sur la télé pour 
+Je vous confirme que oui cela est possible. Il faut une prise HDMI spï¿½cifique sur la tï¿½lï¿½ pour 
 pouvoir allumer la Chromecast avec Google mais oui vous pouvez lancer Netflix ou youtube depuis la 
-google home à la chromecast. 
+google home ï¿½ la chromecast. 
 
 Je vous remercie de votre confiance. 
 
-L'équipe Boulanger.</blockquote>
+L'ï¿½quipe Boulanger.</blockquote>
         </dd>
       </dl>
     </li>
@@ -3765,7 +3765,7 @@ L'équipe Boulanger.</blockquote>
                                             
                     <div class="shop_logo">
                                             <a href="/boutique/Boulanger/kw/google+home" rel="nofollow">
-                                                <img alt="Découvrez Google Home avec Boulanger" src="https://static.fr.shopping.rakuten.com/rmsres/108276039/img/fileupload/1558703613009_totem_google_home.jpg"/>
+                                                <img alt="Dï¿½couvrez Google Home avec Boulanger" src="https://static.fr.shopping.rakuten.com/rmsres/108276039/img/fileupload/1558703613009_totem_google_home.jpg"/>
                                             </a>
                                 </div>
             </div><div class="shopModule carouselMod section " id="advertsfeed_589879" data-pm-tagging-specificity="Nouveautes"></div>
@@ -3781,7 +3781,7 @@ L'équipe Boulanger.</blockquote>
         if(data.adverts.length != 0){
             var htmlLink = 'href';
         
-            var carousel  = '<h2 class="titleBlock">Nouveautés</h2>';
+            var carousel  = '<h2 class="titleBlock">Nouveautï¿½s</h2>';
             carousel     += '<div class="carousel">';
                                            carousel     +=    '<div class="carouselWindow">';
             carousel     +=    '<ul class="carouselCtn clearFix">';
@@ -3807,7 +3807,7 @@ L'équipe Boulanger.</blockquote>
                                              }
                 carousel     +=              '">';
                                                                carousel     +=                '<li class="product_photo first_child">';
-                carousel     +=                  '<a ' + htmlLink + '="' + item.url + '" title="Aperçu">';
+                carousel     +=                  '<a ' + htmlLink + '="' + item.url + '" title="Aperï¿½u">';
                                                  if(item.hasImg){
                 carousel     +=                    '<img class="photo" src="' + item.imgSrc + '" alt="' + item.title + '" width="130" height="130"/>';                                  
                                                  }
@@ -3898,7 +3898,7 @@ L'équipe Boulanger.</blockquote>
             targetDiv.innerHTML = carousel;
 
             var parameters = {};
-            parameters.buttonPrevHTML = '<a class="navBtn backBtn" title="Produits précédents">Produits précédents</a>';
+            parameters.buttonPrevHTML = '<a class="navBtn backBtn" title="Produits prï¿½cï¿½dents">Produits prï¿½cï¿½dents</a>';
             parameters.buttonNextHTML = '<a class="navBtn nextBtn" title="Produits suivants">Produits suivants</a>';
             parameters.visible        = 1;
             parameters.scroll         = 1;
@@ -3926,7 +3926,7 @@ L'équipe Boulanger.</blockquote>
 	        <span class="seller_rating">
 	            4,8/5
 	        </span>
-	     pour
+	    ï¿½pour
 	    
 	    38 806        
 	    	    
@@ -3951,35 +3951,35 @@ L'équipe Boulanger.</blockquote>
               <b class="fn">OlivierP,</b>
               <abbr class="time">22/06/2019 :</abbr>
             </dt>
-            <dd class="description ">«Parfait, merci »</dd>
+            <dd class="description ">ï¿½Parfait, merci ï¿½</dd>
           </dl>
                                           <dl class="comment_user">
             <dt class="summary">
               <b class="fn">OlivierP,</b>
               <abbr class="time">22/06/2019 :</abbr>
             </dt>
-            <dd class="description ">«Parfait merci »</dd>
+            <dd class="description ">ï¿½Parfait merci ï¿½</dd>
           </dl>
                                           <dl class="comment_user">
             <dt class="summary">
               <b class="fn">MohamedN,</b>
               <abbr class="time">21/06/2019 :</abbr>
             </dt>
-            <dd class="description ">«Reçu»</dd>
+            <dd class="description ">ï¿½Reï¿½uï¿½</dd>
           </dl>
                                           <dl class="comment_user">
             <dt class="summary">
               <b class="fn">MohamedN,</b>
               <abbr class="time">21/06/2019 :</abbr>
             </dt>
-            <dd class="description ">«Reçu»</dd>
+            <dd class="description ">ï¿½Reï¿½uï¿½</dd>
           </dl>
                                           <dl class="comment_user">
             <dt class="summary">
               <b class="fn">MohamedN,</b>
               <abbr class="time">21/06/2019 :</abbr>
             </dt>
-            <dd class="description ">«Reçu»</dd>
+            <dd class="description ">ï¿½Reï¿½uï¿½</dd>
           </dl>
                                                                                       
       <a href="/feedback/Boulanger" rel="nofollow">Lire tous les commentaires</a>
@@ -4041,7 +4041,7 @@ L'équipe Boulanger.</blockquote>
 <p class="prevent_misuse">
 
     <a href="javascript:popHelp(&#39;/help/m_shop_problem_alert/aid/3081593/popup/true&#39;,490, 520)" rel="nofollow">
-        Signaler un problème d'affichage sur cette Super Boutique
+        Signaler un problï¿½me d'affichage sur cette Super Boutique
     </a>
     
         <br />
@@ -4049,7 +4049,7 @@ L'équipe Boulanger.</blockquote>
 
 
     <a href="javascript:popHelp(&#39;/question?action=problem&amp;aid=4312231996&amp;productid=3513226278&#39;,490, 520)" rel="nofollow">
-        Signaler un problème sur cette annonce à Rakuten
+        Signaler un problï¿½me sur cette annonce ï¿½ Rakuten
     </a>
 
 </p>
@@ -4126,11 +4126,11 @@ PM.Event.add(window, PM.Event.Type.INIT, function(){
 
 <!-- Begin: #product_pm -->
 <div id="product_pm" class="box_ctn information product_pm">
-<h6>Google Chromecast 3 - Récepteur multimédia numérique</h6>
+<h6>Google Chromecast 3 - Rï¿½cepteur multimï¿½dia numï¿½rique</h6>
 <div class="b_ctn product_pm_ctn">
     <!-- photo produit -->
     
-      <img src="https://static.fr.shopping.rakuten.com/rakuten-static-deliver/app/509.0.1/20180814/static/front/brand/www/images/default/structure/blank.gif" pagespeed_no_defer="" width="130" alt="Google Chromecast 3 - Récepteur multimédia numérique" data-pm-lazy-src="https://pmcdn.priceminister.com/photo/1219963045_M.jpg" class="photo" height="130"/>
+      <img src="https://static.fr.shopping.rakuten.com/rakuten-static-deliver/app/509.0.1/20180814/static/front/brand/www/images/default/structure/blank.gif" pagespeed_no_defer="" width="130" alt="Google Chromecast 3 - Rï¿½cepteur multimï¿½dia numï¿½rique" data-pm-lazy-src="https://pmcdn.priceminister.com/photo/1219963045_M.jpg" class="photo" height="130"/>
     
     
     <!-- begin:  .pm_mkt_place -->
@@ -4145,7 +4145,7 @@ PM.Event.add(window, PM.Event.Type.INIT, function(){
         </b></span>
         </span></li>
         <li class="wish"><a href="/product_alert?action=view&fromurl=%2Foffer%3Faction%3Ddesc%26aid%3D4312231996%26productid%3D3513226278&productid=3513226278" onclick="PM.Statistics.tagClick(null, 'DACustom::FaireUnSouhait::FPA::FaireUnSouhait::Formulaire', PM.Statistics.Type.NAVIGATION)" rel="nofollow">
-        <span><b>Créer une alerte prix (souhait)</b></span></a>
+        <span><b>Crï¿½er une alerte prix (souhait)</b></span></a>
         </li>
         
         <li class="sell_yours last_child"><a href="/submit?action=submitadvert&productid=3513226278&stage=10" onclick="PM.Statistics.tagClick(null, 'DACustom::VendezLeVotre::FPA::MeVRapide::Formulaire', PM.Statistics.Type.NAVIGATION)" rel="nofollow">
@@ -4159,7 +4159,7 @@ PM.Event.add(window, PM.Event.Type.INIT, function(){
     
         <div class="pm_panel all_offers">
         
-            <p class="edito">"Google Chromecast 3 - Récepteur multimédia numérique" sur Rakuten :</p>
+            <p class="edito">"Google Chromecast 3 - Rï¿½cepteur multimï¿½dia numï¿½rique" sur Rakuten :</p>
             <ul class="pm_offers">
 
              
@@ -4167,14 +4167,14 @@ PM.Event.add(window, PM.Event.Type.INIT, function(){
             
               <li class="advtype_used first_child">
                   <p class="price_used"> 
-                      Occasion à partir de&nbsp;: <span class="value">30,00&nbsp;&euro;</span>
+                      Occasion ï¿½ partir de&nbsp;: <span class="value">30,00&nbsp;&euro;</span>
                   </p>
               </li>
             
             
             <li class="advtype_new last_child">
                 <p class="price_new">
-                    Neuf à partir de&nbsp;: <span class="value">39,00&nbsp;&euro;</span>
+                    Neuf ï¿½ partir de&nbsp;: <span class="value">39,00&nbsp;&euro;</span>
                 </p>
             </li>
             
@@ -4410,10 +4410,10 @@ PM.Event.add(window, PM.Event.Type.INIT, function(){
       <p class="heading_5">Rakuten</p>
       <ul>
         
-        <li><a href="https://recrutement.rakuten.fr" target="_blank">Carrières</a></li>
+        <li><a href="https://recrutement.rakuten.fr" target="_blank">Carriï¿½res</a></li>
         
-        <li><a href="/newhelp/conditions-generales/" rel="nofollow">Conditions générales</a></li>
-        <li><a href="/newhelp/vie-privee-et-cookies/" rel="nofollow">Vie privée et cookies</a></li>
+        <li><a href="/newhelp/conditions-generales/" rel="nofollow">Conditions gï¿½nï¿½rales</a></li>
+        <li><a href="/newhelp/vie-privee-et-cookies/" rel="nofollow">Vie privï¿½e et cookies</a></li>
         
         <li><a href="/evt/affiliation-PM">Affiliation</a></li>
         
@@ -4505,13 +4505,13 @@ PM.Event.add(window, PM.Event.Type.INIT, function(){
             <li class="viber"><a href="https://www.viber.com/fr/">Rakuten Viber</a></li>
             <li class="viki"><a href="https://www.viki.com/">Rakuten Viki</a></li>
             <li class="services"><a href="https://global.rakuten.com/corp/about/company/">Plus de services</a></li>
-            <li class="about"><a href="https://global.rakuten.com/corp/about/">À propos de Rakuten</a></li>
+            <li class="about"><a href="https://global.rakuten.com/corp/about/">ï¿½ propos de Rakuten</a></li>
          </ul>
          <div class="rakuten_footer_select_container">
             <select class="rakuten_footer_select" onchange="window.location = this.value">
                <option selected="selected" value="https://fr.shopping.rakuten.com">France</option>
                <option value="https://www.rakuten.de">Allemagne</option>
-               <option value="https://www.rakuten.com.br">Brésil</option>
+               <option value="https://www.rakuten.com.br">Brï¿½sil</option>
                <option value="https://www.rakuten.com">Etats-Unis</option>
                <option value="https://www.rakuten.co.jp">Japon</option>
                <option value="https://www.rakuten.com.tw">Taiwan</option>
@@ -4537,7 +4537,7 @@ PM.Event.add(window, PM.Event.Type.INIT, function(){
 
 
     
-      <!-- Méthode appellée pour invoquer des méthodes à appeller avant les tags xiti, criteo, ...  -->
+      <!-- Mï¿½thode appellï¿½e pour invoquer des mï¿½thodes ï¿½ appeller avant les tags xiti, criteo, ...  -->
 <script type="text/javascript">
   PM.Event.eventReached(PM.Event.Type.INIT);
 </script>
@@ -4714,7 +4714,7 @@ PM.Event.add(window, PM.Event.Type.INIT, function(){
       <a target="_blank" href="/evt/rakuten-superpoints"><b>avantages du Club Rakuten</b></a>.
     </p>
     {{#if isMultipleAccount}}
-    <p>Cette modification sera appliquée à tous les comptes créés avec votre adresse e-mail <strong>{{userEmail}}</strong></p>
+    <p>Cette modification sera appliquï¿½e ï¿½ tous les comptes crï¿½ï¿½s avec votre adresse e-mail <strong>{{userEmail}}</strong></p>
     {{/if}}
     <p class="spacerBottomM">Vous pourrez n&eacute;anmoins d&eacute;penser les Super Points que vous avez d&eacute;j&agrave; gagn&eacute;s.</p>
     <div class="btnCtn">
@@ -4820,7 +4820,7 @@ PM.Event.add(window, PM.Event.Type.INIT, function(){
   
   <div id="low">
     
-      <!-- Méthode appellée pour invoquer le chargement des images en lazyloading sur la page  -->
+      <!-- Mï¿½thode appellï¿½e pour invoquer le chargement des images en lazyloading sur la page  -->
 <script type="text/javascript">
   PM.Lazyload.init();
 </script>
@@ -5092,7 +5092,7 @@ PM.Event.add(window, PM.Event.Type.INIT, function(){
                 catch (e) {}
                 try
                 {
-                        window._uxa.push(['setCustomVariable', 13, 'rsp_pgs_status', PM.Context.data.rsp_pgs_status.value,3]); }
+                        window._uxa.push(['setCustomVariable', 13, 'rsp_pgs_status', PM.Context.data.rsp_pgs_LinkStatus.value,3]); }
                 catch (e) {}
                 try
                 {
@@ -5139,7 +5139,7 @@ PM.Event.add(window, PM.Event.Type.INIT, function(){
     })();
 
     function seoSearchKeywordManagement(path) {
-              var json = '{"occasion": "ft=u", "solde": "cmp=sales", "soldé": "cmp=sales", "soldes": "cmp=sales"}';
+              var json = '{"occasion": "ft=u", "solde": "cmp=sales", "soldï¿½": "cmp=sales", "soldes": "cmp=sales"}';
               var keywordMap = JSON.parse(json);
               var filterValue = undefined;
               var keyword = path.split("/")

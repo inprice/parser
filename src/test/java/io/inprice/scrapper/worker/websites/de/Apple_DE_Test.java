@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.de;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
@@ -14,6 +14,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Apple_DE_Test {
 
     private final String SITE_NAME = "apple";
@@ -36,7 +37,7 @@ public class Apple_DE_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Apple TV HD 32 GB", link.getName());
         assertEquals("159.00", link.getPrice().toString());
@@ -53,7 +54,7 @@ public class Apple_DE_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("21,5\" iMac mit Retina 4K Display", link.getName());
         assertEquals("1699.00", link.getPrice().toString());
@@ -70,7 +71,7 @@ public class Apple_DE_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("12,9\" iPad Pro Wi‑Fi 256 GB – Space Grau", link.getName());
         assertEquals("1269.00", link.getPrice().toString());
@@ -87,7 +88,7 @@ public class Apple_DE_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("iPhone XR 64 GB Gelb", link.getName());
         assertEquals("849.00", link.getPrice().toString());

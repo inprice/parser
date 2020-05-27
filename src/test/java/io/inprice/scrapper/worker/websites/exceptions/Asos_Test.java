@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.exceptions;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Asos_Test {
 
     private final String SITE_NAME = "asos";
@@ -37,7 +38,7 @@ public class Asos_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(Status.NO_DATA, link.getStatus());
+        assertEquals(LinkStatus.NO_DATA, link.getStatus());
     }
 
     @Test
@@ -48,7 +49,7 @@ public class Asos_Test {
 
         Link link = site.test(Helpers.getEmptyHtmlPath(), httpClient);
 
-        assertEquals(Status.READ_ERROR, link.getStatus());
+        assertEquals(LinkStatus.READ_ERROR, link.getStatus());
     }
 
     @Test
@@ -60,7 +61,7 @@ public class Asos_Test {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
         assertTrue(link.getHttpStatus() == 0);
-        assertEquals(Status.SOCKET_ERROR, link.getStatus());
+        assertEquals(LinkStatus.SOCKET_ERROR, link.getStatus());
     }
 
     @Test
@@ -72,7 +73,7 @@ public class Asos_Test {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
         assertTrue(link.getHttpStatus() == 400);
-        assertEquals(Status.NETWORK_ERROR, link.getStatus());
+        assertEquals(LinkStatus.NETWORK_ERROR, link.getStatus());
     }
 
 }

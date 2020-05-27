@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.uk;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Asda_UK_Test {
 
     private final String SITE_NAME = "asda";
@@ -40,7 +41,7 @@ public class Asda_UK_Test {
         setMock(1, prodId);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(prodId, link.getSku());
         assertEquals("Gran Lomo Malbec", link.getName());
         assertEquals("5.00", link.getPrice().toString());
@@ -56,7 +57,7 @@ public class Asda_UK_Test {
         setMock(2, prodId);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(prodId, link.getSku());
         assertEquals("Purina ONE Adult Dry Cat Food Salmon and Wholegrain", link.getName());
         assertEquals("11.00", link.getPrice().toString());
@@ -72,7 +73,7 @@ public class Asda_UK_Test {
         setMock(3, prodId);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(prodId, link.getSku());
         assertEquals("Prince Chocolate Sandwich Biscuits", link.getName());
         assertEquals("1.00", link.getPrice().toString());
@@ -88,7 +89,7 @@ public class Asda_UK_Test {
         setMock(4, prodId);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(prodId, link.getSku());
         assertEquals("Oral-B Pro 600 White & Clean Rechargeable Electric Toothbrush", link.getName());
         assertEquals("15.00", link.getPrice().toString());

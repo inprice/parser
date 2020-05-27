@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.es;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
@@ -21,6 +21,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.anyMap;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Pixmania_ES_Test {
 
     private final String SITE_NAME = "pixmania";
@@ -41,7 +42,7 @@ public class Pixmania_ES_Test {
         setMock(1);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("LIBH60WH", link.getSku());
         assertEquals("Casco para Bici Inteligente Blanco (Luz,Intermitentes,Manos libres,Reproductor,Aviso caída) y Mando Multifunción", link.getName());
         assertEquals("99.99", link.getPrice().toString());
@@ -56,7 +57,7 @@ public class Pixmania_ES_Test {
         setMock(2);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("502773", link.getSku());
         assertEquals("Alpine 64 PLUS Procesador Enfriador", link.getName());
         assertEquals("30.95", link.getPrice().toString());
@@ -71,7 +72,7 @@ public class Pixmania_ES_Test {
         setMock(3);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("VLVB34700B30", link.getSku());
         assertEquals("Cable HDMI de alta velocidad con conector HDMIEthe", link.getName());
         assertEquals("17.86", link.getPrice().toString());
@@ -86,7 +87,7 @@ public class Pixmania_ES_Test {
         setMock(4);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("1022729", link.getSku());
         assertEquals("6 discos lavables", link.getName());
         assertEquals("28.95", link.getPrice().toString());

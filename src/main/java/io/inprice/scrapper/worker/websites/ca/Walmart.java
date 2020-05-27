@@ -10,7 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
@@ -91,8 +91,8 @@ public class Walmart extends AbstractWebsite {
    */
   @Override
   public JSONObject getJsonData() {
-    Status preStatus = getLinkStatus();
-    setLinkStatus(Status.NO_DATA);
+    LinkStatus preStatus = getLinkStatus();
+    setLinkStatus(LinkStatus.NO_DATA);
 
     final String payload = getPayload();
 
@@ -123,14 +123,14 @@ public class Walmart extends AbstractWebsite {
             }
           }
         } else {
-          log.error("Failed to fetch data! Status: NO_DATA");
+          log.error("Failed to fetch data! LinkStatus: NO_DATA");
         }
       } else {
         setLinkStatus(response);
       }
     } else {
       log.error("Failed to create payload, NO_DATA");
-      setLinkStatus(Status.READ_ERROR);
+      setLinkStatus(LinkStatus.READ_ERROR);
     }
 
     return null;

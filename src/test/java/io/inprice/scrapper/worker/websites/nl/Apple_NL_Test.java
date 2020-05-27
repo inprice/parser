@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.nl;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
@@ -13,6 +13,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Apple_NL_Test {
 
     private final String SITE_NAME = "apple";
@@ -35,7 +36,7 @@ public class Apple_NL_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("21,5-inch iMac met Retina 4K‑display", link.getName());
         assertEquals("1699.00", link.getPrice().toString());
@@ -52,7 +53,7 @@ public class Apple_NL_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("512‑GB iPhone XS Max, goud", link.getName());
         assertEquals("1659.00", link.getPrice().toString());
@@ -69,7 +70,7 @@ public class Apple_NL_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("AirPods met draadloze oplaadcase", link.getName());
         assertEquals("229.00", link.getPrice().toString());
@@ -86,7 +87,7 @@ public class Apple_NL_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("SteelSeries Nimbus draadloze gamecontroller", link.getName());
         assertEquals("59.95", link.getPrice().toString());

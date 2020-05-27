@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.xx;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
@@ -34,8 +34,8 @@ public class Apple extends AbstractWebsite {
 
   @Override
   public JSONObject getJsonData() {
-    Status preStatus = getLinkStatus();
-    setLinkStatus(Status.NO_DATA);
+    LinkStatus preStatus = getLinkStatus();
+    setLinkStatus(LinkStatus.NO_DATA);
 
     Element dataEL = doc.selectFirst("script[type='application/ld+json']");
     if (dataEL != null) {
@@ -74,12 +74,12 @@ public class Apple extends AbstractWebsite {
         }
       } else {
         log.error("Failed to fetch data! Status: READ_ERROR --> L1");
-        setLinkStatus(Status.READ_ERROR);
+        setLinkStatus(LinkStatus.READ_ERROR);
       }
       return data;
     } else {
       log.error("Failed to fetch data! Status: READ_ERROR --> L2");
-      setLinkStatus(Status.READ_ERROR);
+      setLinkStatus(LinkStatus.READ_ERROR);
     }
     return super.getJsonData();
   }

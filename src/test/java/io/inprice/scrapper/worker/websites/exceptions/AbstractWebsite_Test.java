@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.websites.exceptions;
 
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
@@ -22,7 +22,7 @@ public class AbstractWebsite_Test {
 
         Link link = site.test(null);
 
-        assertEquals(Status.NOT_A_PRODUCT_PAGE, link.getStatus());
+        assertEquals(LinkStatus.NOT_A_PRODUCT_PAGE, link.getStatus());
     }
 
     @Test
@@ -31,7 +31,7 @@ public class AbstractWebsite_Test {
 
         Link link = site.test(null);
 
-        assertEquals(Status.NOT_A_PRODUCT_PAGE, link.getStatus());
+        assertEquals(LinkStatus.NOT_A_PRODUCT_PAGE, link.getStatus());
     }
 
     @Test
@@ -42,7 +42,7 @@ public class AbstractWebsite_Test {
 
         site.check();
 
-        assertEquals(Status.SOCKET_ERROR, site.getLink().getStatus());
+        assertEquals(LinkStatus.SOCKET_ERROR, site.getLink().getStatus());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class AbstractWebsite_Test {
 
         site.check();
 
-        assertEquals(Status.NETWORK_ERROR, site.getLink().getStatus());
+        assertEquals(LinkStatus.NETWORK_ERROR, site.getLink().getStatus());
     }
 
     private final Link link = new Link();

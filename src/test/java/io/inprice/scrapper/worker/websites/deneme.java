@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.UserAgents;
 
+@SuppressWarnings("unused")
 public class deneme {
 
     private static final Logger log = LoggerFactory.getLogger(deneme.class);

@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.fr;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Apple_FR_Test {
 
     private final String SITE_NAME = "apple";
@@ -36,7 +37,7 @@ public class Apple_FR_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Casque Beats Solo3 sans fil - Collection Club de Beats - Rouge Club", link.getName());
         assertEquals("199.95", link.getPrice().toString());
@@ -53,7 +54,7 @@ public class Apple_FR_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Housse en cuir pour MacBook Air et MacBook Pro 13 pouces - Noir", link.getName());
         assertEquals("199.00", link.getPrice().toString());
@@ -70,7 +71,7 @@ public class Apple_FR_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Smart Keyboard pour iPad Air 10,5 pouces (français)", link.getName());
         assertEquals("179.00", link.getPrice().toString());
@@ -87,7 +88,7 @@ public class Apple_FR_Test {
 
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals(sku, link.getSku());
         assertEquals("Smart Battery Case pour iPhone XS Max – Rose des sables", link.getName());
         assertEquals("149.00", link.getPrice().toString());

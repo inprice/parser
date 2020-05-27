@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.websites.nl;
 
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.websites.Helpers;
 import org.junit.Test;
@@ -19,7 +19,7 @@ public class Bol_NL_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("9200000080451630", link.getSku());
         assertEquals("Eagle Creek Pack-It Specter Tech Cube Set XS/S/M Black", link.getName());
         assertEquals("40.99", link.getPrice().toString());
@@ -33,7 +33,7 @@ public class Bol_NL_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("9200000108307626", link.getSku());
         assertEquals("Dyson Pure Cool Me - Luchtreiniger", link.getName());
         assertEquals("349.00", link.getPrice().toString());
@@ -47,7 +47,7 @@ public class Bol_NL_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("9200000106883561", link.getSku());
         assertEquals("Samsung Galaxy A50 - 128GB - Zwart", link.getName());
         assertEquals("279.00", link.getPrice().toString());
@@ -61,7 +61,7 @@ public class Bol_NL_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("9200000099723478", link.getSku());
         assertEquals("Andrélon Iedere Dag Shampoo - 3 x 300 ml - Voordeelverpakking", link.getName());
         assertEquals("5.09", link.getPrice().toString());

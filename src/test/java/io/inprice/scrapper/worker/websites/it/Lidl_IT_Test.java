@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.websites.it;
 
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
@@ -19,7 +19,7 @@ public class Lidl_IT_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("25951", link.getSku());
         assertEquals("Pettine elettrico lisciante", link.getName());
         assertEquals("14.99", link.getPrice().toString());
@@ -33,7 +33,7 @@ public class Lidl_IT_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("25959", link.getSku());
         assertEquals("Dispositivo per massaggi sottovuoto", link.getName());
         assertEquals("22.99", link.getPrice().toString());
@@ -47,7 +47,7 @@ public class Lidl_IT_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("25984", link.getSku());
         assertEquals("Cuscino 50x80 cm", link.getName());
         assertEquals("9.99", link.getPrice().toString());
@@ -61,7 +61,7 @@ public class Lidl_IT_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("26050", link.getSku());
         assertEquals("Robot aspirapolvere", link.getName());
         assertEquals("129.00", link.getPrice().toString());

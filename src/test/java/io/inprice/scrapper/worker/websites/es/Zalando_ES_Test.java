@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.websites.es;
 
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
@@ -20,7 +20,7 @@ public class Zalando_ES_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("C1852F00Z-Q11", link.getSku());
         assertEquals("Monedero", link.getName());
         assertEquals("38.95", link.getPrice().toString());
@@ -34,7 +34,7 @@ public class Zalando_ES_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("CL612M00S-B11", link.getSku());
         assertEquals("WALLABEE - Zapatos de vestir", link.getName());
         assertEquals("135.95", link.getPrice().toString());
@@ -48,7 +48,7 @@ public class Zalando_ES_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("EV451Q00W-G11", link.getSku());
         assertEquals("Mochila", link.getName());
         assertEquals("20.25", link.getPrice().toString());
@@ -62,7 +62,7 @@ public class Zalando_ES_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("GP021C0BY-A11", link.getSku());
         assertEquals("EYELET - Vestido camisero", link.getName());
         assertEquals("48.95", link.getPrice().toString());

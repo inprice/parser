@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.consumer;
 
-import io.inprice.scrapper.worker.config.Props;
+import io.inprice.scrapper.common.config.SysProps;
 
 /**
  * Handles AVAILABLE status
@@ -8,7 +8,7 @@ import io.inprice.scrapper.worker.config.Props;
 public class AVAILABLE_Consumer extends BaseLinkConsumer {
 
   public AVAILABLE_Consumer() {
-    super("Available links consumer", Props.MQ_QUEUE_AVALIABLE_LINKS());
+    super("Available links consumer", SysProps.MQ_AVALIABLE_LINKS_QUEUE());
   }
 
 }

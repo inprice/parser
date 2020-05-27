@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.au;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import org.json.JSONObject;
@@ -19,6 +19,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class AppliancesOnline_AU_Test {
 
     private final String SITE_NAME = "appliancesonline";
@@ -39,7 +40,7 @@ public class AppliancesOnline_AU_Test {
         setMock(1);
         Link link = site.test(null, httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("1562", link.getSku());
         assertEquals("Rinnai 6kg Dry-Soft 6 Natural Gas Dryer DRYSOFT6N", link.getName());
         assertEquals("1524.00", link.getPrice().toString());
@@ -54,7 +55,7 @@ public class AppliancesOnline_AU_Test {
         setMock(2);
         Link link = site.test(null, httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("2708", link.getSku());
         assertEquals("InSinkErator 100 Evolution Food Waste Disposer", link.getName());
         assertEquals("978.00", link.getPrice().toString());
@@ -69,7 +70,7 @@ public class AppliancesOnline_AU_Test {
         setMock(3);
         Link link = site.test(null, httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("39819", link.getSku());
         assertEquals("WEBER 6579 Q Portable Cart for Baby Q Q 1000 & Q2000 Series 6579", link.getName());
         assertEquals("152.00", link.getPrice().toString());
@@ -84,7 +85,7 @@ public class AppliancesOnline_AU_Test {
         setMock(4);
         Link link = site.test(null, httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("56789", link.getSku());
         assertEquals("Dimplex DC18 5.3kW Portable Air Conditioner with Dehumidifier", link.getName());
         assertEquals("978.00", link.getPrice().toString());

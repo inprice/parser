@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.consumer;
 
-import io.inprice.scrapper.worker.config.Props;
+import io.inprice.scrapper.common.config.SysProps;
 
 /**
  * Handles NEW and RENEWED links
@@ -8,7 +8,7 @@ import io.inprice.scrapper.worker.config.Props;
 public class NEW_Consumer extends BaseLinkConsumer {
 
   public NEW_Consumer() {
-    super("NEW links consumer", Props.MQ_QUEUE_NEW_LINKS());
+    super("NEW links consumer", SysProps.MQ_NEW_LINKS_QUEUE());
   }
 
 }

@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.websites.nl;
 
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
@@ -20,7 +20,7 @@ public class Zalando_NL_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("BJ282H006-K12", link.getSku());
         assertEquals("SANDRO SWIM - Zwemshorts", link.getName());
         assertEquals("27.45", link.getPrice().toString());
@@ -34,7 +34,7 @@ public class Zalando_NL_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("MQ581F008-O11", link.getSku());
         assertEquals("SUMMER - Panty", link.getName());
         assertEquals("14.95", link.getPrice().toString());
@@ -48,7 +48,7 @@ public class Zalando_NL_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("VE052L00M-F11", link.getSku());
         assertEquals("Ring - gold", link.getName());
         assertEquals("103.95", link.getPrice().toString());
@@ -62,7 +62,7 @@ public class Zalando_NL_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("1MI22P01E-K11", link.getSku());
         assertEquals("NEW LOGO - Poloshirt", link.getName());
         assertEquals("89.95", link.getPrice().toString());

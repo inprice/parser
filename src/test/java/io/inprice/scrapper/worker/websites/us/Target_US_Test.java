@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.us;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Target_US_Test {
 
     private final String SITE_NAME = "target";
@@ -39,7 +40,7 @@ public class Target_US_Test {
         setMock(1);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("76150374", link.getSku());
         assertEquals("NERF Fortnite SP-L Elite Dart Blaster with 6 Official Nerf Fortnite Elite Darts", link.getName());
         assertEquals("16.69", link.getPrice().toString());
@@ -54,7 +55,7 @@ public class Target_US_Test {
         setMock(2);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(Status.NOT_AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.NOT_AVAILABLE, link.getStatus());
         assertEquals("52459899", link.getSku());
         assertEquals("Alena Wood Free Standing Cheval Mirror Jewelry Armoire - Baxton Studio", link.getName());
         assertEquals("161.09", link.getPrice().toString());
@@ -69,7 +70,7 @@ public class Target_US_Test {
         setMock(3);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("50608360", link.getSku());
         assertEquals("Instant Pot Duo 6qt 7-in-1 Pressure Cooker", link.getName());
         assertEquals("79.95", link.getPrice().toString());
@@ -84,7 +85,7 @@ public class Target_US_Test {
         setMock(4);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("52361921", link.getSku());
         assertEquals("TURTLE BEACH&#174; Recon Chat Wired Gaming Headset for Xbox One", link.getName());
         assertEquals("19.95", link.getPrice().toString());

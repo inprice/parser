@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.uk;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
@@ -31,8 +31,8 @@ public class Asos extends AbstractWebsite {
 
   @Override
   protected JSONObject getJsonData() {
-    Status preStatus = getLinkStatus();
-    setLinkStatus(Status.NO_DATA);
+    LinkStatus preStatus = getLinkStatus();
+    setLinkStatus(LinkStatus.NO_DATA);
 
     final String sku = getSku();
 
@@ -66,7 +66,7 @@ public class Asos extends AbstractWebsite {
         }
       } else {
         log.error("Failed to fetch data! Status: READ_ERROR");
-        setLinkStatus(Status.NO_DATA);
+        setLinkStatus(LinkStatus.NO_DATA);
       }
     } else {
       setLinkStatus(response);

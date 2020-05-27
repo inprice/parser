@@ -3,7 +3,7 @@ package io.inprice.scrapper.worker.websites.ca;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class CanadianTire_CA_Test {
 
     private final String SITE_NAME = "canadiantire";
@@ -37,7 +38,7 @@ public class CanadianTire_CA_Test {
         setMock(1);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("0791265", link.getSku());
         assertEquals("Pelican Kayak Paddle, Green, 84-in", link.getName());
         assertEquals("49.99", link.getPrice().toString());
@@ -52,7 +53,7 @@ public class CanadianTire_CA_Test {
         setMock(2);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("0427991", link.getSku());
         assertEquals("Corn Broom", link.getName());
         assertEquals("7.99", link.getPrice().toString());
@@ -67,7 +68,7 @@ public class CanadianTire_CA_Test {
         setMock(3);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("0687094", link.getSku());
         assertEquals("Mastercraft Wall-Mounted Bicycle Rack with Shelf", link.getName());
         assertEquals("29.99", link.getPrice().toString());
@@ -82,7 +83,7 @@ public class CanadianTire_CA_Test {
         setMock(4);
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("0765877", link.getSku());
         assertEquals("Woods™ Logan Sleeping Bag, -12°C", link.getName());
         assertEquals("119.99", link.getPrice().toString());

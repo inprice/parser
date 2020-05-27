@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.websites.fr;
 
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.worker.websites.Helpers;
 import org.junit.Test;
@@ -19,7 +19,7 @@ public class Auchan_FR_Test {
     public void test_product_1() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("C1091807", link.getSku());
         assertEquals("Bio Lubrifiant Social Marchesseau Bourgueil Rouge 2017", link.getName());
         assertEquals("7.72", link.getPrice().toString());
@@ -33,7 +33,7 @@ public class Auchan_FR_Test {
     public void test_product_2() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("M1406900", link.getSku());
         assertEquals("X-TRI2 YF910 pliable avec dossier", link.getName());
         assertEquals("179.00", link.getPrice().toString());
@@ -47,7 +47,7 @@ public class Auchan_FR_Test {
     public void test_product_3() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("C1011762", link.getSku());
         assertEquals("MT 110 B - Platine vinyle vintage - Noir", link.getName());
         assertEquals("99.00", link.getPrice().toString());
@@ -61,7 +61,7 @@ public class Auchan_FR_Test {
     public void test_product_4() {
         Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(Status.AVAILABLE, link.getStatus());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("M2089818", link.getSku());
         assertEquals("Bonnet de bain Speedo Mouldede silicone kid red Rouge 83667", link.getName());
         assertEquals("3.99", link.getPrice().toString());

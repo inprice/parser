@@ -2,7 +2,7 @@ package io.inprice.scrapper.worker.websites;
 
 import com.mashape.unirest.http.HttpResponse;
 import io.inprice.scrapper.common.helpers.Beans;
-import io.inprice.scrapper.common.meta.Status;
+import io.inprice.scrapper.common.meta.LinkStatus;
 import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.common.utils.NumberUtils;
@@ -62,7 +62,7 @@ public abstract class AbstractWebsite implements Website {
       read();
     }
 
-    log.debug("Website: {}, Status: {}, Time: {}", link.getWebsiteClassName(), link.getStatus(),
+    log.debug("Website: {}, LinkStatus: {}, Time: {}", link.getWebsiteClassName(), link.getStatus(),
         (System.currentTimeMillis() - startTime));
   }
 
@@ -168,14 +168,14 @@ public abstract class AbstractWebsite implements Website {
   }
 
   private void read() {
-    Status previousStatus = link.getStatus();
+    LinkStatus previousStatus = link.getStatus();
     json = getJsonData();
 
     if (!link.getStatus().equals(previousStatus)) {
       // getJsonData method may return a network or socket error. thus, we need to
       // check if it is so
-      if (Status.READ_ERROR.equals(link.getStatus()) || Status.NO_DATA.equals(link.getStatus())
-          || Status.SOCKET_ERROR.equals(link.getStatus()) || Status.NETWORK_ERROR.equals(link.getStatus())) {
+      if (LinkStatus.READ_ERROR.equals(link.getStatus()) || LinkStatus.NO_DATA.equals(link.getStatus())
+          || LinkStatus.SOCKET_ERROR.equals(link.getStatus()) || LinkStatus.NETWORK_ERROR.equals(link.getStatus())) {
         return;
       }
     }
@@ -185,13 +185,13 @@ public abstract class AbstractWebsite implements Website {
     link.setPrice(price);
     if ((getPrice() == null || getPrice().compareTo(BigDecimal.ONE) < 0)
         && (getName() == null || Consts.Words.NOT_AVAILABLE.equals(getName()))) {
-      link.setStatus(Status.NOT_A_PRODUCT_PAGE);
+      link.setStatus(LinkStatus.NOT_A_PRODUCT_PAGE);
       log.warn("URL doesn't point at a specific page! " + getUrl());
       return;
     }
 
     // other settings
-    if (Status.NEW.equals(link.getStatus()) || Status.RENEWED.equals(link.getStatus())) {
+    if (LinkStatus.NEW.equals(link.getStatus()) || LinkStatus.RENEWED.equals(link.getStatus())) {
       if (getSku() != null)
         link.setSku(fixLength(getSku(), Consts.Limits.SKU));
       if (getName() != null)
@@ -216,34 +216,34 @@ public abstract class AbstractWebsite implements Website {
     }
 
     if (isAvailable()) {
-      link.setStatus(Status.AVAILABLE);
+      link.setStatus(LinkStatus.AVAILABLE);
     } else {
-      link.setStatus(Status.NOT_AVAILABLE);
+      link.setStatus(LinkStatus.NOT_AVAILABLE);
       log.debug("Link with id {} is not available!", link.getId());
     }
   }
 
-  protected Status getLinkStatus() {
+  protected LinkStatus getLinkStatus() {
     return link.getStatus();
   }
 
-  protected void setLinkStatus(Status status) {
+  protected void setLinkStatus(LinkStatus status) {
     link.setStatus(status);
   }
 
-  protected void setLinkStatus(Status status, int httpStatus) {
+  protected void setLinkStatus(LinkStatus status, int httpStatus) {
     link.setStatus(status);
     link.setHttpStatus(httpStatus);
   }
 
   protected void setLinkStatus(HttpResponse<String> response) {
     if (response != null) {
-      final Status status = (response.getStatus() == 0 ? Status.SOCKET_ERROR : Status.NETWORK_ERROR);
-      log.error("Failed to fetch data! Status: {}, Http Status: {}", status.name(), response.getStatus());
+      final LinkStatus status = (response.getStatus() == 0 ? LinkStatus.SOCKET_ERROR : LinkStatus.NETWORK_ERROR);
+      log.error("Failed to fetch data! LinkStatus: {}, Http LinkStatus: {}", status.name(), response.getStatus());
       setLinkStatus(status, response.getStatus());
     } else {
       log.error("Response is null!");
-      setLinkStatus(Status.READ_ERROR);
+      setLinkStatus(LinkStatus.READ_ERROR);
     }
   }
 
@@ -252,10 +252,10 @@ public abstract class AbstractWebsite implements Website {
     if (httpStatus != 200)
       link.setHttpStatus(httpStatus);
     if (httpStatus == 0) {
-      link.setStatus(Status.SOCKET_ERROR);
+      link.setStatus(LinkStatus.SOCKET_ERROR);
     }
     if (httpStatus > 399) {
-      link.setStatus(Status.NETWORK_ERROR);
+      link.setStatus(LinkStatus.NETWORK_ERROR);
       link.setHttpStatus(httpStatus);
     }
   }
