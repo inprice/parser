@@ -249,12 +249,11 @@ public abstract class AbstractWebsite implements Website {
 
   private void createDoc() {
     int httpStatus = openDocument();
-    if (httpStatus != 200)
-      link.setHttpStatus(httpStatus);
     if (httpStatus == 0) {
       link.setStatus(LinkStatus.SOCKET_ERROR);
-    }
-    if (httpStatus > 399) {
+    } else if (httpStatus >= 200 && httpStatus <= 399) {
+      link.setHttpStatus(httpStatus);
+    } else {
       link.setStatus(LinkStatus.NETWORK_ERROR);
       link.setHttpStatus(httpStatus);
     }

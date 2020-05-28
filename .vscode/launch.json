@@ -8,7 +8,7 @@
       "projectName": "worker",
       "mainClass": "io.inprice.scrapper.worker.Application",
       "env": {
-        "APP_ENV": "dev",
+        "APP_ENV": "DEV",
       }
     }
   ]

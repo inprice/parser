@@ -55,17 +55,15 @@ class BaseLinkConsumer {
               Constructor<Website> ctor = clazz.getConstructor(Link.class);
               Website website = ctor.newInstance(newState);
               website.check();
-              // RabbitMQ.getChannel().basicAck(envelope.getDeliveryTag(), true);
+              RabbitMQ.getChannel().basicAck(envelope.getDeliveryTag(), false);
             } catch (Exception e) {
               log.error("Failed to find the website", e);
               newState.setStatus(LinkStatus.CLASS_PROBLEM);
-              /*
               try {
-                RabbitMQ.getChannel().basicNack(envelope.getDeliveryTag(), false, true);
+                RabbitMQ.getChannel().basicNack(envelope.getDeliveryTag(), false, false);
               } catch (IOException e1) {
                 log.error("Failed to send a message to dlx", e1);
               }
-              */
             }
           }
           sendToQueue(oldState, newState);
@@ -74,7 +72,7 @@ class BaseLinkConsumer {
     };
 
     try {
-      RabbitMQ.getChannel().basicConsume(queueName, true, consumer);
+      RabbitMQ.getChannel().basicConsume(queueName, false, consumer);
     } catch (IOException e) {
       log.error("Error in setting up active links consumer to pull tasks from queue", e);
     }

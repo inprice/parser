@@ -38,7 +38,9 @@ public class HepsiBurada extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("span[itemprop='name']");
+    Element name = doc.getElementById("product-name");
+    if (name == null) name = doc.selectFirst("span[itemprop='name']");
+
     if (name != null) {
       return name.text();
     }
