@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -71,9 +73,9 @@ public class Bonanza extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element available = doc.selectFirst("meta[property='og:availability']");
-    if (available != null) {
-      return "instock".equals(available.attr("content"));
+    Element val = doc.selectFirst("meta[property='og:availability']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return "instock".equals(val.attr("content"));
     }
 
     return availability;
@@ -81,23 +83,23 @@ public class Bonanza extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element skuEL = doc.selectFirst("meta[property='product:retailer_item_id']");
-    if (skuEL != null) {
-      return skuEL.attr("content");
+    Element val = doc.selectFirst("meta[property='product:retailer_item_id']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return sku;
   }
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("meta[property='og:title']");
-    if (name != null) {
-      return name.attr("content");
+    Element val = doc.selectFirst("meta[property='og:title']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
 
-    name = doc.selectFirst("span[itemprop='name']");
-    if (name != null) {
-      return name.text();
+    val = doc.selectFirst("span[itemprop='name']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
     return Consts.Words.NOT_AVAILABLE;
@@ -105,14 +107,14 @@ public class Bonanza extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.selectFirst("meta[property='product:price:amount']");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    Element val = doc.selectFirst("meta[property='product:price:amount']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
 
-    price = doc.selectFirst("div.item_price");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.text()));
+    val = doc.selectFirst("div.item_price");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return new BigDecimal(cleanDigits(val.text()));
     }
 
     return BigDecimal.ZERO;
@@ -120,14 +122,14 @@ public class Bonanza extends AbstractWebsite {
 
   @Override
   public String getSeller() {
-    Element seller = doc.selectFirst("meta[property='wanelo:store:name']");
-    if (seller != null) {
-      return seller.attr("content");
+    Element val = doc.selectFirst("meta[property='wanelo:store:name']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
 
-    seller = doc.selectFirst("div.booth_link a");
-    if (seller != null) {
-      return seller.text();
+    val = doc.selectFirst("div.booth_link a");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
     return "Bonanza";
@@ -145,9 +147,9 @@ public class Bonanza extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element brandEL = doc.selectFirst("meta[property='product:brand']");
-    if (brandEL != null) {
-      return brandEL.attr("content");
+    Element val = doc.selectFirst("meta[property='product:brand']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return brand;
   }

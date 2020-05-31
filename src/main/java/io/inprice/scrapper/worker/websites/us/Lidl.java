@@ -5,6 +5,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -113,13 +115,13 @@ public class Lidl extends AbstractWebsite {
 
     if (json != null && json.has("longDescription")) {
       String desc = json.getString("longDescription");
-      if (!desc.isEmpty()) {
+      if (StringUtils.isNotBlank(desc)) {
         String features = desc.replaceAll("<ul>|</ul>|<li>", "");
         String[] featureChunks = features.split("</li>");
         if (featureChunks.length > 0) {
           specList = new ArrayList<>();
           for (String val : featureChunks) {
-            if (!val.isEmpty() && !val.startsWith("<p>") && !val.startsWith("<div>"))
+            if (StringUtils.isNotBlank(val) && !val.startsWith("<p>") && !val.startsWith("<div>"))
               specList.add(new LinkSpec("", val));
           }
         }

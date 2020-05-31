@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -26,36 +28,36 @@ public class Gigas101 extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element available = doc.selectFirst("meta[property='product:availability']");
-    if (available != null) {
-      return available.attr("content").trim().contains("instock");
+    Element val = doc.selectFirst("meta[property='product:availability']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content").trim().contains("instock");
     }
     return false;
   }
 
   @Override
   public String getSku() {
-    Element sku = doc.selectFirst("meta[property='product:retailer_part_no']");
-    if (sku != null) {
-      return sku.attr("content");
+    Element val = doc.selectFirst("meta[property='product:retailer_part_no']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("h1[itemprop='name']");
-    if (name != null) {
-      return name.text();
+    Element val = doc.selectFirst("h1[itemprop='name']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.selectFirst("meta[property='product:sale_price:amount']");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    Element val = doc.selectFirst("meta[property='product:sale_price:amount']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
     return BigDecimal.ZERO;
   }
@@ -67,10 +69,10 @@ public class Gigas101 extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Elements availability = doc.select("div.availability div#codigosku");
-    if (availability != null) {
-      for (int i = 0; i < availability.size(); i++) {
-        Element note = availability.get(i);
+    Elements vals = doc.select("div.availability div#codigosku");
+    if (vals != null && !vals.isEmpty()) {
+      for (int i = 0; i < vals.size(); i++) {
+        Element note = vals.get(i);
         if (note.text().contains("Envío")) {
           return note.text();
         }
@@ -81,9 +83,9 @@ public class Gigas101 extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("meta[property='product:brand']");
-    if (brand != null) {
-      return brand.attr("content");
+    Element val = doc.selectFirst("meta[property='product:brand']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
   }

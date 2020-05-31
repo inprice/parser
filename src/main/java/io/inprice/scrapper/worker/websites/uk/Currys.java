@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
@@ -81,9 +83,9 @@ public class Currys extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element shipment = doc.getElementById("delivery");
-    if (shipment != null) {
-      return shipment.text().replaceAll("More info", "");
+    Element val = doc.getElementById("delivery");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text().replaceAll("More info", "");
     }
     return Consts.Words.NOT_AVAILABLE;
   }

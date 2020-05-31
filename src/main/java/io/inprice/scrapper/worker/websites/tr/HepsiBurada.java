@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
@@ -29,47 +31,49 @@ public class HepsiBurada extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element sku = doc.selectFirst("#addToCartForm input[name='sku']");
-    if (sku != null) {
-      return sku.val();
+    Element val = doc.selectFirst("#addToCartForm input[name='sku']");
+    if (val != null && StringUtils.isNotBlank(val.val())) {
+      return val.val();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element name = doc.getElementById("product-name");
-    if (name == null) name = doc.selectFirst("span[itemprop='name']");
+    Element val = doc.getElementById("product-name");
+    if (val == null || StringUtils.isBlank(val.text())) {
+      val = doc.selectFirst("span[itemprop='name']");
+    }
 
-    if (name != null) {
-      return name.text();
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.selectFirst("span[itemprop='price']");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    Element val = doc.selectFirst("span[itemprop='price']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getSeller() {
-    Element seller = doc.selectFirst("span.seller a");
-    if (seller != null) {
-      return seller.text();
+    Element val = doc.selectFirst("span.seller a");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getShipment() {
-    Element shipping = doc.selectFirst("label.campaign-text span");
-    if (shipping != null) {
-      return shipping.text();
+    Element val = doc.selectFirst("label.campaign-text span");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
     boolean freeShipping = isTrue("\"freeShipping\":");
@@ -78,9 +82,9 @@ public class HepsiBurada extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("span[itemprop='brand']");
-    if (brand != null) {
-      return brand.attr("content");
+    Element val = doc.selectFirst("span[itemprop='brand']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
   }

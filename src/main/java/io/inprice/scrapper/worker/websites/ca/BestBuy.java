@@ -109,8 +109,7 @@ public class BestBuy extends AbstractWebsite {
   @Override
   public List<LinkSpec> getSpecList() {
     Elements specs = doc.select("div#MoreInformation li");
-    if (specs == null || specs.isEmpty())
-      specs = doc.select("div#MoreInformation p");
+    if (specs == null || specs.isEmpty()) specs = doc.select("div#MoreInformation p");
     return getValueOnlySpecList(specs);
   }
 }

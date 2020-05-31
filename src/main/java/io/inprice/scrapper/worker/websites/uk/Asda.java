@@ -5,6 +5,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -39,7 +41,7 @@ public class Asda extends AbstractWebsite {
       String productId = urlChunks[urlChunks.length - 1];
       if (productId.matches("\\d+")) {
         HttpResponse<String> response = httpClient.get("https://groceries.asda.com/api/items/view?itemid=" + productId);
-        if (response.getStatus() == 200 && !response.getBody().isEmpty()) {
+        if (response.getStatus() == 200 && StringUtils.isNotBlank(response.getBody())) {
           JSONObject prod = new JSONObject(response.getBody());
           if (prod.has("items")) {
             JSONArray items = prod.getJSONArray("items");

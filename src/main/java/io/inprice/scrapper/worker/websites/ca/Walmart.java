@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.mashape.unirest.http.HttpResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -96,7 +97,7 @@ public class Walmart extends AbstractWebsite {
 
     final String payload = getPayload();
 
-    if (payload != null && !payload.isEmpty()) {
+    if (payload != null && StringUtils.isNotBlank(payload)) {
       HttpResponse<String> response = httpClient.post(STATIC_URL, payload);
       if (response != null && response.getStatus() > 0 && response.getStatus() < 400) {
         JSONObject product = new JSONObject(response.getBody());
@@ -205,7 +206,7 @@ public class Walmart extends AbstractWebsite {
       if (specs.length > 0) {
         specList = new ArrayList<>();
         for (String spec : specs) {
-          if (!spec.trim().isEmpty()) {
+          if (StringUtils.isNotBlank(spec)) {
             final String clean = spec.replaceAll(".u2028|.u003C", "").replaceAll("br>", "");
             specList.add(new LinkSpec("", clean));
           }

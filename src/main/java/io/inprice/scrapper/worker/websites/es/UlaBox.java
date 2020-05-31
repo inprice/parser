@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
@@ -24,41 +26,39 @@ public class UlaBox extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element product = doc.selectFirst("div.product-shop");
-    if (product != null) {
+    Element val = doc.selectFirst("div.product-shop");
+    if (val != null && StringUtils.isNotBlank(val.attr("data-product-qty"))) {
       try {
-        int quantity = new Integer(cleanDigits(product.attr("data-product-qty")));
-        return quantity > 0;
-      } catch (Exception e) {
-        //
-      }
+        int qty = new Integer(cleanDigits(val.attr("data-product-qty")));
+        return qty > 0;
+      } catch (Exception ignored) { }
     }
     return false;
   }
 
   @Override
   public String getSku() {
-    Element product = doc.selectFirst("div.product-shop");
-    if (product != null) {
-      return product.attr("data-product-id");
+    Element val = doc.selectFirst("div.product-shop");
+    if (val != null && StringUtils.isNotBlank(val.attr("data-product-id"))) {
+      return val.attr("data-product-id");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element product = doc.selectFirst("div.product-shop");
-    if (product != null) {
-      return product.attr("data-product-name");
+    Element val = doc.selectFirst("div.product-shop");
+    if (val != null && StringUtils.isNotBlank(val.attr("data-product-name"))) {
+      return val.attr("data-product-name");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element product = doc.selectFirst("div.product-shop");
-    if (product != null) {
-      return new BigDecimal(cleanDigits(product.attr("data-price")));
+    Element val = doc.selectFirst("div.product-shop");
+    if (val != null && StringUtils.isNotBlank(val.attr("data-price"))) {
+      return new BigDecimal(cleanDigits(val.attr("data-price")));
     }
     return BigDecimal.ZERO;
   }
@@ -70,18 +70,18 @@ public class UlaBox extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element shipment = doc.selectFirst("div.value-description");
-    if (shipment != null) {
-      return shipment.text();
+    Element val = doc.selectFirst("div.value-description");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("span.milli a.js-pjax");
-    if (brand != null) {
-      return brand.text();
+    Element val = doc.selectFirst("span.milli a.js-pjax");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }

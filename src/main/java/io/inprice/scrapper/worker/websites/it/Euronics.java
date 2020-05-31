@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
@@ -33,8 +35,8 @@ public class Euronics extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element availability = doc.selectFirst("span.productDetails__availability.not-available");
-    return (availability == null);
+    Element val = doc.selectFirst("span.productDetails__availability.not-available");
+    return (val == null || StringUtils.isBlank(val.text()));
   }
 
   @Override
@@ -68,16 +70,16 @@ public class Euronics extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element ship = doc.selectFirst("span.productDetails__label.productDetails__label--left");
-    if (ship != null) {
+    Element val = doc.selectFirst("span.productDetails__label.productDetails__label--left");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
       StringBuilder sb = new StringBuilder();
 
-      sb.append(ship.text());
+      sb.append(val.text());
       sb.append(" ");
 
-      ship = doc.selectFirst("span.productDetails__label.productDetails__label--right");
-      if (ship != null) {
-        sb.append(ship.text());
+      val = doc.selectFirst("span.productDetails__label.productDetails__label--right");
+      if (val != null && StringUtils.isNotBlank(val.text())) {
+        sb.append(val.text());
       }
 
       return sb.toString();

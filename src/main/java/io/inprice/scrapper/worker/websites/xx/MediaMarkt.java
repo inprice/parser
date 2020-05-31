@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -40,13 +42,14 @@ public class MediaMarkt extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element available = doc.selectFirst(".online-nostock");
-    if (available != null)
+    Element val = doc.selectFirst(".online-nostock");
+    if (val != null) {
       return false;
+    }
 
-    available = doc.selectFirst("meta[property='og:availability']");
-    if (available != null) {
-      return !available.attr("content").trim().equals("out of stock");
+    val = doc.selectFirst("meta[property='og:availability']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return !val.attr("content").trim().equals("out of stock");
     }
 
     return false;
@@ -54,36 +57,36 @@ public class MediaMarkt extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element sku = doc.selectFirst("dd span[itemprop='sku']");
-    if (sku != null) {
-      return sku.text();
+    Element val = doc.selectFirst("dd span[itemprop='sku']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("meta[property='og:title']");
-    if (name != null) {
-      return name.attr("content");
+    Element val = doc.selectFirst("meta[property='og:title']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.selectFirst("meta[property='product:price:amount']");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    Element val = doc.selectFirst("meta[property='product:price:amount']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getSeller() {
-    Element seller = doc.selectFirst("meta[property='og:site_name']");
-    if (seller != null) {
-      return seller.attr("content");
+    Element val = doc.selectFirst("meta[property='og:site_name']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return "Media Markt";
   }
@@ -100,16 +103,18 @@ public class MediaMarkt extends AbstractWebsite {
 
     Element shipment = doc.selectFirst("div.price.big");
     if (shipment != null) {
-      Element desc = shipment.nextElementSibling().selectFirst("small");
-      if (desc != null)
-        return desc.text();
+      Element val = shipment.nextElementSibling().selectFirst("small");
+      if (val != null && StringUtils.isNotBlank(val.text())) {
+        return val.text();
+      }
     }
 
     shipment = doc.selectFirst("div.old-price-block");
     if (shipment != null) {
-      Element desc = shipment.nextElementSibling().selectFirst("small");
-      if (desc != null)
-        return desc.text();
+      Element val = shipment.nextElementSibling().selectFirst("small");
+      if (val != null && StringUtils.isNotBlank(val.text())) {
+        return val.text();
+      }
     }
 
     return Consts.Words.NOT_AVAILABLE;
@@ -117,9 +122,9 @@ public class MediaMarkt extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("meta[property='product:brand']");
-    if (brand != null) {
-      return brand.attr("content");
+    Element val = doc.selectFirst("meta[property='product:brand']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
   }

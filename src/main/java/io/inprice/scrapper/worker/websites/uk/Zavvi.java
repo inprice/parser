@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -59,9 +61,9 @@ public class Zavvi extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element stock = doc.selectFirst("p.productStockInformation_prefix");
-    if (stock != null) {
-      return stock.text().contains("In stock");
+    Element val = doc.selectFirst("p.productStockInformation_prefix");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text().contains("In stock");
     }
     return false;
   }
@@ -97,9 +99,9 @@ public class Zavvi extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element shipment = doc.selectFirst("div.productDeliveryAndReturns_message");
-    if (shipment != null) {
-      return shipment.text();
+    Element val = doc.selectFirst("div.productDeliveryAndReturns_message");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }

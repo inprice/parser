@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -90,12 +92,13 @@ public class Fnac extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element shipment = doc.selectFirst("p.f-buyBox-shipping");
-    if (shipment == null)
-      shipment = doc.selectFirst("div.f-productSpecialsOffers-offerParagraphWrapper");
+    Element val = doc.selectFirst("p.f-buyBox-shipping");
+    if (val == null || StringUtils.isBlank(val.text())) {
+      val = doc.selectFirst("div.f-productSpecialsOffers-offerParagraphWrapper");
+    }
 
-    if (shipment != null) {
-      return shipment.text();
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
     return Consts.Words.NOT_AVAILABLE;

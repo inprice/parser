@@ -39,7 +39,7 @@ public class Application {
       ThreadPools.shutdown();
 
       log.info(" - RabbitMQ connection is closing...");
-      RabbitMQ.closeChannel();
+      RabbitMQ.closeConnection();
 
       log.info("ALL SERVICES IS DONE.");
     }, "shutdown-hook"));

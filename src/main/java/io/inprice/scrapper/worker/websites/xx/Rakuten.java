@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -150,10 +152,11 @@ public class Rakuten extends AbstractWebsite {
       }
     }
 
-    Element brand = doc.selectFirst("meta[property='og:description']");
-    if (brand != null) {
-      return brand.attr("content");
+    Element val = doc.selectFirst("meta[property='og:description']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
+
     return "Rakuten";
   }
 
@@ -171,17 +174,16 @@ public class Rakuten extends AbstractWebsite {
       }
     }
 
-    Element shipping = doc.selectFirst("p.freeShipping");
-    if (shipping != null) {
-      return shipping.text();
+    Element val = doc.selectFirst("p.freeShipping");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
-    shipping = doc.selectFirst("ul.shipping li.value");
-    if (shipping == null)
-      shipping = doc.selectFirst("li.shipping_amount span.value");
+    val = doc.selectFirst("ul.shipping li.value");
+    if (val == null) val = doc.selectFirst("li.shipping_amount span.value");
 
-    if (shipping != null) {
-      return shipping.text();
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
     return Consts.Words.NOT_AVAILABLE;
@@ -201,10 +203,11 @@ public class Rakuten extends AbstractWebsite {
       }
     }
 
-    Element brand = doc.selectFirst("meta[property='product:brand']");
-    if (brand != null) {
-      return brand.attr("content");
+    Element val = doc.selectFirst("meta[property='product:brand']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
+
     return Consts.Words.NOT_AVAILABLE;
   }
 

@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -110,9 +112,9 @@ public class Bol extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element shipment = doc.selectFirst("ul.buy-block__usps.check-list--succes.check-list--usps li");
-    if (shipment != null) {
-      return shipment.text();
+    Element val = doc.selectFirst("ul.buy-block__usps.check-list--succes.check-list--usps li");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return "Bekijk alle bezorgopties";
   }

@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -26,20 +28,18 @@ public class Bonprix extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element available = doc.selectFirst("meta[property='og:availability']");
-    if (available == null)
-      available = doc.selectFirst("meta[content='https://schema.org/InStock']");
+    Element val = doc.selectFirst("meta[property='og:availability']");
+    if (val == null) val = doc.selectFirst("meta[content='https://schema.org/InStock']");
 
-    if (available != null) {
-      return available.attr("content").toLowerCase().contains("instock");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content").toLowerCase().contains("instock");
     }
 
-    available = doc.selectFirst("div.product-availability-box_wrapper div");
-    if (available == null)
-      doc.selectFirst("div#product-detail-availibility-container noscript");
+    val = doc.selectFirst("div.product-availability-box_wrapper div");
+    if (val == null) doc.selectFirst("div#product-detail-availibility-container noscript");
 
-    if (available != null) {
-      return available.text().contains("erfügbar");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text().contains("erfügbar");
     }
 
     return false;
@@ -47,22 +47,23 @@ public class Bonprix extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element sku = doc.selectFirst("meta[itemprop='sku']");
-    if (sku != null) {
-      return sku.attr("content");
+    Element val = doc.selectFirst("meta[itemprop='sku']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("h1.product-name span[itemprop='name']");
-    if (name != null)
-      return name.text();
+    Element val = doc.selectFirst("h1.product-name span[itemprop='name']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
 
-    name = doc.selectFirst("meta[property='og:title']");
-    if (name != null) {
-      return name.attr("content");
+    val = doc.selectFirst("meta[property='og:title']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
 
     return Consts.Words.NOT_AVAILABLE;
@@ -70,22 +71,21 @@ public class Bonprix extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.selectFirst("span.price");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    Element val = doc.selectFirst("span.price");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
 
-    price = doc.selectFirst("span[itemprop='price']");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.text()));
+    val = doc.selectFirst("span[itemprop='price']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return new BigDecimal(cleanDigits(val.text()));
     }
 
-    price = doc.selectFirst("span.clearfix.price");
-    if (price == null)
-      price = doc.selectFirst("meta[property='og:price:amount']");
+    val = doc.selectFirst("span.clearfix.price");
+    if (val == null) val = doc.selectFirst("meta[property='og:price:amount']");
 
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
 
     return BigDecimal.ZERO;
@@ -98,19 +98,19 @@ public class Bonprix extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element shipment = doc.selectFirst("div[data-controller='infoicon'] div.info-text");
-    if (shipment != null) {
-      return shipment.text().replaceAll(" ada12_info-icon-bigsize-additional-text", "");
+    Element val = doc.selectFirst("div[data-controller='infoicon'] div.info-text");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text().replaceAll(" ada12_info-icon-bigsize-additional-text", "");
     }
 
-    shipment = doc.selectFirst("div.product-availability-box_wrapper div");
-    if (shipment != null) {
-      return shipment.text();
+    val = doc.selectFirst("div.product-availability-box_wrapper div");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
-    shipment = doc.getElementById("aiDelChargeSame");
-    if (shipment != null) {
-      return shipment.text();
+    val = doc.getElementById("aiDelChargeSame");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
     return Consts.Words.NOT_AVAILABLE;
@@ -118,12 +118,11 @@ public class Bonprix extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("meta[itemprop='brand']");
-    if (brand == null)
-      brand = doc.selectFirst("meta[property='og:brand']");
+    Element val = doc.selectFirst("meta[itemprop='brand']");
+    if (val == null) val = doc.selectFirst("meta[property='og:brand']");
 
-    if (brand != null) {
-      return brand.attr("content");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
 
     return Consts.Words.NOT_AVAILABLE;

@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
@@ -43,9 +45,9 @@ public class Debenhams extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element availability = doc.selectFirst("meta[name='twitter:data2']");
-    if (availability != null) {
-      return "In Stock".equals(availability.attr("content"));
+    Element val = doc.selectFirst("meta[name='twitter:data2']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return "In Stock".equals(val.attr("content"));
     }
     return false;
   }
@@ -77,9 +79,9 @@ public class Debenhams extends AbstractWebsite {
       return json.getString("name");
     }
 
-    Element name = doc.selectFirst("div#ProductTitle span.title");
-    if (name != null) {
-      return name.text();
+    Element val = doc.selectFirst("div#ProductTitle span.title");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
     return Consts.Words.NOT_AVAILABLE;
@@ -95,9 +97,9 @@ public class Debenhams extends AbstractWebsite {
       }
     }
 
-    Element price = doc.selectFirst("span.VersionOfferPrice img");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("alt")));
+    Element val = doc.selectFirst("span.VersionOfferPrice img");
+    if (val != null && StringUtils.isNotBlank(val.attr("alt"))) {
+      return new BigDecimal(cleanDigits(val.attr("alt")));
     }
 
     return BigDecimal.ZERO;
@@ -110,12 +112,13 @@ public class Debenhams extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element shipment = doc.selectFirst("div.pw-dangerous-html.dbh-content");
-    if (shipment == null)
-      shipment = doc.getElementById("hd3");
+    Element val = doc.selectFirst("div.pw-dangerous-html.dbh-content");
+    if (val == null || StringUtils.isBlank(val.text())) {
+      val = doc.getElementById("hd3");
+    }
 
-    if (shipment != null) {
-      return shipment.text();
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return "In-store pickup";
   }

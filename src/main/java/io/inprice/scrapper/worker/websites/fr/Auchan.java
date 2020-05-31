@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
@@ -118,7 +120,7 @@ public class Auchan extends AbstractWebsite {
 
     if (json != null && json.has("extendedDescription")) {
       String desc = json.get("extendedDescription").toString();
-      if (!desc.isEmpty()) {
+      if (StringUtils.isNotBlank(desc)) {
         specList = new ArrayList<>();
         String[] descChunks = desc.split("<br/>");
         for (String dsc : descChunks) {

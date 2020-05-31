@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
@@ -40,9 +42,9 @@ public class Otto extends AbstractWebsite {
 
   @Override
   public JSONObject getJsonData() {
-    Element data = doc.selectFirst("script#productDataJson");
-    if (data != null) {
-      JSONObject result = new JSONObject(data.dataNodes().get(0).getWholeData());
+    Element val = doc.selectFirst("script#productDataJson");
+    if (val != null) {
+      JSONObject result = new JSONObject(val.dataNodes().get(0).getWholeData());
       if (!result.isEmpty() && result.has("variations")) {
         JSONObject variations = result.getJSONObject("variations");
         Set<String> keySet = variations.keySet();
@@ -68,9 +70,9 @@ public class Otto extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element sku = doc.selectFirst("meta[itemprop='sku']");
-    if (sku != null) {
-      return sku.attr("content");
+    Element val = doc.selectFirst("meta[itemprop='sku']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
 
     if (json != null && json.has("id")) {
@@ -89,12 +91,13 @@ public class Otto extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.getElementById("reducedPriceAmount");
-    if (price == null)
-      price = doc.getElementById("normalPriceAmount");
+    Element val = doc.getElementById("reducedPriceAmount");
+    if (val == null || StringUtils.isBlank(val.text())) {
+      val = doc.getElementById("normalPriceAmount");
+    }
 
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
 
     if (product != null && product.has("displayPrice")) {

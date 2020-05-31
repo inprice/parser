@@ -5,6 +5,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -138,7 +140,7 @@ public class Target extends AbstractWebsite {
       JSONObject priceEL = product.getJSONObject("price");
       if (priceEL.has("price")) {
         String price = priceEL.getString("price");
-        if (!price.trim().isEmpty())
+        if (StringUtils.isNotBlank(price))
           return new BigDecimal(cleanDigits(price));
       }
     }

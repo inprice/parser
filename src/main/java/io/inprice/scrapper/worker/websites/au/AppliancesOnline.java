@@ -5,6 +5,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -100,7 +102,7 @@ public class AppliancesOnline extends AbstractWebsite {
     HttpResponse<String> response = httpClient
         .get("https://www.appliancesonline.com.au/api/v2/product/specifications/id/" + json.getInt("productId"));
 
-    if (response.getStatus() == 200 && !response.getBody().isEmpty()) {
+    if (response.getStatus() == 200 && StringUtils.isNotBlank(response.getBody())) {
       JSONObject specs = new JSONObject(response.getBody());
       if (specs.has("groupedAttributes")) {
         JSONObject groupedAttributes = specs.getJSONObject("groupedAttributes");

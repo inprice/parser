@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
@@ -33,7 +35,10 @@ public class MediaWorld extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    return (product != null && product.attr("data-gtm-avail2").contains("disponibile"));
+    if (product != null) {
+      return (StringUtils.isNotBlank(product.attr("data-gtm-avail2")) && product.attr("data-gtm-avail2").contains("disponibile"));
+    }
+    return false;
   }
 
   @Override
@@ -47,11 +52,11 @@ public class MediaWorld extends AbstractWebsite {
   @Override
   public String getName() {
     if (product != null) {
-      Element name = product.selectFirst("h1[itemprop='name']");
-      if (name != null) {
-        StringBuilder sb = new StringBuilder(name.text());
+      Element val = product.selectFirst("h1[itemprop='name']");
+      if (val != null && StringUtils.isNotBlank(val.text())) {
+        StringBuilder sb = new StringBuilder(val.text());
         Element descEL = product.selectFirst("h4.product-short-description");
-        if (descEL != null) {
+        if (descEL != null && StringUtils.isNotBlank(descEL.text())) {
           sb.append(" (");
           sb.append(descEL.text().split("\\|")[0].trim());
           sb.append(")");
@@ -77,9 +82,9 @@ public class MediaWorld extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element shipment = doc.selectFirst("p.product-info-shipping");
-    if (shipment != null) {
-      return shipment.text();
+    Element val = doc.selectFirst("p.product-info-shipping");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }

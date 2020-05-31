@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -26,45 +28,45 @@ public class EPrice extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element inStock = doc.selectFirst("meta[itemprop='availability']");
-    if (inStock != null) {
-      return inStock.attr("content").contains("InStock");
+    Element val = doc.selectFirst("meta[itemprop='availability']");
+    if (val != null) {
+      return val.attr("content").contains("InStock");
     }
     return false;
   }
 
   @Override
   public String getSku() {
-    Element sku = doc.selectFirst("meta[itemprop='sku']");
-    if (sku != null) {
-      return sku.attr("content");
+    Element val = doc.selectFirst("meta[itemprop='sku']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("h1[itemprop='name']");
-    if (name != null) {
-      return name.text();
+    Element val = doc.selectFirst("h1[itemprop='name']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.selectFirst("span[itemprop='price']");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.text()));
+    Element val = doc.selectFirst("span[itemprop='price']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return new BigDecimal(cleanDigits(val.text()));
     }
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getSeller() {
-    Element shipment = doc.selectFirst("p.infoSeller a strong");
-    if (shipment != null) {
-      return shipment.text();
+    Element val = doc.selectFirst("p.infoSeller a strong");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return "ePrice";
   }
@@ -76,9 +78,9 @@ public class EPrice extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("meta[itemprop='brand']");
-    if (brand != null) {
-      return brand.attr("content");
+    Element val = doc.selectFirst("meta[itemprop='brand']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
   }

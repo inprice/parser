@@ -42,7 +42,7 @@ public class AbstractWebsite_Test {
 
         site.check();
 
-        assertEquals(LinkStatus.SOCKET_ERROR, site.getLink().getStatus());
+        assertEquals(LinkStatus.NOT_A_PRODUCT_PAGE, site.getLink().getStatus());
     }
 
     @Test

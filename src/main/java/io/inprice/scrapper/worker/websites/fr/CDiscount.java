@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -33,7 +35,7 @@ public class CDiscount extends AbstractWebsite {
   @Override
   public JSONObject getJsonData() {
     Elements scripts = doc.select("script[type='application/ld+json']");
-    if (scripts != null) {
+    if (scripts != null && StringUtils.isNotBlank(scripts.html())) {
       Element dataEL = null;
       for (Element script : scripts) {
         if (script.html().contains("itemCondition")) {

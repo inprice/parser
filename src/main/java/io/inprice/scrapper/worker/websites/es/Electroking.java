@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
@@ -24,10 +26,10 @@ public class Electroking extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element stock = doc.selectFirst("span[data-stock]");
-    if (stock != null) {
+    Element val = doc.selectFirst("span[data-stock]");
+    if (val != null && StringUtils.isNotBlank(val.attr("data-stock"))) {
       try {
-        int amount = new Integer(cleanDigits(stock.attr("data-stock")));
+        int amount = new Integer(cleanDigits(val.attr("data-stock")));
         return (amount > 0);
       } catch (Exception e) {
         //
@@ -38,32 +40,32 @@ public class Electroking extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element sku = doc.selectFirst("span[itemprop='sku']");
-    if (sku != null) {
-      return sku.text();
+    Element val = doc.selectFirst("span[itemprop='sku']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("meta[property='og:title']");
-    if (name != null) {
-      return name.attr("content");
+    Element val = doc.selectFirst("meta[property='og:title']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
 
-    name = doc.selectFirst("p.product_name strong");
-    if (name != null) {
-      return name.text();
+    val = doc.selectFirst("p.product_name strong");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.selectFirst("meta[property='product:price:amount']");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    Element val = doc.selectFirst("meta[property='product:price:amount']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
     return BigDecimal.ZERO;
   }
@@ -80,16 +82,14 @@ public class Electroking extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("div.product-manufacturer a");
-    if (brand != null) {
-      String brnd = brand.text();
-      if (!brnd.isEmpty())
-        return brnd;
+    Element val = doc.selectFirst("div.product-manufacturer a");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
-    brand = doc.selectFirst("img.manufacturer-logo");
-    if (brand != null) {
-      return brand.attr("alt");
+    val = doc.selectFirst("img.manufacturer-logo");
+    if (val != null && StringUtils.isNotBlank(val.attr("alt"))) {
+      return val.attr("alt");
     }
 
     return getSeller();

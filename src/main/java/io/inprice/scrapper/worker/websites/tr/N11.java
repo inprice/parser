@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
@@ -24,47 +26,56 @@ public class N11 extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element amount = doc.selectFirst("input[class='stockCount']");
-    if (amount != null) {
+    String value = null;
+
+    Element val = doc.selectFirst("input[class='stockCount']");
+    if (val == null || StringUtils.isBlank(val.val())) {
+      val = doc.selectFirst(".stockWarning");
+      value = val.text();
+    } else {
+      value = val.val();
+    }
+
+    if (value != null && StringUtils.isNotBlank(value)) {
       try {
-        int realAmount = new Integer(cleanDigits(amount.val()));
+        int realAmount = new Integer(cleanDigits(value));
         return (realAmount > 0);
-      } catch (Exception e) {
-        //
-      }
+      } catch (Exception ignored) { }
     }
     return false;
   }
 
   @Override
   public String getSku() {
-    Element sku = doc.selectFirst("input[class='productId']");
-    if (sku != null) {
-      return sku.val();
+    Element val = doc.selectFirst("input[class='productId']");
+    if (val != null && StringUtils.isNotBlank(val.val())) {
+      return val.val();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("h1.proName");
-    if (name == null)
-      name = doc.selectFirst("h1.pro-title_main");
+    Element val = doc.selectFirst("h1.proName");
+    if (val == null || StringUtils.isBlank(val.text())) {
+      val = doc.selectFirst("h1.pro-title_main");
+    }
 
-    if (name != null) {
-      return name.text();
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.selectFirst(".newPrice ins");
-    if (price == null)
-      price = doc.selectFirst("ins.price-now");
+    Element val = doc.selectFirst(".newPrice ins");
+    if (val == null || StringUtils.isBlank(val.attr("content"))) {
+      val = doc.selectFirst("ins.price-now");
+    }
 
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
 
     return BigDecimal.ZERO;
@@ -74,39 +85,47 @@ public class N11 extends AbstractWebsite {
   public String getSeller() {
     String value = null;
 
-    Element seller = doc.selectFirst("div.sallerTop h3 a");
-    if (seller != null) {
-      value = seller.attr("title");
+    Element val = doc.selectFirst("div.sallerTop h3 a");
+    if (val != null && StringUtils.isNotBlank(val.attr("title"))) {
+      value = val.attr("title");
     } else {
-      seller = doc.selectFirst(".shop-name");
-      if (seller != null) {
-        value = seller.text();
+      val = doc.selectFirst(".shop-name");
+      if (val != null && StringUtils.isNotBlank(val.text())) {
+        value = val.text();
       }
     }
+
+    if (StringUtils.isBlank(value)) {
+      val = doc.selectFirst("a.main-seller-name");
+      if (val != null && StringUtils.isNotBlank(val.attr("title"))) {
+        value = val.attr("title");
+      }
+    }
+
     return value;
   }
 
   @Override
   public String getShipment() {
-    Element shipment = doc.selectFirst(".shipment-detail-container .cargoType");
-    if (shipment == null)
-      shipment = doc.selectFirst(".delivery-info_shipment span");
+    Element val = doc.selectFirst(".shipment-detail-container .cargoType");
+    if (val == null || StringUtils.isBlank(val.text())) {
+      val = doc.selectFirst(".delivery-info_shipment span");
+    }
 
-    if (shipment != null) {
-      return shipment.text().replaceAll(":", "");
+    if (val != null) {
+      return val.text().replaceAll(":", "");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("span.label:contains(Marka)");
-    if (brand == null)
-      brand = doc.selectFirst("span.label:contains(Yazar)");
+    Element val = doc.selectFirst("span.label:contains(Marka)");
+    if (val == null) val = doc.selectFirst("span.label:contains(Yazar)");
 
-    if (brand != null) {
-      Element sbling = brand.nextElementSibling();
-      if (sbling != null) {
+    if (val != null) {
+      Element sbling = val.nextElementSibling();
+      if (sbling != null && StringUtils.isNotBlank(sbling.text())) {
         return sbling.text();
       }
     }

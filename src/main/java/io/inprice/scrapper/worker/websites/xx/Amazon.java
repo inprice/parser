@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
@@ -26,31 +28,30 @@ public class Amazon extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element available = doc.getElementById("availability");
-    if (available != null) {
-      Element span = available.selectFirst("span.a-color-success");
+    Element val = doc.getElementById("availability");
+    if (val != null) {
+      Element span = val.selectFirst("span.a-color-success");
       if (span == null)
-        span = available.selectFirst("span.a-color-price");
+        span = val.selectFirst("span.a-color-price");
       return span != null;
     }
 
-    available = doc.getElementById("ebooksProductTitle");
-    if (available == null)
-      available = doc.getElementById("add-to-cart-button");
+    val = doc.getElementById("ebooksProductTitle");
+    if (val == null) val = doc.getElementById("add-to-cart-button");
 
-    return (available != null);
+    return (val != null);
   }
 
   @Override
   public String getSku() {
-    Element sku = doc.getElementById("ASIN");
-    if (sku != null) {
-      return sku.val();
+    Element val = doc.getElementById("ASIN");
+    if (val != null && StringUtils.isNotBlank(val.val())) {
+      return val.val();
     }
 
-    sku = doc.selectFirst("input[name='ASIN.0']");
-    if (sku != null) {
-      return sku.val();
+    val = doc.selectFirst("input[name='ASIN.0']");
+    if (val != null && StringUtils.isNotBlank(val.val())) {
+      return val.val();
     }
 
     return Consts.Words.NOT_AVAILABLE;
@@ -58,12 +59,13 @@ public class Amazon extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element name = doc.getElementById("productTitle");
-    if (name == null)
-      name = doc.getElementById("ebooksProductTitle");
+    Element val = doc.getElementById("productTitle");
+    if (val == null || StringUtils.isBlank(val.text())) {
+      val = doc.getElementById("ebooksProductTitle");
+    }
 
-    if (name != null) {
-      return name.text();
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
     return Consts.Words.NOT_AVAILABLE;
@@ -83,115 +85,109 @@ public class Amazon extends AbstractWebsite {
   public BigDecimal getPrice() {
     String strPrice = null;
 
-    Element price = doc.getElementById("priceblock_dealprice");
-    if (price == null) {
-      price = doc.getElementById("priceblock_ourprice");
-      if (price != null) {
-        Element integer = price.selectFirst("span.price-large");
-        if (integer != null) {
-          Element decimal = integer.nextElementSibling();
-          if (decimal != null) {
-            strPrice = integer.text().trim() + "." + decimal.text().trim();
-            return new BigDecimal(cleanDigits(strPrice));
-          }
+    Element val = doc.getElementById("priceblock_dealprice");
+    if (val == null) val = doc.getElementById("priceblock_ourprice");
+
+    if (val != null) {
+      Element integer = val.selectFirst("span.price-large");
+      if (integer != null) {
+        Element decimal = integer.nextElementSibling();
+        if (decimal != null) {
+          strPrice = integer.text().trim() + "." + decimal.text().trim();
+          return new BigDecimal(cleanDigits(strPrice));
         }
       }
     }
 
-    if (price == null)
-      price = doc.selectFirst("div#buybox span.a-color-price");
+    if (val == null) val = doc.selectFirst("div#buybox span.a-color-price");
 
-    if (price != null) {
-      strPrice = price.text();
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      strPrice = val.text();
     } else {
-      price = doc.getElementById("cerberus-data-metrics");
-      if (price != null)
-        strPrice = price.attr("data-asin-price");
+      val = doc.getElementById("cerberus-data-metrics");
+      if (val != null && StringUtils.isNotBlank(val.attr("data-asin-price"))) {
+        strPrice = val.attr("data-asin-price");
+      }
     }
 
-    if (strPrice == null || strPrice.isEmpty()) {
-      price = doc.selectFirst(".header-price");
-      if (price == null)
-        price = doc.selectFirst("span.a-size-base.a-color-price.a-color-price");
-      if (price == null)
-        price = doc.selectFirst(".a-size-medium.a-color-price.offer-price.a-text-normal");
+    if (strPrice == null || StringUtils.isBlank(strPrice)) {
+      val = doc.selectFirst(".header-price");
+      if (val == null || StringUtils.isBlank(val.text())) {
+        val = doc.selectFirst("span.a-size-base.a-color-price.a-color-price");
+      }
+      if (val == null || StringUtils.isBlank(val.text())) {
+        val = doc.selectFirst(".a-size-medium.a-color-price.offer-price.a-text-normal");
+      }
 
-      if (price != null) {
-        strPrice = price.text();
+      if (val != null && StringUtils.isNotBlank(val.text())) {
+        strPrice = val.text();
       } else {
-        price = doc.selectFirst(".price-large");
-        if (price != null) {
-          String left = cleanDigits(price.text());
+        val = doc.selectFirst(".price-large");
+        if (val != null && StringUtils.isNotBlank(val.text())) {
+          String left = cleanDigits(val.text());
           String right = "00";
-          if (price.nextElementSibling() != null) {
-            right = price.nextElementSibling().text();
+          if (val.nextElementSibling() != null) {
+            right = val.nextElementSibling().text();
           }
           strPrice = left + "." + right;
         } else {
-          // if price is a range like 100 - 300
-          price = doc.getElementById("priceblock_ourprice");
+          // if val is a range like 100 - 300
+          val = doc.getElementById("priceblock_ourprice");
         }
       }
     }
 
-    if (price != null) {
-      if (price.text().contains("-")) {
-        String[] priceChunks = price.text().split("-");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      if (val.text().contains("-")) {
+        String[] priceChunks = val.text().split("-");
         String first = cleanDigits(priceChunks[0]);
         String second = cleanDigits(priceChunks[1]);
         BigDecimal low = new BigDecimal(cleanDigits(first));
         BigDecimal high = new BigDecimal(cleanDigits(second));
         strPrice = high.add(low).divide(BigDecimal.valueOf(2)).toString();
       } else {
-        strPrice = price.text();
+        strPrice = val.text();
       }
     }
 
-    if (strPrice == null || strPrice.isEmpty())
+    if (strPrice == null || StringUtils.isBlank(strPrice)) {
       return BigDecimal.ZERO;
-    else
+    } else {
       return new BigDecimal(cleanDigits(strPrice));
+    }
   }
 
   @Override
   public String getSeller() {
-    Element seller = doc.getElementById("sellerProfileTriggerId");
-    if (seller == null)
-      seller = doc.selectFirst("span.mbcMerchantName");
+    Element val = doc.getElementById("sellerProfileTriggerId");
+    if (val == null || StringUtils.isBlank(val.text())) {
+      val = doc.selectFirst("span.mbcMerchantName");
+    }
 
-    if (seller != null) {
-      return seller.text();
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return "Amazon";
   }
 
   @Override
   public String getShipment() {
-    Element shipment = doc.getElementById("price-shipping-message");
-    if (shipment != null && shipment.text().trim().length() == 0)
-      shipment = null;
+    Element val = doc.getElementById("price-shipping-message");
 
-    if (shipment == null)
-      shipment = doc.selectFirst(".shipping3P");
-    if (shipment == null)
-      shipment = doc.getElementById("mbc-shipping-free-1");
-    if (shipment == null)
-      shipment = doc.getElementById("mbc-shipping-sss-returns-free-1");
-    if (shipment == null)
-      shipment = doc.getElementById("mbc-shipping-sss-eligible-1");
-    if (shipment == null)
-      shipment = doc.getElementById("ddmDeliveryMessage");
-    if (shipment == null)
-      shipment = doc.getElementById("deliverTo");
-    if (shipment == null)
-      shipment = doc.getElementById("delivery-message");
+    if (val == null || StringUtils.isBlank(val.text())) val = doc.selectFirst(".shipping3P");
+    if (val == null || StringUtils.isBlank(val.text())) val = doc.getElementById("mbc-shipping-free-1");
+    if (val == null || StringUtils.isBlank(val.text())) val = doc.getElementById("mbc-shipping-sss-returns-free-1");
+    if (val == null || StringUtils.isBlank(val.text())) val = doc.getElementById("mbc-shipping-sss-eligible-1");
+    if (val == null || StringUtils.isBlank(val.text())) val = doc.getElementById("ddmDeliveryMessage");
+    if (val == null || StringUtils.isBlank(val.text())) val = doc.getElementById("deliverTo");
+    if (val == null || StringUtils.isBlank(val.text())) val = doc.getElementById("delivery-message");
 
-    if (shipment != null) {
-      return shipment.text();
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
-    shipment = doc.getElementById("buybox-see-all-buying-choices-announce");
-    if (shipment != null) {
+    val = doc.getElementById("buybox-see-all-buying-choices-announce");
+    if (val != null) {
       return "See all offers";
     }
 
@@ -200,20 +196,18 @@ public class Amazon extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element brand = doc.getElementById("mbc");
-    if (brand != null) {
-      String brnd = brand.attr("data-brand");
-      if (!brnd.trim().isEmpty()) {
-        return brnd;
-      }
+    Element val = doc.getElementById("mbc");
+    if (val != null && StringUtils.isNotBlank(val.attr("data-brand"))) {
+      return val.attr("data-brand");
     }
 
-    brand = doc.getElementById("bylineInfo");
-    if (brand == null)
-      brand = doc.selectFirst("span.ac-keyword-link a");
+    val = doc.getElementById("bylineInfo");
+    if (val == null || StringUtils.isBlank(val.text())) {
+      val = doc.selectFirst("span.ac-keyword-link a");
+    }
 
-    if (brand != null) {
-      return brand.text();
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
     return "Amazon";

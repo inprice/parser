@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -58,9 +60,9 @@ public class Laredoute extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element sku = doc.getElementById("vendorsList");
-    if (sku != null) {
-      return sku.attr("data-prodid");
+    Element val = doc.getElementById("vendorsList");
+    if (val != null && StringUtils.isNotBlank(val.attr("data-prodid"))) {
+      return val.attr("data-prodid");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -100,9 +102,9 @@ public class Laredoute extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element shipment = doc.selectFirst("li.delivery-info-item.delivery-info.delivery-info-content");
-    if (shipment != null) {
-      return shipment.text();
+    Element val = doc.selectFirst("li.delivery-info-item.delivery-info.delivery-info-content");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }

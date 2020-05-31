@@ -10,6 +10,8 @@ import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.helpers.Global;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.helpers.UserAgents;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
@@ -106,7 +108,7 @@ public abstract class AbstractWebsite implements Website {
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
       for (Element spec : specs) {
-        if (!spec.text().trim().isEmpty()) {
+        if (StringUtils.isNotBlank(spec.text())) {
           LinkSpec ls = new LinkSpec("", spec.text());
           if (sep != null && ls.getValue().indexOf(sep) > 0) {
             String[] specChunks = ls.getValue().split(sep);
@@ -157,7 +159,7 @@ public abstract class AbstractWebsite implements Website {
 
   private String fixLength(String val, int limit) {
     String newForm = fixQuotes(val.trim());
-    if (!newForm.isEmpty() && newForm.length() > limit)
+    if (StringUtils.isNotBlank(newForm) && newForm.length() > limit)
       return newForm.substring(0, limit);
     else
       return newForm;
@@ -168,10 +170,10 @@ public abstract class AbstractWebsite implements Website {
   }
 
   private void read() {
-    LinkStatus previousStatus = link.getStatus();
+    LinkStatus prevStatus = link.getStatus();
     json = getJsonData();
 
-    if (!link.getStatus().equals(previousStatus)) {
+    if (!link.getStatus().equals(prevStatus)) {
       // getJsonData method may return a network or socket error. thus, we need to
       // check if it is so
       if (LinkStatus.READ_ERROR.equals(link.getStatus()) || LinkStatus.NO_DATA.equals(link.getStatus())
@@ -183,7 +185,7 @@ public abstract class AbstractWebsite implements Website {
     // price settings
     BigDecimal price = getPrice().setScale(2, RoundingMode.HALF_UP);
     link.setPrice(price);
-    if ((getPrice() == null || getPrice().compareTo(BigDecimal.ONE) < 0)
+    if ((getPrice() == null || getPrice().compareTo(BigDecimal.ONE) <= 0)
         && (getName() == null || Consts.Words.NOT_AVAILABLE.equals(getName()))) {
       link.setStatus(LinkStatus.NOT_A_PRODUCT_PAGE);
       log.warn("URL doesn't point at a specific page! " + getUrl());
@@ -191,28 +193,26 @@ public abstract class AbstractWebsite implements Website {
     }
 
     // other settings
-    if (LinkStatus.NEW.equals(link.getStatus()) || LinkStatus.RENEWED.equals(link.getStatus())) {
-      if (getSku() != null)
-        link.setSku(fixLength(getSku(), Consts.Limits.SKU));
-      if (getName() != null)
-        link.setName(fixLength(getName(), Consts.Limits.NAME));
-      if (getBrand() != null)
-        link.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
-      if (getSeller() != null)
-        link.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
-      if (getShipment() != null)
-        link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
+    if (getSku() != null)
+      link.setSku(fixLength(getSku(), Consts.Limits.SKU));
+    if (getName() != null)
+      link.setName(fixLength(getName(), Consts.Limits.NAME));
+    if (getBrand() != null)
+      link.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
+    if (getSeller() != null)
+      link.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
+    if (getShipment() != null)
+      link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
 
-      // spec list editing
-      List<LinkSpec> specList = getSpecList();
-      if (specList != null && specList.size() > 0) {
-        List<LinkSpec> newList = new ArrayList<>(specList.size());
-        for (LinkSpec ls : specList) {
-          newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY),
-              fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
-        }
-        link.setSpecList(newList);
+    // spec list editing
+    List<LinkSpec> specList = getSpecList();
+    if (specList != null && specList.size() > 0) {
+      List<LinkSpec> newList = new ArrayList<>(specList.size());
+      for (LinkSpec ls : specList) {
+        newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY),
+            fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
       }
+      link.setSpecList(newList);
     }
 
     if (isAvailable()) {

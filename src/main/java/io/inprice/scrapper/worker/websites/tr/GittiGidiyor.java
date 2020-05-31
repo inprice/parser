@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
@@ -24,10 +26,12 @@ public class GittiGidiyor extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element amount = doc.getElementById("VariantProductRemaingCount");
-    if (amount != null) {
+    Element val = doc.getElementById("VariantProductRemaingCount");
+    if (val == null || StringUtils.isBlank(val.text())) val = doc.selectFirst(".remainingCount");
+
+    if (val != null && StringUtils.isNotBlank(val.text())) {
       try {
-        int realAmount = new Integer(cleanDigits(amount.text()));
+        int realAmount = new Integer(cleanDigits(val.text()));
         return (realAmount > 0);
       } catch (Exception e) {
         //
@@ -38,30 +42,36 @@ public class GittiGidiyor extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element sku = doc.getElementById("productId");
-    if (sku != null) {
-      return sku.val();
+    Element val = doc.getElementById("productId");
+    if (val != null && StringUtils.isNotBlank(val.val())) {
+      return val.val();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element name = doc.getElementById("productTitle");
-    if (name == null)
-      name = doc.selectFirst("span.title");
+    Element val = doc.getElementById("sp-title");
+    if (val == null || StringUtils.isBlank(val.text())) val = doc.selectFirst("span.title");
+    if (val == null || StringUtils.isBlank(val.text())) val = doc.getElementById("productTitle");
 
-    if (name != null) {
-      return name.text();
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.selectFirst("[data-price]");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("data-price")));
+    Element val = doc.selectFirst("span.lastPrice");
+
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return new BigDecimal(cleanDigits(val.text()));
+    } else {
+      val = doc.selectFirst("[data-price]");
+      if (val != null && StringUtils.isNotBlank(val.attr("data-price"))) {
+        return new BigDecimal(cleanDigits(val.attr("data-price")));
+      }
     }
 
     return BigDecimal.ZERO;
@@ -69,27 +79,33 @@ public class GittiGidiyor extends AbstractWebsite {
 
   @Override
   public String getSeller() {
-    Element seller = doc.selectFirst(".member-name a strong");
-    if (seller != null) {
-      return seller.text();
+    Element val = doc.getElementById("sp-member-nick");
+    if (val == null || StringUtils.isBlank(val.text())) val = doc.selectFirst(".member-name a strong");
+    
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getShipment() {
-    Element shipment = doc.selectFirst(".CargoInfos");
-    if (shipment != null) {
-      return shipment.text();
+    Element val = doc.getElementById("sp-tabContent-shipping-type-text");
+    if (val == null || StringUtils.isBlank(val.text())) val = doc.selectFirst(".CargoInfos");
+
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst(".mr10.gt-product-brand-0 a");
-    if (brand != null) {
-      return brand.text();
+    Element val = doc.selectFirst("ul.product-items li a");
+    if (val == null || StringUtils.isBlank(val.text())) val = doc.selectFirst(".mr10.gt-product-brand-0 a");
+
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }

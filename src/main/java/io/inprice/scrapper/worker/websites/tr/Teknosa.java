@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -112,12 +114,13 @@ public class Teknosa extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element shipment = doc.selectFirst("div.pw-dangerous-html.dbh-content");
-    if (shipment == null)
-      shipment = doc.getElementById("hd3");
+    Element val = doc.selectFirst("div.pw-dangerous-html.dbh-content");
+    if (val == null || StringUtils.isBlank(val.text())) {
+      val = doc.getElementById("hd3");
+    }
 
-    if (shipment != null) {
-      return shipment.text();
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return "Mağazada teslim";
   }
@@ -127,12 +130,12 @@ public class Teknosa extends AbstractWebsite {
     if (json != null) {
       if (json.has("brand")) {
         String bn = json.getJSONObject("brand").getString("name");
-        if (bn != null && !bn.trim().isEmpty())
+        if (StringUtils.isNotBlank(bn))
           return bn;
       }
       if (json.has("schema:brand")) {
         String bn = json.getString("schema:brand");
-        if (bn != null && !bn.trim().isEmpty())
+        if (StringUtils.isNotBlank(bn))
           return bn;
       }
     }

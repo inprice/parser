@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
@@ -24,36 +26,36 @@ public class NotebooksBilliger extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element availability = doc.selectFirst("div.availability_widget span.list_names");
-    if (availability != null) {
-      return availability.text().contains("Abholbereit");
+    Element val = doc.selectFirst("div.availability_widget span.list_names");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text().contains("Abholbereit");
     }
     return false;
   }
 
   @Override
   public String getSku() {
-    Element sku = doc.selectFirst("div#product_page_detail");
-    if (sku != null) {
-      return sku.attr("data-products-number");
+    Element val = doc.selectFirst("div#product_page_detail");
+    if (val != null && StringUtils.isNotBlank(val.attr("data-products-number"))) {
+      return val.attr("data-products-number");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("meta[property='og:title']");
-    if (name != null) {
-      return name.attr("content");
+    Element val = doc.selectFirst("meta[property='og:title']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.getElementById("product_detail_price");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    Element val = doc.getElementById("product_detail_price");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
 
     return BigDecimal.ZERO;
@@ -66,25 +68,23 @@ public class NotebooksBilliger extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element shipment = doc.selectFirst("div.sameday img");
-    if (shipment != null) {
-      return shipment.attr("alt");
+    Element val = doc.selectFirst("div.sameday img");
+    if (val != null && StringUtils.isNotBlank(val.attr("alt"))) {
+      return val.attr("alt");
     }
     return "Abholung im Geschäft";
   }
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("div.product_headline div.image_container img");
-    if (brand != null) {
-      String alt = brand.attr("alt");
-      if (!alt.isEmpty()) {
-        return alt.substring(0, alt.lastIndexOf(" "));
-      }
+    Element val = doc.selectFirst("div.product_headline div.image_container img");
+    if (val != null && StringUtils.isNotBlank(val.attr("alt"))) {
+      String alt = val.attr("alt");
+      return alt.substring(0, alt.lastIndexOf(" "));
     }
 
     final String brandName = findAPart(doc.html(), "\"productBrand\":\"", "\"");
-    if (brandName != null) {
+    if (StringUtils.isNotBlank(brandName)) {
       return brandName;
     }
 

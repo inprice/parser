@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
@@ -30,27 +32,27 @@ public class Argos extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element sku = doc.selectFirst("[itemProp='sku']");
-    if (sku != null) {
-      return sku.attr("content");
+    Element val = doc.selectFirst("[itemProp='sku']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("span.product-title");
-    if (name != null) {
-      return name.text();
+    Element val = doc.selectFirst("span.product-title");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.selectFirst(".product-price-primary");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    Element val = doc.selectFirst(".product-price-primary");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
     return BigDecimal.ZERO;
   }
@@ -64,9 +66,9 @@ public class Argos extends AbstractWebsite {
   public String getShipment() {
     final String staticPart = "In-store pickup";
 
-    Element shippingFee = doc.selectFirst("a.ac-propbar__slot > span.sr-only");
-    if (shippingFee != null) {
-      return staticPart + " OR " + shippingFee.text();
+    Element val = doc.selectFirst("a.ac-propbar__slot > span.sr-only");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return staticPart + " OR " + val.text();
     }
 
     return staticPart;
@@ -74,9 +76,9 @@ public class Argos extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("[itemprop='brand']");
-    if (brand != null) {
-      return brand.text();
+    Element val = doc.selectFirst("[itemprop='brand']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
     final String brandName = findAPart(doc.html(), "\"brand\":\"", "\",");

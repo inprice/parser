@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -27,8 +29,7 @@ public class Zalando extends AbstractWebsite {
   @Override
   public boolean isAvailable() {
     boolean isAvailable = doc.html().indexOf("\"available\":true") > 0;
-    if (isAvailable)
-      return true;
+    if (isAvailable) return true;
 
     Element addToCartButton = doc.getElementById("z-pdp-topSection-addToCartButton");
     return (addToCartButton != null);
@@ -36,15 +37,13 @@ public class Zalando extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element sku = doc.selectFirst("meta[property='og:url']");
-    if (sku != null) {
-      String url = sku.attr("content");
-      if (!url.isEmpty()) {
-        String[] urlChunks = url.split("-");
-        if (urlChunks.length > 1) {
-          String pure = urlChunks[urlChunks.length - 2] + "-" + urlChunks[urlChunks.length - 1].replaceAll(".html", "");
-          return pure.toUpperCase();
-        }
+    Element val = doc.selectFirst("meta[property='og:url']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      String url = val.attr("content");
+      String[] urlChunks = url.split("-");
+      if (urlChunks.length > 1) {
+        String pure = urlChunks[urlChunks.length - 2] + "-" + urlChunks[urlChunks.length - 1].replaceAll(".html", "");
+        return pure.toUpperCase();
       }
     }
     return Consts.Words.NOT_AVAILABLE;
@@ -52,23 +51,23 @@ public class Zalando extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("h1[title]");
-    if (name != null) {
-      return name.attr("title");
+    Element val = doc.selectFirst("h1[title]");
+    if (val != null && StringUtils.isNotBlank(val.attr("title"))) {
+      return val.attr("title");
     }
 
-    name = doc.selectFirst("meta[name='twitter:title']");
-    if (name != null) {
-      return name.attr("content");
+    val = doc.selectFirst("meta[name='twitter:title']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.selectFirst("meta[name='twitter:data1']");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    Element val = doc.selectFirst("meta[name='twitter:data1']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
     return BigDecimal.ZERO;
   }
@@ -140,7 +139,7 @@ public class Zalando extends AbstractWebsite {
         String value = "";
         if (i < specs.size())
           value = specs.get(i++).text();
-        if (!key.isEmpty() && !value.isEmpty())
+        if (StringUtils.isNotBlank(key) && StringUtils.isNotBlank(value))
           specList.add(new LinkSpec(key, value));
       }
     }

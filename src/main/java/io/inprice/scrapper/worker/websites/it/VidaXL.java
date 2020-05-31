@@ -5,6 +5,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
@@ -27,9 +29,9 @@ public class VidaXL extends AbstractWebsite {
   }
 
   public String getAuctionId() {
-    Element auctionId = doc.getElementById("auctionId");
-    if (auctionId != null) {
-      return auctionId.val();
+    Element val = doc.getElementById("auctionId");
+    if (val != null && StringUtils.isNotBlank(val.val())) {
+      return val.val();
     }
     return null;
   }
@@ -40,7 +42,7 @@ public class VidaXL extends AbstractWebsite {
     if (auctionId != null) {
       HttpResponse<String> response = httpClient
           .get("https://www.vidaxl.it/platform/index.php?m=auction&a=getAuctionsList&id=" + auctionId);
-      if (response.getStatus() == 200 && !response.getBody().isEmpty()) {
+      if (response.getStatus() == 200 && StringUtils.isNotBlank(response.getBody())) {
         JSONObject auction = new JSONObject(response.getBody());
         if (auction.has("current")) {
           current = auction.getJSONObject("current");
@@ -59,14 +61,14 @@ public class VidaXL extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element code = doc.selectFirst("meta[itemprop='sku']");
-    if (code != null) {
-      return code.attr("content");
+    Element val = doc.selectFirst("meta[itemprop='sku']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
 
-    code = doc.selectFirst("input[name='hidden_sku']");
-    if (code != null) {
-      return code.attr("value");
+    val = doc.selectFirst("input[name='hidden_sku']");
+    if (val != null && StringUtils.isNotBlank(val.attr("value"))) {
+      return val.attr("value");
     }
 
     return Consts.Words.NOT_AVAILABLE;
@@ -74,14 +76,14 @@ public class VidaXL extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element title = doc.selectFirst("h1[itemprop='name']");
-    if (title != null) {
-      return title.text();
+    Element val = doc.selectFirst("h1[itemprop='name']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
-    title = doc.selectFirst("meta[property='og:title']");
-    if (title != null) {
-      return title.attr("content");
+    val = doc.selectFirst("meta[property='og:title']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
 
     return Consts.Words.NOT_AVAILABLE;
@@ -93,18 +95,18 @@ public class VidaXL extends AbstractWebsite {
       return new BigDecimal(cleanDigits(current.getString("price_num")));
     }
 
-    Element price = doc.selectFirst("meta[itemprop='price']");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    Element val = doc.selectFirst("meta[itemprop='price']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getSeller() {
-    Element seller = doc.selectFirst("meta[itemprop='seller']");
-    if (seller != null) {
-      return seller.attr("content");
+    Element val = doc.selectFirst("meta[itemprop='seller']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return "VidaXL";
   }
@@ -113,28 +115,28 @@ public class VidaXL extends AbstractWebsite {
   public String getShipment() {
     StringBuilder sb = new StringBuilder();
 
-    Element shipment = doc.selectFirst("div.delivery-name");
-    if (shipment == null)
-      shipment = doc.selectFirst("div.delivery-info");
+    Element val = doc.selectFirst("div.delivery-name");
+    if (val == null || StringUtils.isBlank(val.text())) {
+      val = doc.selectFirst("div.delivery-info");
+    }
 
-    if (shipment != null) {
-      sb.append(shipment.text());
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      sb.append(val.text());
       sb.append(". ");
     }
 
-    shipment = doc.selectFirst("div.shipping-from");
-    if (shipment != null) {
-      sb.append(shipment.text());
+    val = doc.selectFirst("div.shipping-from");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      sb.append(val.text());
       sb.append(". ");
     }
 
-    shipment = doc.selectFirst("div.delivery-seller");
-    if (shipment != null) {
-      sb.append(shipment.text());
+    val = doc.selectFirst("div.delivery-seller");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      sb.append(val.text());
     }
 
-    if (sb.length() == 0)
-      sb.append("NA");
+    if (sb.length() == 0) sb.append("NA");
 
     return sb.toString().replaceAll(" Disponibile Non disponibile", "");
   }

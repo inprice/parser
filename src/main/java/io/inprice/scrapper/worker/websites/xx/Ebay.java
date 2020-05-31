@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -39,51 +41,50 @@ public class Ebay extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element stock = doc.getElementById("vi-quantity__select-box");
-    if (stock != null)
-      return true;
+    Element val = doc.getElementById("vi-quantity__select-box");
+    if (val != null) return true;
 
-    stock = doc.selectFirst("#qtySubTxt span");
-    if (stock != null)
-      return true;
+    val = doc.selectFirst("#qtySubTxt span");
+    if (val != null) return true;
 
-    stock = doc.selectFirst("a[data-action-name='BUY_IT_NOW']");
-    if (stock != null)
-      return true;
+    val = doc.selectFirst("a[data-action-name='BUY_IT_NOW']");
+    if (val != null) return true;
 
-    stock = doc.selectFirst("span[itemprop='availableAtOrFrom']");
-    return (stock != null);
+    val = doc.selectFirst("span[itemprop='availableAtOrFrom']");
+    return (val != null);
   }
 
   @Override
   public String getSku() {
-    Element sku = doc.getElementById("descItemNumber");
-    if (sku != null) {
-      return sku.text();
+    Element val = doc.getElementById("descItemNumber");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
-    sku = doc.selectFirst("a[data-itemid]");
-    if (sku != null) {
-      return sku.attr("data-itemid");
+    val = doc.selectFirst("a[data-itemid]");
+    if (val != null && StringUtils.isNotBlank(val.attr("data-itemid"))) {
+      return val.attr("data-itemid");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("span#vi-lkhdr-itmTitl");
-    if (name == null)
-      name = doc.selectFirst("title");
-    if (name != null)
-      return name.text();
+    Element val = doc.selectFirst("span#vi-lkhdr-itmTitl");
+    if (val == null) val = doc.selectFirst("title");
 
-    name = doc.selectFirst("h1.product-title");
-    if (name != null)
-      return name.text();
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
 
-    name = doc.selectFirst("a[data-itemid]");
-    if (name != null) {
-      return name.attr("etafsharetitle");
+    val = doc.selectFirst("h1.product-title");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+
+    val = doc.selectFirst("a[data-itemid]");
+    if (val != null && StringUtils.isNotBlank(val.attr("etafsharetitle"))) {
+      return val.attr("etafsharetitle");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -92,29 +93,29 @@ public class Ebay extends AbstractWebsite {
   public BigDecimal getPrice() {
     String strPrice = null;
 
-    Element price = doc.getElementById("convbinPrice");
-    if (price == null)
-      price = doc.getElementById("convbidPrice");
+    Element val = doc.getElementById("convbinPrice");
+    if (val == null) val = doc.getElementById("convbidPrice");
 
-    if (price != null) {
-      strPrice = price.text();
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      strPrice = val.text();
     } else {
-      price = doc.getElementById("prcIsum");
-      if (price == null)
-        price = doc.getElementById("prcIsum_bidPrice");
+      val = doc.getElementById("prcIsum");
+      if (val == null) val = doc.getElementById("prcIsum_bidPrice");
 
-      if (price != null) {
-        strPrice = price.attr("content");
+      if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+        strPrice = val.attr("content");
       } else {
-        price = doc.getElementById("mm-saleDscPrc");
-        if (price != null)
-          strPrice = price.text();
+        val = doc.getElementById("mm-saleDscPrc");
+        if (val != null && StringUtils.isNotBlank(val.text())) {
+          strPrice = val.text();
+        }
       }
 
-      if (price == null) {
-        price = doc.selectFirst("div.price");
-        if (price != null)
-          strPrice = price.text();
+      if (val == null) {
+        val = doc.selectFirst("div.price");
+        if (val != null && StringUtils.isNotBlank(val.text())) {
+          strPrice = val.text();
+        }
       }
     }
 
@@ -126,56 +127,53 @@ public class Ebay extends AbstractWebsite {
 
   @Override
   public String getSeller() {
-    String value = null;
-    Element seller = doc.getElementById("mbgLink");
+    Element val = doc.getElementById("mbgLink");
 
-    if (seller != null) {
-      String[] sellerChunks = seller.attr("aria-label").split(":");
+    if (val != null && StringUtils.isNotBlank(val.attr("aria-label"))) {
+      String[] sellerChunks = val.attr("aria-label").split(":");
       if (sellerChunks.length > 1) {
-        value = sellerChunks[1];
+        return sellerChunks[1];
       }
     } else {
-      seller = doc.selectFirst("div.seller-persona a");
-      if (seller == null)
-        seller = doc.selectFirst("span.mbg-nw");
+      val = doc.selectFirst("div.seller-persona a");
+      if (val == null) val = doc.selectFirst("span.mbg-nw");
 
-      if (seller != null) {
-        value = seller.text();
+      if (val != null && StringUtils.isNotBlank(val.text())) {
+        return val.text();
       }
     }
-    return value;
+
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getShipment() {
-    String value = null;
+    Element val = doc.getElementById("fshippingCost");
 
-    Element shipment = doc.getElementById("fshippingCost");
-    if (shipment != null) {
-      String left = shipment.text();
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      String left = val.text();
       String right = "";
 
-      shipment = doc.getElementById("fShippingSvc");
-      if (shipment != null) {
-        right = shipment.text();
+      val = doc.getElementById("fShippingSvc");
+      if (val != null && StringUtils.isNotBlank(val.text())) {
+        right = val.text();
       }
       return left + " " + right;
     }
 
-    shipment = doc.selectFirst("#shSummary span");
-    if (shipment == null)
-      shipment = doc.selectFirst("span.logistics-cost");
+    val = doc.selectFirst("#shSummary span");
+    if (val == null || StringUtils.isBlank(val.text())) val = doc.selectFirst("span.logistics-cost");
 
-    if (shipment != null && shipment.text().trim().length() > 1) {
-      value = shipment.text();
+    if (val != null && StringUtils.isNotBlank(val.text()) && !"|".equals(val.text().trim())) {
+      return val.text();
     } else {
-      shipment = doc.getElementById("shSummary");
-      if (shipment != null) {
-        value = shipment.text();
+      val = doc.getElementById("shSummary");
+      if (val != null && StringUtils.isNotBlank(val.text())) {
+        return val.text();
       }
     }
 
-    return value;
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override

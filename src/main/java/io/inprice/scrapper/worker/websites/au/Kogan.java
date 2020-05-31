@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
@@ -24,41 +26,41 @@ public class Kogan extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element available = doc.selectFirst("link[itemProp='availability']");
-    if (available != null) {
-      return available.attr("href").contains("InStock");
+    Element val = doc.selectFirst("link[itemProp='availability']");
+    if (val != null && StringUtils.isNotBlank(val.attr("href"))) {
+      return val.attr("href").contains("InStock");
     }
     return false;
   }
 
   @Override
   public String getSku() {
-    Element sku = doc.selectFirst("p[itemProp='model']");
-    if (sku != null) {
-      return sku.text();
+    Element val = doc.selectFirst("p[itemProp='model']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("h1[itemprop='name']");
-    if (name != null) {
-      return name.text();
+    Element val = doc.selectFirst("h1[itemprop='name']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
-    name = doc.selectFirst("meta[property='og:title']");
-    if (name != null) {
-      return name.attr("content");
+    val = doc.selectFirst("meta[property='og:title']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.selectFirst("meta[property='product:price:amount']");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    Element val = doc.selectFirst("meta[property='product:price:amount']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
     return BigDecimal.ZERO;
   }
@@ -70,18 +72,18 @@ public class Kogan extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element shipment = doc.selectFirst("div[itemprop='offers'] span[role='tooltip']");
-    if (shipment != null) {
-      return shipment.text();
+    Element val = doc.selectFirst("div[itemprop='offers'] span[role='tooltip']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("meta[itemProp='name']");
-    if (brand != null) {
-      return brand.attr("content");
+    Element val = doc.selectFirst("meta[itemProp='name']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return "Kogan";
   }

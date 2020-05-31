@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -25,10 +27,10 @@ public class Etsy extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element quantity = doc.selectFirst("input[name='quantity']");
-    if (quantity != null) {
+    Element val = doc.selectFirst("input[name='quantity']");
+    if (val != null && StringUtils.isNotBlank(val.attr("value"))) {
       try {
-        int qty = new Integer(cleanDigits(quantity.attr("value")));
+        int qty = new Integer(cleanDigits(val.attr("value")));
         return qty > 0;
       } catch (Exception e) {
         //
@@ -41,40 +43,41 @@ public class Etsy extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element sku = doc.selectFirst("input[name='listing_id']");
-    if (sku != null) {
-      return sku.attr("value");
+    Element val = doc.selectFirst("input[name='listing_id']");
+    if (val != null && StringUtils.isNotBlank(val.attr("value"))) {
+      return val.attr("value");
     }
 
-    sku = doc.selectFirst("h1[data-listing-id]");
-    if (sku != null) {
-      return sku.attr("data-listing-id");
+    val = doc.selectFirst("h1[data-listing-id]");
+    if (val != null && StringUtils.isNotBlank(val.attr("data-listing-id"))) {
+      return val.attr("data-listing-id");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("meta[property='og:title']");
-    if (name != null) {
-      return name.attr("content");
+    Element val = doc.selectFirst("meta[property='og:title']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.selectFirst("span.override-listing-price");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.text()));
+    Element val = doc.selectFirst("span.override-listing-price");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return new BigDecimal(cleanDigits(val.text()));
     }
 
-    price = doc.selectFirst("meta[property='etsymarketplace:price_value']");
-    if (price == null)
-      price = doc.selectFirst("meta[property='product:price:amount']");
+    val = doc.selectFirst("meta[property='etsymarketplace:price_value']");
+    if (val == null || StringUtils.isBlank(val.attr("content"))) {
+      val = doc.selectFirst("meta[property='product:price:amount']");
+    }
 
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
 
     return BigDecimal.ZERO;
@@ -82,9 +85,9 @@ public class Etsy extends AbstractWebsite {
 
   @Override
   public String getSeller() {
-    Element brand = doc.selectFirst("a[aria-label='Contact the shop']");
-    if (brand != null) {
-      return brand.attr("data-to_username");
+    Element val = doc.selectFirst("a[aria-label='Contact the shop']");
+    if (val != null && StringUtils.isNotBlank(val.attr("data-to_username"))) {
+      return val.attr("data-to_username");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -92,35 +95,36 @@ public class Etsy extends AbstractWebsite {
   @Override
   public String getShipment() {
     StringBuilder sb = new StringBuilder();
-    Element shipment = doc.selectFirst("div.js-estimated-delivery div");
-    if (shipment != null) {
-      sb.append(shipment.text().trim());
+    Element val = doc.selectFirst("div.js-estimated-delivery div");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      sb.append(val.text().trim());
       sb.append(". ");
     }
 
-    shipment = doc.selectFirst("div.js-ships-from");
-    if (shipment != null) {
-      sb.append(shipment.text().trim());
+    val = doc.selectFirst("div.js-ships-from");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      sb.append(val.text().trim());
       sb.append(". ");
     }
 
-    shipment = doc.selectFirst("div.shipping-cost");
-    if (shipment != null) {
-      sb.append(shipment.text().trim());
+    val = doc.selectFirst("div.shipping-cost");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      sb.append(val.text().trim());
       sb.append(". ");
     }
 
-    if (sb.length() == 0)
+    if (sb.length() == 0) {
       sb.append("NA");
+    }
 
     return sb.toString();
   }
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("a[aria-label='Contact the shop']");
-    if (brand != null) {
-      return brand.attr("data-to_user_display_name");
+    Element val = doc.selectFirst("a[aria-label='Contact the shop']");
+    if (val != null && StringUtils.isNotBlank(val.attr("data-to_user_display_name"))) {
+      return val.attr("data-to_user_display_name");
     }
     return Consts.Words.NOT_AVAILABLE;
   }

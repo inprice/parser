@@ -4,6 +4,8 @@ import io.inprice.scrapper.common.models.Link;
 import io.inprice.scrapper.common.models.LinkSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
@@ -24,38 +26,38 @@ public class TheGoodGuys extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element available = doc.getElementById("add2CartBtn");
-    return (available != null);
+    Element val = doc.getElementById("add2CartBtn");
+    return (val != null);
   }
 
   @Override
   public String getSku() {
-    Element sku = doc.selectFirst("span.titleItems_model_digit");
-    if (sku != null) {
-      return sku.text();
+    Element val = doc.selectFirst("span.titleItems_model_digit");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
 
-    sku = doc.getElementById("mainProductId");
-    if (sku != null) {
-      return sku.val();
+    val = doc.getElementById("mainProductId");
+    if (val != null && StringUtils.isNotBlank(val.val())) {
+      return val.val();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("h1.titleItems_head");
-    if (name != null) {
-      return name.text();
+    Element val = doc.selectFirst("h1.titleItems_head");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element price = doc.selectFirst("meta[property='og:price:amount']");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("content")));
+    Element val = doc.selectFirst("meta[property='og:price:amount']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
     return BigDecimal.ZERO;
   }
@@ -72,9 +74,9 @@ public class TheGoodGuys extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("img.brand_logo_keyftrs");
-    if (brand != null) {
-      return brand.attr("alt");
+    Element val = doc.selectFirst("img.brand_logo_keyftrs");
+    if (val != null && StringUtils.isNotBlank(val.attr("alt"))) {
+      return val.attr("alt");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
