@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.us;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -32,10 +32,10 @@ public class Bonanza extends AbstractWebsite {
   private String sku = "NA";
   private String brand = "NA";
   private boolean availability;
-  private List<LinkSpec> specList;
+  private List<CompetitorSpec> specList;
 
-  public Bonanza(Link link) {
-    super(link);
+  public Bonanza(Competitor competitor) {
+    super(competitor);
   }
 
   /**
@@ -52,7 +52,7 @@ public class Bonanza extends AbstractWebsite {
       for (Element spec : specs) {
         String key = spec.selectFirst("td.extended_info_label").text().replaceAll(":", "");
         String value = spec.selectFirst("p.extended_info_value_content").text();
-        specList.add(new LinkSpec(key, value));
+        specList.add(new CompetitorSpec(key, value));
 
         if (key.equals("Item number"))
           sku = value;
@@ -127,7 +127,7 @@ public class Bonanza extends AbstractWebsite {
       return val.attr("content");
     }
 
-    val = doc.selectFirst("div.booth_link a");
+    val = doc.selectFirst("div.booth_competitor a");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -155,7 +155,7 @@ public class Bonanza extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return specList;
   }
 }

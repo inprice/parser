@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.au;
 
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
 import org.junit.Test;
@@ -14,62 +14,62 @@ public class Ebay_AU_Test {
     private final String SITE_NAME = "ebay";
     private final String COUNTRY_CODE = "au";
 
-    private final Website site = new io.inprice.scrapper.worker.websites.xx.Ebay(new Link());
+    private final Website site = new io.inprice.scrapper.worker.websites.xx.Ebay(new Competitor());
 
     @Test
     public void test_product_1() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("253639280508", link.getSku());
-        assertEquals("Milano Deluxe 3pc ABS Luggage Suitcase Luxury Hard Case Shockproof Travel Set", link.getName());
-        assertEquals("99.95", link.getPrice().toString());
-        assertEquals("Milano", link.getBrand());
-        assertEquals("grouptwowarehouse", link.getSeller());
-        assertEquals("May not post to Turkey", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("253639280508", competitor.getSku());
+        assertEquals("Milano Deluxe 3pc ABS Luggage Suitcase Luxury Hard Case Shockproof Travel Set", competitor.getName());
+        assertEquals("99.95", competitor.getPrice().toString());
+        assertEquals("Milano", competitor.getBrand());
+        assertEquals("grouptwowarehouse", competitor.getSeller());
+        assertEquals("May not post to Turkey", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("291875944966", link.getSku());
-        assertEquals("NEW Peter Thomas Roth Max Anti-Shine Mattifying Gel 30ml Womens Skin Care", link.getName());
-        assertEquals("41.97", link.getPrice().toString());
-        assertEquals("Peter Thomas Roth", link.getBrand());
-        assertEquals("the_beauty_club_au", link.getSeller());
-        assertEquals("Doesn't post to Turkey", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("291875944966", competitor.getSku());
+        assertEquals("NEW Peter Thomas Roth Max Anti-Shine Mattifying Gel 30ml Womens Skin Care", competitor.getName());
+        assertEquals("41.97", competitor.getPrice().toString());
+        assertEquals("Peter Thomas Roth", competitor.getBrand());
+        assertEquals("the_beauty_club_au", competitor.getSeller());
+        assertEquals("Doesn't post to Turkey", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("254255431988", link.getSku());
-        assertEquals("140340 vidaXL Auger Ground Drill Orange", link.getName());
-        assertEquals("195.97", link.getPrice().toString());
-        assertEquals("vidaXL", link.getBrand());
-        assertEquals("comebuy-uk", link.getSeller());
-        assertEquals("Doesn't post to Turkey", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("254255431988", competitor.getSku());
+        assertEquals("140340 vidaXL Auger Ground Drill Orange", competitor.getName());
+        assertEquals("195.97", competitor.getPrice().toString());
+        assertEquals("vidaXL", competitor.getBrand());
+        assertEquals("comebuy-uk", competitor.getSeller());
+        assertEquals("Doesn't post to Turkey", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("283038845115", link.getSku());
-        assertEquals("MEN'S TROUSERS DIAMOND mod. CAPRI DARK GREY CHECK CASUAL COTTON", link.getName());
-        assertEquals("38.13", link.getPrice().toString());
-        assertEquals("Diamond Collezioni", link.getBrand());
-        assertEquals("gi-store1", link.getSeller());
-        assertEquals("AU $21.18 Australia Post Air Mail Parcel", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("283038845115", competitor.getSku());
+        assertEquals("MEN'S TROUSERS DIAMOND mod. CAPRI DARK GREY CHECK CASUAL COTTON", competitor.getName());
+        assertEquals("38.13", competitor.getPrice().toString());
+        assertEquals("Diamond Collezioni", competitor.getBrand());
+        assertEquals("gi-store1", competitor.getSeller());
+        assertEquals("AU $21.18 Australia Post Air Mail Parcel", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
 }

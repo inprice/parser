@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.xx;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class Amazon extends AbstractWebsite {
 
-  public Amazon(Link link) {
-    super(link);
+  public Amazon(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -203,7 +203,7 @@ public class Amazon extends AbstractWebsite {
 
     val = doc.getElementById("bylineInfo");
     if (val == null || StringUtils.isBlank(val.text())) {
-      val = doc.selectFirst("span.ac-keyword-link a");
+      val = doc.selectFirst("span.ac-keyword-competitor a");
     }
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
@@ -214,8 +214,8 @@ public class Amazon extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = getValueOnlySpecList(doc.select("#feature-bullets li:not(.aok-hidden)"));
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = getValueOnlySpecList(doc.select("#feature-bullets li:not(.aok-hidden)"));
     if (specList == null) {
       specList = getValueOnlySpecList(doc.select("div.content ul li"));
     }

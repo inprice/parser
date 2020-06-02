@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.tr;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class Trendyol extends AbstractWebsite {
 
-  public Trendyol(Link link) {
-    super(link);
+  public Trendyol(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -34,11 +34,11 @@ public class Trendyol extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("link[rel='canonical']");
+    Element val = doc.selectFirst("competitor[rel='canonical']");
     if (val != null && StringUtils.isNotBlank(val.attr("href"))) {
-      String[] linkChunks = val.attr("href").split("-");
-      if (linkChunks.length > 0) {
-        return linkChunks[linkChunks.length - 1];
+      String[] competitorChunks = val.attr("href").split("-");
+      if (competitorChunks.length > 0) {
+        return competitorChunks[competitorChunks.length - 1];
       }
     }
     return Consts.Words.NOT_AVAILABLE;
@@ -110,8 +110,8 @@ public class Trendyol extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = null;
 
     Elements specs = doc.select("div.pr-in-dt-cn ul span li");
     if (specs != null && specs.size() > 0) {
@@ -119,7 +119,7 @@ public class Trendyol extends AbstractWebsite {
       for (Element spec : specs) {
         String[] specChunks = spec.text().split("\\.");
         for (String sp : specChunks) {
-          specList.add(new LinkSpec("", sp));
+          specList.add(new CompetitorSpec("", sp));
         }
       }
     }

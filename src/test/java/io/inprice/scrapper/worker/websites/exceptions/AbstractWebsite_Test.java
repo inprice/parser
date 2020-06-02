@@ -1,8 +1,8 @@
 package io.inprice.scrapper.worker.websites.exceptions;
 
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.junit.Test;
@@ -20,18 +20,18 @@ public class AbstractWebsite_Test {
     public void should_set_NOT_A_PRODUCT_PAGE_for_available_products_with_NA_name() {
         AbstractWebsite site = new FakeSite(true, Consts.Words.NOT_AVAILABLE, BigDecimal.ZERO, false);
 
-        Link link = site.test(null);
+        Competitor competitor = site.test(null);
 
-        assertEquals(LinkStatus.NOT_A_PRODUCT_PAGE, link.getStatus());
+        assertEquals(CompetitorStatus.NOT_A_PRODUCT_PAGE, competitor.getStatus());
     }
 
     @Test
     public void should_set_NOT_A_PRODUCT_PAGE_for_unavailable_products_with_NULL_name() {
         AbstractWebsite site = new FakeSite(false, null, BigDecimal.ZERO, false);
 
-        Link link = site.test(null);
+        Competitor competitor = site.test(null);
 
-        assertEquals(LinkStatus.NOT_A_PRODUCT_PAGE, link.getStatus());
+        assertEquals(CompetitorStatus.NOT_A_PRODUCT_PAGE, competitor.getStatus());
     }
 
     @Test
@@ -42,7 +42,7 @@ public class AbstractWebsite_Test {
 
         site.check();
 
-        assertEquals(LinkStatus.NOT_A_PRODUCT_PAGE, site.getLink().getStatus());
+        assertEquals(CompetitorStatus.NOT_A_PRODUCT_PAGE, site.getCompetitor().getStatus());
     }
 
     @Test
@@ -53,10 +53,10 @@ public class AbstractWebsite_Test {
 
         site.check();
 
-        assertEquals(LinkStatus.NETWORK_ERROR, site.getLink().getStatus());
+        assertEquals(CompetitorStatus.NETWORK_ERROR, site.getCompetitor().getStatus());
     }
 
-    private final Link link = new Link();
+    private final Competitor competitor = new Competitor();
 
     private class FakeSite extends AbstractWebsite {
 
@@ -71,15 +71,15 @@ public class AbstractWebsite_Test {
         }
 
         private FakeSite(boolean isAvailable, String name, BigDecimal price, boolean willHtmlBePulled) {
-            super(link);
+            super(competitor);
             this.isAvailable = isAvailable;
             this.name = name;
             this.price = price;
             this.willHtmlBePulled = willHtmlBePulled;
         }
 
-        public Link getLink() {
-            return link;
+        public Competitor getCompetitor() {
+            return competitor;
         }
 
         @Override
@@ -128,7 +128,7 @@ public class AbstractWebsite_Test {
         }
 
         @Override
-        public List<LinkSpec> getSpecList() {
+        public List<CompetitorSpec> getSpecList() {
             return null;
         }
     }

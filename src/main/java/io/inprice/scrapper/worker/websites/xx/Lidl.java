@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.xx;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class Lidl extends AbstractWebsite {
 
-  public Lidl(Link link) {
-    super(link);
+  public Lidl(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -103,15 +103,15 @@ public class Lidl extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = null;
 
     Elements specs = doc.select("div.product-detail-hero li");
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
       for (Element spec : specs) {
         String value = spec.text();
-        specList.add(new LinkSpec("", value));
+        specList.add(new CompetitorSpec("", value));
       }
 
       return specList;
@@ -135,7 +135,7 @@ public class Lidl extends AbstractWebsite {
             value = specChunks[1];
           }
         }
-        specList.add(new LinkSpec(key, value));
+        specList.add(new CompetitorSpec(key, value));
       }
     }
 

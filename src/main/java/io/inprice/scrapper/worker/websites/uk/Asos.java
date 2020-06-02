@@ -1,9 +1,9 @@
 package io.inprice.scrapper.worker.websites.uk;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -27,14 +27,14 @@ public class Asos extends AbstractWebsite {
   private BigDecimal price = BigDecimal.ZERO;
   private boolean isAvailable;
 
-  public Asos(Link link) {
-    super(link);
+  public Asos(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
   protected JSONObject getJsonData() {
-    LinkStatus preStatus = getLinkStatus();
-    setLinkStatus(LinkStatus.NO_DATA);
+    CompetitorStatus preStatus = getCompetitorStatus();
+    setCompetitorStatus(CompetitorStatus.NO_DATA);
 
     final String sku = getSku();
 
@@ -50,7 +50,7 @@ public class Asos extends AbstractWebsite {
           if (parent.has("productPrice")) {
             JSONObject pprice = parent.getJSONObject("productPrice");
             price = pprice.getJSONObject("current").getBigDecimal("value");
-            setLinkStatus(preStatus);
+            setCompetitorStatus(preStatus);
           }
 
           if (parent.has("variants")) {
@@ -68,10 +68,10 @@ public class Asos extends AbstractWebsite {
         }
       } else {
         log.error("Failed to fetch data! Status: READ_ERROR");
-        setLinkStatus(LinkStatus.NO_DATA);
+        setCompetitorStatus(CompetitorStatus.NO_DATA);
       }
     } else {
-      setLinkStatus(response);
+      setCompetitorStatus(response);
     }
 
     return super.getJsonData();
@@ -123,7 +123,7 @@ public class Asos extends AbstractWebsite {
         return "Please refer to Delivery and returns info section";
     }
 
-    val = doc.getElementById("shippingRestrictionsLink");
+    val = doc.getElementById("shippingRestrictionsCompetitor");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     } else {
@@ -141,7 +141,7 @@ public class Asos extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("div.product-description li"));
   }
 }

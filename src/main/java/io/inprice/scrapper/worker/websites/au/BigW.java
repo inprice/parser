@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.au;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONObject;
@@ -20,16 +20,16 @@ import java.util.List;
 public class BigW extends AbstractWebsite {
 
   private String brand = "NA";
-  private List<LinkSpec> specList;
+  private List<CompetitorSpec> specList;
 
-  public BigW(Link link) {
-    super(link);
+  public BigW(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
   protected JSONObject getJsonData() {
     specList = getKeyValueSpecList(doc.select("div.tab-Specification li"), "div.meta", "div.subMeta");
-    for (LinkSpec spec : specList) {
+    for (CompetitorSpec spec : specList) {
       if (spec.getKey().contains("Brand")) {
         brand = spec.getValue();
         break;
@@ -91,7 +91,7 @@ public class BigW extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return specList;
   }
 }

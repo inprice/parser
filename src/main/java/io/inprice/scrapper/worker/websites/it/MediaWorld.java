@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.it;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -23,8 +23,8 @@ public class MediaWorld extends AbstractWebsite {
 
   private Element product;
 
-  public MediaWorld(Link link) {
-    super(link);
+  public MediaWorld(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -98,7 +98,7 @@ public class MediaWorld extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return getKeyValueSpecList(doc.select("li.content__Tech__row"), "div.Tech-row__inner__key",
         "div.Tech-row__inner__value");
   }

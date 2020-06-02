@@ -3,8 +3,8 @@ package io.inprice.scrapper.worker.websites.us;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
 import org.junit.Test;
@@ -31,68 +31,68 @@ public class Target_US_Test {
     private final Target site =
         Mockito.spy(
             new Target(
-                new Link()
+                new Competitor()
             )
         );
 
     @Test
     public void test_product_1() {
         setMock(1);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("76150374", link.getSku());
-        assertEquals("NERF Fortnite SP-L Elite Dart Blaster with 6 Official Nerf Fortnite Elite Darts", link.getName());
-        assertEquals("16.69", link.getPrice().toString());
-        assertEquals("Nerf", link.getBrand());
-        assertEquals("HASBRO INTN'L TRDG BV", link.getSeller());
-        assertEquals("Free order pickup", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("76150374", competitor.getSku());
+        assertEquals("NERF Fortnite SP-L Elite Dart Blaster with 6 Official Nerf Fortnite Elite Darts", competitor.getName());
+        assertEquals("16.69", competitor.getPrice().toString());
+        assertEquals("Nerf", competitor.getBrand());
+        assertEquals("HASBRO INTN'L TRDG BV", competitor.getSeller());
+        assertEquals("Free order pickup", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
         setMock(2);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(LinkStatus.NOT_AVAILABLE, link.getStatus());
-        assertEquals("52459899", link.getSku());
-        assertEquals("Alena Wood Free Standing Cheval Mirror Jewelry Armoire - Baxton Studio", link.getName());
-        assertEquals("161.09", link.getPrice().toString());
-        assertEquals("Baxton Studio", link.getBrand());
-        assertEquals("Target", link.getSeller());
-        assertEquals("Free order pickup", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.NOT_AVAILABLE, competitor.getStatus());
+        assertEquals("52459899", competitor.getSku());
+        assertEquals("Alena Wood Free Standing Cheval Mirror Jewelry Armoire - Baxton Studio", competitor.getName());
+        assertEquals("161.09", competitor.getPrice().toString());
+        assertEquals("Baxton Studio", competitor.getBrand());
+        assertEquals("Target", competitor.getSeller());
+        assertEquals("Free order pickup", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
         setMock(3);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("50608360", link.getSku());
-        assertEquals("Instant Pot Duo 6qt 7-in-1 Pressure Cooker", link.getName());
-        assertEquals("79.95", link.getPrice().toString());
-        assertEquals("Instant Pot", link.getBrand());
-        assertEquals("DOUBLE INSIGHT INC", link.getSeller());
-        assertEquals("Free order pickup", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("50608360", competitor.getSku());
+        assertEquals("Instant Pot Duo 6qt 7-in-1 Pressure Cooker", competitor.getName());
+        assertEquals("79.95", competitor.getPrice().toString());
+        assertEquals("Instant Pot", competitor.getBrand());
+        assertEquals("DOUBLE INSIGHT INC", competitor.getSeller());
+        assertEquals("Free order pickup", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
         setMock(4);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("52361921", link.getSku());
-        assertEquals("TURTLE BEACH&#174; Recon Chat Wired Gaming Headset for Xbox One", link.getName());
-        assertEquals("19.95", link.getPrice().toString());
-        assertEquals("Microsoft", link.getBrand());
-        assertEquals("VOYETRA TURTLE BEACH INC", link.getSeller());
-        assertEquals("Free order pickup", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("52361921", competitor.getSku());
+        assertEquals("TURTLE BEACH&#174; Recon Chat Wired Gaming Headset for Xbox One", competitor.getName());
+        assertEquals("19.95", competitor.getPrice().toString());
+        assertEquals("Microsoft", competitor.getBrand());
+        assertEquals("VOYETRA TURTLE BEACH INC", competitor.getSeller());
+        assertEquals("Free order pickup", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     private void setMock(int no) {

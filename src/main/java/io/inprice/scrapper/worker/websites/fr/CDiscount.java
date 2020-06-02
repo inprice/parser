@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.fr;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -28,8 +28,8 @@ public class CDiscount extends AbstractWebsite {
    */
   private JSONObject offers;
 
-  public CDiscount(Link link) {
-    super(link);
+  public CDiscount(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -117,15 +117,15 @@ public class CDiscount extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = null;
 
     Elements specs = doc.select("div#fpBulletPointReadMore li");
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
       for (Element spec : specs) {
         String[] specChunks = spec.text().split(":");
-        LinkSpec ls = new LinkSpec(specChunks[0], "");
+        CompetitorSpec ls = new CompetitorSpec(specChunks[0], "");
         if (specChunks.length > 1) {
           ls.setValue(specChunks[1]);
         }
@@ -140,7 +140,7 @@ public class CDiscount extends AbstractWebsite {
         for (Element spec : specs) {
           Elements pairs = spec.select("td");
           if (pairs.size() > 0) {
-            LinkSpec ls = new LinkSpec(pairs.get(0).text(), "");
+            CompetitorSpec ls = new CompetitorSpec(pairs.get(0).text(), "");
             if (pairs.size() > 1) {
               ls.setValue(pairs.get(1).text());
             }

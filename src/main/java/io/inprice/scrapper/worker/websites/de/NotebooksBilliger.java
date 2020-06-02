@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.de;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -20,8 +20,8 @@ import java.util.List;
  */
 public class NotebooksBilliger extends AbstractWebsite {
 
-  public NotebooksBilliger(Link link) {
-    super(link);
+  public NotebooksBilliger(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -92,8 +92,8 @@ public class NotebooksBilliger extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = getValueOnlySpecList(doc.select("div#section_info li span"));
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = getValueOnlySpecList(doc.select("div#section_info li span"));
     if (specList == null)
       specList = getKeyValueSpecList(doc.select("table.properties_table tr"), "td.produktDetails_eigenschaft2",
           "td.produktDetails_eigenschaft3");

@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.nl;
 
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.websites.Helpers;
 import org.junit.Test;
 
@@ -13,62 +13,62 @@ public class CoolBlue_NL_Test {
     private final String SITE_NAME = "coolblue";
     private final String COUNTRY_CODE = "nl";
 
-    private final CoolBlue site = new CoolBlue(new Link());
+    private final CoolBlue site = new CoolBlue(new Competitor());
 
     @Test
     public void test_product_1() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("447037", link.getSku());
-        assertEquals("Stanley Air Kit", link.getName());
-        assertEquals("109.00", link.getPrice().toString());
-        assertEquals("Stanley", link.getBrand());
-        assertEquals("CoolBlue", link.getSeller());
-        assertEquals("Voor 23.59 uur besteld, morgen gratis bezorgd", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("447037", competitor.getSku());
+        assertEquals("Stanley Air Kit", competitor.getName());
+        assertEquals("109.00", competitor.getPrice().toString());
+        assertEquals("Stanley", competitor.getBrand());
+        assertEquals("CoolBlue", competitor.getSeller());
+        assertEquals("Voor 23.59 uur besteld, morgen gratis bezorgd", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("819196", link.getSku());
-        assertEquals("GoPro HERO 7 Black", link.getName());
-        assertEquals("349.00", link.getPrice().toString());
-        assertEquals("GoPro", link.getBrand());
-        assertEquals("CoolBlue", link.getSeller());
-        assertEquals("Voor 23.59 uur besteld, morgen gratis bezorgd", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("819196", competitor.getSku());
+        assertEquals("GoPro HERO 7 Black", competitor.getName());
+        assertEquals("349.00", competitor.getPrice().toString());
+        assertEquals("GoPro", competitor.getBrand());
+        assertEquals("CoolBlue", competitor.getSeller());
+        assertEquals("Voor 23.59 uur besteld, morgen gratis bezorgd", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("819780", link.getSku());
-        assertEquals("TomTom GO Essential 5 Europa", link.getName());
-        assertEquals("187.00", link.getPrice().toString());
-        assertEquals("TomTom", link.getBrand());
-        assertEquals("CoolBlue", link.getSeller());
-        assertEquals("Voor 23.59 uur besteld, morgen gratis bezorgd", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("819780", competitor.getSku());
+        assertEquals("TomTom GO Essential 5 Europa", competitor.getName());
+        assertEquals("187.00", competitor.getPrice().toString());
+        assertEquals("TomTom", competitor.getBrand());
+        assertEquals("CoolBlue", competitor.getSeller());
+        assertEquals("Voor 23.59 uur besteld, morgen gratis bezorgd", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("601518", link.getSku());
-        assertEquals("Bose SoundLink Mini II Zwart", link.getName());
-        assertEquals("139.00", link.getPrice().toString());
-        assertEquals("Bose", link.getBrand());
-        assertEquals("CoolBlue", link.getSeller());
-        assertEquals("Voor 23.59 uur besteld, morgen gratis bezorgd", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("601518", competitor.getSku());
+        assertEquals("Bose SoundCompetitor Mini II Zwart", competitor.getName());
+        assertEquals("139.00", competitor.getPrice().toString());
+        assertEquals("Bose", competitor.getBrand());
+        assertEquals("CoolBlue", competitor.getSeller());
+        assertEquals("Voor 23.59 uur besteld, morgen gratis bezorgd", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
 }

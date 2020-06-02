@@ -1,8 +1,8 @@
 package io.inprice.scrapper.worker.websites.it;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
@@ -24,7 +24,7 @@ public class Apple_IT_Test {
 
     private final Website site =
         new io.inprice.scrapper.worker.websites.xx.Apple(
-            new Link(
+            new Competitor(
                 String.format("https://www.apple.com/%s/shop/", COUNTRY_CODE)
             )
         );
@@ -34,16 +34,16 @@ public class Apple_IT_Test {
         final String sku = "MRE92T/A";
         setMocks(sku);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals(sku, link.getSku());
-        assertEquals("MacBook Air 13\" - Grigio siderale", link.getName());
-        assertEquals("1629.00", link.getPrice().toString());
-        assertEquals("Apple", link.getBrand());
-        assertEquals("Apple", link.getSeller());
-        assertEquals("Free Shipping", link.getShipment());
-        assertNull(link.getSpecList());
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals(sku, competitor.getSku());
+        assertEquals("MacBook Air 13\" - Grigio siderale", competitor.getName());
+        assertEquals("1629.00", competitor.getPrice().toString());
+        assertEquals("Apple", competitor.getBrand());
+        assertEquals("Apple", competitor.getSeller());
+        assertEquals("Free Shipping", competitor.getShipment());
+        assertNull(competitor.getSpecList());
     }
 
     @Test
@@ -51,16 +51,16 @@ public class Apple_IT_Test {
         final String sku = "MTXU2TY/A";
         setMocks(sku);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals(sku, link.getSku());
-        assertEquals("iPad Pro 11\" Wi-Fi 512GB - Argento", link.getName());
-        assertEquals("1289.00", link.getPrice().toString());
-        assertEquals("Apple", link.getBrand());
-        assertEquals("Apple", link.getSeller());
-        assertEquals("Free Shipping", link.getShipment());
-        assertNull(link.getSpecList());
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals(sku, competitor.getSku());
+        assertEquals("iPad Pro 11\" Wi-Fi 512GB - Argento", competitor.getName());
+        assertEquals("1289.00", competitor.getPrice().toString());
+        assertEquals("Apple", competitor.getBrand());
+        assertEquals("Apple", competitor.getSeller());
+        assertEquals("Free Shipping", competitor.getShipment());
+        assertNull(competitor.getSpecList());
     }
 
     @Test
@@ -68,16 +68,16 @@ public class Apple_IT_Test {
         final String sku = "MU642TY/A";
         setMocks(sku);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals(sku, link.getSku());
-        assertEquals("Apple Watch Series 4 GPS, cassa 40 mm in alluminio color argento e cinturino Sport bianco", link.getName());
-        assertEquals("439.00", link.getPrice().toString());
-        assertEquals("Apple", link.getBrand());
-        assertEquals("Apple", link.getSeller());
-        assertEquals("Free Shipping", link.getShipment());
-        assertNull(link.getSpecList());
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals(sku, competitor.getSku());
+        assertEquals("Apple Watch Series 4 GPS, cassa 40 mm in alluminio color argento e cinturino Sport bianco", competitor.getName());
+        assertEquals("439.00", competitor.getPrice().toString());
+        assertEquals("Apple", competitor.getBrand());
+        assertEquals("Apple", competitor.getSeller());
+        assertEquals("Free Shipping", competitor.getShipment());
+        assertNull(competitor.getSpecList());
     }
 
     @Test
@@ -85,16 +85,16 @@ public class Apple_IT_Test {
         final String sku = "MQD82ZM/A";
         setMocks(sku);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals(sku, link.getSku());
-        assertEquals("Altoparlante Beats Pill+ - Edizione speciale UNDEFEATED - Camouflage", link.getName());
-        assertEquals("199.95", link.getPrice().toString());
-        assertEquals("Beats by Dr. Dre", link.getBrand());
-        assertEquals("Apple", link.getSeller());
-        assertEquals("Free Shipping", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals(sku, competitor.getSku());
+        assertEquals("Altoparlante Beats Pill+ - Edizione speciale UNDEFEATED - Camouflage", competitor.getName());
+        assertEquals("199.95", competitor.getPrice().toString());
+        assertEquals("Beats by Dr. Dre", competitor.getBrand());
+        assertEquals("Apple", competitor.getSeller());
+        assertEquals("Free Shipping", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     private void setMocks(String sku) {
@@ -123,12 +123,12 @@ public class Apple_IT_Test {
                     "          }" +
                     "        ]," +
                     "        'promoMessage': 'Free Shipping'," +
-                    "        'deliveryOptionsLink': {" +
+                    "        'deliveryOptionsCompetitor': {" +
                     "          'text': 'Get delivery dates'," +
                     "          'dataVar': {}," +
                     "          'newTab': false" +
                     "        }," +
-                    "        'showDeliveryOptionsLink': true," +
+                    "        'showDeliveryOptionsCompetitor': true," +
                     "        'messageType': 'Ship'," +
                     "        'basePartNumber': 'MTXP2'," +
                     "        'commitCodeId': '0'," +

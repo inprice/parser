@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.de;
 
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
 import org.junit.Test;
@@ -14,62 +14,62 @@ public class Zalando_DE_Test {
     private final String SITE_NAME = "zalando";
     private final String COUNTRY_CODE = "de";
 
-    private final Website site = new io.inprice.scrapper.worker.websites.xx.Zalando(new Link());
+    private final Website site = new io.inprice.scrapper.worker.websites.xx.Zalando(new Competitor());
 
     @Test
     public void test_product_1() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("TIB31H01D-S11", link.getSku());
-        assertEquals("BED HEAD AFTER PARTY 100ML - Styling", link.getName());
-        assertEquals("16.05", link.getPrice().toString());
-        assertEquals("Tigi", link.getBrand());
-        assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard-Lieferung kostenlos 3-5 Werktage Express 7,90 € Lieferung verfügbar", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("TIB31H01D-S11", competitor.getSku());
+        assertEquals("BED HEAD AFTER PARTY 100ML - Styling", competitor.getName());
+        assertEquals("16.05", competitor.getPrice().toString());
+        assertEquals("Tigi", competitor.getBrand());
+        assertEquals("Zalando", competitor.getSeller());
+        assertEquals("Standard-Lieferung kostenlos 3-5 Werktage Express 7,90 € Lieferung verfügbar", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("ES183C02R-K11", link.getSku());
-        assertEquals("BRAVA BEACH AMERICAN NECKHOLDER HIPSTER - Bikini", link.getName());
-        assertEquals("27.95", link.getPrice().toString());
-        assertEquals("Esprit", link.getBrand());
-        assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard-Lieferung kostenlos 3-5 Werktage Express 7,90 € Lieferung verfügbar", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("ES183C02R-K11", competitor.getSku());
+        assertEquals("BRAVA BEACH AMERICAN NECKHOLDER HIPSTER - Bikini", competitor.getName());
+        assertEquals("27.95", competitor.getPrice().toString());
+        assertEquals("Esprit", competitor.getBrand());
+        assertEquals("Zalando", competitor.getSeller());
+        assertEquals("Standard-Lieferung kostenlos 3-5 Werktage Express 7,90 € Lieferung verfügbar", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("GU152M00V-D11", link.getSku());
-        assertEquals("MENS SPORT - Uhr - silver", link.getName());
-        assertEquals("189.95", link.getPrice().toString());
-        assertEquals("Guess", link.getBrand());
-        assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard-Lieferung kostenlos 3-5 Werktage Express 7,90 € Lieferung verfügbar", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("GU152M00V-D11", competitor.getSku());
+        assertEquals("MENS SPORT - Uhr - silver", competitor.getName());
+        assertEquals("189.95", competitor.getPrice().toString());
+        assertEquals("Guess", competitor.getBrand());
+        assertEquals("Zalando", competitor.getSeller());
+        assertEquals("Standard-Lieferung kostenlos 3-5 Werktage Express 7,90 € Lieferung verfügbar", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("K4451K00T-Q11", link.getSku());
-        assertEquals("Sonnenbrille", link.getName());
-        assertEquals("12.75", link.getPrice().toString());
-        assertEquals("KIOMI", link.getBrand());
-        assertEquals("Zalando", link.getSeller());
-        assertEquals("Standard-Lieferung kostenlos 3-5 Werktage Express 7,90 € Lieferung verfügbar", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("K4451K00T-Q11", competitor.getSku());
+        assertEquals("Sonnenbrille", competitor.getName());
+        assertEquals("12.75", competitor.getPrice().toString());
+        assertEquals("KIOMI", competitor.getBrand());
+        assertEquals("Zalando", competitor.getSeller());
+        assertEquals("Standard-Lieferung kostenlos 3-5 Werktage Express 7,90 € Lieferung verfügbar", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
 }

@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.tr;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -20,8 +20,8 @@ import java.util.List;
  */
 public class HepsiBurada extends AbstractWebsite {
 
-  public HepsiBurada(Link link) {
-    super(link);
+  public HepsiBurada(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -90,7 +90,7 @@ public class HepsiBurada extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return getKeyValueSpecList(doc.select(".data-list.tech-spec tr"), "th", "td");
   }
 

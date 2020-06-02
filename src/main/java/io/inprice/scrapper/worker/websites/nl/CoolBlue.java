@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.nl;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -26,8 +26,8 @@ public class CoolBlue extends AbstractWebsite {
    */
   private JSONObject offers;
 
-  public CoolBlue(Link link) {
-    super(link);
+  public CoolBlue(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -99,7 +99,7 @@ public class CoolBlue extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return getKeyValueSpecList(doc.select("div.product-specs__list-item.js-product-specs--list-item"),
         ".product-specs__item-title", ".product-specs__item-spec");
   }

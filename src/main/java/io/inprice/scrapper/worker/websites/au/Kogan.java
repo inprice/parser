@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.au;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -20,13 +20,13 @@ import java.util.List;
  */
 public class Kogan extends AbstractWebsite {
 
-  public Kogan(Link link) {
-    super(link);
+  public Kogan(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
   public boolean isAvailable() {
-    Element val = doc.selectFirst("link[itemProp='availability']");
+    Element val = doc.selectFirst("competitor[itemProp='availability']");
     if (val != null && StringUtils.isNotBlank(val.attr("href"))) {
       return val.attr("href").contains("InStock");
     }
@@ -89,7 +89,7 @@ public class Kogan extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("section[itemprop='description'] li"));
   }
 }

@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.xx;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -25,8 +25,8 @@ public class MediaMarkt extends AbstractWebsite {
 
   private BigDecimal freeShippingTresholdForNL;
 
-  public MediaMarkt(Link link) {
-    super(link);
+  public MediaMarkt(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -130,8 +130,8 @@ public class MediaMarkt extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = null;
 
     String parentClass = "specification";
     Elements isParentExist = doc.select("dl." + parentClass);
@@ -142,7 +142,7 @@ public class MediaMarkt extends AbstractWebsite {
     if (specKeys != null && specKeys.size() > 0) {
       specList = new ArrayList<>();
       for (Element key : specKeys) {
-        specList.add(new LinkSpec(key.text().replaceAll(":", ""), ""));
+        specList.add(new CompetitorSpec(key.text().replaceAll(":", ""), ""));
       }
     }
 
@@ -156,7 +156,7 @@ public class MediaMarkt extends AbstractWebsite {
       for (int i = 0; i < specList.size(); i++) {
         Element value = specValues.get(i);
         if (isEmpty) {
-          specList.add(new LinkSpec("", value.text()));
+          specList.add(new CompetitorSpec("", value.text()));
         } else {
           specList.get(i).setValue(value.text());
         }
@@ -168,7 +168,7 @@ public class MediaMarkt extends AbstractWebsite {
       if (specValues != null && specValues.size() > 0) {
         specList = new ArrayList<>();
         for (Element spec : specValues) {
-          specList.add(new LinkSpec("", spec.text()));
+          specList.add(new CompetitorSpec("", spec.text()));
         }
       }
     }

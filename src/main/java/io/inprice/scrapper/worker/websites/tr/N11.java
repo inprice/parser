@@ -1,12 +1,13 @@
 package io.inprice.scrapper.worker.websites.tr;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,20 +21,38 @@ import java.util.List;
  */
 public class N11 extends AbstractWebsite {
 
-  public N11(Link link) {
-    super(link);
+  public N11(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
   public boolean isAvailable() {
     String value = null;
 
-    Element val = doc.selectFirst("input[class='stockCount']");
-    if (val == null || StringUtils.isBlank(val.val())) {
-      val = doc.selectFirst(".stockWarning");
-      value = val.text();
-    } else {
-      value = val.val();
+    Element val = doc.getElementById("skuStock");
+    if (val != null) {
+      if (StringUtils.isNotBlank(val.text())) {
+        value = val.text();
+      } else if (StringUtils.isNotBlank(val.val())) {
+        value = val.val();
+      }
+    }
+    
+    if (StringUtils.isBlank(value)) {
+      val = doc.selectFirst("input[class='stockCount']");
+      if (val != null && StringUtils.isNotBlank(val.val())) {
+        value = val.val();
+      } else {
+        val = doc.selectFirst(".stockWarning");
+        if (val != null && StringUtils.isNotBlank(val.val())) {
+          value = val.val();
+        } else {
+          val = doc.selectFirst(".newPrice ins");
+          if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+            value = val.attr("content");
+          }
+        }
+      }
     }
 
     if (value != null && StringUtils.isNotBlank(value)) {
@@ -69,13 +88,21 @@ public class N11 extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.selectFirst(".newPrice ins");
-    if (val == null || StringUtils.isBlank(val.attr("content"))) {
-      val = doc.selectFirst("ins.price-now");
+    String value = null;
+
+    Element val = doc.getElementById("skuPrice");
+    if (val != null && StringUtils.isNotBlank(val.val())) {
+      value = val.val();
+    } else {
+      val = doc.selectFirst(".newPrice ins");
+      if (val == null || StringUtils.isBlank(val.attr("content"))) val = doc.selectFirst("ins.price-now");
+      if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+        value = val.attr("content");
+      }
     }
 
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return new BigDecimal(cleanDigits(val.attr("content")));
+    if (value != null && StringUtils.isNotBlank(value)) {
+      return new BigDecimal(cleanDigits(value));
     }
 
     return BigDecimal.ZERO;
@@ -138,7 +165,17 @@ public class N11 extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    return getKeyValueSpecList(doc.select("div.feaItem"), ".label", ".data");
+  public List<CompetitorSpec> getSpecList() {
+    Elements specs = doc.select("div.feaItem");
+    String keySelector = ".label";
+    String valSelector = ".data";
+
+    if (specs == null || specs.isEmpty()) {
+      specs = doc.select("li.unf-prop-list-item");
+      keySelector = "p.unf-prop-list-title";
+      valSelector = "p.unf-prop-list-prop";
+    }
+
+    return getKeyValueSpecList(specs, keySelector, valSelector);
   }
 }

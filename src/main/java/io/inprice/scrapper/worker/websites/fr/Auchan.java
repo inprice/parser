@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.fr;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class Auchan extends AbstractWebsite {
 
-  public Auchan(Link link) {
-    super(link);
+  public Auchan(Competitor competitor) {
+    super(competitor);
   }
 
   /**
@@ -115,8 +115,8 @@ public class Auchan extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = null;
 
     if (json != null && json.has("extendedDescription")) {
       String desc = json.get("extendedDescription").toString();
@@ -124,7 +124,7 @@ public class Auchan extends AbstractWebsite {
         specList = new ArrayList<>();
         String[] descChunks = desc.split("<br/>");
         for (String dsc : descChunks) {
-          specList.add(new LinkSpec("", dsc));
+          specList.add(new CompetitorSpec("", dsc));
         }
       }
     }

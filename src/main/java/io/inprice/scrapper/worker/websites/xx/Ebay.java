@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.xx;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -26,10 +26,10 @@ import java.util.List;
 public class Ebay extends AbstractWebsite {
 
   private String brand = "NA";
-  private List<LinkSpec> specList;
+  private List<CompetitorSpec> specList;
 
-  public Ebay(Link link) {
-    super(link);
+  public Ebay(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -127,7 +127,7 @@ public class Ebay extends AbstractWebsite {
 
   @Override
   public String getSeller() {
-    Element val = doc.getElementById("mbgLink");
+    Element val = doc.getElementById("mbgCompetitor");
 
     if (val != null && StringUtils.isNotBlank(val.attr("aria-label"))) {
       String[] sellerChunks = val.attr("aria-label").split(":");
@@ -182,7 +182,7 @@ public class Ebay extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return specList;
   }
 
@@ -202,7 +202,7 @@ public class Ebay extends AbstractWebsite {
               key = tds.get(i).text();
             } else {
               value = tds.get(i).text();
-              specList.add(new LinkSpec(key, value));
+              specList.add(new CompetitorSpec(key, value));
               if (key.matches(BRAND_WORDS)) {
                 brand = value;
               }
@@ -225,7 +225,7 @@ public class Ebay extends AbstractWebsite {
           if (key.matches(BRAND_WORDS)) {
             brand = value;
           }
-          specList.add(new LinkSpec(key, value));
+          specList.add(new CompetitorSpec(key, value));
         }
       }
     }

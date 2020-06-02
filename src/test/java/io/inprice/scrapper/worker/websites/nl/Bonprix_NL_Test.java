@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.nl;
 
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
 import org.junit.Test;
@@ -14,48 +14,48 @@ public class Bonprix_NL_Test {
     private final String SITE_NAME = "bonprix";
     private final String COUNTRY_CODE = "nl";
 
-    private final Website site = new io.inprice.scrapper.worker.websites.xx.Bonprix(new Link());
+    private final Website site = new io.inprice.scrapper.worker.websites.xx.Bonprix(new Competitor());
 
     @Test
     public void test_product_1() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(LinkStatus.NOT_AVAILABLE, link.getStatus());
-        assertEquals("97447795_29806865", link.getSku());
-        assertEquals("Sweatbermuda", link.getName());
-        assertEquals("9.99", link.getPrice().toString());
-        assertEquals("bpc bonprix collection", link.getBrand());
-        assertEquals("Bonprix", link.getSeller());
-        assertEquals("€ 4,95 per bestelling Meer informatie >", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.NOT_AVAILABLE, competitor.getStatus());
+        assertEquals("97447795_29806865", competitor.getSku());
+        assertEquals("Sweatbermuda", competitor.getName());
+        assertEquals("9.99", competitor.getPrice().toString());
+        assertEquals("bpc bonprix collection", competitor.getBrand());
+        assertEquals("Bonprix", competitor.getSeller());
+        assertEquals("€ 4,95 per bestelling Meer informatie >", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("94977395_26495747", link.getSku());
-        assertEquals("Dekbedovertrek «Aap»", link.getName());
-        assertEquals("19.99", link.getPrice().toString());
-        assertEquals("bpc living", link.getBrand());
-        assertEquals("Bonprix", link.getSeller());
-        assertEquals("€ 4,95 per bestelling Meer informatie >", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("94977395_26495747", competitor.getSku());
+        assertEquals("Dekbedovertrek «Aap»", competitor.getName());
+        assertEquals("19.99", competitor.getPrice().toString());
+        assertEquals("bpc living", competitor.getBrand());
+        assertEquals("Bonprix", competitor.getSeller());
+        assertEquals("€ 4,95 per bestelling Meer informatie >", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("90555595_26598631", link.getSku());
-        assertEquals("Halskettingen (3-dlg. set)", link.getName());
-        assertEquals("12.99", link.getPrice().toString());
-        assertEquals("RAINBOW", link.getBrand());
-        assertEquals("Bonprix", link.getSeller());
-        assertEquals("€ 4,95 per bestelling Meer informatie >", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("90555595_26598631", competitor.getSku());
+        assertEquals("Halskettingen (3-dlg. set)", competitor.getName());
+        assertEquals("12.99", competitor.getPrice().toString());
+        assertEquals("RAINBOW", competitor.getBrand());
+        assertEquals("Bonprix", competitor.getSeller());
+        assertEquals("€ 4,95 per bestelling Meer informatie >", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
 }

@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.inprice.scrapper.common.helpers.RabbitMQ;
-import io.inprice.scrapper.worker.consumer.AVAILABLE_Consumer;
-import io.inprice.scrapper.worker.consumer.FailedLinksConsumer;
-import io.inprice.scrapper.worker.consumer.NEW_Consumer;
+import io.inprice.scrapper.worker.consumer.AvailableConsumer;
+import io.inprice.scrapper.worker.consumer.FailedConsumer;
+import io.inprice.scrapper.worker.consumer.TobeClassifiedConsumer;
 import io.inprice.scrapper.worker.helpers.Global;
 import io.inprice.scrapper.worker.helpers.ThreadPools;
 
@@ -25,9 +25,9 @@ public class Application {
     new Thread(() -> {
       Global.isApplicationRunning = true;
 
-      new NEW_Consumer().start();
-      new AVAILABLE_Consumer().start();
-      new FailedLinksConsumer().start();
+      new TobeClassifiedConsumer().start();
+      new AvailableConsumer().start();
+      new FailedConsumer().start();
 
     }, "app-starter").start();
 

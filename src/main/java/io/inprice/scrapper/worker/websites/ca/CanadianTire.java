@@ -10,15 +10,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
 /**
  * Parser for CanadianTire Canada
  *
- * Please note that: link's url (aka main url) is never used for data pulling
+ * Please note that: competitor's url (aka main url) is never used for data pulling
  *
  * This is a very special case. CanadianTire provides too limited data in html
  * form. So, we need to make a json request to collect all the data we need.
@@ -30,8 +30,8 @@ import io.inprice.scrapper.worker.websites.AbstractWebsite;
  */
 public class CanadianTire extends AbstractWebsite {
 
-  public CanadianTire(Link link) {
-    super(link);
+  public CanadianTire(Competitor competitor) {
+    super(competitor);
   }
 
   /**
@@ -127,7 +127,7 @@ public class CanadianTire extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("img.brand-logo-link__img");
+    Element brand = doc.selectFirst("img.brand-logo-competitor__img");
     if (brand == null)
       brand = doc.selectFirst("img.brand-footer__logo");
 
@@ -138,7 +138,7 @@ public class CanadianTire extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("div.pdp-details-features__items li"));
   }
 

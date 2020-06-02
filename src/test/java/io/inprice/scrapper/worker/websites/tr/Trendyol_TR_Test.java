@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.tr;
 
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.websites.Helpers;
 import org.junit.Test;
 
@@ -13,62 +13,62 @@ public class Trendyol_TR_Test {
     private final String SITE_NAME = "trendyol";
     private final String COUNTRY_CODE = "tr";
 
-    private final Trendyol site = new Trendyol(new Link());
+    private final Trendyol site = new Trendyol(new Competitor());
 
     @Test
     public void test_product_1() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("1263059", link.getSku());
-        assertEquals("Hacim Sağlayan Siyah Maskara - Colossal Go Extreme Volum Express Mascara 30114319", link.getName());
-        assertEquals("29.95", link.getPrice().toString());
-        assertEquals("Maybelline", link.getBrand());
-        assertEquals("L'Oreal Türkiye", link.getSeller());
-        assertEquals("L'Oreal Türkiye tarafından gönderilecektir.", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("1263059", competitor.getSku());
+        assertEquals("Hacim Sağlayan Siyah Maskara - Colossal Go Extreme Volum Express Mascara 30114319", competitor.getName());
+        assertEquals("29.95", competitor.getPrice().toString());
+        assertEquals("Maybelline", competitor.getBrand());
+        assertEquals("L'Oreal Türkiye", competitor.getSeller());
+        assertEquals("L'Oreal Türkiye tarafından gönderilecektir.", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("3390771", link.getSku());
-        assertEquals("Unisex Sırt Çantası - Y Nk Academy Team - Ba5773-010 BA5773-010", link.getName());
-        assertEquals("118.00", link.getPrice().toString());
-        assertEquals("Nike", link.getBrand());
-        assertEquals("Dream Sport", link.getSeller());
-        assertEquals("Kargo Bedava", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("3390771", competitor.getSku());
+        assertEquals("Unisex Sırt Çantası - Y Nk Academy Team - Ba5773-010 BA5773-010", competitor.getName());
+        assertEquals("118.00", competitor.getPrice().toString());
+        assertEquals("Nike", competitor.getBrand());
+        assertEquals("Dream Sport", competitor.getSeller());
+        assertEquals("Kargo Bedava", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("6733226", link.getSku());
-        assertEquals("Erkek Lacivert Kemer L6149AZ.19SM.NV42", link.getName());
-        assertEquals("25.99", link.getPrice().toString());
-        assertEquals("Defacto", link.getBrand());
-        assertEquals("DeFacto", link.getSeller());
-        assertEquals("DeFacto tarafından gönderilecektir.", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("6733226", competitor.getSku());
+        assertEquals("Erkek Lacivert Kemer L6149AZ.19SM.NV42", competitor.getName());
+        assertEquals("25.99", competitor.getPrice().toString());
+        assertEquals("Defacto", competitor.getBrand());
+        assertEquals("DeFacto", competitor.getSeller());
+        assertEquals("DeFacto tarafından gönderilecektir.", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("3058612", link.getSku());
-        assertEquals("Altus AL 6100 L A+++ 1000 Devir 6 kg Çamaşır Makinesi AL6100L", link.getName());
-        assertEquals("1199.00", link.getPrice().toString());
-        assertEquals("Altus", link.getBrand());
-        assertEquals("Beyaz Live", link.getSeller());
-        assertEquals("Kargo Bedava", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("3058612", competitor.getSku());
+        assertEquals("Altus AL 6100 L A+++ 1000 Devir 6 kg Çamaşır Makinesi AL6100L", competitor.getName());
+        assertEquals("1199.00", competitor.getPrice().toString());
+        assertEquals("Altus", competitor.getBrand());
+        assertEquals("Beyaz Live", competitor.getSeller());
+        assertEquals("Kargo Bedava", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
 }

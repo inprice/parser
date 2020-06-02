@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.uk;
 
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
 import org.junit.Test;
@@ -13,62 +13,62 @@ public class Lidl_UK_Test {
     private final String SITE_NAME = "lidl";
     private final String COUNTRY_CODE = "uk";
 
-    private final Website site = new io.inprice.scrapper.worker.websites.xx.Lidl(new Link());
+    private final Website site = new io.inprice.scrapper.worker.websites.xx.Lidl(new Competitor());
 
     @Test
     public void test_product_1() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("23068", link.getSku());
-        assertEquals("Parkside 4Ah Battery", link.getName());
-        assertEquals("24.99", link.getPrice().toString());
-        assertEquals("Parkside", link.getBrand());
-        assertEquals("Lidl", link.getSeller());
-        assertEquals("In-store pickup", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("23068", competitor.getSku());
+        assertEquals("Parkside 4Ah Battery", competitor.getName());
+        assertEquals("24.99", competitor.getPrice().toString());
+        assertEquals("Parkside", competitor.getBrand());
+        assertEquals("Lidl", competitor.getSeller());
+        assertEquals("In-store pickup", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("23141", link.getSku());
-        assertEquals("Aquapur Dustpan & Brush Set", link.getName());
-        assertEquals("2.49", link.getPrice().toString());
-        assertEquals("Aquapur", link.getBrand());
-        assertEquals("Lidl", link.getSeller());
-        assertEquals("In-store pickup", link.getShipment());
-        assertNull(link.getSpecList());
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("23141", competitor.getSku());
+        assertEquals("Aquapur Dustpan & Brush Set", competitor.getName());
+        assertEquals("2.49", competitor.getPrice().toString());
+        assertEquals("Aquapur", competitor.getBrand());
+        assertEquals("Lidl", competitor.getSeller());
+        assertEquals("In-store pickup", competitor.getShipment());
+        assertNull(competitor.getSpecList());
     }
 
     @Test
     public void test_product_3() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("23076", link.getSku());
-        assertEquals("Powerfix Spirit Level Set", link.getName());
-        assertEquals("7.99", link.getPrice().toString());
-        assertEquals("Powerfix", link.getBrand());
-        assertEquals("Lidl", link.getSeller());
-        assertEquals("In-store pickup", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("23076", competitor.getSku());
+        assertEquals("Powerfix Spirit Level Set", competitor.getName());
+        assertEquals("7.99", competitor.getPrice().toString());
+        assertEquals("Powerfix", competitor.getBrand());
+        assertEquals("Lidl", competitor.getSeller());
+        assertEquals("In-store pickup", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("23026", link.getSku());
-        assertEquals("Ernesto Stainless Steel Colander", link.getName());
-        assertEquals("2.99", link.getPrice().toString());
-        assertEquals("Ernesto", link.getBrand());
-        assertEquals("Lidl", link.getSeller());
-        assertEquals("In-store pickup", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("23026", competitor.getSku());
+        assertEquals("Ernesto Stainless Steel Colander", competitor.getName());
+        assertEquals("2.99", competitor.getPrice().toString());
+        assertEquals("Ernesto", competitor.getBrand());
+        assertEquals("Lidl", competitor.getSeller());
+        assertEquals("In-store pickup", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
 }

@@ -1,8 +1,8 @@
 package io.inprice.scrapper.worker.websites.exceptions;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
@@ -25,7 +25,7 @@ public class Apple_Test {
 
     private final Website site =
         new io.inprice.scrapper.worker.websites.xx.Apple(
-            new Link(
+            new Competitor(
                 String.format("https://www.apple.com/%s/shop/", COUNTRY_CODE)
             )
         );
@@ -36,16 +36,16 @@ public class Apple_Test {
         when(mockResponse.getBody()).thenReturn(null);
         when(httpClient.get(anyString(), anyString())).thenReturn(mockResponse);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(LinkStatus.NO_DATA, link.getStatus());
+        assertEquals(CompetitorStatus.NO_DATA, competitor.getStatus());
     }
 
     @Test
     public void test_for_read_error() {
-        Link link = site.test(Helpers.getEmptyHtmlPath());
+        Competitor competitor = site.test(Helpers.getEmptyHtmlPath());
 
-        assertEquals(LinkStatus.READ_ERROR, link.getStatus());
+        assertEquals(CompetitorStatus.READ_ERROR, competitor.getStatus());
     }
 
     @Test
@@ -54,10 +54,10 @@ public class Apple_Test {
         when(mockResponse.getBody()).thenReturn(null);
         when(httpClient.get(anyString(), anyString())).thenReturn(mockResponse);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertTrue(link.getHttpStatus() == 0);
-        assertEquals(LinkStatus.SOCKET_ERROR, link.getStatus());
+        assertTrue(competitor.getHttpStatus() == 0);
+        assertEquals(CompetitorStatus.SOCKET_ERROR, competitor.getStatus());
     }
 
     @Test
@@ -66,10 +66,10 @@ public class Apple_Test {
         when(mockResponse.getBody()).thenReturn(null);
         when(httpClient.get(anyString(), anyString())).thenReturn(mockResponse);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertTrue(link.getHttpStatus() == 400);
-        assertEquals(LinkStatus.NETWORK_ERROR, link.getStatus());
+        assertTrue(competitor.getHttpStatus() == 400);
+        assertEquals(CompetitorStatus.NETWORK_ERROR, competitor.getStatus());
     }
 
 }

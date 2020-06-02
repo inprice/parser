@@ -1,8 +1,8 @@
 package io.inprice.scrapper.worker.websites.us;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -28,8 +28,8 @@ public class Lidl extends AbstractWebsite {
 
   private String sku;
 
-  public Lidl(Link link) {
-    super(link);
+  public Lidl(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -110,8 +110,8 @@ public class Lidl extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = null;
 
     if (json != null && json.has("longDescription")) {
       String desc = json.getString("longDescription");
@@ -122,7 +122,7 @@ public class Lidl extends AbstractWebsite {
           specList = new ArrayList<>();
           for (String val : featureChunks) {
             if (StringUtils.isNotBlank(val) && !val.startsWith("<p>") && !val.startsWith("<div>"))
-              specList.add(new LinkSpec("", val));
+              specList.add(new CompetitorSpec("", val));
           }
         }
       }

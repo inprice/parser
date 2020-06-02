@@ -1,8 +1,8 @@
 package io.inprice.scrapper.worker.websites.uk;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -24,8 +24,8 @@ public class Asda extends AbstractWebsite {
 
   private JSONObject product;
 
-  public Asda(Link link) {
-    super(link);
+  public Asda(Competitor competitor) {
+    super(competitor);
   }
 
   /**
@@ -108,7 +108,7 @@ public class Asda extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return null;
   }
 

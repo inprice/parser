@@ -1,8 +1,8 @@
 package io.inprice.scrapper.worker.websites.it;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -24,8 +24,8 @@ public class VidaXL extends AbstractWebsite {
 
   private JSONObject current;
 
-  public VidaXL(Link link) {
-    super(link);
+  public VidaXL(Competitor competitor) {
+    super(competitor);
   }
 
   public String getAuctionId() {
@@ -153,7 +153,7 @@ public class VidaXL extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("ul.specs li"));
   }
 }

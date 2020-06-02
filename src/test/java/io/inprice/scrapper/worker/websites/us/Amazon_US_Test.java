@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.us;
 
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
 import org.junit.Test;
@@ -13,62 +13,62 @@ public class Amazon_US_Test {
     private final String SITE_NAME = "amazon";
     private final String COUNTRY_CODE = "us";
 
-    private final Website site = new io.inprice.scrapper.worker.websites.xx.Amazon(new Link());
+    private final Website site = new io.inprice.scrapper.worker.websites.xx.Amazon(new Competitor());
 
     @Test
     public void test_product_1() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("B0759YSF4W", link.getSku());
-        assertEquals("Samsung Chromebook 3, 11.6in, 4GB RAM, 16GB eMMC, Chromebook (XE500C13-K04US) (Renewed)", link.getName());
-        assertEquals("142.90", link.getPrice().toString());
-        assertEquals("Samsung", link.getBrand());
-        assertEquals("Holiday Express(SN Recorded) ✅", link.getSeller());
-        assertEquals("This item ships to Turkey. Get it by Tuesday, June 18 Choose this date at checkout. Learn more", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("B0759YSF4W", competitor.getSku());
+        assertEquals("Samsung Chromebook 3, 11.6in, 4GB RAM, 16GB eMMC, Chromebook (XE500C13-K04US) (Renewed)", competitor.getName());
+        assertEquals("142.90", competitor.getPrice().toString());
+        assertEquals("Samsung", competitor.getBrand());
+        assertEquals("Holiday Express(SN Recorded) ✅", competitor.getSeller());
+        assertEquals("This item ships to Turkey. Get it by Tuesday, June 18 Choose this date at checkout. Learn more", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("B0787V183F", link.getSku());
-        assertEquals("Google Pixel 2 64 GB, Black Factory Unlocked (Renewed)", link.getName());
-        assertEquals("294.99", link.getPrice().toString());
-        assertEquals("Google", link.getBrand());
-        assertEquals("toronto cellular", link.getSeller());
-        assertEquals("This item does not ship to Turkey. Please check other sellers who may ship internationally. Learn more", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("B0787V183F", competitor.getSku());
+        assertEquals("Google Pixel 2 64 GB, Black Factory Unlocked (Renewed)", competitor.getName());
+        assertEquals("294.99", competitor.getPrice().toString());
+        assertEquals("Google", competitor.getBrand());
+        assertEquals("toronto cellular", competitor.getSeller());
+        assertEquals("This item does not ship to Turkey. Please check other sellers who may ship internationally. Learn more", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("B07PGR2G13", link.getSku());
-        assertEquals("SAME DAY SHIPPING before 12pm Personalized Vertical Bar Necklace Coordinate Jewelry Mothers Day Gift Roman Numeral Graduation Gift Engraved 3D Necklaces for Women Initial Necklace - 4SBN", link.getName());
-        assertEquals("16.58", link.getPrice().toString());
-        assertEquals("Amazon", link.getBrand());
-        assertEquals("MignonandMignon", link.getSeller());
-        assertEquals("This item does not ship to Turkey. Please check other sellers who may ship internationally.", link.getShipment());
-        assertNull(link.getSpecList());
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("B07PGR2G13", competitor.getSku());
+        assertEquals("SAME DAY SHIPPING before 12pm Personalized Vertical Bar Necklace Coordinate Jewelry Mothers Day Gift Roman Numeral Graduation Gift Engraved 3D Necklaces for Women Initial Necklace - 4SBN", competitor.getName());
+        assertEquals("16.58", competitor.getPrice().toString());
+        assertEquals("Amazon", competitor.getBrand());
+        assertEquals("MignonandMignon", competitor.getSeller());
+        assertEquals("This item does not ship to Turkey. Please check other sellers who may ship internationally.", competitor.getShipment());
+        assertNull(competitor.getSpecList());
     }
 
     @Test
     public void test_product_4() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("B00SMJHB6C", link.getSku());
-        assertEquals("Clarks Men's Tilden Walk Oxford", link.getName());
-        assertEquals("67.69", link.getPrice().toString());
-        assertEquals("tilden walk clarks", link.getBrand());
-        assertEquals("Amazon", link.getSeller());
-        assertEquals("NA", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("B00SMJHB6C", competitor.getSku());
+        assertEquals("Clarks Men's Tilden Walk Oxford", competitor.getName());
+        assertEquals("67.69", competitor.getPrice().toString());
+        assertEquals("tilden walk clarks", competitor.getBrand());
+        assertEquals("Amazon", competitor.getSeller());
+        assertEquals("NA", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
 }

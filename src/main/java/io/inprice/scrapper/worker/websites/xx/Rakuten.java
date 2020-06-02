@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.xx;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -26,8 +26,8 @@ public class Rakuten extends AbstractWebsite {
 
   private JSONObject offer;
 
-  public Rakuten(Link link) {
-    super(link);
+  public Rakuten(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -212,8 +212,8 @@ public class Rakuten extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = null;
 
     if (json != null && json.has("details")) {
       JSONObject details = json.getJSONObject("details");
@@ -223,7 +223,7 @@ public class Rakuten extends AbstractWebsite {
         JSONArray features = details.getJSONArray("features");
         for (int i = 0; i < features.length(); i++) {
           JSONObject pair = features.getJSONObject(i);
-          specList.add(new LinkSpec(pair.getString("key"), pair.getString("value")));
+          specList.add(new CompetitorSpec(pair.getString("key"), pair.getString("value")));
         }
       }
     }

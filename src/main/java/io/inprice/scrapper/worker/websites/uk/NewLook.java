@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.uk;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -20,8 +20,8 @@ import java.util.List;
  */
 public class NewLook extends AbstractWebsite {
 
-  public NewLook(Link link) {
-    super(link);
+  public NewLook(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -67,7 +67,7 @@ public class NewLook extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = doc.selectFirst("span.product-delivery-link a");
+    Element val = doc.selectFirst("span.product-delivery-competitor a");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -84,7 +84,7 @@ public class NewLook extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("div.product-details--description.cms p"));
   }
 }

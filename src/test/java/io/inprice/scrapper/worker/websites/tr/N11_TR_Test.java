@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.tr;
 
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.websites.Helpers;
 import org.junit.Test;
 
@@ -13,62 +13,76 @@ public class N11_TR_Test {
     private final String SITE_NAME = "n11";
     private final String COUNTRY_CODE = "tr";
 
-    private final N11 site = new N11(new Link());
+    private final N11 site = new N11(new Competitor());
 
     @Test
     public void test_product_1() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("249823652", link.getSku());
-        assertEquals("Seaflo Hidrofor Pompası 4.3 lt. / dak 12 V 35 psi", link.getName());
-        assertEquals("123.55", link.getPrice().toString());
-        assertEquals("Diğer", link.getBrand());
-        assertEquals("eroldenizcilik", link.getSeller());
-        assertEquals("Mağazaya özel 150 TL ve üzeri Ücretsiz Kargo", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("249823652", competitor.getSku());
+        assertEquals("Seaflo Hidrofor Pompası 4.3 lt. / dak 12 V 35 psi", competitor.getName());
+        assertEquals("123.55", competitor.getPrice().toString());
+        assertEquals("Diğer", competitor.getBrand());
+        assertEquals("eroldenizcilik", competitor.getSeller());
+        assertEquals("Mağazaya özel 150 TL ve üzeri Ücretsiz Kargo", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("241174632", link.getSku());
-        assertEquals("Bel İnceltici Korse Vücut Şekillendirici Doğum Sonrası Toparlayıc", link.getName());
-        assertEquals("39.90", link.getPrice().toString());
-        assertEquals("Giaxa", link.getBrand());
-        assertEquals("ecogroup", link.getSeller());
-        assertEquals("Ücretsiz Kargo", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("241174632", competitor.getSku());
+        assertEquals("Bel İnceltici Korse Vücut Şekillendirici Doğum Sonrası Toparlayıc", competitor.getName());
+        assertEquals("39.90", competitor.getPrice().toString());
+        assertEquals("Giaxa", competitor.getBrand());
+        assertEquals("ecogroup", competitor.getSeller());
+        assertEquals("Ücretsiz Kargo", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("31175655", link.getSku());
-        assertEquals("Gemici Çelik Erkek Zincir Kolye 7 mm 56 cm h081", link.getName());
-        assertEquals("59.90", link.getPrice().toString());
-        assertEquals("Takı Dükkanı", link.getBrand());
-        assertEquals("takidukkani", link.getSeller());
-        assertEquals("Ücretsiz Kargo", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("31175655", competitor.getSku());
+        assertEquals("Gemici Çelik Erkek Zincir Kolye 7 mm 56 cm h081", competitor.getName());
+        assertEquals("59.90", competitor.getPrice().toString());
+        assertEquals("Takı Dükkanı", competitor.getBrand());
+        assertEquals("takidukkani", competitor.getSeller());
+        assertEquals("Ücretsiz Kargo", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("223682414", link.getSku());
-        assertEquals("Genç Elitler Serisi Kutulu Özel Set (Ciltli 3 Kitap)", link.getName());
-        assertEquals("65.84", link.getPrice().toString());
-        assertEquals("Marie Lu", link.getBrand());
-        assertEquals("pegasusyayinlari", link.getSeller());
-        assertEquals("Mağazaya özel 100 TL ve üzeri Ücretsiz Kargo", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("223682414", competitor.getSku());
+        assertEquals("Genç Elitler Serisi Kutulu Özel Set (Ciltli 3 Kitap)", competitor.getName());
+        assertEquals("65.84", competitor.getPrice().toString());
+        assertEquals("Marie Lu", competitor.getBrand());
+        assertEquals("pegasusyayinlari", competitor.getSeller());
+        assertEquals("Mağazaya özel 100 TL ve üzeri Ücretsiz Kargo", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
+    }
+
+    @Test
+    public void test_product_5() {
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 5));
+
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("428137685", competitor.getSku());
+        assertEquals("Oppo Realme X2 Pro Duos 128 GB (İthalatçı Garantili)", competitor.getName());
+        assertEquals("4899.00", competitor.getPrice().toString());
+        assertEquals("Oppo", competitor.getBrand());
+        assertEquals("Anatolium", competitor.getSeller());
+        assertEquals("Ücretsiz Kargo", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
 }

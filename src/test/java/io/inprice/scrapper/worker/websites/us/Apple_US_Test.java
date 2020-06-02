@@ -1,8 +1,8 @@
 package io.inprice.scrapper.worker.websites.us;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
@@ -24,7 +24,7 @@ public class Apple_US_Test {
 
     private final Website site =
         new io.inprice.scrapper.worker.websites.xx.Apple(
-            new Link(
+            new Competitor(
                 String.format("https://www.apple.com/%s/shop/", COUNTRY_CODE)
             )
         );
@@ -34,16 +34,16 @@ public class Apple_US_Test {
         final String sku = "MV6Y2LL/A";
         setMocks(sku);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals(sku, link.getSku());
-        assertEquals("Powerbeats Pro - Totally Wireless Earphones - Black", link.getName());
-        assertEquals("249.95", link.getPrice().toString());
-        assertEquals("Beats by Dr. Dre", link.getBrand());
-        assertEquals("Apple", link.getSeller());
-        assertEquals("Free Shipping", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals(sku, competitor.getSku());
+        assertEquals("Powerbeats Pro - Totally Wireless Earphones - Black", competitor.getName());
+        assertEquals("249.95", competitor.getPrice().toString());
+        assertEquals("Beats by Dr. Dre", competitor.getBrand());
+        assertEquals("Apple", competitor.getSeller());
+        assertEquals("Free Shipping", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
@@ -51,16 +51,16 @@ public class Apple_US_Test {
         final String sku = "MQHV2LL/A";
         setMocks(sku);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals(sku, link.getSku());
-        assertEquals("HomePod - White", link.getName());
-        assertEquals("299.00", link.getPrice().toString());
-        assertEquals("Apple", link.getBrand());
-        assertEquals("Apple", link.getSeller());
-        assertEquals("Free Shipping", link.getShipment());
-        assertNull(link.getSpecList());
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals(sku, competitor.getSku());
+        assertEquals("HomePod - White", competitor.getName());
+        assertEquals("299.00", competitor.getPrice().toString());
+        assertEquals("Apple", competitor.getBrand());
+        assertEquals("Apple", competitor.getSeller());
+        assertEquals("Free Shipping", competitor.getShipment());
+        assertNull(competitor.getSpecList());
     }
 
     @Test
@@ -68,16 +68,16 @@ public class Apple_US_Test {
         final String sku = "MVHR2LL/A";
         setMocks(sku);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals(sku, link.getSku());
-        assertEquals("iPod touch 32GB - Pink", link.getName());
-        assertEquals("199.00", link.getPrice().toString());
-        assertEquals("Apple", link.getBrand());
-        assertEquals("Apple", link.getSeller());
-        assertEquals("Free Shipping", link.getShipment());
-        assertNull(link.getSpecList());
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals(sku, competitor.getSku());
+        assertEquals("iPod touch 32GB - Pink", competitor.getName());
+        assertEquals("199.00", competitor.getPrice().toString());
+        assertEquals("Apple", competitor.getBrand());
+        assertEquals("Apple", competitor.getSeller());
+        assertEquals("Free Shipping", competitor.getShipment());
+        assertNull(competitor.getSpecList());
     }
 
     @Test
@@ -85,16 +85,16 @@ public class Apple_US_Test {
         final String sku = "MU8X2LL/A";
         setMocks(sku);
 
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals(sku, link.getSku());
-        assertEquals("Beats Solo3 Wireless Headphones - Mickey’s 90th Anniversary Edition", link.getName());
-        assertEquals("224.95", link.getPrice().toString());
-        assertEquals("Beats by Dr. Dre", link.getBrand());
-        assertEquals("Apple", link.getSeller());
-        assertEquals("Free Shipping", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals(sku, competitor.getSku());
+        assertEquals("Beats Solo3 Wireless Headphones - Mickey’s 90th Anniversary Edition", competitor.getName());
+        assertEquals("224.95", competitor.getPrice().toString());
+        assertEquals("Beats by Dr. Dre", competitor.getBrand());
+        assertEquals("Apple", competitor.getSeller());
+        assertEquals("Free Shipping", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     private void setMocks(String sku) {
@@ -123,12 +123,12 @@ public class Apple_US_Test {
                     "          }" +
                     "        ]," +
                     "        'promoMessage': 'Free Shipping'," +
-                    "        'deliveryOptionsLink': {" +
+                    "        'deliveryOptionsCompetitor': {" +
                     "          'text': 'Get delivery dates'," +
                     "          'dataVar': {}," +
                     "          'newTab': false" +
                     "        }," +
-                    "        'showDeliveryOptionsLink': true," +
+                    "        'showDeliveryOptionsCompetitor': true," +
                     "        'messageType': 'Ship'," +
                     "        'basePartNumber': 'MTXP2'," +
                     "        'commitCodeId': '0'," +

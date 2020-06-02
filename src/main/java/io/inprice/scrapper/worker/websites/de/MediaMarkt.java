@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.de;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -16,7 +16,7 @@ import java.util.List;
  *
  * The parsing steps:
  *
- * - the html body of link's url contains data (in json format) we need 
+ * - the html body of competitor's url contains data (in json format) we need 
  * - in getJsonData(), we get that json data by using substring() method of String class 
  * - this data is named as product which is hold on a class-level variable
  * - each data (except for availability and specList) can be gathered using product variable
@@ -27,8 +27,8 @@ public class MediaMarkt extends AbstractWebsite {
 
   private JSONObject article;
 
-  public MediaMarkt(Link link) {
-    super(link);
+  public MediaMarkt(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -130,8 +130,8 @@ public class MediaMarkt extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = null;
 
     if (article != null && article.has("mainFeatures")) {
       specList = new ArrayList<>();
@@ -139,7 +139,7 @@ public class MediaMarkt extends AbstractWebsite {
       if (features.length() > 0) {
         for (int i = 0; i < features.length(); i++) {
           JSONObject pair = features.getJSONObject(i);
-          specList.add(new LinkSpec(pair.getString("name"), pair.getString("value")));
+          specList.add(new CompetitorSpec(pair.getString("name"), pair.getString("value")));
         }
       }
     }

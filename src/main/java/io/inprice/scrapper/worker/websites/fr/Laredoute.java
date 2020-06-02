@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.fr;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -25,8 +25,8 @@ public class Laredoute extends AbstractWebsite {
 
   private JSONObject offers;
 
-  public Laredoute(Link link) {
-    super(link);
+  public Laredoute(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -121,8 +121,8 @@ public class Laredoute extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = null;
     Element specs = doc.getElementsByTag("dscpdp").first();
     if (specs != null) {
       String[] specChunks;
@@ -134,7 +134,7 @@ public class Laredoute extends AbstractWebsite {
       if (specChunks.length > 0) {
         specList = new ArrayList<>(specChunks.length);
         for (String spec : specChunks) {
-          specList.add(new LinkSpec("", spec));
+          specList.add(new CompetitorSpec("", spec));
         }
       }
     }

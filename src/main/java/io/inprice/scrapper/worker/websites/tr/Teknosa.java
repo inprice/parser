@@ -1,13 +1,14 @@
 package io.inprice.scrapper.worker.websites.tr;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -26,15 +27,20 @@ public class Teknosa extends AbstractWebsite {
 
   private JSONObject offers;
 
-  public Teknosa(Link link) {
-    super(link);
+  public Teknosa(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
   public JSONObject getJsonData() {
-    Element dataEL = doc.selectFirst("script[type='application/ld+json']");
+    Element dataEL = doc.getElementById("schemaJSON");
     if (dataEL != null) {
-      JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
+      // user reviews may cause encoding problems and can be huge amount of data
+      // and we do not need user opinions
+      // thus, they are trimmed with the help of regex
+      String html = dataEL.html();
+      html = html.replaceAll("(?s)\\s*\"review\":.*\\],", "");
+      JSONObject data = new JSONObject(html);
       if (data.has("offers")) {
         offers = data.getJSONObject("offers");
       }
@@ -149,15 +155,15 @@ public class Teknosa extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = null;
 
     Elements specKeys = doc.select("div.product-classifications tr");
     if (specKeys != null && specKeys.size() > 0) {
       specList = new ArrayList<>();
       for (Element key : specKeys) {
         Element val = key.selectFirst("td");
-        specList.add(new LinkSpec(val.text(), ""));
+        specList.add(new CompetitorSpec(val.text(), ""));
       }
     }
 
@@ -172,7 +178,7 @@ public class Teknosa extends AbstractWebsite {
         Element value = specValues.get(i);
         Element val = value.selectFirst("td span");
         if (isEmpty) {
-          specList.add(new LinkSpec("", val.text()));
+          specList.add(new CompetitorSpec("", val.text()));
         } else {
           specList.get(i).setValue(val.text());
         }

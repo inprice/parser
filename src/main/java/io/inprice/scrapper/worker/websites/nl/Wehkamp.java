@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.nl;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -30,8 +30,8 @@ public class Wehkamp extends AbstractWebsite {
   private JSONObject offers;
   private JSONArray properties;
 
-  public Wehkamp(Link link) {
-    super(link);
+  public Wehkamp(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -119,14 +119,14 @@ public class Wehkamp extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = null;
 
     if (properties != null && properties.length() > 0) {
       specList = new ArrayList<>();
       for (int i = 0; i < properties.length(); i++) {
         JSONObject prop = properties.getJSONObject(i);
-        specList.add(new LinkSpec(prop.getString("label"), prop.getString("value")));
+        specList.add(new CompetitorSpec(prop.getString("label"), prop.getString("value")));
       }
     }
 

@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.us;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -21,8 +21,8 @@ import java.util.List;
  */
 public class Walmart extends AbstractWebsite {
 
-  public Walmart(Link link) {
-    super(link);
+  public Walmart(Competitor competitor) {
+    super(competitor);
   }
 
   /**
@@ -100,7 +100,7 @@ public class Walmart extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("div#product-about li"));
   }
 }

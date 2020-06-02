@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.au;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.browser.BrowserManager;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.info.Pair;
@@ -34,8 +34,8 @@ public class HarveyNorman extends AbstractWebsite {
    */
   private JSONObject offer;
 
-  public HarveyNorman(Link link) {
-    super(link);
+  public HarveyNorman(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -125,7 +125,7 @@ public class HarveyNorman extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("div.product-long-description li"));
   }
 

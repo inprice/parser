@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.es;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class Gigas101 extends AbstractWebsite {
 
-  public Gigas101(Link link) {
-    super(link);
+  public Gigas101(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -91,8 +91,8 @@ public class Gigas101 extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = null;
 
     Elements specs = doc.select("div#desc_prop tr");
 
@@ -101,7 +101,7 @@ public class Gigas101 extends AbstractWebsite {
       for (Element spec : specs) {
         Element key = spec.selectFirst("td");
         Element value = key.nextElementSibling();
-        specList.add(new LinkSpec(key.text(), value.text()));
+        specList.add(new CompetitorSpec(key.text(), value.text()));
       }
     }
 

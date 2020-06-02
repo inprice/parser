@@ -3,8 +3,8 @@ package io.inprice.scrapper.worker.websites.uk;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
 import org.junit.Test;
@@ -31,68 +31,68 @@ public class Asos_UK_Test {
     private final Asos site =
         Mockito.spy(
             new Asos(
-                new Link()
+                new Competitor()
             )
         );
 
     @Test
     public void test_product_1() {
         setMock(1);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("12382834", link.getSku());
-        assertEquals("Lacoste Ampthill in black leather", link.getName());
-        assertEquals("103.69", link.getPrice().toString());
-        assertEquals("Lacoste", link.getBrand());
-        assertEquals("ASOS", link.getSeller());
-        assertEquals("See delivery and returns info", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("12382834", competitor.getSku());
+        assertEquals("Lacoste Ampthill in black leather", competitor.getName());
+        assertEquals("103.69", competitor.getPrice().toString());
+        assertEquals("Lacoste", competitor.getBrand());
+        assertEquals("ASOS", competitor.getSeller());
+        assertEquals("See delivery and returns info", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
         setMock(2);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("9021109", link.getSku());
-        assertEquals("Nike clear water bottle", link.getName());
-        assertEquals("7.60", link.getPrice().toString());
-        assertEquals("Nike", link.getBrand());
-        assertEquals("ASOS", link.getSeller());
-        assertEquals("See delivery and returns info", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("9021109", competitor.getSku());
+        assertEquals("Nike clear water bottle", competitor.getName());
+        assertEquals("7.60", competitor.getPrice().toString());
+        assertEquals("Nike", competitor.getBrand());
+        assertEquals("ASOS", competitor.getSeller());
+        assertEquals("See delivery and returns info", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
         setMock(3);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("11903288", link.getSku());
-        assertEquals("Sass & Belle cutie cat toothbrush holder", link.getName());
-        assertEquals("8.99", link.getPrice().toString());
-        assertEquals("Sass & Belle", link.getBrand());
-        assertEquals("ASOS", link.getSeller());
-        assertEquals("See delivery and returns info", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("11903288", competitor.getSku());
+        assertEquals("Sass & Belle cutie cat toothbrush holder", competitor.getName());
+        assertEquals("8.99", competitor.getPrice().toString());
+        assertEquals("Sass & Belle", competitor.getBrand());
+        assertEquals("ASOS", competitor.getSeller());
+        assertEquals("See delivery and returns info", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
         setMock(4);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("11837256", link.getSku());
-        assertEquals("Liquorish mix and match floral and polka print wrap skirt", link.getName());
-        assertEquals("35.95", link.getPrice().toString());
-        assertEquals("Liquorish", link.getBrand());
-        assertEquals("ASOS", link.getSeller());
-        assertEquals("See delivery and returns info", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("11837256", competitor.getSku());
+        assertEquals("Liquorish mix and match floral and polka print wrap skirt", competitor.getName());
+        assertEquals("35.95", competitor.getPrice().toString());
+        assertEquals("Liquorish", competitor.getBrand());
+        assertEquals("ASOS", competitor.getSeller());
+        assertEquals("See delivery and returns info", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     private void setMock(int no) {

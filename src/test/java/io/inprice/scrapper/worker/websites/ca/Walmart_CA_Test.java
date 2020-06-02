@@ -3,8 +3,8 @@ package io.inprice.scrapper.worker.websites.ca;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.helpers.HttpClient;
 import io.inprice.scrapper.worker.websites.Helpers;
 import org.junit.Test;
@@ -30,68 +30,68 @@ public class Walmart_CA_Test {
     private final Walmart site =
         Mockito.spy(
             new Walmart(
-                new Link()
+                new Competitor()
             )
         );
 
     @Test
     public void test_product_1() {
         setMock(1);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("6000199211475", link.getSku());
-        assertEquals("hometrends Tuscany Cuddle Chair", link.getName());
-        assertEquals("224.00", link.getPrice().toString());
-        assertEquals("hometrends", link.getBrand());
-        assertEquals("Walmart", link.getSeller());
-        assertEquals("Sold & shipped by Walmart", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("6000199211475", competitor.getSku());
+        assertEquals("hometrends Tuscany Cuddle Chair", competitor.getName());
+        assertEquals("224.00", competitor.getPrice().toString());
+        assertEquals("hometrends", competitor.getBrand());
+        assertEquals("Walmart", competitor.getSeller());
+        assertEquals("Sold & shipped by Walmart", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
         setMock(2);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("6000187311310", link.getSku());
-        assertEquals("Armor All Complete Car Care Kit", link.getName());
-        assertEquals("21.97", link.getPrice().toString());
-        assertEquals("Armor All", link.getBrand());
-        assertEquals("Walmart", link.getSeller());
-        assertEquals("Sold & shipped by Walmart", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("6000187311310", competitor.getSku());
+        assertEquals("Armor All Complete Car Care Kit", competitor.getName());
+        assertEquals("21.97", competitor.getPrice().toString());
+        assertEquals("Armor All", competitor.getBrand());
+        assertEquals("Walmart", competitor.getSeller());
+        assertEquals("Sold & shipped by Walmart", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
         setMock(3);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("6000188988578", link.getSku());
-        assertEquals("Trudeau Maison Misto Party Grill", link.getName());
-        assertEquals("35.00", link.getPrice().toString());
-        assertEquals("Trudeau Maison", link.getBrand());
-        assertEquals("Walmart", link.getSeller());
-        assertEquals("Sold & shipped by Walmart", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("6000188988578", competitor.getSku());
+        assertEquals("Trudeau Maison Misto Party Grill", competitor.getName());
+        assertEquals("35.00", competitor.getPrice().toString());
+        assertEquals("Trudeau Maison", competitor.getBrand());
+        assertEquals("Walmart", competitor.getSeller());
+        assertEquals("Sold & shipped by Walmart", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
         setMock(4);
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(LinkStatus.NOT_AVAILABLE, link.getStatus());
-        assertEquals("6000196486964", link.getSku());
-        assertEquals("Scunci No-Slip Silicone Elastics", link.getName());
-        assertEquals("0.00", link.getPrice().toString());
-        assertEquals("Scunci", link.getBrand());
-        assertEquals("NA", link.getSeller());
-        assertEquals("Sold & shipped by NA", link.getShipment());
-        assertNull(link.getSpecList());
+        assertEquals(CompetitorStatus.NOT_AVAILABLE, competitor.getStatus());
+        assertEquals("6000196486964", competitor.getSku());
+        assertEquals("Scunci No-Slip Silicone Elastics", competitor.getName());
+        assertEquals("0.00", competitor.getPrice().toString());
+        assertEquals("Scunci", competitor.getBrand());
+        assertEquals("NA", competitor.getSeller());
+        assertEquals("Sold & shipped by NA", competitor.getShipment());
+        assertNull(competitor.getSpecList());
     }
 
     private void setMock(int no) {

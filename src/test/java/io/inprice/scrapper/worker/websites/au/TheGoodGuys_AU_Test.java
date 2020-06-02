@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.au;
 
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.websites.Helpers;
 import io.inprice.scrapper.worker.websites.Website;
 import org.junit.Test;
@@ -13,62 +13,62 @@ public class TheGoodGuys_AU_Test {
     private final String SITE_NAME = "thegoodguys";
     private final String COUNTRY_CODE = "au";
 
-    private final Website site = new TheGoodGuys(new Link());
+    private final Website site = new TheGoodGuys(new Competitor());
 
     @Test
     public void test_product_1() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("3542538", link.getSku());
-        assertEquals("Fitbit Alta HR Black Small", link.getName());
-        assertEquals("99.00", link.getPrice().toString());
-        assertEquals("Fitbit", link.getBrand());
-        assertEquals("TheGoodGuys", link.getSeller());
-        assertEquals("Check delivery cost", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("3542538", competitor.getSku());
+        assertEquals("Fitbit Alta HR Black Small", competitor.getName());
+        assertEquals("99.00", competitor.getPrice().toString());
+        assertEquals("Fitbit", competitor.getBrand());
+        assertEquals("TheGoodGuys", competitor.getSeller());
+        assertEquals("Check delivery cost", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("248407-01", link.getSku());
-        assertEquals("Dyson V7 Cord-free Handstick", link.getName());
-        assertEquals("399.00", link.getPrice().toString());
-        assertEquals("Dyson", link.getBrand());
-        assertEquals("TheGoodGuys", link.getSeller());
-        assertEquals("Check delivery cost", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("248407-01", competitor.getSku());
+        assertEquals("Dyson V7 Cord-free Handstick", competitor.getName());
+        assertEquals("399.00", competitor.getPrice().toString());
+        assertEquals("Dyson", competitor.getBrand());
+        assertEquals("TheGoodGuys", competitor.getSeller());
+        assertEquals("Check delivery cost", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("WH7560J3", link.getSku());
-        assertEquals("Fisher & Paykel 7.5kg Front Load Washer", link.getName());
-        assertEquals("598.00", link.getPrice().toString());
-        assertEquals("Fisher & Paykel", link.getBrand());
-        assertEquals("TheGoodGuys", link.getSeller());
-        assertEquals("Check delivery cost", link.getShipment());
-        assertTrue(link.getSpecList().size() > 0);
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("WH7560J3", competitor.getSku());
+        assertEquals("Fisher & Paykel 7.5kg Front Load Washer", competitor.getName());
+        assertEquals("598.00", competitor.getPrice().toString());
+        assertEquals("Fisher & Paykel", competitor.getBrand());
+        assertEquals("TheGoodGuys", competitor.getSeller());
+        assertEquals("Check delivery cost", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
-        assertEquals("3278984", link.getSku());
-        assertEquals("Tom Tom Start 52 5\" GPS", link.getName());
-        assertEquals("169.00", link.getPrice().toString());
-        assertEquals("Tom Tom", link.getBrand());
-        assertEquals("TheGoodGuys", link.getSeller());
-        assertEquals("Check delivery cost", link.getShipment());
-        assertNull(link.getSpecList());
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("3278984", competitor.getSku());
+        assertEquals("Tom Tom Start 52 5\" GPS", competitor.getName());
+        assertEquals("169.00", competitor.getPrice().toString());
+        assertEquals("Tom Tom", competitor.getBrand());
+        assertEquals("TheGoodGuys", competitor.getSeller());
+        assertEquals("Check delivery cost", competitor.getShipment());
+        assertNull(competitor.getSpecList());
     }
 
 }

@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.uk;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -20,8 +20,8 @@ import java.util.List;
  */
 public class Argos extends AbstractWebsite {
 
-  public Argos(Link link) {
-    super(link);
+  public Argos(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -90,7 +90,7 @@ public class Argos extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return getValueOnlySpecList(doc.select(".product-description-content-text li"));
   }
 }

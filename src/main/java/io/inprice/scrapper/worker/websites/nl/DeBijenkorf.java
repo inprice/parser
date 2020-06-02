@@ -1,7 +1,7 @@
 package io.inprice.scrapper.worker.websites.nl;
 
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -26,8 +26,8 @@ public class DeBijenkorf extends AbstractWebsite {
 
   private JSONObject variant;
 
-  public DeBijenkorf(Link link) {
-    super(link);
+  public DeBijenkorf(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -83,7 +83,7 @@ public class DeBijenkorf extends AbstractWebsite {
 
   @Override
   public String getSeller() {
-    Elements sellers = doc.select("a.dbk-breadcrumb--link");
+    Elements sellers = doc.select("a.dbk-breadcrumb--competitor");
     if (sellers != null && sellers.size() > 0) {
       for (Element seller : sellers) {
         if (seller.attr("href").length() > 1) {
@@ -121,8 +121,8 @@ public class DeBijenkorf extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = null;
 
     if (json != null && json.has("groupedAttributes")) {
       JSONArray groupedAttributes = json.getJSONArray("groupedAttributes");
@@ -135,7 +135,7 @@ public class DeBijenkorf extends AbstractWebsite {
             for (int j = 0; j < attributes.length(); j++) {
               JSONObject attr = attributes.getJSONObject(j);
               if (attr.has("label") && attr.has("value")) {
-                specList.add(new LinkSpec(attr.getString("label"), attr.getString("value")));
+                specList.add(new CompetitorSpec(attr.getString("label"), attr.getString("value")));
               }
             }
           }

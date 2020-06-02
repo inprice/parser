@@ -1,9 +1,9 @@
 package io.inprice.scrapper.worker.websites.xx;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -28,14 +28,14 @@ public class Apple extends AbstractWebsite {
   private JSONObject product;
   private boolean available;
 
-  public Apple(Link link) {
-    super(link);
+  public Apple(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
   public JSONObject getJsonData() {
-    LinkStatus preStatus = getLinkStatus();
-    setLinkStatus(LinkStatus.NO_DATA);
+    CompetitorStatus preStatus = getCompetitorStatus();
+    setCompetitorStatus(CompetitorStatus.NO_DATA);
 
     Element dataEL = doc.selectFirst("script[type='application/ld+json']");
     if (dataEL != null) {
@@ -62,24 +62,24 @@ public class Apple extends AbstractWebsite {
                       product = shipment.getJSONObject("body").getJSONObject("content").getJSONObject("deliveryMessage")
                           .getJSONObject(sku);
                       available = product.getBoolean("isBuyable");
-                      setLinkStatus(preStatus);
+                      setCompetitorStatus(preStatus);
                     }
                   }
                 }
               } else {
-                setLinkStatus(response);
+                setCompetitorStatus(response);
               }
             }
           }
         }
       } else {
         log.error("Failed to fetch data! Status: READ_ERROR --> L1");
-        setLinkStatus(LinkStatus.READ_ERROR);
+        setCompetitorStatus(CompetitorStatus.READ_ERROR);
       }
       return data;
     } else {
       log.error("Failed to fetch data! Status: READ_ERROR --> L2");
-      setLinkStatus(LinkStatus.READ_ERROR);
+      setCompetitorStatus(CompetitorStatus.READ_ERROR);
     }
     return super.getJsonData();
   }
@@ -159,7 +159,7 @@ public class Apple extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public List<CompetitorSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("div.as-productinfosection-mainpanel div.para-list"));
   }
 

@@ -1,8 +1,8 @@
 package io.inprice.scrapper.worker.websites.au;
 
 import com.mashape.unirest.http.HttpResponse;
-import io.inprice.scrapper.common.models.Link;
-import io.inprice.scrapper.common.models.LinkSpec;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 
@@ -24,8 +24,8 @@ import java.util.List;
  */
 public class AppliancesOnline extends AbstractWebsite {
 
-  public AppliancesOnline(Link link) {
-    super(link);
+  public AppliancesOnline(Competitor competitor) {
+    super(competitor);
   }
 
   @Override
@@ -96,8 +96,8 @@ public class AppliancesOnline extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public List<CompetitorSpec> getSpecList() {
+    List<CompetitorSpec> specList = null;
 
     HttpResponse<String> response = httpClient
         .get("https://www.appliancesonline.com.au/api/v2/product/specifications/id/" + json.getInt("productId"));
@@ -133,7 +133,7 @@ public class AppliancesOnline extends AbstractWebsite {
                       value = "No";
                   }
 
-                  specList.add(new LinkSpec(name, value));
+                  specList.add(new CompetitorSpec(name, value));
                 }
               }
             }

@@ -17,14 +17,14 @@ import io.inprice.scrapper.common.helpers.JsonConverter;
 import io.inprice.scrapper.common.helpers.RabbitMQ;
 import io.inprice.scrapper.common.info.PriceUpdateInfo;
 import io.inprice.scrapper.common.info.StatusChange;
-import io.inprice.scrapper.common.meta.LinkStatus;
-import io.inprice.scrapper.common.models.Link;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.helpers.ThreadPools;
 import io.inprice.scrapper.worker.websites.Website;
 
-class BaseLinkConsumer {
+class BaseCompetitorConsumer {
 
-  private static final Logger log = LoggerFactory.getLogger(BaseLinkConsumer.class);
+  private static final Logger log = LoggerFactory.getLogger(BaseCompetitorConsumer.class);
 
   private static final String BASE_PACKAGE = "io.inprice.scrapper.worker.websites.";
 
@@ -32,7 +32,7 @@ class BaseLinkConsumer {
   private String queueName;
   private Channel pubChannel;
 
-  BaseLinkConsumer(String name, String queueName) {
+  BaseCompetitorConsumer(String name, String queueName) {
     this.name = name;
     this.queueName = queueName;
     this.pubChannel = RabbitMQ.openChannel();
@@ -49,21 +49,21 @@ class BaseLinkConsumer {
       public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
           final byte[] body) {
         ThreadPools.WORKER_POOL.submit(() -> {
-          Link oldState = JsonConverter.fromJson(new String(body), Link.class);
-          Link newState = JsonConverter.fromJson(new String(body), Link.class);
+          Competitor oldState = JsonConverter.fromJson(new String(body), Competitor.class);
+          Competitor newState = JsonConverter.fromJson(new String(body), Competitor.class);
 
           if (newState.getWebsiteClassName() == null) {
-            newState.setStatus(LinkStatus.RENEWED);
+            newState.setStatus(CompetitorStatus.TOBE_RENEWED);
           } else {
             try {
               Class<Website> clazz = (Class<Website>) Class.forName(BASE_PACKAGE + newState.getWebsiteClassName());
-              Constructor<Website> ctor = clazz.getConstructor(Link.class);
+              Constructor<Website> ctor = clazz.getConstructor(Competitor.class);
               Website website = ctor.newInstance(newState);
               website.check();
               conChannel.basicAck(envelope.getDeliveryTag(), false);
             } catch (Exception e) {
               log.error("Failed to find the website", e);
-              newState.setStatus(LinkStatus.CLASS_PROBLEM);
+              newState.setStatus(CompetitorStatus.CLASS_PROBLEM);
               try {
                 conChannel.basicNack(envelope.getDeliveryTag(), false, false);
               } catch (IOException e1) {
@@ -79,16 +79,16 @@ class BaseLinkConsumer {
     try {
       conChannel.basicConsume(queueName, false, consumer);
     } catch (IOException e) {
-      log.error("Error in setting up active links consumer to pull tasks from queue", e);
+      log.error("Error in setting up active competitors consumer to pull tasks from queue", e);
     }
   }
 
-  private void sendToQueue(Link oldState, Link newState) {
+  private void sendToQueue(Competitor oldState, Competitor newState) {
     // status change
     if (!oldState.getStatus().equals(newState.getStatus())) {
-      if (newState.getStatus().equals(LinkStatus.AVAILABLE)) {
-        // the consumer class is in Manager, TobeAvailableLinksConsumer
-        RabbitMQ.publishLink(pubChannel, SysProps.MQ_TOBE_AVAILABLE_LINKS_ROUTING(), JsonConverter.toJson(newState));
+      if (newState.getStatus().equals(CompetitorStatus.AVAILABLE)) {
+        // the consumer class is in Manager, TobeAvailableCompetitorsConsumer
+        RabbitMQ.publishCompetitor(pubChannel, SysProps.MQ_TOBE_AVAILABLE_COMPETITORS_ROUTING(), JsonConverter.toJson(newState));
       } else {
         // the consumer class is in Manager, StatusChangeConsumer
         StatusChange change = new StatusChange(newState, oldState.getStatus());
@@ -97,12 +97,12 @@ class BaseLinkConsumer {
     } else {
       // price change
       if (oldState.getPrice().compareTo(newState.getPrice()) != 0) {
-        // the consumer class is in Manager, LinkPriceChangeConsumer
+        // the consumer class is in Manager, CompetitorPriceChangeConsumer
         PriceUpdateInfo pui = new PriceUpdateInfo(newState);
         RabbitMQ.publish(pubChannel, SysProps.MQ_CHANGES_EXCHANGE(), SysProps.MQ_PRICE_CHANGES_ROUTING(), JsonConverter.toJson(pui));
       }
     }
-    // else, do nothing. we already set last_check time of the link to indicate is being cared
+    // else, do nothing. we already set last_check time of the competitor to indicate is being cared
   }
 
 }
