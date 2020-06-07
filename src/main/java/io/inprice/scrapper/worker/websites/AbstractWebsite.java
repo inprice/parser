@@ -1,6 +1,8 @@
 package io.inprice.scrapper.worker.websites;
 
 import com.mashape.unirest.http.HttpResponse;
+import com.vdurmont.emoji.EmojiParser;
+
 import io.inprice.scrapper.common.helpers.Beans;
 import io.inprice.scrapper.common.meta.CompetitorStatus;
 import io.inprice.scrapper.common.models.Competitor;
@@ -28,6 +30,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public abstract class AbstractWebsite implements Website {
@@ -158,7 +161,7 @@ public abstract class AbstractWebsite implements Website {
   }
 
   private String fixLength(String val, int limit) {
-    String newForm = fixQuotes(val.trim());
+    String newForm = EmojiParser.removeAllEmojis(fixQuotes(val.trim()));
     if (StringUtils.isNotBlank(newForm) && newForm.length() > limit)
       return newForm.substring(0, limit);
     else
@@ -173,11 +176,16 @@ public abstract class AbstractWebsite implements Website {
     CompetitorStatus prevStatus = competitor.getStatus();
     json = getJsonData();
 
+    //one min before from competitors collecting time in manager
+    Date thirtyOneMinAgo = new Date((new Date()).getTime() - 31 * 60 * 1000);
+
     if (!competitor.getStatus().equals(prevStatus)) {
       // getJsonData method may return a network or socket error. thus, we need to
       // check if it is so
       if (CompetitorStatus.READ_ERROR.equals(competitor.getStatus()) || CompetitorStatus.NO_DATA.equals(competitor.getStatus())
           || CompetitorStatus.SOCKET_ERROR.equals(competitor.getStatus()) || CompetitorStatus.NETWORK_ERROR.equals(competitor.getStatus())) {
+        //in order to re-handled by manager
+        competitor.setLastCheck(thirtyOneMinAgo);
         return;
       }
     }
@@ -187,8 +195,12 @@ public abstract class AbstractWebsite implements Website {
     competitor.setPrice(price);
     if ((getPrice() == null || getPrice().compareTo(BigDecimal.ONE) <= 0)
         && (getName() == null || Consts.Words.NOT_AVAILABLE.equals(getName()))) {
-      competitor.setStatus(CompetitorStatus.NOT_A_PRODUCT_PAGE);
-      log.warn("URL doesn't point at a specific page! " + getUrl());
+      //in order to re-handled by manager
+      competitor.setLastCheck(thirtyOneMinAgo);
+      log.warn("Price and Name is null!");
+      log.warn(" - URL: " + getUrl());
+      log.warn(" - Price: " + getPrice());
+      log.warn(" - Name: " + getName());
       return;
     }
 
@@ -249,17 +261,6 @@ public abstract class AbstractWebsite implements Website {
 
   private void createDoc() {
     int httpStatus = openDocument();
-
-    //if there is a socket error, try two times more
-    int retry = 0;
-    while (httpStatus == 0 && retry < 2) {
-      log.warn("Secoket error, Retry: {}, URL: {}", (retry+1), getUrl());
-      try {
-        Thread.sleep(1000);
-      } catch (InterruptedException ignored) { }
-      httpStatus = openDocument();
-      retry++;
-    }
 
     if (httpStatus == 0) {
       competitor.setStatus(CompetitorStatus.SOCKET_ERROR);

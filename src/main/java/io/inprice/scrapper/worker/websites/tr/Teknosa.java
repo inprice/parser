@@ -8,7 +8,6 @@ import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 

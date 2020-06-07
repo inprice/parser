@@ -183,7 +183,7 @@ public class Amazon extends AbstractWebsite {
     if (val == null || StringUtils.isBlank(val.text())) val = doc.getElementById("delivery-message");
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
+      return val.text().replaceAll("Learn more", "");
     }
 
     val = doc.getElementById("buybox-see-all-buying-choices-announce");

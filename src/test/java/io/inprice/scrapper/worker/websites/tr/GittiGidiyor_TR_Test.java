@@ -71,4 +71,18 @@ public class GittiGidiyor_TR_Test {
         assertTrue(competitor.getSpecList().size() > 0);
     }
 
+    @Test
+    public void test_product_5() {
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 5));
+
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("453332669", competitor.getSku());
+        assertEquals("Bosch TDA3024010 Ütü", competitor.getName());
+        assertEquals("258.99", competitor.getPrice().toString());
+        assertEquals("Bosch", competitor.getBrand());
+        assertEquals("sepet-indirimi", competitor.getSeller());
+        assertEquals("Ücretsiz", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
+    }
+
 }

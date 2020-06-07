@@ -64,14 +64,15 @@ public class GittiGidiyor extends AbstractWebsite {
   @Override
   public BigDecimal getPrice() {
     Element val = doc.selectFirst("span.lastPrice");
+    if (val == null || StringUtils.isBlank(val.text())) val = doc.getElementById("sp-price-lowPrice");
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return new BigDecimal(cleanDigits(val.text()));
-    } else {
-      val = doc.selectFirst("[data-price]");
-      if (val != null && StringUtils.isNotBlank(val.attr("data-price"))) {
-        return new BigDecimal(cleanDigits(val.attr("data-price")));
-      }
+    }
+
+    val = doc.selectFirst("[data-price]");
+    if (val != null && StringUtils.isNotBlank(val.attr("data-price"))) {
+      return new BigDecimal(cleanDigits(val.attr("data-price")));
     }
 
     return BigDecimal.ZERO;
@@ -112,7 +113,11 @@ public class GittiGidiyor extends AbstractWebsite {
 
   @Override
   public List<CompetitorSpec> getSpecList() {
-    return getKeyValueSpecList(doc.select("#specs-container ul li"), "span", "strong");
+    List<CompetitorSpec> specs = getKeyValueSpecList(doc.select("#specs-container ul li"), "span", "strong");
+    if (specs == null || specs.size() == 0) {
+      specs = getKeyValueSpecList(doc.select("div.item-container"), "div.item-column:nth-child(1)", "div.item-column:nth-child(2)");
+    }
+    return specs;
   }
 
 }

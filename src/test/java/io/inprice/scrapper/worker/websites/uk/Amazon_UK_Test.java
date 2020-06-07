@@ -72,4 +72,18 @@ public class Amazon_UK_Test {
         assertTrue(competitor.getSpecList().size() > 0);
     }
 
+    @Test
+    public void test_product_5() {
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 5));
+
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("B07RDNVZ65", competitor.getSku());
+        assertEquals("NULAXY [Upgraded Version Phone Stand, Adjustable Mobile Phone Desk Holder, Cradle, Dock, Cell Phone Stand compatible with iPhone Xs Xr 8 X 7 6 6s Plus SE 5 5s 5c, All Smartphones-Black", competitor.getName());
+        assertEquals("11.99", competitor.getPrice().toString());
+        assertEquals("NULAXY", competitor.getBrand());
+        assertEquals("WONEW-EU", competitor.getSeller());
+        assertEquals("This item does not ship to Turkey.", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
+    }
+
 }
