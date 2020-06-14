@@ -72,4 +72,18 @@ public class MediaMarkt_DE_Test {
         assertTrue(competitor.getSpecList().size() > 0);
     }
 
+    @Test
+    public void test_product_5() {
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 5));
+
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("2586325", competitor.getSku());
+        assertEquals("SAMSUNG Galaxy Tab A 10.1 Wi-Fi, Tablet, 64 GB, Nein, 10,1 Zoll, Black", competitor.getName());
+        assertEquals("239.99", competitor.getPrice().toString());
+        assertEquals("SAMSUNG", competitor.getBrand());
+        assertEquals("Media Markt", competitor.getSeller());
+        assertEquals("Lieferung 17.06.2020 - 18.06.2020 + €0.00", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
+    }
+
 }

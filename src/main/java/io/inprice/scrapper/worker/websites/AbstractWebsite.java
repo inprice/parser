@@ -1,17 +1,14 @@
 package io.inprice.scrapper.worker.websites;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.vdurmont.emoji.EmojiParser;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
-import io.inprice.scrapper.common.helpers.Beans;
-import io.inprice.scrapper.common.meta.CompetitorStatus;
-import io.inprice.scrapper.common.models.Competitor;
-import io.inprice.scrapper.common.models.CompetitorSpec;
-import io.inprice.scrapper.common.utils.NumberUtils;
-import io.inprice.scrapper.worker.helpers.Consts;
-import io.inprice.scrapper.worker.helpers.Global;
-import io.inprice.scrapper.worker.helpers.HttpClient;
-import io.inprice.scrapper.worker.helpers.UserAgents;
+import com.vdurmont.emoji.EmojiParser;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -24,14 +21,16 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import io.inprice.scrapper.common.helpers.Beans;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
+import io.inprice.scrapper.common.utils.NumberUtils;
+import io.inprice.scrapper.worker.helpers.Consts;
+import io.inprice.scrapper.worker.helpers.Global;
+import io.inprice.scrapper.worker.helpers.HttpClient;
+import io.inprice.scrapper.worker.helpers.UserAgents;
+import kong.unirest.HttpResponse;
 
 public abstract class AbstractWebsite implements Website {
 
@@ -61,8 +60,7 @@ public abstract class AbstractWebsite implements Website {
 
     if (willHtmlBePulled()) {
       createDoc();
-      if (competitor.getHttpStatus() == null || competitor.getHttpStatus() == 200)
-        read();
+      if (competitor.getHttpStatus() == null || competitor.getHttpStatus() == 200) read();
     } else {
       read();
     }
@@ -161,7 +159,8 @@ public abstract class AbstractWebsite implements Website {
   }
 
   private String fixLength(String val, int limit) {
-    String newForm = EmojiParser.removeAllEmojis(fixQuotes(val.trim()));
+    if (val == null) return null;
+    String newForm = EmojiParser.removeAllEmojis(fixQuotes(val)).trim();
     if (StringUtils.isNotBlank(newForm) && newForm.length() > limit)
       return newForm.substring(0, limit);
     else
@@ -173,48 +172,38 @@ public abstract class AbstractWebsite implements Website {
   }
 
   private void read() {
-    CompetitorStatus prevStatus = competitor.getStatus();
     json = getJsonData();
 
-    //one min before from competitors collecting time in manager
-    Date thirtyOneMinAgo = new Date((new Date()).getTime() - 31 * 60 * 1000);
-
-    if (!competitor.getStatus().equals(prevStatus)) {
-      // getJsonData method may return a network or socket error. thus, we need to
-      // check if it is so
-      if (CompetitorStatus.READ_ERROR.equals(competitor.getStatus()) || CompetitorStatus.NO_DATA.equals(competitor.getStatus())
-          || CompetitorStatus.SOCKET_ERROR.equals(competitor.getStatus()) || CompetitorStatus.NETWORK_ERROR.equals(competitor.getStatus())) {
-        //in order to re-handled by manager
-        competitor.setLastCheck(thirtyOneMinAgo);
-        return;
-      }
+    // getJsonData method may return a network or socket error. thus, we need to check if it is so
+    if (CompetitorStatus.READ_ERROR.equals(competitor.getStatus()) || CompetitorStatus.NO_DATA.equals(competitor.getStatus())
+    || CompetitorStatus.SOCKET_ERROR.equals(competitor.getStatus()) || CompetitorStatus.NETWORK_ERROR.equals(competitor.getStatus())) {
+      return;
     }
 
     // price settings
-    BigDecimal price = getPrice().setScale(2, RoundingMode.HALF_UP);
-    competitor.setPrice(price);
-    if ((getPrice() == null || getPrice().compareTo(BigDecimal.ONE) <= 0)
-        && (getName() == null || Consts.Words.NOT_AVAILABLE.equals(getName()))) {
-      //in order to re-handled by manager
-      competitor.setLastCheck(thirtyOneMinAgo);
-      log.warn("Price and Name is null!");
-      log.warn(" - URL: " + getUrl());
-      log.warn(" - Price: " + getPrice());
-      log.warn(" - Name: " + getName());
+    BigDecimal price = getPrice();
+    competitor.setPrice(price.setScale(2, RoundingMode.HALF_UP));
+
+    if ((price == null || price.compareTo(BigDecimal.ONE) <= 0)
+    && (getName() == null || Consts.Words.NOT_AVAILABLE.equals(getName()))) {
+
+      CompetitorStatus preStatus = competitor.getStatus();
+      if (CompetitorStatus.AVAILABLE.equals(preStatus)) {
+        competitor.setStatus(CompetitorStatus.SOCKET_ERROR);
+      } else {
+        competitor.setStatus(CompetitorStatus.NO_DATA);
+      }
+      log.warn("URL: " + getUrl());
+      log.warn(" - Status: {}, Pre.Status: {}", competitor.getStatus().name(), preStatus.name());
       return;
     }
 
     // other settings
-    if (getSku() != null)
-      competitor.setSku(fixLength(getSku(), Consts.Limits.SKU));
-    if (getName() != null)
-      competitor.setName(fixLength(getName(), Consts.Limits.NAME));
-    if (getBrand() != null)
-      competitor.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
-    if (getSeller() != null)
-      competitor.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
-    if (getShipment() != null)
-      competitor.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
+    competitor.setSku(fixLength(getSku(), Consts.Limits.SKU));
+    competitor.setName(fixLength(getName(), Consts.Limits.NAME));
+    competitor.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
+    competitor.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
+    competitor.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
 
     // spec list editing
     List<CompetitorSpec> specList = getSpecList();
@@ -261,25 +250,24 @@ public abstract class AbstractWebsite implements Website {
 
   private void createDoc() {
     int httpStatus = openDocument();
+    competitor.setHttpStatus(httpStatus);
 
-    if (httpStatus == 0) {
+    if (httpStatus < 200) {
       competitor.setStatus(CompetitorStatus.SOCKET_ERROR);
-    } else if (httpStatus >= 200 && httpStatus <= 399) {
-      competitor.setHttpStatus(httpStatus);
+    } else if (httpStatus >= 400 && httpStatus != 503) {
+      competitor.setStatus(CompetitorStatus.NETWORK_ERROR);
     } else if (httpStatus == 503) {
       competitor.setStatus(CompetitorStatus.BLOCKED);
-      competitor.setHttpStatus(httpStatus);
-    } else {
-      competitor.setStatus(CompetitorStatus.NETWORK_ERROR);
-      competitor.setHttpStatus(httpStatus);
+    } else if (httpStatus != 200) {
+      log.warn("Http status: {} for url: {}", httpStatus, getUrl());
     }
   }
 
   protected int openDocument() {
     String url = getAlternativeUrl();
-    if (url == null)
+    if (url == null) {
       url = getUrl();
-
+    }
     try {
       Connection.Response 
       response = 
@@ -287,18 +275,22 @@ public abstract class AbstractWebsite implements Website {
           .connect(url)
           .headers(Global.standardHeaders)
           .userAgent(UserAgents.findARandomUA())
-          .referrer(UserAgents.findARandomReferer()).timeout(5 * 1000)
+          .referrer(UserAgents.findARandomReferer())
+          .timeout(5 * 1000)
           .followRedirects(true)
         .execute();
-      //response.charset("ISO-8859-1");
       response.charset("UTF-8");
       doc = response.parse();
       return response.statusCode();
     } catch (HttpStatusException httpe) {
-      log.error(httpe.getMessage() + " : " + url);
+      log.error("HttpStatusException for " + url);
+      log.error(httpe.getMessage());
+      competitor.setStatus(CompetitorStatus.NETWORK_ERROR);
       return httpe.getStatusCode();
     } catch (IOException e) {
-      log.error(e.getMessage() + " : " + url);
+      log.error("IOException for " + url);
+      log.error(e.getMessage());
+      competitor.setStatus(CompetitorStatus.SOCKET_ERROR);
       return 0;
     }
   }

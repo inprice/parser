@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -31,9 +32,12 @@ public class Amazon extends AbstractWebsite {
     Element val = doc.getElementById("availability");
     if (val != null) {
       Element span = val.selectFirst("span.a-color-success");
-      if (span == null)
+      if (span == null) {
         span = val.selectFirst("span.a-color-price");
-      return span != null;
+      }
+      if (span != null) return true;
+
+      return (val.text().toLowerCase().indexOf("in stock") > -1);
     }
 
     val = doc.getElementById("ebooksProductTitle");
@@ -85,76 +89,74 @@ public class Amazon extends AbstractWebsite {
   public BigDecimal getPrice() {
     String strPrice = null;
 
-    Element val = doc.getElementById("priceblock_dealprice");
-    if (val == null) val = doc.getElementById("priceblock_ourprice");
-
-    if (val != null) {
-      Element integer = val.selectFirst("span.price-large");
-      if (integer != null) {
-        Element decimal = integer.nextElementSibling();
-        if (decimal != null) {
-          strPrice = integer.text().trim() + "." + decimal.text().trim();
-          return new BigDecimal(cleanDigits(strPrice));
+    Element price = doc.getElementById("priceblock_dealprice");
+    if (price == null) {
+      price = doc.getElementById("priceblock_ourprice");
+      if (price != null) {
+        Element integer = price.selectFirst("span.price-large");
+        if (integer != null) {
+          Element decimal = integer.nextElementSibling();
+          if (decimal != null) {
+            strPrice = integer.text().trim() + "." + decimal.text().trim();
+            return new BigDecimal(cleanDigits(strPrice));
+          }
         }
       }
     }
 
-    if (val == null) val = doc.selectFirst("div#buybox span.a-color-price");
+    if (price == null)
+      price = doc.selectFirst("div#buybox span.a-color-price");
 
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      strPrice = val.text();
+    if (price != null) {
+      strPrice = price.text();
     } else {
-      val = doc.getElementById("cerberus-data-metrics");
-      if (val != null && StringUtils.isNotBlank(val.attr("data-asin-price"))) {
-        strPrice = val.attr("data-asin-price");
-      }
+      price = doc.getElementById("cerberus-data-metrics");
+      if (price != null)
+        strPrice = price.attr("data-asin-price");
     }
 
-    if (strPrice == null || StringUtils.isBlank(strPrice)) {
-      val = doc.selectFirst(".header-price");
-      if (val == null || StringUtils.isBlank(val.text())) {
-        val = doc.selectFirst("span.a-size-base.a-color-price.a-color-price");
-      }
-      if (val == null || StringUtils.isBlank(val.text())) {
-        val = doc.selectFirst(".a-size-medium.a-color-price.offer-price.a-text-normal");
-      }
+    if (strPrice == null || strPrice.isEmpty()) {
+      price = doc.selectFirst(".header-price");
+      if (price == null)
+        price = doc.selectFirst("span.a-size-base.a-color-price.a-color-price");
+      if (price == null)
+        price = doc.selectFirst(".a-size-medium.a-color-price.offer-price.a-text-normal");
 
-      if (val != null && StringUtils.isNotBlank(val.text())) {
-        strPrice = val.text();
+      if (price != null) {
+        strPrice = price.text();
       } else {
-        val = doc.selectFirst(".price-large");
-        if (val != null && StringUtils.isNotBlank(val.text())) {
-          String left = cleanDigits(val.text());
+        price = doc.selectFirst(".price-large");
+        if (price != null) {
+          String left = cleanDigits(price.text());
           String right = "00";
-          if (val.nextElementSibling() != null) {
-            right = val.nextElementSibling().text();
+          if (price.nextElementSibling() != null) {
+            right = price.nextElementSibling().text();
           }
           strPrice = left + "." + right;
         } else {
-          // if val is a range like 100 - 300
-          val = doc.getElementById("priceblock_ourprice");
+          // if price is a range like 100 - 300
+          price = doc.getElementById("priceblock_ourprice");
         }
       }
     }
 
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      if (val.text().contains("-")) {
-        String[] priceChunks = val.text().split("-");
+    if (price != null) {
+      if (price.text().contains("-")) {
+        String[] priceChunks = price.text().split("-");
         String first = cleanDigits(priceChunks[0]);
         String second = cleanDigits(priceChunks[1]);
         BigDecimal low = new BigDecimal(cleanDigits(first));
         BigDecimal high = new BigDecimal(cleanDigits(second));
-        strPrice = high.add(low).divide(BigDecimal.valueOf(2)).toString();
+        strPrice = high.add(low).divide(BigDecimal.valueOf(2)).setScale(2, RoundingMode.HALF_UP).toString();
       } else {
-        strPrice = val.text();
+        strPrice = price.text();
       }
     }
 
-    if (strPrice == null || StringUtils.isBlank(strPrice)) {
+    if (strPrice == null || strPrice.isEmpty())
       return BigDecimal.ZERO;
-    } else {
+    else
       return new BigDecimal(cleanDigits(strPrice));
-    }
   }
 
   @Override
@@ -206,6 +208,11 @@ public class Amazon extends AbstractWebsite {
       val = doc.selectFirst("span.ac-keyword-competitor a");
     }
 
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+
+    val = doc.selectFirst("span[data-hook='cm_cr_skyfall_medley_group']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }

@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.websites.exceptions;
 
-import com.mashape.unirest.http.HttpResponse;
+import kong.unirest.HttpResponse;
 import io.inprice.scrapper.common.meta.CompetitorStatus;
 import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.helpers.HttpClient;

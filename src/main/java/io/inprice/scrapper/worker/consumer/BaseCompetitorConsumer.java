@@ -87,8 +87,13 @@ class BaseCompetitorConsumer {
     // status change
     if (!oldState.getStatus().equals(newState.getStatus())) {
       if (newState.getStatus().equals(CompetitorStatus.AVAILABLE)) {
-        // the consumer class is in Manager, TobeAvailableCompetitorsConsumer
-        RabbitMQ.publishCompetitor(pubChannel, SysProps.MQ_TOBE_AVAILABLE_COMPETITORS_ROUTING(), JsonConverter.toJson(newState));
+        if (newState.getProductId() == null) {
+          // the consumer class is in API, ProductCreationFromLinkConsumer
+          RabbitMQ.publish(pubChannel, SysProps.MQ_CHANGES_EXCHANGE(), SysProps.MQ_PRODUCT_CREATIONS_ROUTING(), JsonConverter.toJson(newState));
+        } else {
+          // the consumer class is in Manager, TobeAvailableCompetitorsConsumer
+          RabbitMQ.publishCompetitor(pubChannel, SysProps.MQ_TOBE_AVAILABLE_COMPETITORS_ROUTING(), JsonConverter.toJson(newState));
+        }
       } else {
         // the consumer class is in Manager, StatusChangeConsumer
         StatusChange change = new StatusChange(newState, oldState.getStatus());
@@ -102,7 +107,7 @@ class BaseCompetitorConsumer {
         RabbitMQ.publish(pubChannel, SysProps.MQ_CHANGES_EXCHANGE(), SysProps.MQ_PRICE_CHANGES_ROUTING(), JsonConverter.toJson(pui));
       }
     }
-    // else, do nothing. we already set last_check time of the competitor to indicate is being cared
+    // else, do nothing. we have already set last_check time of the competitor to indicate it is being cared
   }
 
 }

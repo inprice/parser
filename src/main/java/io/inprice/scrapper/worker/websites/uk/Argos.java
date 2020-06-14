@@ -45,12 +45,20 @@ public class Argos extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
+
+    val = doc.selectFirst("[data-test='product-title']");
+    if (val != null && StringUtils.isNotBlank(val.html())) {
+      return val.html();
+    }
+
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
     Element val = doc.selectFirst(".product-price-primary");
+    if (val == null || StringUtils.isBlank(val.attr("content"))) val = doc.selectFirst("[itemProp='price']");
+
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }

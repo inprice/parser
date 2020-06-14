@@ -4,8 +4,11 @@ import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -55,6 +58,11 @@ public class MediaMarkt extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
+    Element val = doc.selectFirst("div[data-test='mms-delivery-online-availability']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return true;
+    }
+
     if (json != null && json.has("availability")) {
       JSONObject availability = json.getJSONObject("availability");
       if (availability.has("online")) {
@@ -69,6 +77,15 @@ public class MediaMarkt extends AbstractWebsite {
 
   @Override
   public String getSku() {
+    Element val = doc.selectFirst("link[itemProp='url']");
+    if (val != null && StringUtils.isNotBlank(val.attr("href"))) {
+      String[] urlChunks = val.attr("href").split("-");
+      if (urlChunks.length > 0) {
+        String sku = urlChunks[urlChunks.length-1].replaceAll("[^\\d]", "");
+        if (StringUtils.isNotBlank(sku)) return sku;
+      }
+    }
+
     if (article != null && article.has("articleId")) {
       return article.getString("articleId");
     }
@@ -77,6 +94,11 @@ public class MediaMarkt extends AbstractWebsite {
 
   @Override
   public String getName() {
+    Element val = doc.selectFirst("h1[itemProp='name']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
+    }
+
     if (article != null && article.has("title")) {
       return article.getString("title");
     }
@@ -85,6 +107,11 @@ public class MediaMarkt extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
+    Element val = doc.selectFirst("meta[itemProp='price']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
+    }
+
     if (json != null && json.has("price")) {
       JSONObject price = json.getJSONObject("price");
       if (price.has("price")) {
@@ -101,6 +128,11 @@ public class MediaMarkt extends AbstractWebsite {
 
   @Override
   public String getShipment() {
+    Element val = doc.selectFirst("div[data-test='mms-delivery-online-availability']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+
     if (json != null && json.has("availability")) {
       JSONObject availability = json.getJSONObject("availability");
       if (availability.has("online")) {
@@ -126,12 +158,19 @@ public class MediaMarkt extends AbstractWebsite {
     if (article != null && article.has("manufacturer")) {
       return article.getString("manufacturer");
     }
+
+    Element val = doc.selectFirst("meta[itemProp='name']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
+    }
+
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+    List<CompetitorSpec> specList = getKeyValueSpecList(doc.select("tr[class^=TableRow__]"), "td:nth-child(1)", "td:nth-child(2)");
+    if (specList != null && specList.size() > 0) return specList;
 
     if (article != null && article.has("mainFeatures")) {
       specList = new ArrayList<>();

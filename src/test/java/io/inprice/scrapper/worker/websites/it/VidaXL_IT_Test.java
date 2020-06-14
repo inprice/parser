@@ -2,7 +2,7 @@ package io.inprice.scrapper.worker.websites.it;
 
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
-import com.mashape.unirest.http.HttpResponse;
+import kong.unirest.HttpResponse;
 import io.inprice.scrapper.common.meta.CompetitorStatus;
 import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.worker.helpers.HttpClient;

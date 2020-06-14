@@ -1,12 +1,14 @@
 package io.inprice.scrapper.worker.helpers;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import kong.unirest.GetRequest;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
+import kong.unirest.UnirestException;
 
 public class HttpClient {
 
@@ -15,8 +17,10 @@ public class HttpClient {
   public HttpResponse<String> get(String url) {
     HttpResponse<String> response = null;
     try {
-      response = Unirest.get(url).header("Accept-Language", "en-US,en;q=0.5")
-          .header("User-Agent", UserAgents.findARandomUA()).asString();
+      response = 
+        Unirest.get(url)
+          .header("User-Agent", UserAgents.findARandomUA())
+        .asString();
     } catch (UnirestException e) {
       log.error("Failed to make a GET request", e);
     }
@@ -26,8 +30,11 @@ public class HttpClient {
   public HttpResponse<String> get(String url, String referrer) {
     HttpResponse<String> response = null;
     try {
-      response = Unirest.get(url).header("Accept-Language", "en-US,en;q=0.5")
-          .header("User-Agent", UserAgents.findARandomUA()).header("Referrer", referrer).asString();
+      response = 
+        Unirest.get(url)
+          .header("User-Agent", UserAgents.findARandomUA())
+          .header("Referrer", referrer)
+        .asString();
     } catch (UnirestException e) {
       log.error("Failed to make a GET request with a referrer", e);
     }
@@ -37,8 +44,11 @@ public class HttpClient {
   public HttpResponse<String> get(String url, Map<String, String> headers) {
     HttpResponse<String> response = null;
     try {
-      response = Unirest.get(url).headers(headers).header("User-Agent", UserAgents.findARandomUA())
-          .header("Referrer", UserAgents.findARandomReferer()).asString();
+      GetRequest get = 
+        Unirest.get(url)
+          .headers(headers)
+          .header("User-Agent", UserAgents.findARandomUA());
+      response = get.asString();
     } catch (UnirestException e) {
       log.error("Failed to make a GET request with headers", e);
     }
@@ -48,8 +58,10 @@ public class HttpClient {
   public HttpResponse<String> post(String url) {
     HttpResponse<String> response = null;
     try {
-      response = Unirest.post(url).header("User-Agent", UserAgents.findARandomUA())
-          .header("Referrer", UserAgents.findARandomReferer()).asString();
+      response = 
+        Unirest.post(url)
+          .header("Referrer", UserAgents.findARandomReferer())
+        .asString();
     } catch (UnirestException e) {
       log.error("Failed to make a POST request", e);
     }
@@ -59,9 +71,12 @@ public class HttpClient {
   public HttpResponse<String> post(String url, String data) {
     HttpResponse<String> response = null;
     try {
-      response = Unirest.post(url).header("Accept-Language", "en-US,en;q=0.5")
-          .header("User-Agent", UserAgents.findARandomUA()).header("Referrer", UserAgents.findARandomReferer())
-          .body(data).asString();
+      response = 
+        Unirest.post(url).header("Accept-Language", "en-US,en;q=0.5")
+          .header("User-Agent", UserAgents.findARandomUA())
+          .header("Referrer", UserAgents.findARandomReferer())
+          .body(data)
+        .asString();
     } catch (UnirestException e) {
       log.error("Failed to make a POST request with data", e);
     }

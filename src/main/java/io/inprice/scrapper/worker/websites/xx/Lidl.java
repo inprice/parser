@@ -64,7 +64,7 @@ public class Lidl extends AbstractWebsite {
   @Override
   public BigDecimal getPrice() {
     if (json != null && json.has("amount")) {
-      return json.getBigDecimal("amount");
+      return new BigDecimal(cleanDigits(json.getString("amount")));
     }
     return BigDecimal.ZERO;
   }

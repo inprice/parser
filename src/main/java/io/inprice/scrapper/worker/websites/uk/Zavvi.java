@@ -61,11 +61,13 @@ public class Zavvi extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
+    /*
     Element val = doc.selectFirst("p.productStockInformation_prefix");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text().contains("In stock");
     }
-    return false;
+    */
+    return doc.html().indexOf("'productStatus':'Available'") >= 0;
   }
 
   @Override

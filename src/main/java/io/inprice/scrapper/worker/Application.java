@@ -1,5 +1,6 @@
 package io.inprice.scrapper.worker;
 
+import org.apache.http.client.config.CookieSpecs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +10,7 @@ import io.inprice.scrapper.worker.consumer.FailedConsumer;
 import io.inprice.scrapper.worker.consumer.TobeClassifiedConsumer;
 import io.inprice.scrapper.worker.helpers.Global;
 import io.inprice.scrapper.worker.helpers.ThreadPools;
+import kong.unirest.Unirest;
 
 /**
  * Entry point of the application.
@@ -24,6 +26,8 @@ public class Application {
   public static void main(String[] args) {
     new Thread(() -> {
       Global.isApplicationRunning = true;
+
+      config();
 
       new TobeClassifiedConsumer().start();
       new AvailableConsumer().start();
@@ -41,8 +45,19 @@ public class Application {
       log.info(" - RabbitMQ connection is closing...");
       RabbitMQ.closeConnection();
 
+      log.info(" - Unirest is shuting down...");
+      Unirest.shutDown(true);
+
       log.info("ALL SERVICES IS DONE.");
     }, "shutdown-hook"));
+  }
+
+  private static void config() {
+    Unirest.config()
+      .socketTimeout(5 * 1000) //five second
+      .connectTimeout(8 * 1000) //eight seconds
+      .cookieSpec(CookieSpecs.STANDARD)
+      .setDefaultHeader("Accept-Language", "en-US,en;q=0.5");
   }
 
 }

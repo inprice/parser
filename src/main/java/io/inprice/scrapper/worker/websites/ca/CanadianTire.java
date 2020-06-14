@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import com.mashape.unirest.http.HttpResponse;
+import kong.unirest.HttpResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

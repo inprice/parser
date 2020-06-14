@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.mashape.unirest.http.HttpResponse;
+import kong.unirest.HttpResponse;
 
 import org.json.JSONObject;
 

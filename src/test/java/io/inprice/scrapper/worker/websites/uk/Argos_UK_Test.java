@@ -71,4 +71,18 @@ public class Argos_UK_Test {
         assertTrue(competitor.getSpecList().size() > 0);
     }
 
+    @Test
+    public void test_product_5() {
+        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 5));
+
+        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
+        assertEquals("9345151", competitor.getSku());
+        assertEquals("RED5 Retro Mini Arcade Machine", competitor.getName());
+        assertEquals("20.00", competitor.getPrice().toString());
+        assertEquals("RED5", competitor.getBrand());
+        assertEquals("Argos", competitor.getSeller());
+        assertEquals("In-store pickup", competitor.getShipment());
+        assertTrue(competitor.getSpecList().size() > 0);
+    }
+
 }

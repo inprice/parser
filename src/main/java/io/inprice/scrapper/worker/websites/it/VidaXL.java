@@ -1,6 +1,6 @@
 package io.inprice.scrapper.worker.websites.it;
 
-import com.mashape.unirest.http.HttpResponse;
+import kong.unirest.HttpResponse;
 import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.worker.helpers.Consts;
