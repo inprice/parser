@@ -50,7 +50,7 @@ public class Lidl_ES_Test {
 
         assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
         assertEquals("54661", competitor.getSku());
-        assertEquals("'Livergy®' Bañador hombre", competitor.getName());
+        assertEquals("'Livergy' Bañador hombre", competitor.getName());
         assertEquals("4.99", competitor.getPrice().toString());
         assertEquals("lidl.es", competitor.getBrand());
         assertEquals("Lidl", competitor.getSeller());

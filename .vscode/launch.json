@@ -3,13 +3,6 @@
   "configurations": [
     {
       "type": "java",
-      "name": "CodeLens (Launch) - Test",
-      "request": "launch",
-      "mainClass": "io.inprice.scrapper.worker.Test",
-      "projectName": "worker"
-    },
-    {
-      "type": "java",
       "name": "Debug API",
       "request": "launch",
       "projectName": "worker",

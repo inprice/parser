@@ -24,7 +24,7 @@ public class DeBijenkorf_NL_Test {
         assertEquals("Swarovski Stone Signet ring 5412032", competitor.getName());
         assertEquals("64.50", competitor.getPrice().toString());
         assertEquals("Swarovski", competitor.getBrand());
-        assertEquals("sieraden", competitor.getSeller());
+        assertEquals("DeBijenkorf", competitor.getSeller());
         assertEquals("Voor 22.00 uur besteld, morgen in huis", competitor.getShipment());
         assertTrue(competitor.getSpecList().size() > 0);
     }
@@ -38,7 +38,7 @@ public class DeBijenkorf_NL_Test {
         assertEquals("Balenciaga I Love Techno T-shirt met borduring", competitor.getName());
         assertEquals("279.30", competitor.getPrice().toString());
         assertEquals("Balenciaga", competitor.getBrand());
-        assertEquals("herenmode", competitor.getSeller());
+        assertEquals("DeBijenkorf", competitor.getSeller());
         assertEquals("Voor 22.00 uur besteld, morgen in huis", competitor.getShipment());
         assertTrue(competitor.getSpecList().size() > 0);
     }
@@ -52,7 +52,7 @@ public class DeBijenkorf_NL_Test {
         assertEquals("Seafolly Splendour triangel bikinitop met bloemendessin", competitor.getName());
         assertEquals("47.20", competitor.getPrice().toString());
         assertEquals("Seafolly", competitor.getBrand());
-        assertEquals("seafolly", competitor.getSeller());
+        assertEquals("DeBijenkorf", competitor.getSeller());
         assertEquals("Voor 22.00 uur besteld, morgen in huis", competitor.getShipment());
         assertTrue(competitor.getSpecList().size() > 0);
     }
@@ -66,7 +66,7 @@ public class DeBijenkorf_NL_Test {
         assertEquals("Godiva Gold Rigid Box assortiment bonbons 34 stuks", competitor.getName());
         assertEquals("48.95", competitor.getPrice().toString());
         assertEquals("Godiva", competitor.getBrand());
-        assertEquals("wijn-delicatessen", competitor.getSeller());
+        assertEquals("DeBijenkorf", competitor.getSeller());
         assertEquals("Voor 22.00 uur besteld, morgen in huis", competitor.getShipment());
         assertTrue(competitor.getSpecList().size() > 0);
     }

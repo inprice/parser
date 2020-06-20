@@ -63,7 +63,7 @@ public class CoolBlue_NL_Test {
 
         assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
         assertEquals("601518", competitor.getSku());
-        assertEquals("Bose SoundCompetitor Mini II Zwart", competitor.getName());
+        assertEquals("Bose SoundLink Mini II Zwart", competitor.getName());
         assertEquals("139.00", competitor.getPrice().toString());
         assertEquals("Bose", competitor.getBrand());
         assertEquals("CoolBlue", competitor.getSeller());

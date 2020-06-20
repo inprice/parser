@@ -41,39 +41,4 @@ public class Asos_Test {
         assertEquals(CompetitorStatus.NO_DATA, competitor.getStatus());
     }
 
-    @Test
-    public void test_for_read_error() {
-        when(mockResponse.getStatus()).thenReturn(200);
-        when(mockResponse.getBody()).thenReturn("");
-        when(httpClient.get(anyString())).thenReturn(null);
-
-        Competitor competitor = site.test(Helpers.getEmptyHtmlPath(), httpClient);
-
-        assertEquals(CompetitorStatus.READ_ERROR, competitor.getStatus());
-    }
-
-    @Test
-    public void test_for_socket_error() {
-        when(mockResponse.getStatus()).thenReturn(0);
-        when(mockResponse.getBody()).thenReturn(null);
-        when(httpClient.get(anyString())).thenReturn(mockResponse);
-
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
-
-        assertTrue(competitor.getHttpStatus() == 0);
-        assertEquals(CompetitorStatus.SOCKET_ERROR, competitor.getStatus());
-    }
-
-    @Test
-    public void test_for_network_error() {
-        when(mockResponse.getStatus()).thenReturn(400);
-        when(mockResponse.getBody()).thenReturn(null);
-        when(httpClient.get(anyString())).thenReturn(mockResponse);
-
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
-
-        assertTrue(competitor.getHttpStatus() == 400);
-        assertEquals(CompetitorStatus.NETWORK_ERROR, competitor.getStatus());
-    }
-
 }

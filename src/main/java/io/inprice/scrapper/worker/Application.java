@@ -4,7 +4,10 @@ import org.apache.http.client.config.CookieSpecs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.inprice.scrapper.common.config.SysProps;
 import io.inprice.scrapper.common.helpers.RabbitMQ;
+import io.inprice.scrapper.common.meta.AppEnv;
+import io.inprice.scrapper.worker.config.Props;
 import io.inprice.scrapper.worker.consumer.AvailableConsumer;
 import io.inprice.scrapper.worker.consumer.FailedConsumer;
 import io.inprice.scrapper.worker.consumer.TobeClassifiedConsumer;
@@ -53,6 +56,11 @@ public class Application {
   }
 
   private static void config() {
+    if (SysProps.APP_ENV().equals(AppEnv.PROD)) {
+      System.setProperty("http.proxyHost", Props.PROXY_HOST());
+      System.setProperty("http.proxyPort", Props.PROXY_PORT());
+    }
+
     Unirest.config()
       .socketTimeout(5 * 1000) //five second
       .connectTimeout(8 * 1000) //eight seconds

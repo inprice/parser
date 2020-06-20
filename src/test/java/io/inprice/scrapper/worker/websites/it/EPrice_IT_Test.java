@@ -21,9 +21,9 @@ public class EPrice_IT_Test {
 
         assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
         assertEquals("4374277", competitor.getSku());
-        assertEquals("D-COMPETITOR DWR-730 Mini Router 3G con tecnologia HSPA+ 21 Mbps Slot Sim Card Micro SD", competitor.getName());
+        assertEquals("D-LINK DWR-730 Mini Router 3G con tecnologia HSPA+ 21 Mbps Slot Sim Card Micro SD", competitor.getName());
         assertEquals("42.99", competitor.getPrice().toString());
-        assertEquals("D-COMPETITOR", competitor.getBrand());
+        assertEquals("D-LINK", competitor.getBrand());
         assertEquals("ePrice", competitor.getSeller());
         assertEquals("Venduto e spedito da ePrice", competitor.getShipment());
         assertTrue(competitor.getSpecList().size() > 0);

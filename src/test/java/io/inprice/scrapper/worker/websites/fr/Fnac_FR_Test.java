@@ -20,7 +20,7 @@ public class Fnac_FR_Test {
 
         assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
         assertEquals("6837425", competitor.getSku());
-        assertEquals("LEGO® Creator 10220 Le campingcar Volkswagen T1", competitor.getName());
+        assertEquals("LEGO Creator 10220 Le campingcar Volkswagen T1", competitor.getName());
         assertEquals("81.99", competitor.getPrice().toString());
         assertEquals("Lego", competitor.getBrand());
         assertEquals("FNAC.COM", competitor.getSeller());

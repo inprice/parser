@@ -64,7 +64,7 @@ public class Lidl_NL_Test {
 
         assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
         assertEquals("100257246", competitor.getSku());
-        assertEquals("FLORABEST® Relaxstoel", competitor.getName());
+        assertEquals("FLORABEST Relaxstoel", competitor.getName());
         assertEquals("39.99", competitor.getPrice().toString());
         assertEquals("", competitor.getBrand());
         assertEquals("Lidl", competitor.getSeller());

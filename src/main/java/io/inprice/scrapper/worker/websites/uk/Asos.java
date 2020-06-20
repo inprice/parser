@@ -1,21 +1,23 @@
 package io.inprice.scrapper.worker.websites.uk;
 
-import kong.unirest.HttpResponse;
-import io.inprice.scrapper.common.meta.CompetitorStatus;
-import io.inprice.scrapper.common.models.Competitor;
-import io.inprice.scrapper.common.models.CompetitorSpec;
-import io.inprice.scrapper.worker.helpers.Consts;
-import io.inprice.scrapper.worker.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import io.inprice.scrapper.common.meta.CompetitorStatus;
+import io.inprice.scrapper.common.models.Competitor;
+import io.inprice.scrapper.common.models.CompetitorSpec;
+import io.inprice.scrapper.worker.Application;
+import io.inprice.scrapper.worker.config.Props;
+import io.inprice.scrapper.worker.helpers.Consts;
+import io.inprice.scrapper.worker.websites.AbstractWebsite;
+import kong.unirest.HttpResponse;
 
 /**
  * Parser for Asos UK
@@ -44,7 +46,9 @@ public class Asos extends AbstractWebsite {
     setCompetitorStatus(CompetitorStatus.NO_DATA);
 
     final String prodData = findAPart(doc.html(), "window.asos.pdp.config.product =", "};", 1);
-    offer = new JSONObject(prodData);
+    if (StringUtils.isNotBlank(prodData)) {
+      offer = new JSONObject(prodData);
+    }
 
     if (offer != null) {
       sku = "" + offer.getInt("id");
@@ -59,13 +63,10 @@ public class Asos extends AbstractWebsite {
       sku = getSku();
     }
 
-    Map<String, String> headers = new HashMap<>(1);
-    headers.put("cookie", "geocountry=GB");
-
     HttpResponse<String> 
       response = 
         httpClient
-        .get("https://www.asos.com/api/product/catalogue/v3/stockprice?currency=EUR&store=ROW&productIds=" + sku, headers);
+        .get("https://www.asos.com/api/product/catalogue/v3/stockprice?store=ROW&productIds=" + sku);
     if (response != null && response.getStatus() > 0 && response.getStatus() < 400) {
 
       if (response.getBody() != null && StringUtils.isNotBlank(response.getBody())) {

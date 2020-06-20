@@ -34,11 +34,11 @@ public class Trendyol extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("competitor[rel='canonical']");
+    Element val = doc.selectFirst("link[rel='canonical']");
     if (val != null && StringUtils.isNotBlank(val.attr("href"))) {
-      String[] competitorChunks = val.attr("href").split("-");
-      if (competitorChunks.length > 0) {
-        return competitorChunks[competitorChunks.length - 1];
+      String[] linkChunks = val.attr("href").split("-");
+      if (linkChunks.length > 0) {
+        return linkChunks[linkChunks.length - 1];
       }
     }
     return Consts.Words.NOT_AVAILABLE;

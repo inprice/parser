@@ -85,7 +85,7 @@ public class CanadianTire_CA_Test {
 
         assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
         assertEquals("0765877", competitor.getSku());
-        assertEquals("Woods™ Logan Sleeping Bag, -12°C", competitor.getName());
+        assertEquals("Woods Logan Sleeping Bag, -12°C", competitor.getName());
         assertEquals("119.99", competitor.getPrice().toString());
         assertEquals("Woods", competitor.getBrand());
         assertEquals("CanadianTire", competitor.getSeller());

@@ -89,17 +89,19 @@ public class Debenhams extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (offers != null) {
-      if (!offers.isEmpty() && offers.has("lowPrice")) {
-        return offers.getBigDecimal("lowPrice");
-      } else if (!offers.isEmpty() && offers.has("price")) {
-        return offers.getBigDecimal("price");
+    if (isAvailable()) {
+      if (offers != null) {
+        if (!offers.isEmpty() && offers.has("lowPrice")) {
+          return offers.getBigDecimal("lowPrice");
+        } else if (!offers.isEmpty() && offers.has("price")) {
+          return offers.getBigDecimal("price");
+        }
       }
-    }
-
-    Element val = doc.selectFirst("span.VersionOfferPrice img");
-    if (val != null && StringUtils.isNotBlank(val.attr("alt"))) {
-      return new BigDecimal(cleanDigits(val.attr("alt")));
+      
+      Element val = doc.selectFirst("span.VersionOfferPrice img");
+      if (val != null && StringUtils.isNotBlank(val.attr("alt"))) {
+        return new BigDecimal(cleanDigits(val.attr("alt")));
+      }
     }
 
     return BigDecimal.ZERO;

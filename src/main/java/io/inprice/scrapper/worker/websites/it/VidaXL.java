@@ -91,8 +91,8 @@ public class VidaXL extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (current != null && current.has("price_num")) {
-      return new BigDecimal(cleanDigits(current.getString("price_num")));
+    if (current != null && current.has("price")) {
+      return new BigDecimal(cleanDigits(current.getString("price")));
     }
 
     Element val = doc.selectFirst("meta[itemprop='price']");

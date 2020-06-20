@@ -127,7 +127,7 @@ public class CanadianTire extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("img.brand-logo-competitor__img");
+    Element brand = doc.selectFirst("img.brand-logo-link__img");
     if (brand == null)
       brand = doc.selectFirst("img.brand-footer__logo");
 

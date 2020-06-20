@@ -36,7 +36,7 @@ public class Walmart_US_Test {
         assertEquals("911905348", competitor.getSku());
         assertEquals("Hilasal Palm Island Fiber-Reaction Printed Beach Towel - 30 x 60 inches 12058", competitor.getName());
         assertEquals("9.95", competitor.getPrice().toString());
-        assertEquals("Hilasal USA®", competitor.getBrand());
+        assertEquals("Hilasal USA", competitor.getBrand());
         assertEquals("American Living Online", competitor.getSeller());
         assertEquals("Free delivery", competitor.getShipment());
         assertTrue(competitor.getSpecList().size() > 0);

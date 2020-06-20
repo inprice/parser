@@ -96,17 +96,19 @@ public class Teknosa extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (offers != null) {
-      if (!offers.isEmpty() && offers.has("lowPrice")) {
-        return offers.getBigDecimal("lowPrice");
-      } else if (!offers.isEmpty() && offers.has("price")) {
-        return offers.getBigDecimal("price");
+    if (isAvailable()) {
+      if (offers != null) {
+        if (!offers.isEmpty() && offers.has("lowPrice")) {
+          return offers.getBigDecimal("lowPrice");
+        } else if (!offers.isEmpty() && offers.has("price")) {
+          return offers.getBigDecimal("price");
+        }
       }
-    }
-
-    Element price = doc.selectFirst("span.VersionOfferPrice img");
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price.attr("alt")));
+      
+      Element price = doc.selectFirst("span.VersionOfferPrice img");
+      if (price != null) {
+        return new BigDecimal(cleanDigits(price.attr("alt")));
+      }
     }
 
     return BigDecimal.ZERO;

@@ -38,7 +38,7 @@ public class Laredoute_FR_Test {
         assertEquals("59.94", competitor.getPrice().toString());
         assertEquals("adidas Originals", competitor.getBrand());
         assertEquals("La Redoute", competitor.getSeller());
-        assertEquals("Livraison gratuite en point Relais Colis ® dès 29€*", competitor.getShipment());
+        assertEquals("Livraison gratuite en point Relais Colis  dès 29€*", competitor.getShipment());
         assertTrue(competitor.getSpecList().size() > 0);
     }
 
@@ -52,7 +52,7 @@ public class Laredoute_FR_Test {
         assertEquals("2.40", competitor.getPrice().toString());
         assertEquals("DOUCEUR D&#39;INTÉRIEUR", competitor.getBrand());
         assertEquals("1001 Kdo", competitor.getSeller());
-        assertEquals("Livrable en point Relais Colis ® : 3,90 €", competitor.getShipment());
+        assertEquals("Livrable en point Relais Colis  : 3,90 €", competitor.getShipment());
         assertNull(competitor.getSpecList());
     }
 

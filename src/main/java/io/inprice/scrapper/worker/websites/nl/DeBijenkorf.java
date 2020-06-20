@@ -83,20 +83,6 @@ public class DeBijenkorf extends AbstractWebsite {
 
   @Override
   public String getSeller() {
-    Elements sellers = doc.select("a.dbk-breadcrumb--competitor");
-    if (sellers != null && sellers.size() > 0) {
-      for (Element seller : sellers) {
-        if (seller.attr("href").length() > 1) {
-          String halfPure = seller.attr("href").split("/")[1];
-          return halfPure.split("#")[0];
-        }
-      }
-    }
-
-    Element seller = doc.select("ul.dbk-breadcrumb-group li.dbk-breadcrumb span").last();
-    if (seller != null) {
-      return seller.text();
-    }
     return "DeBijenkorf";
   }
 

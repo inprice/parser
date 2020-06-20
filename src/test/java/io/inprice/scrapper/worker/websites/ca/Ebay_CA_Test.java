@@ -50,7 +50,7 @@ public class Ebay_CA_Test {
 
         assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
         assertEquals("222999332993", competitor.getSku());
-        assertEquals("LivingBasics® 1000W 16-in-1 Electric Pressure Cooker Brushed Stainless, 5-Quart", competitor.getName());
+        assertEquals("LivingBasics 1000W 16-in-1 Electric Pressure Cooker Brushed Stainless, 5-Quart", competitor.getName());
         assertEquals("61.99", competitor.getPrice().toString());
         assertEquals("LivingBasics", competitor.getBrand());
         assertEquals("saveonmany", competitor.getSeller());

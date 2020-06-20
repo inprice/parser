@@ -36,7 +36,7 @@ public class Amazon_UK_Test {
 
         assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
         assertEquals("B07L4F8LJW", competitor.getSku());
-        assertEquals("Crash™ Team Racing Nitro-Fueled (PS4)", competitor.getName());
+        assertEquals("Crash Team Racing Nitro-Fueled (PS4)", competitor.getName());
         assertEquals("34.99", competitor.getPrice().toString());
         assertEquals("by ACTIVISION", competitor.getBrand());
         assertEquals("Amazon", competitor.getSeller());

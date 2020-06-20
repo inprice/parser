@@ -70,8 +70,10 @@ public class CoolBlue extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (offers != null && offers.has("price")) {
-      return offers.getBigDecimal("price");
+    if (isAvailable()) {
+      if (offers != null && offers.has("price")) {
+        return offers.getBigDecimal("price");
+      }
     }
     return BigDecimal.ZERO;
   }

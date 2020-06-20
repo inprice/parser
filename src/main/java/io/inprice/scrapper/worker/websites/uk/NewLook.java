@@ -67,7 +67,7 @@ public class NewLook extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = doc.selectFirst("span.product-delivery-competitor a");
+    Element val = doc.selectFirst("span.product-delivery-link a");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }

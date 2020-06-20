@@ -17,21 +17,21 @@ import static org.mockito.Mockito.spy;
 public class AbstractWebsite_Test {
 
     @Test
-    public void should_set_NOT_A_PRODUCT_PAGE_for_available_products_with_NA_name() {
+    public void should_set_NO_DATA_for_available_products_with_NA_name() {
         AbstractWebsite site = new FakeSite(true, Consts.Words.NOT_AVAILABLE, BigDecimal.ZERO, false);
 
         Competitor competitor = site.test(null);
 
-        assertEquals(CompetitorStatus.NOT_A_PRODUCT_PAGE, competitor.getStatus());
+        assertEquals(CompetitorStatus.NO_DATA, competitor.getStatus());
     }
 
     @Test
-    public void should_set_NOT_A_PRODUCT_PAGE_for_unavailable_products_with_NULL_name() {
+    public void should_set_NOT_DATA_for_unavailable_products_with_NULL_name() {
         AbstractWebsite site = new FakeSite(false, null, BigDecimal.ZERO, false);
 
         Competitor competitor = site.test(null);
 
-        assertEquals(CompetitorStatus.NOT_A_PRODUCT_PAGE, competitor.getStatus());
+        assertEquals(CompetitorStatus.NO_DATA, competitor.getStatus());
     }
 
     @Test
@@ -42,7 +42,7 @@ public class AbstractWebsite_Test {
 
         site.check();
 
-        assertEquals(CompetitorStatus.NOT_A_PRODUCT_PAGE, site.getCompetitor().getStatus());
+        assertEquals(CompetitorStatus.SOCKET_ERROR, site.getCompetitor().getStatus());
     }
 
     @Test

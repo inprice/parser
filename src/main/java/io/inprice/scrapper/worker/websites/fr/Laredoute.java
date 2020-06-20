@@ -77,14 +77,16 @@ public class Laredoute extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    final String price = findAPart(doc.html(), "\"SalePriceAfterWithCharges\":", ",");
+    if (isAvailable()) {
+      final String price = findAPart(doc.html(), "\"SalePriceAfterWithCharges\":", ",");
 
-    if (price != null) {
-      return new BigDecimal(cleanDigits(price));
-    }
+      if (price != null) {
+        return new BigDecimal(cleanDigits(price));
+      }
 
-    if (offers != null && offers.has("price")) {
-      return offers.getBigDecimal("price");
+      if (offers != null && offers.has("price")) {
+        return offers.getBigDecimal("price");
+      }
     }
     return BigDecimal.ZERO;
   }

@@ -26,7 +26,7 @@ public class Kogan extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element val = doc.selectFirst("competitor[itemProp='availability']");
+    Element val = doc.selectFirst("link[itemProp='availability']");
     if (val != null && StringUtils.isNotBlank(val.attr("href"))) {
       return val.attr("href").contains("InStock");
     }

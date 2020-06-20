@@ -26,6 +26,7 @@ import io.inprice.scrapper.common.meta.CompetitorStatus;
 import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.common.utils.NumberUtils;
+import io.inprice.scrapper.worker.config.Props;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.helpers.Global;
 import io.inprice.scrapper.worker.helpers.HttpClient;
@@ -283,13 +284,11 @@ public abstract class AbstractWebsite implements Website {
       doc = response.parse();
       return response.statusCode();
     } catch (HttpStatusException httpe) {
-      log.error("HttpStatusException for " + url);
-      log.error(httpe.getMessage());
+      log.error("HttpStatusException for " + url, httpe);
       competitor.setStatus(CompetitorStatus.NETWORK_ERROR);
       return httpe.getStatusCode();
     } catch (IOException e) {
-      log.error("IOException for " + url);
-      log.error(e.getMessage());
+      log.error("IOException for " + url, e);
       competitor.setStatus(CompetitorStatus.SOCKET_ERROR);
       return 0;
     }
