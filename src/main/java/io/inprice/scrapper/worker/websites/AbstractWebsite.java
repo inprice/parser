@@ -26,7 +26,6 @@ import io.inprice.scrapper.common.meta.CompetitorStatus;
 import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.common.models.CompetitorSpec;
 import io.inprice.scrapper.common.utils.NumberUtils;
-import io.inprice.scrapper.worker.config.Props;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.helpers.Global;
 import io.inprice.scrapper.worker.helpers.HttpClient;

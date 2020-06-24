@@ -1,9 +1,7 @@
 package io.inprice.scrapper.worker.websites.uk;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -13,8 +11,6 @@ import org.jsoup.nodes.Element;
 import io.inprice.scrapper.common.meta.CompetitorStatus;
 import io.inprice.scrapper.common.models.Competitor;
 import io.inprice.scrapper.common.models.CompetitorSpec;
-import io.inprice.scrapper.worker.Application;
-import io.inprice.scrapper.worker.config.Props;
 import io.inprice.scrapper.worker.helpers.Consts;
 import io.inprice.scrapper.worker.websites.AbstractWebsite;
 import kong.unirest.HttpResponse;

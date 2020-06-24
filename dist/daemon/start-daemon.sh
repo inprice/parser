@@ -8,7 +8,6 @@ APP_DIR="$( dirname "$BIN_DIR" )"
 
 # get paths
 PID_FILE="$APP_DIR"/.pid
-OUT_FILE="$APP_DIR"/logs/std.out
 
 # get java
 JAVA="$( "$DAEMON_DIR"/find-java.sh )"
@@ -20,7 +19,8 @@ if [ -f "$PID_FILE" ] ; then
 fi
 
 # startup
-nohup "$JAVA" $JVM_ARGS -cp "lib/*" -jar "$@" io.inprice.scrapper.worker.Application > "$OUT_FILE" 2>&1 &
+"$JAVA" $JVM_ARGS -cp "lib/*":"$@" $MAIN_CLASS > /dev/null 2>&1 &
+
 PID="$!"
 
 echo "$PID" > "$PID_FILE"
