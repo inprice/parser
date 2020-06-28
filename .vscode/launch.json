@@ -5,10 +5,12 @@
       "type": "java",
       "name": "Debug API",
       "request": "launch",
-      "projectName": "worker",
-      "mainClass": "io.inprice.scrapper.worker.Application",
+      "projectName": "parser",
+      "mainClass": "io.inprice.scrapper.parser.Application",
       "env": {
-        "APP_ENV": "DEV"
+        "APP_ENV": "DEV",
+        "PROXY_HOST": "http://mdumlupinar:f2mvm4wMBeuBC2xP_country-UnitedStates@proxy.packetstream.io",
+        "PROXY_PORT": 31112
       }
     }
   ]

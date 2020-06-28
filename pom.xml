@@ -4,9 +4,9 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.inprice.scrapper</groupId>
-	<artifactId>worker</artifactId>
+	<artifactId>parser</artifactId>
 	<version>1.0.0</version>
-	<name>Worker project of Scrapper</name>
+	<name>Parser project of Scrapper</name>
 	<packaging>jar</packaging>
 
 	<properties>
