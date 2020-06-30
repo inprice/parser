@@ -60,15 +60,9 @@ class BaseCompetitorConsumer {
               Constructor<Website> ctor = clazz.getConstructor(Competitor.class);
               Website website = ctor.newInstance(newState);
               website.check();
-              conChannel.basicAck(envelope.getDeliveryTag(), false);
             } catch (Exception e) {
               log.error("Failed to find the website", e);
               newState.setStatus(CompetitorStatus.CLASS_PROBLEM);
-              try {
-                conChannel.basicNack(envelope.getDeliveryTag(), false, false);
-              } catch (IOException e1) {
-                log.error("Failed to send a message to dlx", e1);
-              }
             }
           }
           sendToQueue(oldState, newState);
@@ -77,7 +71,7 @@ class BaseCompetitorConsumer {
     };
 
     try {
-      conChannel.basicConsume(queueName, false, consumer);
+      conChannel.basicConsume(queueName, true, consumer);
     } catch (IOException e) {
       log.error("Error in setting up active competitors consumer to pull tasks from queue", e);
     }

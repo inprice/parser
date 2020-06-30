@@ -8,9 +8,7 @@
       "projectName": "parser",
       "mainClass": "io.inprice.scrapper.parser.Application",
       "env": {
-        "APP_ENV": "DEV",
-        "PROXY_HOST": "http://mdumlupinar:f2mvm4wMBeuBC2xP_country-UnitedStates@proxy.packetstream.io",
-        "PROXY_PORT": 31112
+        "APP_ENV": "DEV"
       }
     }
   ]
