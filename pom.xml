@@ -3,10 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>io.inprice.scrapper</groupId>
+
+  <groupId>io.inprice</groupId>
 	<artifactId>parser</artifactId>
 	<version>1.0.0</version>
-	<name>Parser project of Scrapper</name>
 	<packaging>jar</packaging>
 
 	<properties>
@@ -16,7 +16,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>io.inprice.scrapper</groupId>
+			<groupId>io.inprice</groupId>
 			<artifactId>common</artifactId>
 			<version>1.0.0</version>
 		</dependency>

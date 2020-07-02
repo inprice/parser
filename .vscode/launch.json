@@ -6,7 +6,7 @@
       "name": "Debug API",
       "request": "launch",
       "projectName": "parser",
-      "mainClass": "io.inprice.scrapper.parser.Application",
+      "mainClass": "io.inprice.parser.Application",
       "env": {
         "APP_ENV": "DEV"
       }
