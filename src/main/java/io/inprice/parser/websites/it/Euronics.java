@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.it;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -23,8 +23,8 @@ public class Euronics extends AbstractWebsite {
 
   private Element base;
 
-  public Euronics(Competitor competitor) {
-    super(competitor);
+  public Euronics(Link link) {
+    super(link);
   }
 
   @Override
@@ -96,7 +96,7 @@ public class Euronics extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("ul.productDetails__specifications li"));
   }
 }

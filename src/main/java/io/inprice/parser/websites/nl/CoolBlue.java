@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.nl;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -26,8 +26,8 @@ public class CoolBlue extends AbstractWebsite {
    */
   private JSONObject offers;
 
-  public CoolBlue(Competitor competitor) {
-    super(competitor);
+  public CoolBlue(Link link) {
+    super(link);
   }
 
   @Override
@@ -101,7 +101,7 @@ public class CoolBlue extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return getKeyValueSpecList(doc.select("div.product-specs__list-item.js-product-specs--list-item"),
         ".product-specs__item-title", ".product-specs__item-spec");
   }

@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.it;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class EPrice extends AbstractWebsite {
 
-  public EPrice(Competitor competitor) {
-    super(competitor);
+  public EPrice(Link link) {
+    super(link);
   }
 
   @Override
@@ -86,8 +86,8 @@ public class EPrice extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = getKeyValueSpecList(doc.select("#anchorCar li"), "span", "a");
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = getKeyValueSpecList(doc.select("#anchorCar li"), "span", "a");
     if (specList == null) {
       Elements specs = doc.select("#anchorTech li");
       if (specs != null && specs.size() > 0) {
@@ -95,9 +95,9 @@ public class EPrice extends AbstractWebsite {
         for (Element spec : specs) {
           Elements pair = spec.select("span");
           if (pair.size() == 1) {
-            specList.add(new CompetitorSpec("", pair.get(0).text()));
+            specList.add(new LinkSpec("", pair.get(0).text()));
           } else if (pair.size() > 1) {
-            specList.add(new CompetitorSpec(pair.get(0).text(), pair.get(1).text()));
+            specList.add(new LinkSpec(pair.get(0).text(), pair.get(1).text()));
           }
         }
       }
@@ -110,7 +110,7 @@ public class EPrice extends AbstractWebsite {
         for (Element spec : specs) {
           String[] specChunks = spec.text().split("\\.");
           for (String sp : specChunks) {
-            specList.add(new CompetitorSpec("", sp));
+            specList.add(new LinkSpec("", sp));
           }
         }
       }

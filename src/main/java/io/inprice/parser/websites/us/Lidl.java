@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.us;
 
 import kong.unirest.HttpResponse;
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -28,8 +28,8 @@ public class Lidl extends AbstractWebsite {
 
   private String sku;
 
-  public Lidl(Competitor competitor) {
-    super(competitor);
+  public Lidl(Link link) {
+    super(link);
   }
 
   @Override
@@ -110,8 +110,8 @@ public class Lidl extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     if (json != null && json.has("longDescription")) {
       String desc = json.getString("longDescription");
@@ -122,7 +122,7 @@ public class Lidl extends AbstractWebsite {
           specList = new ArrayList<>();
           for (String val : featureChunks) {
             if (StringUtils.isNotBlank(val) && !val.startsWith("<p>") && !val.startsWith("<div>"))
-              specList.add(new CompetitorSpec("", val));
+              specList.add(new LinkSpec("", val));
           }
         }
       }

@@ -3,8 +3,8 @@ package io.inprice.parser.websites.us;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 import kong.unirest.HttpResponse;
-import io.inprice.common.meta.CompetitorStatus;
-import io.inprice.common.models.Competitor;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
 import io.inprice.parser.helpers.HttpClient;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -28,64 +28,64 @@ public class Lidl_US_Test {
     public void test_product_1() {
         setMocks(1);
 
-        Competitor competitor = new Lidl(new Competitor("https://www.lidl.com/products/285939_A")).test(null, httpClient);
+        Link link = new Lidl(new Link("https://www.lidl.com/products/285939_A")).test(null, httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("285939_A", competitor.getSku());
-        assertEquals("train set", competitor.getName());
-        assertEquals("19.99", competitor.getPrice().toString());
-        assertEquals("NA", competitor.getBrand());
-        assertEquals("Lidl", competitor.getSeller());
-        assertEquals("In-store pickup", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("285939_A", link.getSku());
+        assertEquals("train set", link.getName());
+        assertEquals("19.99", link.getPrice().toString());
+        assertEquals("NA", link.getBrand());
+        assertEquals("Lidl", link.getSeller());
+        assertEquals("In-store pickup", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
         setMocks(2);
 
-        Competitor competitor = new Lidl(new Competitor("https://www.lidl.com/products/311073_A")).test(null, httpClient);
+        Link link = new Lidl(new Link("https://www.lidl.com/products/311073_A")).test(null, httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("311073_A", competitor.getSku());
-        assertEquals("inflatable tandem kayak", competitor.getName());
-        assertEquals("49.99", competitor.getPrice().toString());
-        assertEquals("NA", competitor.getBrand());
-        assertEquals("Lidl", competitor.getSeller());
-        assertEquals("In-store pickup", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("311073_A", link.getSku());
+        assertEquals("inflatable tandem kayak", link.getName());
+        assertEquals("49.99", link.getPrice().toString());
+        assertEquals("NA", link.getBrand());
+        assertEquals("Lidl", link.getSeller());
+        assertEquals("In-store pickup", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
         setMocks(3);
 
-        Competitor competitor = new Lidl(new Competitor("https://www.lidl.com/products/310436_C")).test(null, httpClient);
+        Link link = new Lidl(new Link("https://www.lidl.com/products/310436_C")).test(null, httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("310436_C", competitor.getSku());
-        assertEquals("pastel color paint, graphite", competitor.getName());
-        assertEquals("9.99", competitor.getPrice().toString());
-        assertEquals("NA", competitor.getBrand());
-        assertEquals("Lidl", competitor.getSeller());
-        assertEquals("In-store pickup", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("310436_C", link.getSku());
+        assertEquals("pastel color paint, graphite", link.getName());
+        assertEquals("9.99", link.getPrice().toString());
+        assertEquals("NA", link.getBrand());
+        assertEquals("Lidl", link.getSeller());
+        assertEquals("In-store pickup", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
         setMocks(4);
 
-        Competitor competitor = new Lidl(new Competitor("https://www.lidl.com/products/1031629")).test(null, httpClient);
+        Link link = new Lidl(new Link("https://www.lidl.com/products/1031629")).test(null, httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("1031629", competitor.getSku());
-        assertEquals("classic ciabatta", competitor.getName());
-        assertEquals("1.79", competitor.getPrice().toString());
-        assertEquals("NA", competitor.getBrand());
-        assertEquals("Lidl", competitor.getSeller());
-        assertEquals("In-store pickup", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("1031629", link.getSku());
+        assertEquals("classic ciabatta", link.getName());
+        assertEquals("1.79", link.getPrice().toString());
+        assertEquals("NA", link.getBrand());
+        assertEquals("Lidl", link.getSeller());
+        assertEquals("In-store pickup", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     private void setMocks(int no) {

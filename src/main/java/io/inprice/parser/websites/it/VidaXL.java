@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.it;
 
 import kong.unirest.HttpResponse;
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -24,8 +24,8 @@ public class VidaXL extends AbstractWebsite {
 
   private JSONObject current;
 
-  public VidaXL(Competitor competitor) {
-    super(competitor);
+  public VidaXL(Link link) {
+    super(link);
   }
 
   public String getAuctionId() {
@@ -153,7 +153,7 @@ public class VidaXL extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("ul.specs li"));
   }
 }

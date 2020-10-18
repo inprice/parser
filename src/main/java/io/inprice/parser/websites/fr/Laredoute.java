@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.fr;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -25,8 +25,8 @@ public class Laredoute extends AbstractWebsite {
 
   private JSONObject offers;
 
-  public Laredoute(Competitor competitor) {
-    super(competitor);
+  public Laredoute(Link link) {
+    super(link);
   }
 
   @Override
@@ -123,8 +123,8 @@ public class Laredoute extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
     Element specs = doc.getElementsByTag("dscpdp").first();
     if (specs != null) {
       String[] specChunks;
@@ -136,7 +136,7 @@ public class Laredoute extends AbstractWebsite {
       if (specChunks.length > 0) {
         specList = new ArrayList<>(specChunks.length);
         for (String spec : specChunks) {
-          specList.add(new CompetitorSpec("", spec));
+          specList.add(new LinkSpec("", spec));
         }
       }
     }

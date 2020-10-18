@@ -6,8 +6,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -18,8 +18,8 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Sanal extends AbstractWebsite {
 
-  public Sanal(Competitor competitor) {
-    super(competitor);
+  public Sanal(Link link) {
+    super(link);
   }
 
   @Override
@@ -86,7 +86,7 @@ public class Sanal extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return null;
   }
 }

@@ -3,8 +3,8 @@ package io.inprice.parser.websites.es;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 import kong.unirest.HttpResponse;
-import io.inprice.common.meta.CompetitorStatus;
-import io.inprice.common.models.Competitor;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
 import io.inprice.parser.helpers.HttpClient;
 import io.inprice.parser.websites.Helpers;
 import org.junit.Test;
@@ -33,68 +33,68 @@ public class Pixmania_ES_Test {
     private final Pixmania site =
         Mockito.spy(
             new Pixmania(
-                new Competitor()
+                new Link()
             )
         );
 
     @Test
     public void test_product_1() {
         setMock(1);
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("LIBH60WH", competitor.getSku());
-        assertEquals("Casco para Bici Inteligente Blanco (Luz,Intermitentes,Manos libres,Reproductor,Aviso caída) y Mando Multifunción", competitor.getName());
-        assertEquals("99.99", competitor.getPrice().toString());
-        assertEquals("Livall", competitor.getBrand());
-        assertEquals("Ascendeo Iberia ES", competitor.getSeller());
-        assertEquals("Free shipping: true", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("LIBH60WH", link.getSku());
+        assertEquals("Casco para Bici Inteligente Blanco (Luz,Intermitentes,Manos libres,Reproductor,Aviso caída) y Mando Multifunción", link.getName());
+        assertEquals("99.99", link.getPrice().toString());
+        assertEquals("Livall", link.getBrand());
+        assertEquals("Ascendeo Iberia ES", link.getSeller());
+        assertEquals("Free shipping: true", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
         setMock(2);
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("502773", competitor.getSku());
-        assertEquals("Alpine 64 PLUS Procesador Enfriador", competitor.getName());
-        assertEquals("30.95", competitor.getPrice().toString());
-        assertEquals("ARCTIC", competitor.getBrand());
-        assertEquals("PIXMANIA ESPANA", competitor.getSeller());
-        assertEquals("Free shipping: true", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("502773", link.getSku());
+        assertEquals("Alpine 64 PLUS Procesador Enfriador", link.getName());
+        assertEquals("30.95", link.getPrice().toString());
+        assertEquals("ARCTIC", link.getBrand());
+        assertEquals("PIXMANIA ESPANA", link.getSeller());
+        assertEquals("Free shipping: true", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
         setMock(3);
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("VLVB34700B30", competitor.getSku());
-        assertEquals("Cable HDMI de alta velocidad con conector HDMIEthe", competitor.getName());
-        assertEquals("17.86", competitor.getPrice().toString());
-        assertEquals("VALUELINE", competitor.getBrand());
-        assertEquals("IberiaPC ES", competitor.getSeller());
-        assertEquals("Free shipping: true", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("VLVB34700B30", link.getSku());
+        assertEquals("Cable HDMI de alta velocidad con conector HDMIEthe", link.getName());
+        assertEquals("17.86", link.getPrice().toString());
+        assertEquals("VALUELINE", link.getBrand());
+        assertEquals("IberiaPC ES", link.getSeller());
+        assertEquals("Free shipping: true", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
         setMock(4);
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("1022729", competitor.getSku());
-        assertEquals("6 discos lavables", competitor.getName());
-        assertEquals("28.95", competitor.getPrice().toString());
-        assertEquals("PHILIPS AVENT", competitor.getBrand());
-        assertEquals("PIXMANIA ESPANA", competitor.getSeller());
-        assertEquals("Free shipping: true", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("1022729", link.getSku());
+        assertEquals("6 discos lavables", link.getName());
+        assertEquals("28.95", link.getPrice().toString());
+        assertEquals("PHILIPS AVENT", link.getBrand());
+        assertEquals("PIXMANIA ESPANA", link.getSeller());
+        assertEquals("Free shipping: true", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     private void setMock(int no) {

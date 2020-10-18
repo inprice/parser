@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.fr;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -26,8 +26,8 @@ public class Fnac extends AbstractWebsite {
 
   protected JSONObject offers;
 
-  public Fnac(Competitor competitor) {
-    super(competitor);
+  public Fnac(Link link) {
+    super(link);
   }
 
   @Override
@@ -118,8 +118,8 @@ public class Fnac extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     Elements specs = doc.select("table.f-productDetails-table tr");
     if (specs != null) {
@@ -127,9 +127,9 @@ public class Fnac extends AbstractWebsite {
       for (Element spec : specs) {
         Elements pairs = spec.select("td.f-productDetails-cell");
         if (pairs.size() == 1) {
-          specList.add(new CompetitorSpec("", pairs.get(0).text()));
+          specList.add(new LinkSpec("", pairs.get(0).text()));
         } else if (pairs.size() > 1) {
-          specList.add(new CompetitorSpec(pairs.get(0).text(), pairs.get(1).text()));
+          specList.add(new LinkSpec(pairs.get(0).text(), pairs.get(1).text()));
         }
       }
     }

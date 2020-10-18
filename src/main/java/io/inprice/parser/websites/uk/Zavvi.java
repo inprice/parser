@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.uk;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -30,8 +30,8 @@ public class Zavvi extends AbstractWebsite {
    */
   private JSONObject product;
 
-  public Zavvi(Competitor competitor) {
-    super(competitor);
+  public Zavvi(Link link) {
+    super(link);
   }
 
   /**
@@ -117,8 +117,8 @@ public class Zavvi extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
     Elements specs = doc.select("div.productDescription_contentWrapper");
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
@@ -135,7 +135,7 @@ public class Zavvi extends AbstractWebsite {
         if (value != null)
           strValue = value.text();
 
-        specList.add(new CompetitorSpec(strKey, strValue));
+        specList.add(new LinkSpec(strKey, strValue));
       }
     }
     return specList;

@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.uk;
 
-import io.inprice.common.meta.CompetitorStatus;
-import io.inprice.common.models.Competitor;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
 import io.inprice.parser.websites.Helpers;
 import org.junit.Test;
 
@@ -13,62 +13,62 @@ public class Debenhams_UK_Test {
     private final String SITE_NAME = "debenhams";
     private final String COUNTRY_CODE = "uk";
 
-    private final Debenhams site = new Debenhams(new Competitor());
+    private final Debenhams site = new Debenhams(new Link());
 
     @Test
     public void test_product_1() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("3310014132", competitor.getSku());
-        assertEquals("Black non-stick aluminium 'Gourmet' 5 piece pan set", competitor.getName());
-        assertEquals("68.00", competitor.getPrice().toString());
-        assertEquals("Tefal", competitor.getBrand());
-        assertEquals("Debenhams", competitor.getSeller());
-        assertEquals("FREE Standard Delivery on orders £50 or over", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("3310014132", link.getSku());
+        assertEquals("Black non-stick aluminium 'Gourmet' 5 piece pan set", link.getName());
+        assertEquals("68.00", link.getPrice().toString());
+        assertEquals("Tefal", link.getBrand());
+        assertEquals("Debenhams", link.getSeller());
+        assertEquals("FREE Standard Delivery on orders £50 or over", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("1610104181", competitor.getSku());
-        assertEquals("Black Embroidered Mesh Satin Brazilian Knickers", competitor.getName());
-        assertEquals("10.00", competitor.getPrice().toString());
-        assertEquals("Reger by Janet Reger", competitor.getBrand());
-        assertEquals("Debenhams", competitor.getSeller());
-        assertEquals("FREE Standard Delivery on orders £50 or over", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("1610104181", link.getSku());
+        assertEquals("Black Embroidered Mesh Satin Brazilian Knickers", link.getName());
+        assertEquals("10.00", link.getPrice().toString());
+        assertEquals("Reger by Janet Reger", link.getBrand());
+        assertEquals("Debenhams", link.getSeller());
+        assertEquals("FREE Standard Delivery on orders £50 or over", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("61131_105548", competitor.getSku());
-        assertEquals("Pleasure Dome Topkapi Opal Designer Wallpaper", competitor.getName());
-        assertEquals("12.50", competitor.getPrice().toString());
-        assertEquals("Laurence Llewelyn-Bowen", competitor.getBrand());
-        assertEquals("Debenhams", competitor.getSeller());
-        assertEquals("FREE Standard Delivery on orders £50 or over", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("61131_105548", link.getSku());
+        assertEquals("Pleasure Dome Topkapi Opal Designer Wallpaper", link.getName());
+        assertEquals("12.50", link.getPrice().toString());
+        assertEquals("Laurence Llewelyn-Bowen", link.getBrand());
+        assertEquals("Debenhams", link.getSeller());
+        assertEquals("FREE Standard Delivery on orders £50 or over", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("1710104267", competitor.getSku());
-        assertEquals("My First Talking Ted", competitor.getName());
-        assertEquals("8.80", competitor.getPrice().toString());
-        assertEquals("Early Learning Centre", competitor.getBrand());
-        assertEquals("Debenhams", competitor.getSeller());
-        assertEquals("FREE Standard Delivery on orders £50 or over", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("1710104267", link.getSku());
+        assertEquals("My First Talking Ted", link.getName());
+        assertEquals("8.80", link.getPrice().toString());
+        assertEquals("Early Learning Centre", link.getBrand());
+        assertEquals("Debenhams", link.getSeller());
+        assertEquals("FREE Standard Delivery on orders £50 or over", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
 }

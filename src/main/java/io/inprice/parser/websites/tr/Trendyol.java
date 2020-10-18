@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.tr;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class Trendyol extends AbstractWebsite {
 
-  public Trendyol(Competitor competitor) {
-    super(competitor);
+  public Trendyol(Link link) {
+    super(link);
   }
 
   @Override
@@ -110,8 +110,8 @@ public class Trendyol extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     Elements specs = doc.select("div.pr-in-dt-cn ul span li");
     if (specs != null && specs.size() > 0) {
@@ -119,7 +119,7 @@ public class Trendyol extends AbstractWebsite {
       for (Element spec : specs) {
         String[] specChunks = spec.text().split("\\.");
         for (String sp : specChunks) {
-          specList.add(new CompetitorSpec("", sp));
+          specList.add(new LinkSpec("", sp));
         }
       }
     }

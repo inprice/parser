@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.exceptions;
 
-import io.inprice.common.meta.CompetitorStatus;
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 import org.junit.Test;
@@ -20,18 +20,18 @@ public class AbstractWebsite_Test {
     public void should_set_NO_DATA_for_available_products_with_NA_name() {
         AbstractWebsite site = new FakeSite(true, Consts.Words.NOT_AVAILABLE, BigDecimal.ZERO, false);
 
-        Competitor competitor = site.test(null);
+        Link link = site.test(null);
 
-        assertEquals(CompetitorStatus.NO_DATA, competitor.getStatus());
+        assertEquals(LinkStatus.NO_DATA, link.getStatus());
     }
 
     @Test
     public void should_set_NOT_DATA_for_unavailable_products_with_NULL_name() {
         AbstractWebsite site = new FakeSite(false, null, BigDecimal.ZERO, false);
 
-        Competitor competitor = site.test(null);
+        Link link = site.test(null);
 
-        assertEquals(CompetitorStatus.NO_DATA, competitor.getStatus());
+        assertEquals(LinkStatus.NO_DATA, link.getStatus());
     }
 
     @Test
@@ -42,7 +42,7 @@ public class AbstractWebsite_Test {
 
         site.check();
 
-        assertEquals(CompetitorStatus.SOCKET_ERROR, site.getCompetitor().getStatus());
+        assertEquals(LinkStatus.SOCKET_ERROR, site.getLink().getStatus());
     }
 
     @Test
@@ -53,10 +53,10 @@ public class AbstractWebsite_Test {
 
         site.check();
 
-        assertEquals(CompetitorStatus.NETWORK_ERROR, site.getCompetitor().getStatus());
+        assertEquals(LinkStatus.NETWORK_ERROR, site.getLink().getStatus());
     }
 
-    private final Competitor competitor = new Competitor();
+    private final Link link = new Link();
 
     private class FakeSite extends AbstractWebsite {
 
@@ -71,15 +71,15 @@ public class AbstractWebsite_Test {
         }
 
         private FakeSite(boolean isAvailable, String name, BigDecimal price, boolean willHtmlBePulled) {
-            super(competitor);
+            super(link);
             this.isAvailable = isAvailable;
             this.name = name;
             this.price = price;
             this.willHtmlBePulled = willHtmlBePulled;
         }
 
-        public Competitor getCompetitor() {
-            return competitor;
+        public Link getLink() {
+            return link;
         }
 
         @Override
@@ -128,7 +128,7 @@ public class AbstractWebsite_Test {
         }
 
         @Override
-        public List<CompetitorSpec> getSpecList() {
+        public List<LinkSpec> getSpecList() {
             return null;
         }
     }

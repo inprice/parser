@@ -1,9 +1,9 @@
 package io.inprice.parser.websites.xx;
 
 import kong.unirest.HttpResponse;
-import io.inprice.common.meta.CompetitorStatus;
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 import org.json.JSONArray;
@@ -28,14 +28,14 @@ public class Apple extends AbstractWebsite {
   private JSONObject product;
   private boolean available;
 
-  public Apple(Competitor competitor) {
-    super(competitor);
+  public Apple(Link link) {
+    super(link);
   }
 
   @Override
   public JSONObject getJsonData() {
-    CompetitorStatus preStatus = getCompetitorStatus();
-    setCompetitorStatus(CompetitorStatus.NO_DATA);
+    LinkStatus preStatus = getLinkStatus();
+    setLinkStatus(LinkStatus.NO_DATA);
 
     Element dataEL = doc.selectFirst("script[type='application/ld+json']");
     if (dataEL != null) {
@@ -62,24 +62,24 @@ public class Apple extends AbstractWebsite {
                       product = shipment.getJSONObject("body").getJSONObject("content").getJSONObject("deliveryMessage")
                           .getJSONObject(sku);
                       available = product.getBoolean("isBuyable");
-                      setCompetitorStatus(preStatus);
+                      setLinkStatus(preStatus);
                     }
                   }
                 }
               } else {
-                setCompetitorStatus(response);
+                setLinkStatus(response);
               }
             }
           }
         }
       } else {
         log.error("Failed to fetch data! Status: READ_ERROR --> L1");
-        setCompetitorStatus(CompetitorStatus.READ_ERROR);
+        setLinkStatus(LinkStatus.READ_ERROR);
       }
       return data;
     } else {
       log.error("Failed to fetch data! Status: READ_ERROR --> L2");
-      setCompetitorStatus(CompetitorStatus.READ_ERROR);
+      setLinkStatus(LinkStatus.READ_ERROR);
     }
     return super.getJsonData();
   }
@@ -161,7 +161,7 @@ public class Apple extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("div.as-productinfosection-mainpanel div.para-list"));
   }
 

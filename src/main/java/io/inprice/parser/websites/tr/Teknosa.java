@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.tr;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -26,8 +26,8 @@ public class Teknosa extends AbstractWebsite {
 
   private JSONObject offers;
 
-  public Teknosa(Competitor competitor) {
-    super(competitor);
+  public Teknosa(Link link) {
+    super(link);
   }
 
   @Override
@@ -156,15 +156,15 @@ public class Teknosa extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     Elements specKeys = doc.select("div.product-classifications tr");
     if (specKeys != null && specKeys.size() > 0) {
       specList = new ArrayList<>();
       for (Element key : specKeys) {
         Element val = key.selectFirst("td");
-        specList.add(new CompetitorSpec(val.text(), ""));
+        specList.add(new LinkSpec(val.text(), ""));
       }
     }
 
@@ -179,7 +179,7 @@ public class Teknosa extends AbstractWebsite {
         Element value = specValues.get(i);
         Element val = value.selectFirst("td span");
         if (isEmpty) {
-          specList.add(new CompetitorSpec("", val.text()));
+          specList.add(new LinkSpec("", val.text()));
         } else {
           specList.get(i).setValue(val.text());
         }

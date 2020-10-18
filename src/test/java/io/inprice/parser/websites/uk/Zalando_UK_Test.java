@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.uk;
 
-import io.inprice.common.meta.CompetitorStatus;
-import io.inprice.common.models.Competitor;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
 import io.inprice.parser.websites.Helpers;
 import io.inprice.parser.websites.Website;
 import org.junit.Test;
@@ -14,62 +14,62 @@ public class Zalando_UK_Test {
     private final String SITE_NAME = "zalando";
     private final String COUNTRY_CODE = "uk";
 
-    private final Website site = new io.inprice.parser.websites.xx.Zalando(new Competitor());
+    private final Website site = new io.inprice.parser.websites.xx.Zalando(new Link());
 
     @Test
     public void test_product_1() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("AD121J0K8-I11", competitor.getSku());
-        assertEquals("TREFOIL HOODIE - Hoodie", competitor.getName());
-        assertEquals("41.90", competitor.getPrice().toString());
-        assertEquals("adidas Originals", competitor.getBrand());
-        assertEquals("Zalando", competitor.getSeller());
-        assertEquals("Standard delivery Free 4-6 working days Next day delivery £5.95 order before 2pm", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("AD121J0K8-I11", link.getSku());
+        assertEquals("TREFOIL HOODIE - Hoodie", link.getName());
+        assertEquals("41.90", link.getPrice().toString());
+        assertEquals("adidas Originals", link.getBrand());
+        assertEquals("Zalando", link.getSeller());
+        assertEquals("Standard delivery Free 4-6 working days Next day delivery £5.95 order before 2pm", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("TO851L01L-F11", competitor.getSku());
-        assertEquals("EARRINGS - Earrings - gold", competitor.getName());
-        assertEquals("36.99", competitor.getPrice().toString());
-        assertEquals("TomShot", competitor.getBrand());
-        assertEquals("Zalando", competitor.getSeller());
-        assertEquals("Standard delivery Free 4-6 working days Next day delivery £5.95 order before 2pm", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("TO851L01L-F11", link.getSku());
+        assertEquals("EARRINGS - Earrings - gold", link.getName());
+        assertEquals("36.99", link.getPrice().toString());
+        assertEquals("TomShot", link.getBrand());
+        assertEquals("Zalando", link.getSeller());
+        assertEquals("Standard delivery Free 4-6 working days Next day delivery £5.95 order before 2pm", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("M9121U0HC-K11", competitor.getSku());
-        assertEquals("STAR - Classic coat", competitor.getName());
-        assertEquals("69.99", competitor.getPrice().toString());
-        assertEquals("Mango", competitor.getBrand());
-        assertEquals("Zalando", competitor.getSeller());
-        assertEquals("Standard delivery Free 4-6 working days Next day delivery £5.95 order before 2pm", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("M9121U0HC-K11", link.getSku());
+        assertEquals("STAR - Classic coat", link.getName());
+        assertEquals("69.99", link.getPrice().toString());
+        assertEquals("Mango", link.getBrand());
+        assertEquals("Zalando", link.getSeller());
+        assertEquals("Standard delivery Free 4-6 working days Next day delivery £5.95 order before 2pm", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("RA251K00I-O11", competitor.getSku());
-        assertEquals("Sunglasses", competitor.getName());
-        assertEquals("109.99", competitor.getPrice().toString());
-        assertEquals("Ray-Ban", competitor.getBrand());
-        assertEquals("Zalando", competitor.getSeller());
-        assertEquals("Standard delivery Free 4-6 working days Next day delivery £5.95 order before 2pm", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("RA251K00I-O11", link.getSku());
+        assertEquals("Sunglasses", link.getName());
+        assertEquals("109.99", link.getPrice().toString());
+        assertEquals("Ray-Ban", link.getBrand());
+        assertEquals("Zalando", link.getSeller());
+        assertEquals("Standard delivery Free 4-6 working days Next day delivery £5.95 order before 2pm", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
 }

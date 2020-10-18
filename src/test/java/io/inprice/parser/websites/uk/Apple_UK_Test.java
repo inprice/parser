@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.uk;
 
 import kong.unirest.HttpResponse;
-import io.inprice.common.meta.CompetitorStatus;
-import io.inprice.common.models.Competitor;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
 import io.inprice.parser.helpers.HttpClient;
 import io.inprice.parser.websites.Helpers;
 import io.inprice.parser.websites.Website;
@@ -24,7 +24,7 @@ public class Apple_UK_Test {
 
     private final Website site =
         new io.inprice.parser.websites.xx.Apple(
-            new Competitor(
+            new Link(
                 String.format("https://www.apple.com/%s/shop/", COUNTRY_CODE)
             )
         );
@@ -34,16 +34,16 @@ public class Apple_UK_Test {
         final String sku = "MV752ZM/A";
         setMocks(sku);
 
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals(sku, competitor.getSku());
-        assertEquals("40mm Dragon Fruit Sport Band - S/M & M/L", competitor.getName());
-        assertEquals("49.00", competitor.getPrice().toString());
-        assertEquals("Apple", competitor.getBrand());
-        assertEquals("Apple", competitor.getSeller());
-        assertEquals("Free Shipping", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals(sku, link.getSku());
+        assertEquals("40mm Dragon Fruit Sport Band - S/M & M/L", link.getName());
+        assertEquals("49.00", link.getPrice().toString());
+        assertEquals("Apple", link.getBrand());
+        assertEquals("Apple", link.getSeller());
+        assertEquals("Free Shipping", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
@@ -51,16 +51,16 @@ public class Apple_UK_Test {
         final String sku = "MRY62B/A";
         setMocks(sku);
 
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals(sku, competitor.getSku());
-        assertEquals("iPhone XR 64GB (PRODUCT)RED", competitor.getName());
-        assertEquals("749.00", competitor.getPrice().toString());
-        assertEquals("Apple", competitor.getBrand());
-        assertEquals("Apple", competitor.getSeller());
-        assertEquals("Free Shipping", competitor.getShipment());
-        assertNull(competitor.getSpecList());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals(sku, link.getSku());
+        assertEquals("iPhone XR 64GB (PRODUCT)RED", link.getName());
+        assertEquals("749.00", link.getPrice().toString());
+        assertEquals("Apple", link.getBrand());
+        assertEquals("Apple", link.getSeller());
+        assertEquals("Free Shipping", link.getShipment());
+        assertNull(link.getSpecList());
     }
 
     @Test
@@ -68,16 +68,16 @@ public class Apple_UK_Test {
         final String sku = "MU6K2B/A";
         setMocks(sku);
 
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals(sku, competitor.getSku());
-        assertEquals("Apple Watch Nike+ Series 4 GPS, 44mm Silver Aluminium Case with Pure Platinum/Black Nike Sport Band", competitor.getName());
-        assertEquals("429.00", competitor.getPrice().toString());
-        assertEquals("Apple", competitor.getBrand());
-        assertEquals("Apple", competitor.getSeller());
-        assertEquals("Free Shipping", competitor.getShipment());
-        assertNull(competitor.getSpecList());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals(sku, link.getSku());
+        assertEquals("Apple Watch Nike+ Series 4 GPS, 44mm Silver Aluminium Case with Pure Platinum/Black Nike Sport Band", link.getName());
+        assertEquals("429.00", link.getPrice().toString());
+        assertEquals("Apple", link.getBrand());
+        assertEquals("Apple", link.getSeller());
+        assertEquals("Free Shipping", link.getShipment());
+        assertNull(link.getSpecList());
     }
 
     @Test
@@ -85,16 +85,16 @@ public class Apple_UK_Test {
         final String sku = "HLL52ZM/A";
         setMocks(sku);
 
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals(sku, competitor.getSku());
-        assertEquals("Belkin Ultra High Speed 4K HDMI Cable (2m)", competitor.getName());
-        assertEquals("29.95", competitor.getPrice().toString());
-        assertEquals("Belkin", competitor.getBrand());
-        assertEquals("Apple", competitor.getSeller());
-        assertEquals("Free Shipping", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals(sku, link.getSku());
+        assertEquals("Belkin Ultra High Speed 4K HDMI Cable (2m)", link.getName());
+        assertEquals("29.95", link.getPrice().toString());
+        assertEquals("Belkin", link.getBrand());
+        assertEquals("Apple", link.getSeller());
+        assertEquals("Free Shipping", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     private void setMocks(String sku) {
@@ -123,12 +123,12 @@ public class Apple_UK_Test {
                     "          }" +
                     "        ]," +
                     "        'promoMessage': 'Free Shipping'," +
-                    "        'deliveryOptionsCompetitor': {" +
+                    "        'deliveryOptionsLink': {" +
                     "          'text': 'Get delivery dates'," +
                     "          'dataVar': {}," +
                     "          'newTab': false" +
                     "        }," +
-                    "        'showDeliveryOptionsCompetitor': true," +
+                    "        'showDeliveryOptionsLink': true," +
                     "        'messageType': 'Ship'," +
                     "        'basePartNumber': 'MTXP2'," +
                     "        'commitCodeId': '0'," +

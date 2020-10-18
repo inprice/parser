@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.xx;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class Zalando extends AbstractWebsite {
 
-  public Zalando(Competitor competitor) {
-    super(competitor);
+  public Zalando(Link link) {
+    super(link);
   }
 
   @Override
@@ -128,8 +128,8 @@ public class Zalando extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
     Elements specs = doc.select("div#z-pdp-detailsSection p.h-text.h-color-black.body.h-m-bottom-xs span");
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
@@ -140,7 +140,7 @@ public class Zalando extends AbstractWebsite {
         if (i < specs.size())
           value = specs.get(i++).text();
         if (StringUtils.isNotBlank(key) && StringUtils.isNotBlank(value))
-          specList.add(new CompetitorSpec(key, value));
+          specList.add(new LinkSpec(key, value));
       }
     }
     return specList;

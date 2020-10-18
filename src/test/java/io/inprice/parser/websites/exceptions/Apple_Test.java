@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.exceptions;
 
 import kong.unirest.HttpResponse;
-import io.inprice.common.meta.CompetitorStatus;
-import io.inprice.common.models.Competitor;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
 import io.inprice.parser.helpers.HttpClient;
 import io.inprice.parser.websites.Helpers;
 import io.inprice.parser.websites.Website;
@@ -25,7 +25,7 @@ public class Apple_Test {
 
     private final Website site =
         new io.inprice.parser.websites.xx.Apple(
-            new Competitor(
+            new Link(
                 String.format("https://www.apple.com/%s/shop/", COUNTRY_CODE)
             )
         );
@@ -36,16 +36,16 @@ public class Apple_Test {
         when(mockResponse.getBody()).thenReturn(null);
         when(httpClient.get(anyString(), anyString())).thenReturn(mockResponse);
 
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(CompetitorStatus.NO_DATA, competitor.getStatus());
+        assertEquals(LinkStatus.NO_DATA, link.getStatus());
     }
 
     @Test
     public void test_for_read_error() {
-        Competitor competitor = site.test(Helpers.getEmptyHtmlPath());
+        Link link = site.test(Helpers.getEmptyHtmlPath());
 
-        assertEquals(CompetitorStatus.READ_ERROR, competitor.getStatus());
+        assertEquals(LinkStatus.READ_ERROR, link.getStatus());
     }
 
     @Test
@@ -54,10 +54,10 @@ public class Apple_Test {
         when(mockResponse.getBody()).thenReturn(null);
         when(httpClient.get(anyString(), anyString())).thenReturn(mockResponse);
 
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertTrue(competitor.getHttpStatus() == 0);
-        assertEquals(CompetitorStatus.SOCKET_ERROR, competitor.getStatus());
+        assertTrue(link.getHttpStatus() == 0);
+        assertEquals(LinkStatus.SOCKET_ERROR, link.getStatus());
     }
 
     @Test
@@ -66,10 +66,10 @@ public class Apple_Test {
         when(mockResponse.getBody()).thenReturn(null);
         when(httpClient.get(anyString(), anyString())).thenReturn(mockResponse);
 
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertTrue(competitor.getHttpStatus() == 400);
-        assertEquals(CompetitorStatus.NETWORK_ERROR, competitor.getStatus());
+        assertTrue(link.getHttpStatus() == 400);
+        assertEquals(LinkStatus.NETWORK_ERROR, link.getStatus());
     }
 
 }

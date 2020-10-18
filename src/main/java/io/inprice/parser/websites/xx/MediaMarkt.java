@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.xx;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -25,8 +25,8 @@ public class MediaMarkt extends AbstractWebsite {
 
   private BigDecimal freeShippingTresholdForNL;
 
-  public MediaMarkt(Competitor competitor) {
-    super(competitor);
+  public MediaMarkt(Link link) {
+    super(link);
   }
 
   @Override
@@ -130,8 +130,8 @@ public class MediaMarkt extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     String parentClass = "specification";
     Elements isParentExist = doc.select("dl." + parentClass);
@@ -142,7 +142,7 @@ public class MediaMarkt extends AbstractWebsite {
     if (specKeys != null && specKeys.size() > 0) {
       specList = new ArrayList<>();
       for (Element key : specKeys) {
-        specList.add(new CompetitorSpec(key.text().replaceAll(":", ""), ""));
+        specList.add(new LinkSpec(key.text().replaceAll(":", ""), ""));
       }
     }
 
@@ -156,7 +156,7 @@ public class MediaMarkt extends AbstractWebsite {
       for (int i = 0; i < specList.size(); i++) {
         Element value = specValues.get(i);
         if (isEmpty) {
-          specList.add(new CompetitorSpec("", value.text()));
+          specList.add(new LinkSpec("", value.text()));
         } else {
           specList.get(i).setValue(value.text());
         }
@@ -168,7 +168,7 @@ public class MediaMarkt extends AbstractWebsite {
       if (specValues != null && specValues.size() > 0) {
         specList = new ArrayList<>();
         for (Element spec : specValues) {
-          specList.add(new CompetitorSpec("", spec.text()));
+          specList.add(new LinkSpec("", spec.text()));
         }
       }
     }

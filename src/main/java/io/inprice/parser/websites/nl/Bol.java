@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.nl;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -28,8 +28,8 @@ public class Bol extends AbstractWebsite {
    */
   private JSONObject offers;
 
-  public Bol(Competitor competitor) {
-    super(competitor);
+  public Bol(Link link) {
+    super(link);
   }
 
   @Override
@@ -120,8 +120,8 @@ public class Bol extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     Elements specs = doc.select("dl.specs__list");
     if (specs != null && specs.size() > 0) {
@@ -135,7 +135,7 @@ public class Bol extends AbstractWebsite {
           for (int i = 0; i < titles.size(); i++) {
             Element key = titles.get(i);
             Element value = values.get(i);
-            specList.add(new CompetitorSpec(key.text(), value.text()));
+            specList.add(new LinkSpec(key.text(), value.text()));
           }
         }
       }

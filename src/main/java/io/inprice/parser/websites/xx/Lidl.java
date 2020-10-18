@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.xx;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 import org.json.JSONObject;
@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class Lidl extends AbstractWebsite {
 
-  public Lidl(Competitor competitor) {
-    super(competitor);
+  public Lidl(Link link) {
+    super(link);
   }
 
   @Override
@@ -103,15 +103,15 @@ public class Lidl extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     Elements specs = doc.select("div.product-detail-hero li");
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
       for (Element spec : specs) {
         String value = spec.text();
-        specList.add(new CompetitorSpec("", value));
+        specList.add(new LinkSpec("", value));
       }
 
       return specList;
@@ -135,7 +135,7 @@ public class Lidl extends AbstractWebsite {
             value = specChunks[1];
           }
         }
-        specList.add(new CompetitorSpec(key, value));
+        specList.add(new LinkSpec(key, value));
       }
     }
 

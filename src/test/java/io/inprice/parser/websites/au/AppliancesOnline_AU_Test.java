@@ -3,8 +3,8 @@ package io.inprice.parser.websites.au;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 import kong.unirest.HttpResponse;
-import io.inprice.common.meta.CompetitorStatus;
-import io.inprice.common.models.Competitor;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
 import io.inprice.parser.helpers.HttpClient;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -31,68 +31,68 @@ public class AppliancesOnline_AU_Test {
     private final AppliancesOnline site =
         Mockito.spy(
             new AppliancesOnline(
-                new Competitor()
+                new Link()
             )
         );
 
     @Test
     public void test_product_1() {
         setMock(1);
-        Competitor competitor = site.test(null, httpClient);
+        Link link = site.test(null, httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("1562", competitor.getSku());
-        assertEquals("Rinnai 6kg Dry-Soft 6 Natural Gas Dryer DRYSOFT6N", competitor.getName());
-        assertEquals("1524.00", competitor.getPrice().toString());
-        assertEquals("Rinnai", competitor.getBrand());
-        assertEquals("Appliance Online", competitor.getSeller());
-        assertEquals("Check delivery cost", competitor.getShipment());
-        assertNull(competitor.getSpecList());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("1562", link.getSku());
+        assertEquals("Rinnai 6kg Dry-Soft 6 Natural Gas Dryer DRYSOFT6N", link.getName());
+        assertEquals("1524.00", link.getPrice().toString());
+        assertEquals("Rinnai", link.getBrand());
+        assertEquals("Appliance Online", link.getSeller());
+        assertEquals("Check delivery cost", link.getShipment());
+        assertNull(link.getSpecList());
     }
 
     @Test
     public void test_product_2() {
         setMock(2);
-        Competitor competitor = site.test(null, httpClient);
+        Link link = site.test(null, httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("2708", competitor.getSku());
-        assertEquals("InSinkErator 100 Evolution Food Waste Disposer", competitor.getName());
-        assertEquals("978.00", competitor.getPrice().toString());
-        assertEquals("InSinkErator", competitor.getBrand());
-        assertEquals("Appliance Online", competitor.getSeller());
-        assertEquals("Check delivery cost", competitor.getShipment());
-        assertNull(competitor.getSpecList());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("2708", link.getSku());
+        assertEquals("InSinkErator 100 Evolution Food Waste Disposer", link.getName());
+        assertEquals("978.00", link.getPrice().toString());
+        assertEquals("InSinkErator", link.getBrand());
+        assertEquals("Appliance Online", link.getSeller());
+        assertEquals("Check delivery cost", link.getShipment());
+        assertNull(link.getSpecList());
     }
 
     @Test
     public void test_product_3() {
         setMock(3);
-        Competitor competitor = site.test(null, httpClient);
+        Link link = site.test(null, httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("39819", competitor.getSku());
-        assertEquals("WEBER 6579 Q Portable Cart for Baby Q Q 1000 & Q2000 Series 6579", competitor.getName());
-        assertEquals("152.00", competitor.getPrice().toString());
-        assertEquals("Weber", competitor.getBrand());
-        assertEquals("Appliance Online", competitor.getSeller());
-        assertEquals("Check delivery cost", competitor.getShipment());
-        assertNull(competitor.getSpecList());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("39819", link.getSku());
+        assertEquals("WEBER 6579 Q Portable Cart for Baby Q Q 1000 & Q2000 Series 6579", link.getName());
+        assertEquals("152.00", link.getPrice().toString());
+        assertEquals("Weber", link.getBrand());
+        assertEquals("Appliance Online", link.getSeller());
+        assertEquals("Check delivery cost", link.getShipment());
+        assertNull(link.getSpecList());
     }
 
     @Test
     public void test_product_4() {
         setMock(4);
-        Competitor competitor = site.test(null, httpClient);
+        Link link = site.test(null, httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("56789", competitor.getSku());
-        assertEquals("Dimplex DC18 5.3kW Portable Air Conditioner with Dehumidifier", competitor.getName());
-        assertEquals("978.00", competitor.getPrice().toString());
-        assertEquals("Dimplex", competitor.getBrand());
-        assertEquals("Appliance Online", competitor.getSeller());
-        assertEquals("Check delivery cost", competitor.getShipment());
-        assertNull(competitor.getSpecList());
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("56789", link.getSku());
+        assertEquals("Dimplex DC18 5.3kW Portable Air Conditioner with Dehumidifier", link.getName());
+        assertEquals("978.00", link.getPrice().toString());
+        assertEquals("Dimplex", link.getBrand());
+        assertEquals("Appliance Online", link.getSeller());
+        assertEquals("Check delivery cost", link.getShipment());
+        assertNull(link.getSpecList());
     }
 
     private JSONObject getJsonDataFromFile(int no) {

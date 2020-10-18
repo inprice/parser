@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.tr;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -21,8 +21,8 @@ import java.util.List;
  */
 public class N11 extends AbstractWebsite {
 
-  public N11(Competitor competitor) {
-    super(competitor);
+  public N11(Link link) {
+    super(link);
   }
 
   @Override
@@ -165,7 +165,7 @@ public class N11 extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     Elements specs = doc.select("div.feaItem");
     String keySelector = ".label";
     String valSelector = ".data";

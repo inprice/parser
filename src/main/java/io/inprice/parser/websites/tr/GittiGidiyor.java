@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.tr;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -20,8 +20,8 @@ import java.util.List;
  */
 public class GittiGidiyor extends AbstractWebsite {
 
-  public GittiGidiyor(Competitor competitor) {
-    super(competitor);
+  public GittiGidiyor(Link link) {
+    super(link);
   }
 
   @Override
@@ -112,8 +112,8 @@ public class GittiGidiyor extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specs = getKeyValueSpecList(doc.select("#specs-container ul li"), "span", "strong");
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specs = getKeyValueSpecList(doc.select("#specs-container ul li"), "span", "strong");
     if (specs == null || specs.size() == 0) {
       specs = getKeyValueSpecList(doc.select("div.item-container"), "div.item-column:nth-child(1)", "div.item-column:nth-child(2)");
     }

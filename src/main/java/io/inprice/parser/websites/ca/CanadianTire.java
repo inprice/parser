@@ -10,15 +10,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for CanadianTire Canada
  *
- * Please note that: competitor's url (aka main url) is never used for data pulling
+ * Please note that: link's url (aka main url) is never used for data pulling
  *
  * This is a very special case. CanadianTire provides too limited data in html
  * form. So, we need to make a json request to collect all the data we need.
@@ -30,8 +30,8 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class CanadianTire extends AbstractWebsite {
 
-  public CanadianTire(Competitor competitor) {
-    super(competitor);
+  public CanadianTire(Link link) {
+    super(link);
   }
 
   /**
@@ -138,7 +138,7 @@ public class CanadianTire extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("div.pdp-details-features__items li"));
   }
 

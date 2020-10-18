@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.nl;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -25,8 +25,8 @@ public class DeBijenkorf extends AbstractWebsite {
 
   private JSONObject variant;
 
-  public DeBijenkorf(Competitor competitor) {
-    super(competitor);
+  public DeBijenkorf(Link link) {
+    super(link);
   }
 
   @Override
@@ -106,8 +106,8 @@ public class DeBijenkorf extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     if (json != null && json.has("groupedAttributes")) {
       JSONArray groupedAttributes = json.getJSONArray("groupedAttributes");
@@ -120,7 +120,7 @@ public class DeBijenkorf extends AbstractWebsite {
             for (int j = 0; j < attributes.length(); j++) {
               JSONObject attr = attributes.getJSONObject(j);
               if (attr.has("label") && attr.has("value")) {
-                specList.add(new CompetitorSpec(attr.getString("label"), attr.getString("value")));
+                specList.add(new LinkSpec(attr.getString("label"), attr.getString("value")));
               }
             }
           }

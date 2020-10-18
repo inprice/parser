@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.xx;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class Bonprix extends AbstractWebsite {
 
-  public Bonprix(Competitor competitor) {
-    super(competitor);
+  public Bonprix(Link link) {
+    super(link);
   }
 
   @Override
@@ -129,8 +129,8 @@ public class Bonprix extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     Elements specKeys = doc.select("div.product-attributes strong");
     if (specKeys != null && specKeys.size() > 0) {
@@ -142,7 +142,7 @@ public class Bonprix extends AbstractWebsite {
         if (i < specValues.size() - 1) {
           val = specValues.get(i);
         }
-        specList.add(new CompetitorSpec(key.text().replaceAll(":", ""), (val != null ? val.text() : "")));
+        specList.add(new LinkSpec(key.text().replaceAll(":", ""), (val != null ? val.text() : "")));
       }
       return specList;
     }
@@ -154,7 +154,7 @@ public class Bonprix extends AbstractWebsite {
     if (specKeys != null && specKeys.size() > 0) {
       specList = new ArrayList<>();
       for (Element key : specKeys) {
-        specList.add(new CompetitorSpec(key.text().replaceAll(":", ""), ""));
+        specList.add(new LinkSpec(key.text().replaceAll(":", ""), ""));
       }
     }
 
@@ -169,7 +169,7 @@ public class Bonprix extends AbstractWebsite {
       for (int i = 0; i < specValues.size(); i++) {
         Element value = specValues.get(i);
         if (isEmpty) {
-          specList.add(new CompetitorSpec("", value.text()));
+          specList.add(new LinkSpec("", value.text()));
         } else {
           specList.get(i).setValue(value.text());
         }
@@ -186,7 +186,7 @@ public class Bonprix extends AbstractWebsite {
       String[] descChunks = desc.split("\\.");
       if (descChunks.length > 0) {
         for (String dsc : descChunks) {
-          specList.add(new CompetitorSpec("", dsc));
+          specList.add(new LinkSpec("", dsc));
         }
       }
     }

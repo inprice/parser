@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.inprice.common.config.SysProps;
-import io.inprice.common.helpers.RabbitMQ;
 import io.inprice.common.meta.AppEnv;
 import io.inprice.parser.config.Props;
 import io.inprice.parser.consumer.AvailableConsumer;
@@ -44,9 +43,6 @@ public class Application {
 
       log.info(" - Thread pools are shutting down...");
       ThreadPools.shutdown();
-
-      log.info(" - RabbitMQ connection is closing...");
-      RabbitMQ.closeConnection();
 
       log.info(" - Unirest is shuting down...");
       Unirest.shutDown(true);

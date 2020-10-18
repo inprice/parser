@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.de;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -19,7 +19,7 @@ import java.util.List;
  *
  * The parsing steps:
  *
- * - the html body of competitor's url contains data (in json format) we need 
+ * - the html body of link's url contains data (in json format) we need 
  * - in getJsonData(), we get that json data by using substring() method of String class 
  * - this data is named as product which is hold on a class-level variable
  * - each data (except for availability and specList) can be gathered using product variable
@@ -30,8 +30,8 @@ public class MediaMarkt extends AbstractWebsite {
 
   private JSONObject article;
 
-  public MediaMarkt(Competitor competitor) {
-    super(competitor);
+  public MediaMarkt(Link link) {
+    super(link);
   }
 
   @Override
@@ -168,8 +168,8 @@ public class MediaMarkt extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = getKeyValueSpecList(doc.select("tr[class^=TableRow__]"), "td:nth-child(1)", "td:nth-child(2)");
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = getKeyValueSpecList(doc.select("tr[class^=TableRow__]"), "td:nth-child(1)", "td:nth-child(2)");
     if (specList != null && specList.size() > 0) return specList;
 
     if (article != null && article.has("mainFeatures")) {
@@ -178,7 +178,7 @@ public class MediaMarkt extends AbstractWebsite {
       if (features.length() > 0) {
         for (int i = 0; i < features.length(); i++) {
           JSONObject pair = features.getJSONObject(i);
-          specList.add(new CompetitorSpec(pair.getString("name"), pair.getString("value")));
+          specList.add(new LinkSpec(pair.getString("name"), pair.getString("value")));
         }
       }
     }

@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.xx;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -23,8 +23,8 @@ import java.util.List;
  */
 public class Amazon extends AbstractWebsite {
 
-  public Amazon(Competitor competitor) {
-    super(competitor);
+  public Amazon(Link link) {
+    super(link);
   }
 
   @Override
@@ -205,7 +205,7 @@ public class Amazon extends AbstractWebsite {
 
     val = doc.getElementById("bylineInfo");
     if (val == null || StringUtils.isBlank(val.text())) {
-      val = doc.selectFirst("span.ac-keyword-competitor a");
+      val = doc.selectFirst("span.ac-keyword-link a");
     }
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
@@ -221,8 +221,8 @@ public class Amazon extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = getValueOnlySpecList(doc.select("#feature-bullets li:not(.aok-hidden)"));
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = getValueOnlySpecList(doc.select("#feature-bullets li:not(.aok-hidden)"));
     if (specList == null) {
       specList = getValueOnlySpecList(doc.select("div.content ul li"));
     }

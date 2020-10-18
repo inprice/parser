@@ -14,7 +14,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.inprice.common.models.Competitor;
+import io.inprice.common.models.Link;
 import io.inprice.parser.helpers.UserAgents;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -296,7 +296,7 @@ public class deneme {
         };
 
         String[] electroking_es = {
-            //"https://www.electroking.es/redes/24238-hub-switch-8-ptos-tp-competitor-tl-sg1008d-6935364092313.html",
+            //"https://www.electroking.es/redes/24238-hub-switch-8-ptos-tp-link-tl-sg1008d-6935364092313.html",
             //"https://www.electroking.es/auriculares/24225-auricular-energy-sistem-style-6-ng-44731-8432426447312.html",
             //"https://www.electroking.es/inicio/24200-patin-electrico-xiaomi-electric-5-blanc-6970244526816.html",
             "https://www.electroking.es/lavadoras/16600-lavadora-balay-3ts873bc-4242006252250.html"
@@ -556,17 +556,17 @@ public class deneme {
         };
 /*
         for (String url: walmart_ca) {
-            Competitor competitor = new Competitor(url);
-            competitor.setWebsiteClassName("io.inprice.parser.websites.ca.Walmart");
+            Link link = new Link(url);
+            link.setWebsiteClassName("io.inprice.parser.websites.ca.Walmart");
             try {
-                Class<Website> clazz = (Class<Website>) Class.forName(competitor.getWebsiteClassName());
-                Constructor<Website> ctor = clazz.getConstructor(Competitor.class);
-                Website website = ctor.newInstance(competitor);
+                Class<Website> clazz = (Class<Website>) Class.forName(link.getWebsiteClassName());
+                Constructor<Website> ctor = clazz.getConstructor(Link.class);
+                Website website = ctor.newInstance(link);
                 website.check();
 
-                printOut(competitor);
+                printOut(link);
             } catch (Exception e) {
-                log.error("Error in converting message from byte array to Competitor", e);
+                log.error("Error in converting message from byte array to Link", e);
             }
         }
 */
@@ -621,15 +621,15 @@ public class deneme {
         System.out.println(maxOrder.trim());
     }
 
-    private static void printOut(Competitor competitor) {
+    private static void printOut(Link link) {
         log.debug("--------------------------------------------------------------------------------------------------");
-        log.debug("SKU   : " + competitor.getSku());
-        log.debug("Name  : " + competitor.getName());
-        log.debug("Status: " + competitor.getStatus() + (competitor.getHttpStatus() != null ? " ("+competitor.getHttpStatus()+")" : ""));
-        log.debug("Price : %f, Seller: %s, Shipment: %s, Brand: %s", competitor.getPrice(), competitor.getSeller(), competitor.getShipment(), competitor.getBrand());
+        log.debug("SKU   : " + link.getSku());
+        log.debug("Name  : " + link.getName());
+        log.debug("Status: " + link.getStatus() + (link.getHttpStatus() != null ? " ("+link.getHttpStatus()+")" : ""));
+        log.debug("Price : %f, Seller: %s, Shipment: %s, Brand: %s", link.getPrice(), link.getSeller(), link.getShipment(), link.getBrand());
         log.debug("--------------------------------------------------------------------------------------------------");
-        if (competitor.getSpecList() != null && competitor.getSpecList().size() > 0) {
-            competitor.getSpecList().forEach(spec -> {
+        if (link.getSpecList() != null && link.getSpecList().size() > 0) {
+            link.getSpecList().forEach(spec -> {
                 log.debug("  > " + spec.getKey() + " - " + spec.getValue());
             });
         }

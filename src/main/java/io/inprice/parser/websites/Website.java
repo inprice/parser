@@ -1,7 +1,7 @@
 package io.inprice.parser.websites;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.HttpClient;
 
 import java.math.BigDecimal;
@@ -14,8 +14,8 @@ import java.util.List;
  */
 public interface Website {
 
-    //checks competitor status and sets data. is implemented in AbstractWebsite
-    void check();
+    //checks link status and sets data. is implemented in AbstractWebsite
+    void check(Link link);
 
     //indicates the availability of the page
     boolean isAvailable();
@@ -33,15 +33,15 @@ public interface Website {
 
     String getShipment();
 
-    List<CompetitorSpec> getSpecList();
+    List<LinkSpec> getSpecList();
 
     //main url
     String getUrl();
 
     //for test purposes
-    Competitor test(String fileName);
+    Link test(String fileName);
 
     //for test purposes
-    Competitor test(String fileName, HttpClient httpClient);
+    Link test(String fileName, HttpClient httpClient);
 
 }

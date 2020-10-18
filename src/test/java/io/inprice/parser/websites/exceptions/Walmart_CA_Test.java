@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.exceptions;
 
 import kong.unirest.HttpResponse;
-import io.inprice.common.meta.CompetitorStatus;
-import io.inprice.common.models.Competitor;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
 import io.inprice.parser.helpers.HttpClient;
 import io.inprice.parser.websites.Helpers;
 import io.inprice.parser.websites.ca.Walmart;
@@ -26,7 +26,7 @@ public class Walmart_CA_Test {
     private final Walmart site =
         Mockito.spy(
             new Walmart(
-                new Competitor()
+                new Link()
             )
         );
 
@@ -38,9 +38,9 @@ public class Walmart_CA_Test {
         when(mockResponse.getBody()).thenReturn("{}");
         when(httpClient.post(anyString(), anyString())).thenReturn(mockResponse);
 
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(CompetitorStatus.NO_DATA, competitor.getStatus());
+        assertEquals(LinkStatus.NO_DATA, link.getStatus());
     }
 
     @Test
@@ -51,9 +51,9 @@ public class Walmart_CA_Test {
         when(mockResponse.getBody()).thenReturn("{}");
         when(httpClient.post(anyString(), anyString())).thenReturn(mockResponse);
 
-        Competitor competitor = site.test(Helpers.getEmptyHtmlPath(), httpClient);
+        Link link = site.test(Helpers.getEmptyHtmlPath(), httpClient);
 
-        assertEquals(CompetitorStatus.READ_ERROR, competitor.getStatus());
+        assertEquals(LinkStatus.READ_ERROR, link.getStatus());
     }
 
     @Test
@@ -64,10 +64,10 @@ public class Walmart_CA_Test {
         when(mockResponse.getBody()).thenReturn(null);
         when(httpClient.post(anyString(), anyString())).thenReturn(mockResponse);
 
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertTrue(competitor.getHttpStatus() == 0);
-        assertEquals(CompetitorStatus.SOCKET_ERROR, competitor.getStatus());
+        assertTrue(link.getHttpStatus() == 0);
+        assertEquals(LinkStatus.SOCKET_ERROR, link.getStatus());
     }
 
     @Test
@@ -78,10 +78,10 @@ public class Walmart_CA_Test {
         when(mockResponse.getBody()).thenReturn(null);
         when(httpClient.post(anyString(), anyString())).thenReturn(mockResponse);
 
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertTrue(competitor.getHttpStatus() == 400);
-        assertEquals(CompetitorStatus.NETWORK_ERROR, competitor.getStatus());
+        assertTrue(link.getHttpStatus() == 400);
+        assertEquals(LinkStatus.NETWORK_ERROR, link.getStatus());
     }
 
 }

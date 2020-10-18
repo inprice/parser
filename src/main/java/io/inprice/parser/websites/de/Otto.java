@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.de;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -23,7 +23,7 @@ import java.util.Set;
  *   b) json object extracted from html body in a script tag (brand) 
  *   c) product object set in getJsonData() by using json object in step b
  *
- * - the html body of competitor's url contains data (in json format) we need 
+ * - the html body of link's url contains data (in json format) we need 
  * - in getJsonData(), we get that json data placed in a specific script tag 
  * - this data is named as product which is hold on a class-level variable
  *
@@ -36,8 +36,8 @@ public class Otto extends AbstractWebsite {
    */
   private JSONObject product;
 
-  public Otto(Competitor competitor) {
-    super(competitor);
+  public Otto(Link link) {
+    super(link);
   }
 
   @Override
@@ -135,7 +135,7 @@ public class Otto extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("ul.prd_unorderedList li"));
   }
 

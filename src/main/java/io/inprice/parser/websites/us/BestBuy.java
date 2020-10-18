@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.us;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -18,7 +18,7 @@ import java.util.List;
  *
  * The parsing steps:
  *
- * - the html body of competitor's url contains data (in json format) we need 
+ * - the html body of link's url contains data (in json format) we need 
  * - in getJsonData(), we get that json data by using substring() method of String class 
  * - this data is named as product which is hold on a class-level variable
  * - each data (except for availability and specList) can be gathered using product variable
@@ -32,8 +32,8 @@ public class BestBuy extends AbstractWebsite {
    */
   private JSONObject offers;
 
-  public BestBuy(Competitor competitor) {
-    super(competitor);
+  public BestBuy(Link link) {
+    super(link);
   }
 
   /**
@@ -115,8 +115,8 @@ public class BestBuy extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     if (json != null && !json.isNull("description")) {
       String desc = json.getString("description");
@@ -126,7 +126,7 @@ public class BestBuy extends AbstractWebsite {
         String[] descChunks = desc.split(";");
         if (descChunks.length > 0) {
           for (String dsc : descChunks) {
-            specList.add(new CompetitorSpec("", dsc));
+            specList.add(new LinkSpec("", dsc));
           }
         }
       }

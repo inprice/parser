@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.uk;
 
 import kong.unirest.HttpResponse;
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -24,8 +24,8 @@ public class Asda extends AbstractWebsite {
 
   private JSONObject product;
 
-  public Asda(Competitor competitor) {
-    super(competitor);
+  public Asda(Link link) {
+    super(link);
   }
 
   /**
@@ -108,7 +108,7 @@ public class Asda extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return null;
   }
 

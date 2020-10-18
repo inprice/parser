@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.us;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -21,8 +21,8 @@ import java.util.List;
  */
 public class Walmart extends AbstractWebsite {
 
-  public Walmart(Competitor competitor) {
-    super(competitor);
+  public Walmart(Link link) {
+    super(link);
   }
 
   /**
@@ -100,7 +100,7 @@ public class Walmart extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("div#product-about li"));
   }
 }

@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import io.inprice.common.config.SysProps;
 import io.inprice.common.helpers.Beans;
-import io.inprice.common.meta.CompetitorStatus;
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.Global;
@@ -38,54 +38,43 @@ public abstract class AbstractWebsite implements Website {
   protected static final Logger log = LoggerFactory.getLogger(AbstractWebsite.class);
 
   protected HttpClient httpClient = Beans.getSingleton(HttpClient.class);
-  private Competitor competitor;
+  private Link link;
 
   protected Document doc;
   protected JSONObject json;
 
-  protected AbstractWebsite(Competitor competitor) {
-    this.competitor = competitor;
+  @Override
+  public void check(Link link) {
+    this.link = link;
+    long startTime = System.currentTimeMillis();
+
+    if (willHtmlBePulled()) {
+      openPage();
+      if (link.getProblem() == null) read();
+    } else {
+      read();
+    }
+
+    log.debug("Website: {}, LinkStatus: {}, Time: {}", 
+      link.getWebsiteClassName(), link.getStatus(), (System.currentTimeMillis() - startTime));
   }
 
   public boolean willHtmlBePulled() {
     return true;
   }
 
-  protected JSONObject getJsonData() {
-    return null;
-  }
-
-  @Override
-  public void check() {
-    long startTime = System.currentTimeMillis();
-
-    if (willHtmlBePulled()) {
-      createDoc();
-      if (competitor.getHttpStatus() == null || competitor.getHttpStatus() == 200) read();
-    } else {
-      read();
-    }
-
-    log.debug("Website: {}, CompetitorStatus: {}, Time: {}", competitor.getWebsiteClassName(), competitor.getStatus(),
-        (System.currentTimeMillis() - startTime));
-  }
-
   @Override
   public String getUrl() {
-    return competitor.getUrl();
-  }
-
-  protected String getAlternativeUrl() {
-    return null;
+    return link.getUrl();
   }
 
   @Override
-  public Competitor test(String fileName) {
+  public Link test(String fileName) {
     return test(fileName, null);
   }
 
   @Override
-  public Competitor test(String fileName, HttpClient httpClient) {
+  public Link test(String fileName, HttpClient httpClient) {
     if (httpClient != null)
       this.httpClient = httpClient;
     try {
@@ -98,20 +87,28 @@ public abstract class AbstractWebsite implements Website {
     } catch (Exception e) {
       log.error("Failed to fetch the page during test!", e);
     }
-    return competitor;
+    return link;
   }
 
-  protected List<CompetitorSpec> getValueOnlySpecList(Elements specs) {
+  protected String getAlternativeUrl() {
+    return null;
+  }
+
+  protected JSONObject getJsonData() {
+    return null;
+  }
+
+  protected List<LinkSpec> getValueOnlySpecList(Elements specs) {
     return getValueOnlySpecList(specs, null);
   }
 
-  protected List<CompetitorSpec> getValueOnlySpecList(Elements specs, String sep) {
-    List<CompetitorSpec> specList = null;
+  protected List<LinkSpec> getValueOnlySpecList(Elements specs, String sep) {
+    List<LinkSpec> specList = null;
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
       for (Element spec : specs) {
         if (StringUtils.isNotBlank(spec.text())) {
-          CompetitorSpec ls = new CompetitorSpec("", spec.text());
+          LinkSpec ls = new LinkSpec("", spec.text());
           if (sep != null && ls.getValue().indexOf(sep) > 0) {
             String[] specChunks = ls.getValue().split(sep);
             ls.setKey(specChunks[0]);
@@ -124,8 +121,8 @@ public abstract class AbstractWebsite implements Website {
     return specList;
   }
 
-  protected List<CompetitorSpec> getKeyValueSpecList(Elements specs, String keySelector, String valueSelector) {
-    List<CompetitorSpec> specList = null;
+  protected List<LinkSpec> getKeyValueSpecList(Elements specs, String keySelector, String valueSelector) {
+    List<LinkSpec> specList = null;
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
       for (Element spec : specs) {
@@ -133,7 +130,7 @@ public abstract class AbstractWebsite implements Website {
         Element value = spec.selectFirst(valueSelector);
         if (key != null || value != null) {
           specList.add(
-              new CompetitorSpec((key != null ? key.text().replaceAll(":", "") : ""), (value != null ? value.text() : "")));
+              new LinkSpec((key != null ? key.text().replaceAll(":", "") : ""), (value != null ? value.text() : "")));
         }
       }
     }
@@ -159,116 +156,41 @@ public abstract class AbstractWebsite implements Website {
     return null;
   }
 
-  private String fixLength(String val, int limit) {
-    if (val == null) return null;
-    String newForm = EmojiParser.removeAllEmojis(fixQuotes(val)).trim();
-    if (StringUtils.isNotBlank(newForm) && newForm.length() > limit)
-      return newForm.substring(0, limit);
-    else
-      return newForm;
-  }
-
   protected String fixQuotes(String raw) {
     return raw.replaceAll("((?<=(\\{|\\[|\\,|:))\\s*')|('\\s*(?=(\\}|(\\])|(\\,|:))))", "\"");
   }
 
-  private void read() {
-    json = getJsonData();
-
-    // getJsonData method may return a network or socket error. thus, we need to check if it is so
-    if (CompetitorStatus.READ_ERROR.equals(competitor.getStatus()) || CompetitorStatus.NO_DATA.equals(competitor.getStatus())
-    || CompetitorStatus.SOCKET_ERROR.equals(competitor.getStatus()) || CompetitorStatus.NETWORK_ERROR.equals(competitor.getStatus())) {
-      return;
-    }
-
-    // price settings
-    BigDecimal price = getPrice();
-    competitor.setPrice(price.setScale(2, RoundingMode.HALF_UP));
-
-    if ((price == null || price.compareTo(BigDecimal.ONE) <= 0)
-    && (getName() == null || Consts.Words.NOT_AVAILABLE.equals(getName()))) {
-
-      CompetitorStatus preStatus = competitor.getStatus();
-      if (CompetitorStatus.AVAILABLE.equals(preStatus)) {
-        competitor.setStatus(CompetitorStatus.SOCKET_ERROR);
-      } else {
-        competitor.setStatus(CompetitorStatus.NO_DATA);
-      }
-      log.warn("URL: " + getUrl());
-      log.warn(" - Status: {}, Pre.Status: {}", competitor.getStatus().name(), preStatus.name());
-      return;
-    }
-
-    // other settings
-    competitor.setSku(fixLength(getSku(), Consts.Limits.SKU));
-    competitor.setName(fixLength(getName(), Consts.Limits.NAME));
-    competitor.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
-    competitor.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
-    competitor.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
-
-    // spec list editing
-    List<CompetitorSpec> specList = getSpecList();
-    if (specList != null && specList.size() > 0) {
-      List<CompetitorSpec> newList = new ArrayList<>(specList.size());
-      for (CompetitorSpec ls : specList) {
-        newList.add(new CompetitorSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY),
-            fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
-      }
-      competitor.setSpecList(newList);
-    }
-
-    if (isAvailable()) {
-      competitor.setStatus(CompetitorStatus.AVAILABLE);
-    } else {
-      competitor.setStatus(CompetitorStatus.NOT_AVAILABLE);
-      log.debug("Competitor with id {} is not available!", competitor.getId());
-    }
+  protected LinkStatus getLinkStatus() {
+    return link.getStatus();
   }
 
-  protected CompetitorStatus getCompetitorStatus() {
-    return competitor.getStatus();
+  protected void setLinkStatus(LinkStatus status) {
+    link.setStatus(status);
   }
 
-  protected void setCompetitorStatus(CompetitorStatus status) {
-    competitor.setStatus(status);
+  protected void setLinkStatus(LinkStatus status, int httpStatus) {
+    link.setStatus(status);
+    link.setHttpStatus(httpStatus);
   }
 
-  protected void setCompetitorStatus(CompetitorStatus status, int httpStatus) {
-    competitor.setStatus(status);
-    competitor.setHttpStatus(httpStatus);
-  }
-
-  protected void setCompetitorStatus(HttpResponse<String> response) {
+  protected void setLinkStatus(HttpResponse<String> response) {
     if (response != null) {
-      final CompetitorStatus status = (response.getStatus() == 0 ? CompetitorStatus.SOCKET_ERROR : CompetitorStatus.NETWORK_ERROR);
-      log.error("Failed to fetch data! CompetitorStatus: {}, Http CompetitorStatus: {}", status.name(), response.getStatus());
-      setCompetitorStatus(status, response.getStatus());
+      final LinkStatus status = (response.getStatus() == 0 ? LinkStatus.SOCKET_ERROR : LinkStatus.NETWORK_ERROR);
+      log.error("Failed to fetch data! LinkStatus: {}, Http LinkStatus: {}", status.name(), response.getStatus());
+      setLinkStatus(status, response.getStatus());
     } else {
       log.error("Response is null!");
-      setCompetitorStatus(CompetitorStatus.READ_ERROR);
+      setLinkStatus(LinkStatus.READ_ERROR);
     }
   }
 
-  private void createDoc() {
-    int httpStatus = openDocument();
-    competitor.setHttpStatus(httpStatus);
-
-    if (httpStatus < 200) {
-      competitor.setStatus(CompetitorStatus.SOCKET_ERROR);
-    } else if (httpStatus >= 400 && httpStatus != 503) {
-      competitor.setStatus(CompetitorStatus.NETWORK_ERROR);
-    } else if (httpStatus == 503) {
-      competitor.setStatus(CompetitorStatus.BLOCKED);
-    } else if (httpStatus != 200) {
-      log.warn("Http status: {} for url: {}", httpStatus, getUrl());
-    }
-  }
-
-  protected int openDocument() {
+  protected void openPage() {
     String url = getAlternativeUrl();
     if (url == null) {
       url = getUrl();
     }
+
+    String problem = null;
     try {
       Connection.Response 
       response = 
@@ -281,16 +203,84 @@ public abstract class AbstractWebsite implements Website {
           .followRedirects(true)
         .execute();
       response.charset("UTF-8");
-      doc = response.parse();
-      return response.statusCode();
-    } catch (HttpStatusException httpe) {
-      log.error("HttpStatusException for " + url, httpe);
-      competitor.setStatus(CompetitorStatus.NETWORK_ERROR);
-      return httpe.getStatusCode();
-    } catch (IOException e) {
-      log.error("IOException for " + url, e);
-      competitor.setStatus(CompetitorStatus.SOCKET_ERROR);
-      return 0;
+
+      if (response.statusCode() < 400) {
+        doc = response.parse();
+        link.setProblem(null);
+      } else {
+        problem = response.statusMessage();
+      }
+
+    } catch (Exception e) {
+      log.error(url, e);
+      problem = e.getMessage();
+    }
+
+    if (problem != null) {
+      link.setProblem(problem);
+      link.setStatus(LinkStatus.NETWORK_ERROR);
+    }
+  }
+
+  private String fixLength(String val, int limit) {
+    if (val == null) return null;
+    String newForm = EmojiParser.removeAllEmojis(fixQuotes(val)).trim();
+    if (StringUtils.isNotBlank(newForm) && newForm.length() > limit)
+      return newForm.substring(0, limit);
+    else
+      return newForm;
+  }
+
+  private void read() {
+    json = getJsonData();
+
+    // getJsonData method may return a network or socket error. thus, we need to check if it is so
+    if (LinkStatus.READ_ERROR.equals(link.getStatus()) || LinkStatus.NO_DATA.equals(link.getStatus())
+    || LinkStatus.SOCKET_ERROR.equals(link.getStatus()) || LinkStatus.NETWORK_ERROR.equals(link.getStatus())) {
+      return;
+    }
+
+    // price settings
+    BigDecimal price = getPrice();
+    link.setPrice(price.setScale(2, RoundingMode.HALF_UP));
+
+    if ((price == null || price.compareTo(BigDecimal.ONE) <= 0)
+    && (getName() == null || Consts.Words.NOT_AVAILABLE.equals(getName()))) {
+
+      LinkStatus preStatus = link.getStatus();
+      if (LinkStatus.AVAILABLE.equals(preStatus)) {
+        link.setStatus(LinkStatus.SOCKET_ERROR);
+      } else {
+        link.setStatus(LinkStatus.NO_DATA);
+      }
+      log.warn("URL: " + getUrl());
+      log.warn(" - Status: {}, Pre.Status: {}", link.getStatus().name(), preStatus.name());
+      return;
+    }
+
+    // other settings
+    link.setSku(fixLength(getSku(), Consts.Limits.SKU));
+    link.setName(fixLength(getName(), Consts.Limits.NAME));
+    link.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
+    link.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
+    link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
+
+    // spec list editing
+    List<LinkSpec> specList = getSpecList();
+    if (specList != null && specList.size() > 0) {
+      List<LinkSpec> newList = new ArrayList<>(specList.size());
+      for (LinkSpec ls : specList) {
+        newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY),
+            fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
+      }
+      link.setSpecList(newList);
+    }
+
+    if (isAvailable()) {
+      link.setStatus(LinkStatus.AVAILABLE);
+    } else {
+      link.setStatus(LinkStatus.NOT_AVAILABLE);
+      log.debug("Link with id {} is not available!", link.getId());
     }
   }
 

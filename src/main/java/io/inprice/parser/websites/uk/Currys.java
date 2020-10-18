@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.uk;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.Link;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -27,8 +27,8 @@ public class Currys extends AbstractWebsite {
    */
   private JSONObject product;
 
-  public Currys(Competitor competitor) {
-    super(competitor);
+  public Currys(Link link) {
+    super(link);
   }
 
   @Override
@@ -99,7 +99,7 @@ public class Currys extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("div.product-highlight li"));
   }
 }
