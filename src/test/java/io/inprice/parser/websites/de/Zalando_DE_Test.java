@@ -14,7 +14,7 @@ public class Zalando_DE_Test {
     private final String SITE_NAME = "zalando";
     private final String COUNTRY_CODE = "de";
 
-    private final Website site = new io.inprice.parser.websites.xx.Zalando(new Link());
+    private final Website site = new io.inprice.parser.websites.xx.Zalando();
 
     @Test
     public void test_product_1() {

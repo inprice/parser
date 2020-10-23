@@ -12,14 +12,14 @@ import io.inprice.parser.helpers.RedisClient;
 import io.inprice.parser.site.SiteFinder;
 import io.inprice.parser.websites.Website;
 
-public class ActiveLinkConsumer implements Runnable {
+public class ActiveLinksConsumer implements Runnable {
 
-  private static final Logger log = LoggerFactory.getLogger(ActiveLinkConsumer.class);
+  private static final Logger log = LoggerFactory.getLogger(ActiveLinksConsumer.class);
   private static final String BASE_PACKAGE = "io.inprice.parser.websites.";
 
   private Link link;
 
-  public ActiveLinkConsumer(Link link) {
+  public ActiveLinksConsumer(Link link) {
     this.link = link;
   }
 

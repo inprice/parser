@@ -14,7 +14,7 @@ public class Ebay_NL_Test {
     private final String SITE_NAME = "ebay";
     private final String COUNTRY_CODE = "nl";
 
-    private final Website site = new io.inprice.parser.websites.xx.Ebay(new Link());
+    private final Website site = new io.inprice.parser.websites.xx.Ebay();
 
     @Test
     public void test_product_1() {

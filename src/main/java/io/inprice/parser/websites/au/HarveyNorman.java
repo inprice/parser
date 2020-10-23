@@ -1,19 +1,19 @@
 package io.inprice.parser.websites.au;
 
-import io.inprice.common.models.Link;
-import io.inprice.common.models.LinkSpec;
-import io.inprice.parser.browser.BrowserManager;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Pair;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.browser.BrowserManager;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.Pair;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Please note that: This site is guarded by incapsula that is a scrapper
@@ -34,17 +34,27 @@ public class HarveyNorman extends AbstractWebsite {
    */
   private JSONObject offer;
 
-  public HarveyNorman(Link link) {
-    super(link);
-  }
-
   @Override
-  protected int openDocument() {
-    Pair response = BrowserManager.getHarveyNormanBrowser().getHtml(getUrl());
-    if (response.getStatus() == 200) {
-      doc = Jsoup.parse(response.getBody());
+  protected void openPage() {
+    String problem = null;
+    try {
+
+      Pair response = BrowserManager.getHarveyNormanBrowser().getHtml(getUrl());
+
+      if (response.getStatus() < 400) {
+        doc = Jsoup.parse(response.getBody());
+      } else {
+        problem = "Access problem to HarveyNorman";
+      }
+
+    } catch (Exception e) {
+      log.error(getUrl(), e);
+      problem = e.getMessage();
     }
-    return response.getStatus();
+
+    if (problem != null) {
+      setLinkStatus(problem);
+    }
   }
 
   @Override

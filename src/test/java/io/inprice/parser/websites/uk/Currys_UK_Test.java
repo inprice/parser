@@ -13,7 +13,7 @@ public class Currys_UK_Test {
     private final String SITE_NAME = "currys";
     private final String COUNTRY_CODE = "uk";
 
-    private final Currys site = new Currys(new Link());
+    private final Currys site = new Currys();
 
     @Test
     public void test_product_1() {

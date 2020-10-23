@@ -13,7 +13,7 @@ public class UlaBox_ES_Test {
     private final String SITE_NAME = "ulabox";
     private final String COUNTRY_CODE = "es";
 
-    private final UlaBox site = new UlaBox(new Link());
+    private final UlaBox site = new UlaBox();
 
     @Test
     public void test_product_1() {

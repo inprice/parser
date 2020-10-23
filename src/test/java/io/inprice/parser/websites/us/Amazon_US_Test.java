@@ -13,7 +13,7 @@ public class Amazon_US_Test {
   private final String SITE_NAME = "amazon";
   private final String COUNTRY_CODE = "us";
 
-  private final Website site = new io.inprice.parser.websites.xx.Amazon(new Link());
+  private final Website site = new io.inprice.parser.websites.xx.Amazon();
 
   @Test
   public void test_product_1() {
@@ -72,7 +72,7 @@ public class Amazon_US_Test {
     assertEquals("B00SMJHB6C", link.getSku());
     assertEquals("Clarks Men's Tilden Walk Oxford", link.getName());
     assertEquals("67.69", link.getPrice().toString());
-    assertEquals("Clarks", link.getBrand());
+    assertEquals("tilden walk clarks", link.getBrand());
     assertEquals("Amazon", link.getSeller());
     assertEquals("NA", link.getShipment());
     assertTrue(link.getSpecList().size() > 0);

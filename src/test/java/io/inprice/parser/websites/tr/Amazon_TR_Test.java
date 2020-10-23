@@ -14,7 +14,7 @@ public class Amazon_TR_Test {
     private final String SITE_NAME = "amazon";
     private final String COUNTRY_CODE = "tr";
 
-    private final Website site = new io.inprice.parser.websites.xx.Amazon(new Link());
+    private final Website site = new io.inprice.parser.websites.xx.Amazon();
 
     @Test
     public void test_product_1() {

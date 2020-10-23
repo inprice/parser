@@ -13,7 +13,7 @@ public class Zavvi_UK_Test {
     private final String SITE_NAME = "zavvi";
     private final String COUNTRY_CODE = "uk";
 
-    private final Zavvi site = new Zavvi(new Link());
+    private final Zavvi site = new Zavvi();
 
     @Test
     public void test_product_1() {

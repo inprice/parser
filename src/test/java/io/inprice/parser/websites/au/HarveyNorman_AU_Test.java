@@ -13,7 +13,7 @@ public class HarveyNorman_AU_Test {
     private final String SITE_NAME = "harveynorman";
     private final String COUNTRY_CODE = "au";
 
-    private final HarveyNorman site = new HarveyNorman(new Link());
+    private final HarveyNorman site = new HarveyNorman();
 
     @Test
     public void test_product_1() {

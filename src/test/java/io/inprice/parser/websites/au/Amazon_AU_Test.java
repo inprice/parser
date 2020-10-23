@@ -14,7 +14,7 @@ public class Amazon_AU_Test {
   private final String SITE_NAME = "amazon";
   private final String COUNTRY_CODE = "au";
 
-  private final Website site = new io.inprice.parser.websites.xx.Amazon(new Link());
+  private final Website site = new io.inprice.parser.websites.xx.Amazon();
 
   @Test
   public void test_product_1() {
@@ -37,8 +37,7 @@ public class Amazon_AU_Test {
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals("B072KMX18S", link.getSku());
-    assertEquals("Emporio Armani Men's Quartz Watch Analog Display and Stainless Steel Strap, AR11068",
-        link.getName());
+    assertEquals("Emporio Armani Men's Quartz Watch Analog Display and Stainless Steel Strap, AR11068", link.getName());
     assertEquals("233.00", link.getPrice().toString());
     assertEquals("Emporio Armani", link.getBrand());
     assertEquals("Amazon AU", link.getSeller());

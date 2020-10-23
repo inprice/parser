@@ -13,7 +13,7 @@ public class DeBijenkorf_NL_Test {
     private final String SITE_NAME = "debijenkorf";
     private final String COUNTRY_CODE = "nl";
 
-    private final DeBijenkorf site = new DeBijenkorf(new Link());
+    private final DeBijenkorf site = new DeBijenkorf();
 
     @Test
     public void test_product_1() {

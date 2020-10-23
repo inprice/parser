@@ -1,6 +1,5 @@
 package io.inprice.parser.websites.au;
 
-import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
@@ -19,10 +18,6 @@ import java.util.List;
  * @author mdpinar
  */
 public class Kogan extends AbstractWebsite {
-
-  public Kogan(Link link) {
-    super(link);
-  }
 
   @Override
   public boolean isAvailable() {

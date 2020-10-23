@@ -6,14 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kong.unirest.HttpResponse;
-
 import org.json.JSONObject;
 
-import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
+import kong.unirest.HttpResponse;
 
 /**
  * Parser for Pixmania Spain
@@ -40,10 +38,6 @@ public class Pixmania extends AbstractWebsite {
    * the main data derived from json gotten server via getSubUrl()
    */
   private JSONObject bestOffer;
-
-  public Pixmania(Link link) {
-    super(link);
-  }
 
   /**
    * This url is substitute for link's original url Since Pixmania provides

@@ -12,7 +12,7 @@ public class Gigas101_ES_Test {
     private final String SITE_NAME = "101gigas";
     private final String COUNTRY_CODE = "es";
 
-    private final Gigas101 site = new Gigas101(new Link());
+    private final Gigas101 site = new Gigas101();
 
     @Test
     public void test_product_1() {

@@ -13,7 +13,7 @@ public class BestBuy_US_Test {
     private final String SITE_NAME = "bestbuy";
     private final String COUNTRY_CODE = "us";
 
-    private final BestBuy site = new BestBuy(new Link());
+    private final BestBuy site = new BestBuy();
 
     @Test
     public void test_product_1() {

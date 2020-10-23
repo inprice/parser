@@ -13,7 +13,7 @@ public class Etsy_US_Test {
     private final String SITE_NAME = "etsy";
     private final String COUNTRY_CODE = "us";
 
-    private final Etsy site = new Etsy(new Link());
+    private final Etsy site = new Etsy();
 
     @Test
     public void test_product_1() {

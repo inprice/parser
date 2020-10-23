@@ -13,7 +13,7 @@ public class EPrice_IT_Test {
     private final String SITE_NAME = "eprice";
     private final String COUNTRY_CODE = "it";
 
-    private final EPrice site = new EPrice(new Link());
+    private final EPrice site = new EPrice();
 
     @Test
     public void test_product_1() {

@@ -1,18 +1,17 @@
 package io.inprice.parser.websites.us;
 
-import io.inprice.common.models.Link;
-import io.inprice.common.models.LinkSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Bonanza USA
@@ -33,10 +32,6 @@ public class Bonanza extends AbstractWebsite {
   private String brand = "NA";
   private boolean availability;
   private List<LinkSpec> specList;
-
-  public Bonanza(Link link) {
-    super(link);
-  }
 
   /**
    * This method is used as a initial data loader using product's spec list. Class

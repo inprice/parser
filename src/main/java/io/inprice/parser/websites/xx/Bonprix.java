@@ -1,17 +1,16 @@
 package io.inprice.parser.websites.xx;
 
-import io.inprice.common.models.Link;
-import io.inprice.common.models.LinkSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Bonprix Global
@@ -21,10 +20,6 @@ import java.util.List;
  * @author mdpinar
  */
 public class Bonprix extends AbstractWebsite {
-
-  public Bonprix(Link link) {
-    super(link);
-  }
 
   @Override
   public boolean isAvailable() {

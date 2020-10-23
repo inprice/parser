@@ -13,7 +13,7 @@ public class GittiGidiyor_TR_Test {
     private final String SITE_NAME = "gittigidiyor";
     private final String COUNTRY_CODE = "tr";
 
-    private final GittiGidiyor site = new GittiGidiyor(new Link());
+    private final GittiGidiyor site = new GittiGidiyor();
 
     @Test
     public void test_product_1() {

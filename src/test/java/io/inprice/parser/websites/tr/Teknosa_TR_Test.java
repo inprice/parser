@@ -12,7 +12,7 @@ public class Teknosa_TR_Test {
     private final String SITE_NAME = "teknosa";
     private final String COUNTRY_CODE = "tr";
 
-    private final Teknosa site = new Teknosa(new Link());
+    private final Teknosa site = new Teknosa();
 
     @Test
     public void test_product_1() {

@@ -1,16 +1,16 @@
 package io.inprice.parser.websites.xx;
 
-import io.inprice.common.models.Link;
-import io.inprice.common.models.LinkSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Lidl Global
@@ -21,10 +21,6 @@ import java.util.List;
  * @author mdpinar
  */
 public class Lidl extends AbstractWebsite {
-
-  public Lidl(Link link) {
-    super(link);
-  }
 
   @Override
   public JSONObject getJsonData() {

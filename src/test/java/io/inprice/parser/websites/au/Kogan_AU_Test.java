@@ -14,7 +14,7 @@ public class Kogan_AU_Test {
     private final String SITE_NAME = "kogan";
     private final String COUNTRY_CODE = "au";
 
-    private final Website site = new Kogan(new Link());
+    private final Website site = new Kogan();
 
     @Test
     public void test_product_1() {

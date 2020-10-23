@@ -12,7 +12,7 @@ public class Laredoute_FR_Test {
     private final String SITE_NAME = "laredoute";
     private final String COUNTRY_CODE = "fr";
 
-    private final Laredoute site = new Laredoute(new Link());
+    private final Laredoute site = new Laredoute();
 
     @Test
     public void test_product_1() {

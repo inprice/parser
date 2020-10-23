@@ -13,7 +13,7 @@ public class CoolBlue_NL_Test {
     private final String SITE_NAME = "coolblue";
     private final String COUNTRY_CODE = "nl";
 
-    private final CoolBlue site = new CoolBlue(new Link());
+    private final CoolBlue site = new CoolBlue();
 
     @Test
     public void test_product_1() {

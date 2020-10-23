@@ -13,7 +13,7 @@ public class NewLook_UK_Test {
     private final String SITE_NAME = "newlook";
     private final String COUNTRY_CODE = "uk";
 
-    private final NewLook site = new NewLook(new Link());
+    private final NewLook site = new NewLook();
 
     @Test
     public void test_product_1() {

@@ -1,17 +1,18 @@
 package io.inprice.parser.websites.xx;
 
-import kong.unirest.HttpResponse;
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.jsoup.nodes.Element;
+
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.jsoup.nodes.Element;
-
-import java.math.BigDecimal;
-import java.util.List;
+import kong.unirest.HttpResponse;
 
 /**
  * Parser for Apple Global
@@ -28,8 +29,14 @@ public class Apple extends AbstractWebsite {
   private JSONObject product;
   private boolean available;
 
-  public Apple(Link link) {
-    super(link);
+  private String testCountry;
+
+  public Apple() {
+    super();
+  }
+
+  public Apple(String testCountry) {
+    this.testCountry = testCountry;
   }
 
   @Override
@@ -73,13 +80,13 @@ public class Apple extends AbstractWebsite {
           }
         }
       } else {
-        log.error("Failed to fetch data! Status: READ_ERROR --> L1");
-        setLinkStatus(LinkStatus.READ_ERROR);
+        setLinkStatus("Offers json not found");
+        log.error("Failed to fetch data! Offers json not found");
       }
       return data;
     } else {
-      log.error("Failed to fetch data! Status: READ_ERROR --> L2");
-      setLinkStatus(LinkStatus.READ_ERROR);
+      setLinkStatus("Application json data not found");
+      log.error("Failed to fetch data! Application json data not found");
     }
     return super.getJsonData();
   }
@@ -163,6 +170,11 @@ public class Apple extends AbstractWebsite {
   @Override
   public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("div.as-productinfosection-mainpanel div.para-list"));
+  }
+
+  @Override
+  protected Link getTestLink() {
+    return new Link(String.format("https://www.apple.com/%s/shop/", this.testCountry));
   }
 
 }

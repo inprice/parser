@@ -13,7 +13,7 @@ public class TheGoodGuys_AU_Test {
     private final String SITE_NAME = "thegoodguys";
     private final String COUNTRY_CODE = "au";
 
-    private final Website site = new TheGoodGuys(new Link());
+    private final Website site = new TheGoodGuys();
 
     @Test
     public void test_product_1() {

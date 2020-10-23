@@ -13,7 +13,7 @@ public class Bol_NL_Test {
     private final String SITE_NAME = "bol";
     private final String COUNTRY_CODE = "nl";
 
-    private final Bol site = new Bol(new Link());
+    private final Bol site = new Bol();
 
     @Test
     public void test_product_1() {

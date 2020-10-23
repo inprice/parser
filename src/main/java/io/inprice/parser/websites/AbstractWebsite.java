@@ -1,7 +1,6 @@
 package io.inprice.parser.websites;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
@@ -13,7 +12,6 @@ import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.Connection;
-import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -65,6 +63,7 @@ public abstract class AbstractWebsite implements Website {
 
   @Override
   public String getUrl() {
+    if (link == null) link = getTestLink();
     return link.getUrl();
   }
 
@@ -75,6 +74,8 @@ public abstract class AbstractWebsite implements Website {
 
   @Override
   public Link test(String fileName, HttpClient httpClient) {
+    this.link = getTestLink();
+
     if (httpClient != null)
       this.httpClient = httpClient;
     try {
@@ -88,6 +89,10 @@ public abstract class AbstractWebsite implements Website {
       log.error("Failed to fetch the page during test!", e);
     }
     return link;
+  }
+
+  protected Link getTestLink() {
+    return new Link();
   }
 
   protected String getAlternativeUrl() {
@@ -160,27 +165,29 @@ public abstract class AbstractWebsite implements Website {
     return raw.replaceAll("((?<=(\\{|\\[|\\,|:))\\s*')|('\\s*(?=(\\}|(\\])|(\\,|:))))", "\"");
   }
 
-  protected LinkStatus getLinkStatus() {
-    return link.getStatus();
-  }
-
   protected void setLinkStatus(LinkStatus status) {
     link.setStatus(status);
   }
 
-  protected void setLinkStatus(LinkStatus status, int httpStatus) {
-    link.setStatus(status);
-    link.setHttpStatus(httpStatus);
+  protected LinkStatus getLinkStatus() {
+    return link.getStatus();
+  }
+
+  protected void setLinkStatus(String problem) {
+    link.setStatus(LinkStatus.NETWORK_ERROR);
+    link.setProblem(problem);
+    log.error("{}!", problem);
   }
 
   protected void setLinkStatus(HttpResponse<String> response) {
+    link.setStatus(LinkStatus.NETWORK_ERROR);
     if (response != null) {
-      final LinkStatus status = (response.getStatus() == 0 ? LinkStatus.SOCKET_ERROR : LinkStatus.NETWORK_ERROR);
-      log.error("Failed to fetch data! LinkStatus: {}, Http LinkStatus: {}", status.name(), response.getStatus());
-      setLinkStatus(status, response.getStatus());
+      link.setProblem("Failed to fetch data");
+      link.setHttpStatus(response.getStatus());
+      log.error("{}! Http Status: {}", link.getProblem(), response.getStatus());
     } else {
-      log.error("Response is null!");
-      setLinkStatus(LinkStatus.READ_ERROR);
+      link.setProblem("Response is null");
+      log.error("{}!", link.getProblem());
     }
   }
 
@@ -235,8 +242,7 @@ public abstract class AbstractWebsite implements Website {
     json = getJsonData();
 
     // getJsonData method may return a network or socket error. thus, we need to check if it is so
-    if (LinkStatus.READ_ERROR.equals(link.getStatus()) || LinkStatus.NO_DATA.equals(link.getStatus())
-    || LinkStatus.SOCKET_ERROR.equals(link.getStatus()) || LinkStatus.NETWORK_ERROR.equals(link.getStatus())) {
+    if (LinkStatus.NETWORK_ERROR.equals(link.getStatus())) {
       return;
     }
 
@@ -249,7 +255,8 @@ public abstract class AbstractWebsite implements Website {
 
       LinkStatus preStatus = link.getStatus();
       if (LinkStatus.AVAILABLE.equals(preStatus)) {
-        link.setStatus(LinkStatus.SOCKET_ERROR);
+        link.setStatus(LinkStatus.NETWORK_ERROR);
+        link.setProblem("Socket error");
       } else {
         link.setStatus(LinkStatus.NO_DATA);
       }

@@ -1,16 +1,15 @@
 package io.inprice.parser.websites.it;
 
-import io.inprice.common.models.Link;
-import io.inprice.common.models.LinkSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for MediaWorld Italy
@@ -22,10 +21,6 @@ import java.util.List;
 public class MediaWorld extends AbstractWebsite {
 
   private Element product;
-
-  public MediaWorld(Link link) {
-    super(link);
-  }
 
   @Override
   protected JSONObject getJsonData() {

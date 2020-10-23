@@ -11,126 +11,114 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 public class AbstractWebsite_Test {
 
-    @Test
-    public void should_set_NO_DATA_for_available_products_with_NA_name() {
-        AbstractWebsite site = new FakeSite(true, Consts.Words.NOT_AVAILABLE, BigDecimal.ZERO, false);
+  private final Link link = new Link();
 
-        Link link = site.test(null);
+  @Test
+  public void should_set_NO_DATA_for_available_products_with_NA_name() {
+    AbstractWebsite site = new FakeSite(true, Consts.Words.NOT_AVAILABLE, BigDecimal.ZERO, false);
 
-        assertEquals(LinkStatus.NO_DATA, link.getStatus());
+    Link link = site.test(null);
+
+    assertEquals(LinkStatus.NO_DATA, link.getStatus());
+  }
+
+  @Test
+  public void should_set_NOT_DATA_for_unavailable_products_with_NULL_name() {
+    AbstractWebsite site = new FakeSite(false, null, BigDecimal.ZERO, false);
+
+    Link link = site.test(null);
+
+    assertEquals(LinkStatus.NO_DATA, link.getStatus());
+  }
+
+  @Test
+  public void should_set_SOCKET_ERROR() {
+    FakeSite site = spy(new FakeSite(false, null, BigDecimal.ZERO));
+    site.check(link);
+
+    assertEquals(LinkStatus.NETWORK_ERROR, site.getLink().getStatus());
+  }
+
+  @Test
+  public void should_set_NETWORK_ERROR() {
+    FakeSite site = spy(new FakeSite(false, null, BigDecimal.ZERO));
+    site.check(link);
+
+    assertEquals(LinkStatus.NETWORK_ERROR, site.getLink().getStatus());
+  }
+
+  private class FakeSite extends AbstractWebsite {
+
+    private boolean isAvailable;
+    private String name;
+    private BigDecimal price;
+
+    private boolean willHtmlBePulled;
+
+    private FakeSite(boolean isAvailable, String name, BigDecimal price) {
+      this(isAvailable, name, price, true);
     }
 
-    @Test
-    public void should_set_NOT_DATA_for_unavailable_products_with_NULL_name() {
-        AbstractWebsite site = new FakeSite(false, null, BigDecimal.ZERO, false);
-
-        Link link = site.test(null);
-
-        assertEquals(LinkStatus.NO_DATA, link.getStatus());
+    private FakeSite(boolean isAvailable, String name, BigDecimal price, boolean willHtmlBePulled) {
+      this.isAvailable = isAvailable;
+      this.name = name;
+      this.price = price;
+      this.willHtmlBePulled = willHtmlBePulled;
+      check(link);
     }
 
-    @Test
-    public void should_set_SOCKET_ERROR() {
-        FakeSite site = spy(new FakeSite(false, null, BigDecimal.ZERO));
-
-        doReturn(0).when(site).openDocument();
-
-        site.check();
-
-        assertEquals(LinkStatus.SOCKET_ERROR, site.getLink().getStatus());
+    public Link getLink() {
+      return link;
     }
 
-    @Test
-    public void should_set_NETWORK_ERROR() {
-        FakeSite site = spy(new FakeSite(false, null, BigDecimal.ZERO));
-
-        doReturn(400).when(site).openDocument();
-
-        site.check();
-
-        assertEquals(LinkStatus.NETWORK_ERROR, site.getLink().getStatus());
+    @Override
+    public boolean willHtmlBePulled() {
+      return willHtmlBePulled;
     }
 
-    private final Link link = new Link();
-
-    private class FakeSite extends AbstractWebsite {
-
-        private boolean isAvailable;
-        private String name;
-        private BigDecimal price;
-
-        private boolean willHtmlBePulled;
-
-        private FakeSite(boolean isAvailable, String name, BigDecimal price) {
-            this(isAvailable, name, price, true);
-        }
-
-        private FakeSite(boolean isAvailable, String name, BigDecimal price, boolean willHtmlBePulled) {
-            super(link);
-            this.isAvailable = isAvailable;
-            this.name = name;
-            this.price = price;
-            this.willHtmlBePulled = willHtmlBePulled;
-        }
-
-        public Link getLink() {
-            return link;
-        }
-
-        @Override
-        protected int openDocument() {
-            return super.openDocument();
-        }
-
-        @Override
-        public boolean willHtmlBePulled() {
-            return willHtmlBePulled;
-        }
-
-        @Override
-        public boolean isAvailable() {
-            return isAvailable;
-        }
-
-        @Override
-        public String getBrand() {
-            return Consts.Words.NOT_AVAILABLE;
-        }
-
-        @Override
-        public String getSeller() {
-            return Consts.Words.NOT_AVAILABLE;
-        }
-
-        @Override
-        public String getSku() {
-            return Consts.Words.NOT_AVAILABLE;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public BigDecimal getPrice() {
-            return price;
-        }
-
-        @Override
-        public String getShipment() {
-            return Consts.Words.NOT_AVAILABLE;
-        }
-
-        @Override
-        public List<LinkSpec> getSpecList() {
-            return null;
-        }
+    @Override
+    public boolean isAvailable() {
+      return isAvailable;
     }
+
+    @Override
+    public String getBrand() {
+      return Consts.Words.NOT_AVAILABLE;
+    }
+
+    @Override
+    public String getSeller() {
+      return Consts.Words.NOT_AVAILABLE;
+    }
+
+    @Override
+    public String getSku() {
+      return Consts.Words.NOT_AVAILABLE;
+    }
+
+    @Override
+    public String getName() {
+      return name;
+    }
+
+    @Override
+    public BigDecimal getPrice() {
+      return price;
+    }
+
+    @Override
+    public String getShipment() {
+      return Consts.Words.NOT_AVAILABLE;
+    }
+
+    @Override
+    public List<LinkSpec> getSpecList() {
+      return null;
+    }
+  }
 
 }

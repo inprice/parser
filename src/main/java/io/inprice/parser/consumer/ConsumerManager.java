@@ -15,29 +15,29 @@ import io.inprice.common.models.Link;
 import io.inprice.parser.config.Props;
 import io.inprice.parser.helpers.RedisClient;
 
-public class Manager {
+public class ConsumerManager {
 
-  private static final Logger log = LoggerFactory.getLogger(Manager.class);
+  private static final Logger log = LoggerFactory.getLogger(ConsumerManager.class);
 
   private static RTopic topic;
   private static ExecutorService tPool;
 
   public static void start() {
-    log.info("Manager is starting...");
+    log.info("Consumer manager is starting...");
 
     topic = RedisClient.createTopic(SysProps.REDIS_ACTIVE_LINKS_TOPIC());
     tPool = Executors.newFixedThreadPool(Props.ACTIVE_LINKS_CONSUMER_TPOOL_CAPACITY());
 
     topic.addListener(Link.class, new MessageListener<Link>(){
       public void onMessage(CharSequence channel, Link link) {
-        tPool.submit(new ActiveLinkConsumer(link));
+        tPool.submit(new ActiveLinksConsumer(link));
       };
     });
 
-    log.info("Manager is started.");
+    log.info("Consumer manager is started.");
   }
 
-  public static void shutdown() {
+  public static void stop() {
     try {
       topic.removeAllListeners();
       tPool.shutdown();

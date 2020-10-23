@@ -13,7 +13,7 @@ public class Bonanza_US_Test {
     private final String SITE_NAME = "bonanza";
     private final String COUNTRY_CODE = "us";
 
-    private final Bonanza site = new Bonanza(new Link());
+    private final Bonanza site = new Bonanza();
 
     @Test
     public void test_product_1() {

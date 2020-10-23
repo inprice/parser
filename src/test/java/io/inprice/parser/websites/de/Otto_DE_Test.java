@@ -13,7 +13,7 @@ public class Otto_DE_Test {
     private final String SITE_NAME = "otto";
     private final String COUNTRY_CODE = "de";
 
-    private final Otto site = new Otto(new Link());
+    private final Otto site = new Otto();
 
     @Test
     public void test_product_1() {

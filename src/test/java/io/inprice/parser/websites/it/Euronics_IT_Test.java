@@ -13,7 +13,7 @@ public class Euronics_IT_Test {
     private final String SITE_NAME = "euronics";
     private final String COUNTRY_CODE = "it";
 
-    private final Euronics site = new Euronics(new Link());
+    private final Euronics site = new Euronics();
 
     @Test
     public void test_product_1() {

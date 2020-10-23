@@ -14,7 +14,7 @@ public class Lidl_ES_Test {
     private final String SITE_NAME = "lidl";
     private final String COUNTRY_CODE = "es";
 
-    private final Website site = new io.inprice.parser.websites.xx.Lidl(new Link());
+    private final Website site = new io.inprice.parser.websites.xx.Lidl();
 
     @Test
     public void test_product_1() {

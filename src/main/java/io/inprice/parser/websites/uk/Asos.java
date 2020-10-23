@@ -9,7 +9,6 @@ import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.meta.LinkStatus;
-import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
@@ -31,10 +30,6 @@ public class Asos extends AbstractWebsite {
   private String brandName;
   private String shipment;
   private JSONObject offer;
-
-  public Asos(Link link) {
-    super(link);
-  }
 
   @Override
   protected JSONObject getJsonData() {

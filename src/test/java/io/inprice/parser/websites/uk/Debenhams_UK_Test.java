@@ -13,7 +13,7 @@ public class Debenhams_UK_Test {
     private final String SITE_NAME = "debenhams";
     private final String COUNTRY_CODE = "uk";
 
-    private final Debenhams site = new Debenhams(new Link());
+    private final Debenhams site = new Debenhams();
 
     @Test
     public void test_product_1() {

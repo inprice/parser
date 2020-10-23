@@ -30,12 +30,7 @@ public class Pixmania_ES_Test {
     private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
     private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
-    private final Pixmania site =
-        Mockito.spy(
-            new Pixmania(
-                new Link()
-            )
-        );
+    private final Pixmania site = Mockito.spy(new Pixmania());
 
     @Test
     public void test_product_1() {

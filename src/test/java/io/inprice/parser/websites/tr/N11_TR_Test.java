@@ -13,7 +13,7 @@ public class N11_TR_Test {
     private final String SITE_NAME = "n11";
     private final String COUNTRY_CODE = "tr";
 
-    private final N11 site = new N11(new Link());
+    private final N11 site = new N11();
 
     @Test
     public void test_product_1() {

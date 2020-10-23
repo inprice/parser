@@ -13,7 +13,7 @@ public class MediaWorld_IT_Test {
     private final String SITE_NAME = "mediaworld";
     private final String COUNTRY_CODE = "it";
 
-    private final MediaWorld site = new MediaWorld(new Link());
+    private final MediaWorld site = new MediaWorld();
 
     @Test
     public void test_product_1() {

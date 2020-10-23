@@ -13,7 +13,7 @@ public class Argos_UK_Test {
     private final String SITE_NAME = "argos";
     private final String COUNTRY_CODE = "uk";
 
-    private final Argos site = new Argos(new Link());
+    private final Argos site = new Argos();
 
     @Test
     public void test_product_1() {

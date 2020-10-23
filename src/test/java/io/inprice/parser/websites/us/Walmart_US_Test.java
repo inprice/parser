@@ -12,7 +12,7 @@ public class Walmart_US_Test {
     private final String SITE_NAME = "walmart";
     private final String COUNTRY_CODE = "us";
 
-    private final Walmart site = new Walmart(new Link());
+    private final Walmart site = new Walmart();
 
     @Test
     public void test_product_1() {

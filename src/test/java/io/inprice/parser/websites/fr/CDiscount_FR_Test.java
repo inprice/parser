@@ -13,7 +13,7 @@ public class CDiscount_FR_Test {
     private final String SITE_NAME = "cdiscount";
     private final String COUNTRY_CODE = "fr";
 
-    private final CDiscount site = new CDiscount(new Link());
+    private final CDiscount site = new CDiscount();
 
     @Test
     public void test_product_1() {

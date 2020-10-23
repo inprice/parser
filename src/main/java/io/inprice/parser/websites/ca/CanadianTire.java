@@ -4,16 +4,14 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import kong.unirest.HttpResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
-import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
+import kong.unirest.HttpResponse;
 
 /**
  * Parser for CanadianTire Canada
@@ -29,10 +27,6 @@ import io.inprice.parser.websites.AbstractWebsite;
  * @author mdpinar
  */
 public class CanadianTire extends AbstractWebsite {
-
-  public CanadianTire(Link link) {
-    super(link);
-  }
 
   /**
    * Returns payload as key value query string

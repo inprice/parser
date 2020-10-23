@@ -1,19 +1,18 @@
 package io.inprice.parser.websites.us;
 
-import kong.unirest.HttpResponse;
-import io.inprice.common.models.Link;
-import io.inprice.common.models.LinkSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
+import kong.unirest.HttpResponse;
 
 /**
  * Parser for Target USA
@@ -32,10 +31,6 @@ public class Target extends AbstractWebsite {
   private JSONObject preLoad;
   private JSONObject product;
   private JSONObject priceData;
-
-  public Target(Link link) {
-    super(link);
-  }
 
   private void setPreLoadData() {
     final String preData = findAPart(doc.html(), "__PRELOADED_STATE__= ", "</script>");

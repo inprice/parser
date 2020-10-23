@@ -13,7 +13,7 @@ public class Electroking_ES_Test {
     private final String SITE_NAME = "electroking";
     private final String COUNTRY_CODE = "es";
 
-    private final Electroking site = new Electroking(new Link());
+    private final Electroking site = new Electroking();
 
     @Test
     public void test_product_1() {

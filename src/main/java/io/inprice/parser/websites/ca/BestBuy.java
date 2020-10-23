@@ -1,14 +1,14 @@
 package io.inprice.parser.websites.ca;
 
-import io.inprice.common.models.Link;
-import io.inprice.common.models.LinkSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.json.JSONObject;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for BestBuy Canada
@@ -28,10 +28,6 @@ public class BestBuy extends AbstractWebsite {
    * the main data provider derived from json placed in html
    */
   private JSONObject product;
-
-  public BestBuy(Link link) {
-    super(link);
-  }
 
   /**
    * The data we looking for is in html body. So, we get it by using String

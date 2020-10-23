@@ -1,15 +1,14 @@
 package io.inprice.parser.websites.es;
 
-import io.inprice.common.models.Link;
-import io.inprice.common.models.LinkSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Electroking Spain
@@ -19,10 +18,6 @@ import java.util.List;
  * @author mdpinar
  */
 public class Electroking extends AbstractWebsite {
-
-  public Electroking(Link link) {
-    super(link);
-  }
 
   @Override
   public boolean isAvailable() {

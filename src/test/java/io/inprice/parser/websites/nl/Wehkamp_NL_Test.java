@@ -13,7 +13,7 @@ public class Wehkamp_NL_Test {
     private final String SITE_NAME = "wehkamp";
     private final String COUNTRY_CODE = "nl";
 
-    private final Wehkamp site = new Wehkamp(new Link());
+    private final Wehkamp site = new Wehkamp();
 
     @Test
     public void test_product_1() {

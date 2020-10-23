@@ -1,16 +1,15 @@
 package io.inprice.parser.websites.tr;
 
-import io.inprice.common.models.Link;
-import io.inprice.common.models.LinkSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for n11 Turkiye
@@ -20,10 +19,6 @@ import java.util.List;
  * @author mdpinar
  */
 public class N11 extends AbstractWebsite {
-
-  public N11(Link link) {
-    super(link);
-  }
 
   @Override
   public boolean isAvailable() {

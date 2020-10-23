@@ -13,7 +13,7 @@ public class Trendyol_TR_Test {
     private final String SITE_NAME = "trendyol";
     private final String COUNTRY_CODE = "tr";
 
-    private final Trendyol site = new Trendyol(new Link());
+    private final Trendyol site = new Trendyol();
 
     @Test
     public void test_product_1() {

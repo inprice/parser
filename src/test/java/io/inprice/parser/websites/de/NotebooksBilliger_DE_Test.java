@@ -13,7 +13,7 @@ public class NotebooksBilliger_DE_Test {
     private final String SITE_NAME = "notebooksbilliger";
     private final String COUNTRY_CODE = "de";
 
-    private final NotebooksBilliger site = new NotebooksBilliger(new Link());
+    private final NotebooksBilliger site = new NotebooksBilliger();
 
     @Test
     public void test_product_1() {

@@ -13,7 +13,7 @@ public class Rakuten_DE_Test {
     private final String SITE_NAME = "rakuten";
     private final String COUNTRY_CODE = "de";
 
-    private final Website site = new io.inprice.parser.websites.xx.Rakuten(new Link());
+    private final Website site = new io.inprice.parser.websites.xx.Rakuten();
 
     @Test
     public void test_product_1() {

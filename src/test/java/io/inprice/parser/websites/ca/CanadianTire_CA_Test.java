@@ -28,10 +28,7 @@ public class CanadianTire_CA_Test {
     private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
     private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
-    private final CanadianTire site =
-        new CanadianTire(
-            new Link()
-        );
+    private final CanadianTire site = new CanadianTire();
 
     @Test
     public void test_product_1() {

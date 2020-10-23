@@ -1,15 +1,14 @@
 package io.inprice.parser.websites.uk;
 
-import io.inprice.common.models.Link;
-import io.inprice.common.models.LinkSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for NewLook UK
@@ -19,10 +18,6 @@ import java.util.List;
  * @author mdpinar
  */
 public class NewLook extends AbstractWebsite {
-
-  public NewLook(Link link) {
-    super(link);
-  }
 
   @Override
   public boolean isAvailable() {

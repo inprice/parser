@@ -14,7 +14,7 @@ public class BestBuy_CA_Test {
     private final String SITE_NAME = "bestbuy";
     private final String COUNTRY_CODE = "ca";
 
-    private final Website site = new BestBuy(new Link());
+    private final Website site = new BestBuy();
 
     @Test
     public void test_product_1() {

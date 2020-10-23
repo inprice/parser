@@ -27,12 +27,7 @@ public class Walmart_CA_Test {
     private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
     private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
-    private final Walmart site =
-        Mockito.spy(
-            new Walmart(
-                new Link()
-            )
-        );
+    private final Walmart site = Mockito.spy(new Walmart());
 
     @Test
     public void test_product_1() {

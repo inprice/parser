@@ -12,7 +12,7 @@ public class Fnac_FR_Test {
     private final String SITE_NAME = "fnac";
     private final String COUNTRY_CODE = "fr";
 
-    private final Fnac site = new Fnac(new Link());
+    private final Fnac site = new Fnac();
 
     @Test
     public void test_product_1() {

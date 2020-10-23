@@ -14,7 +14,7 @@ public class Bonprix_NL_Test {
     private final String SITE_NAME = "bonprix";
     private final String COUNTRY_CODE = "nl";
 
-    private final Website site = new io.inprice.parser.websites.xx.Bonprix(new Link());
+    private final Website site = new io.inprice.parser.websites.xx.Bonprix();
 
     @Test
     public void test_product_1() {

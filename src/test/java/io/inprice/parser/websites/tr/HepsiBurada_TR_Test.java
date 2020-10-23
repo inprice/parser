@@ -13,7 +13,7 @@ public class HepsiBurada_TR_Test {
     private final String SITE_NAME = "hepsiburada";
     private final String COUNTRY_CODE = "tr";
 
-    private final HepsiBurada site = new HepsiBurada(new Link());
+    private final HepsiBurada site = new HepsiBurada();
 
     @Test
     public void test_product_1() {

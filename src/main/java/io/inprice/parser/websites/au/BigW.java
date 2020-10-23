@@ -1,6 +1,5 @@
 package io.inprice.parser.websites.au;
 
-import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
@@ -21,10 +20,6 @@ public class BigW extends AbstractWebsite {
 
   private String brand = "NA";
   private List<LinkSpec> specList;
-
-  public BigW(Link link) {
-    super(link);
-  }
 
   @Override
   protected JSONObject getJsonData() {

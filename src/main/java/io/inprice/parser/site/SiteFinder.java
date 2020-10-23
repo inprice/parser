@@ -10,7 +10,6 @@ import org.jdbi.v3.core.Handle;
 import io.inprice.common.helpers.Database;
 import io.inprice.common.models.Site;
 import io.inprice.common.utils.URLUtils;
-import io.inprice..dao.SiteDao;
 
 public class SiteFinder {
 

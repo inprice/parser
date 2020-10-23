@@ -14,7 +14,7 @@ public class MediaMarkt_DE_Test {
     private final String SITE_NAME = "mediamarkt";
     private final String COUNTRY_CODE = "de";
 
-    private final Website site = new io.inprice.parser.websites.de.MediaMarkt(new Link());
+    private final Website site = new io.inprice.parser.websites.de.MediaMarkt();
 
     @Test
     public void test_product_1() {
