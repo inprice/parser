@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class BigW extends AbstractWebsite {
 
-  private String brand = "NA";
+  private String brand = Consts.Words.NOT_AVAILABLE;
   private List<LinkSpec> specList;
 
   @Override

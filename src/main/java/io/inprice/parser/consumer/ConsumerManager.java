@@ -5,8 +5,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.redisson.api.RTopic;
-import org.redisson.api.listener.MessageListener;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,14 +23,10 @@ public class ConsumerManager {
   public static void start() {
     log.info("Consumer manager is starting...");
 
-    topic = RedisClient.createTopic(SysProps.REDIS_ACTIVE_LINKS_TOPIC());
     tPool = Executors.newFixedThreadPool(Props.ACTIVE_LINKS_CONSUMER_TPOOL_CAPACITY());
-
-    topic.addListener(Link.class, new MessageListener<Link>(){
-      public void onMessage(CharSequence channel, Link link) {
-        tPool.submit(new ActiveLinksConsumer(link));
-      };
-    });
+    
+    topic = RedisClient.createTopic(SysProps.REDIS_ACTIVE_LINKS_TOPIC());
+    topic.addListener(Link.class, (channel, link) -> tPool.submit(new ActiveLinksConsumer(link)));
 
     log.info("Consumer manager is started.");
   }

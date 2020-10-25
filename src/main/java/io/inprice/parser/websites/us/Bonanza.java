@@ -28,8 +28,8 @@ public class Bonanza extends AbstractWebsite {
   /*
    * The following data can only be gathered over spec list
    */
-  private String sku = "NA";
-  private String brand = "NA";
+  private String sku = Consts.Words.NOT_AVAILABLE;
+  private String brand = Consts.Words.NOT_AVAILABLE;
   private boolean availability;
   private List<LinkSpec> specList;
 

@@ -23,7 +23,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Ebay extends AbstractWebsite {
 
-  private String brand = "NA";
+  private String brand = Consts.Words.NOT_AVAILABLE;
   private List<LinkSpec> specList;
 
   @Override

@@ -2,6 +2,7 @@ package io.inprice.parser.websites.us;
 
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
+import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.Helpers;
 import io.inprice.parser.websites.Website;
 import org.junit.Test;
@@ -74,7 +75,7 @@ public class Amazon_US_Test {
     assertEquals("67.69", link.getPrice().toString());
     assertEquals("tilden walk clarks", link.getBrand());
     assertEquals("Amazon", link.getSeller());
-    assertEquals("NA", link.getShipment());
+    assertEquals(Consts.Words.NOT_AVAILABLE, link.getShipment());
     assertTrue(link.getSpecList().size() > 0);
   }
 

@@ -131,7 +131,7 @@ public class VidaXL extends AbstractWebsite {
       sb.append(val.text());
     }
 
-    if (sb.length() == 0) sb.append("NA");
+    if (sb.length() == 0) sb.append(Consts.Words.NOT_AVAILABLE);
 
     return sb.toString().replaceAll(" Disponibile Non disponibile", "");
   }

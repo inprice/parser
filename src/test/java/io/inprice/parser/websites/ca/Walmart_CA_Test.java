@@ -5,6 +5,7 @@ import com.google.common.io.Resources;
 import kong.unirest.HttpResponse;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
+import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.HttpClient;
 import io.inprice.parser.websites.Helpers;
 import org.junit.Test;
@@ -84,7 +85,7 @@ public class Walmart_CA_Test {
         assertEquals("Scunci No-Slip Silicone Elastics", link.getName());
         assertEquals("0.00", link.getPrice().toString());
         assertEquals("Scunci", link.getBrand());
-        assertEquals("NA", link.getSeller());
+        assertEquals(Consts.Words.NOT_AVAILABLE, link.getSeller());
         assertEquals("Sold & shipped by NA", link.getShipment());
         assertNull(link.getSpecList());
     }

@@ -109,7 +109,7 @@ public class Etsy extends AbstractWebsite {
     }
 
     if (sb.length() == 0) {
-      sb.append("NA");
+      sb.append(Consts.Words.NOT_AVAILABLE);
     }
 
     return sb.toString();

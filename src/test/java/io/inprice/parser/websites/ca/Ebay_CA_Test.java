@@ -2,6 +2,7 @@ package io.inprice.parser.websites.ca;
 
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
+import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.Helpers;
 import io.inprice.parser.websites.Website;
 import org.junit.Test;
@@ -38,7 +39,7 @@ public class Ebay_CA_Test {
         assertEquals("142652956613", link.getSku());
         assertEquals("5 x 1 oz 2019 Silver Maple Leaf Coin RCM - Royal Canadian Mint", link.getName());
         assertEquals("121.23", link.getPrice().toString());
-        assertEquals("NA", link.getBrand());
+        assertEquals(Consts.Words.NOT_AVAILABLE, link.getBrand());
         assertEquals("globalbullion", link.getSeller());
         assertEquals("May not ship to Turkey", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);

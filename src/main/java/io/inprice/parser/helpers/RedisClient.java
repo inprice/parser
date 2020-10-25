@@ -59,7 +59,7 @@ public class RedisClient {
     if (isHealthy) {
       statusChangeTopic.publish(new StatusChange(link, oldStatus, oldPrice));
     } else {
-      log.warn("Redis not healty, StatusChange message failed to send!");
+      log.warn("Redis seems not healty. So, failed to send a StatusChange message!");
     }
   }
 

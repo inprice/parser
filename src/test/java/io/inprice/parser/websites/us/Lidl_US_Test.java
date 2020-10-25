@@ -5,6 +5,7 @@ import com.google.common.io.Resources;
 import kong.unirest.HttpResponse;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
+import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.HttpClient;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -34,7 +35,7 @@ public class Lidl_US_Test {
     assertEquals("285939_A", link.getSku());
     assertEquals("train set", link.getName());
     assertEquals("19.99", link.getPrice().toString());
-    assertEquals("NA", link.getBrand());
+    assertEquals(Consts.Words.NOT_AVAILABLE, link.getBrand());
     assertEquals("Lidl", link.getSeller());
     assertEquals("In-store pickup", link.getShipment());
     assertTrue(link.getSpecList().size() > 0);
@@ -50,7 +51,7 @@ public class Lidl_US_Test {
     assertEquals("311073_A", link.getSku());
     assertEquals("inflatable tandem kayak", link.getName());
     assertEquals("49.99", link.getPrice().toString());
-    assertEquals("NA", link.getBrand());
+    assertEquals(Consts.Words.NOT_AVAILABLE, link.getBrand());
     assertEquals("Lidl", link.getSeller());
     assertEquals("In-store pickup", link.getShipment());
     assertTrue(link.getSpecList().size() > 0);
@@ -66,7 +67,7 @@ public class Lidl_US_Test {
     assertEquals("310436_C", link.getSku());
     assertEquals("pastel color paint, graphite", link.getName());
     assertEquals("9.99", link.getPrice().toString());
-    assertEquals("NA", link.getBrand());
+    assertEquals(Consts.Words.NOT_AVAILABLE, link.getBrand());
     assertEquals("Lidl", link.getSeller());
     assertEquals("In-store pickup", link.getShipment());
     assertTrue(link.getSpecList().size() > 0);
@@ -82,7 +83,7 @@ public class Lidl_US_Test {
     assertEquals("1031629", link.getSku());
     assertEquals("classic ciabatta", link.getName());
     assertEquals("1.79", link.getPrice().toString());
-    assertEquals("NA", link.getBrand());
+    assertEquals(Consts.Words.NOT_AVAILABLE, link.getBrand());
     assertEquals("Lidl", link.getSeller());
     assertEquals("In-store pickup", link.getShipment());
     assertTrue(link.getSpecList().size() > 0);

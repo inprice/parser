@@ -2,6 +2,7 @@ package io.inprice.parser.websites.us;
 
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
+import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.Helpers;
 import org.junit.Test;
 
@@ -37,7 +38,7 @@ public class Bonanza_US_Test {
         assertEquals("494281674", link.getSku());
         assertEquals("Martha Blue Leather Purse Clutch With Silver Hardware", link.getName());
         assertEquals("27.00", link.getPrice().toString());
-        assertEquals("NA", link.getBrand());
+        assertEquals(Consts.Words.NOT_AVAILABLE, link.getBrand());
         assertEquals("Kate Bissett New York", link.getSeller());
         assertEquals("Free shipping", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
@@ -65,9 +66,9 @@ public class Bonanza_US_Test {
         assertEquals("725584787", link.getSku());
         assertEquals("Wood Towel Rack Wall 22” Vtg Antique Painted Starburst Design Victorian", link.getName());
         assertEquals("148.49", link.getPrice().toString());
-        assertEquals("NA", link.getBrand());
+        assertEquals(Consts.Words.NOT_AVAILABLE, link.getBrand());
         assertEquals("PanAnnAmericana's World Port", link.getSeller());
-        assertEquals("NA", link.getShipment());
+        assertEquals(Consts.Words.NOT_AVAILABLE, link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 

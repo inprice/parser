@@ -12,6 +12,7 @@ import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.Connection;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import io.inprice.common.config.SysProps;
 import io.inprice.common.helpers.Beans;
+import io.inprice.common.helpers.SqlHelper;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
@@ -182,11 +184,11 @@ public abstract class AbstractWebsite implements Website {
   protected void setLinkStatus(HttpResponse<String> response) {
     link.setStatus(LinkStatus.NETWORK_ERROR);
     if (response != null) {
-      link.setProblem("Failed to fetch data");
+      link.setProblem("DATA FETCHING ERROR");
       link.setHttpStatus(response.getStatus());
       log.error("{}! Http Status: {}", link.getProblem(), response.getStatus());
     } else {
-      link.setProblem("Response is null");
+      link.setProblem("EMPTY RESPONSE");
       log.error("{}!", link.getProblem());
     }
   }
@@ -198,6 +200,8 @@ public abstract class AbstractWebsite implements Website {
     }
 
     String problem = null;
+    int httpStatus = 200;
+
     try {
       Connection.Response 
       response = 
@@ -211,21 +215,24 @@ public abstract class AbstractWebsite implements Website {
         .execute();
       response.charset("UTF-8");
 
-      if (response.statusCode() < 400) {
-        doc = response.parse();
-        link.setProblem(null);
-      } else {
-        problem = response.statusMessage();
-      }
+      doc = response.parse();
+      link.setProblem(null);
+      link.setHttpStatus(200);
 
+    } catch (HttpStatusException hse) {
+      log.error(hse.getMessage() + " -> " + url);
+      problem = hse.getMessage();
+      httpStatus = hse.getStatusCode();
     } catch (Exception e) {
       log.error(url, e);
       problem = e.getMessage();
+      httpStatus = -1;
     }
 
     if (problem != null) {
       link.setProblem(problem);
       link.setStatus(LinkStatus.NETWORK_ERROR);
+      link.setHttpStatus(httpStatus);
     }
   }
 
@@ -233,9 +240,9 @@ public abstract class AbstractWebsite implements Website {
     if (val == null) return null;
     String newForm = EmojiParser.removeAllEmojis(fixQuotes(val)).trim();
     if (StringUtils.isNotBlank(newForm) && newForm.length() > limit)
-      return newForm.substring(0, limit);
+      return SqlHelper.clear(newForm.substring(0, limit));
     else
-      return newForm;
+      return SqlHelper.clear(newForm);
   }
 
   private void read() {
@@ -256,7 +263,8 @@ public abstract class AbstractWebsite implements Website {
       LinkStatus preStatus = link.getStatus();
       if (LinkStatus.AVAILABLE.equals(preStatus)) {
         link.setStatus(LinkStatus.NETWORK_ERROR);
-        link.setProblem("Socket error");
+        link.setProblem("SOCKET ERROR");
+        link.setHttpStatus(0);
       } else {
         link.setStatus(LinkStatus.NO_DATA);
       }
@@ -287,7 +295,7 @@ public abstract class AbstractWebsite implements Website {
       link.setStatus(LinkStatus.AVAILABLE);
     } else {
       link.setStatus(LinkStatus.NOT_AVAILABLE);
-      log.debug("Link with id {} is not available!", link.getId());
+      link.setProblem("INSUFFICIENT STOCK");
     }
   }
 

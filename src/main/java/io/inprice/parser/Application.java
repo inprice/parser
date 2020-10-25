@@ -38,8 +38,10 @@ public class Application {
       log.info(" - Thread pools are shutting down...");
       ConsumerManager.stop();
 
-      log.info(" - Unirest is shuting down...");
-      Unirest.shutDown(true);
+      if (Unirest.isRunning()) {
+        log.info(" - Unirest is shuting down...");
+        Unirest.shutDown(true);
+      }
 
       log.info("ALL SERVICES IS DONE.");
     }, "shutdown-hook"));

@@ -83,6 +83,7 @@
       <artifactId>redisson</artifactId>
       <version>3.13.4</version>
     </dependency>
+
     <dependency>
       <groupId>org.jdbi</groupId>
       <artifactId>jdbi3-core</artifactId>

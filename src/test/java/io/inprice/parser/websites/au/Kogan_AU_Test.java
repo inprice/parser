@@ -2,6 +2,7 @@ package io.inprice.parser.websites.au;
 
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
+import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.Helpers;
 import io.inprice.parser.websites.Website;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class Kogan_AU_Test {
         assertEquals("299.00", link.getPrice().toString());
         assertEquals("Kogan", link.getBrand());
         assertEquals("Kogan", link.getSeller());
-        assertEquals("NA", link.getShipment());
+        assertEquals(Consts.Words.NOT_AVAILABLE, link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
     }
 

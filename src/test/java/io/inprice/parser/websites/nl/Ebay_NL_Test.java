@@ -2,6 +2,7 @@ package io.inprice.parser.websites.nl;
 
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
+import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.Helpers;
 import io.inprice.parser.websites.Website;
 import org.junit.Test;
@@ -66,7 +67,7 @@ public class Ebay_NL_Test {
         assertEquals("192924322253", link.getSku());
         assertEquals("Outil horloger ancien horloge XIX eme clock Morez Morbier Comtoise Watchmakers 5", link.getName());
         assertEquals("118.00", link.getPrice().toString());
-        assertEquals("NA", link.getBrand());
+        assertEquals(Consts.Words.NOT_AVAILABLE, link.getBrand());
         assertEquals("beffroi111", link.getSeller());
         assertEquals("EUR 18,00 La Poste - Lettre Prioritaire Internationale", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);

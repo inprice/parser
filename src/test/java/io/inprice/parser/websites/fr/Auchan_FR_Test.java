@@ -2,6 +2,7 @@ package io.inprice.parser.websites.fr;
 
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
+import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.Helpers;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class Auchan_FR_Test {
         assertEquals("C1091807", link.getSku());
         assertEquals("Bio Lubrifiant Social Marchesseau Bourgueil Rouge 2017", link.getName());
         assertEquals("7.72", link.getPrice().toString());
-        assertEquals("NA", link.getBrand());
+        assertEquals(Consts.Words.NOT_AVAILABLE, link.getBrand());
         assertEquals("Auchan", link.getSeller());
         assertEquals("3,99 € Livraison en magasin estimée le 28/06/2019 Offert à partir de 25 €", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);

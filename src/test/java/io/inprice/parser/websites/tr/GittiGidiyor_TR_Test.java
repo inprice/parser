@@ -2,6 +2,7 @@ package io.inprice.parser.websites.tr;
 
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
+import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.Helpers;
 import org.junit.Test;
 
@@ -37,7 +38,7 @@ public class GittiGidiyor_TR_Test {
         assertEquals("450770874", link.getSku());
         assertEquals("GÜNEŞ ENERJİLİ SOLAR DIŞ MEKAN AYDINLATMASI DEKORATİF 30 LED 5 METRE RENKLİ ANİMASYONLU", link.getName());
         assertEquals("99.99", link.getPrice().toString());
-        assertEquals("NA", link.getBrand());
+        assertEquals(Consts.Words.NOT_AVAILABLE, link.getBrand());
         assertEquals("cocukbebekevofis", link.getSeller());
         assertEquals("Ücretsiz - Aynı Gün Kargolanır", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
@@ -51,7 +52,7 @@ public class GittiGidiyor_TR_Test {
         assertEquals("426398848", link.getSku());
         assertEquals("TÜP ŞEKLİNDE,50 adet, MANTAR TIPALI CAM ŞİŞE, ÜCRETSİZ KARGO", link.getName());
         assertEquals("71.99", link.getPrice().toString());
-        assertEquals("NA", link.getBrand());
+        assertEquals(Consts.Words.NOT_AVAILABLE, link.getBrand());
         assertEquals("birkanz", link.getSeller());
         assertEquals("Ücretsiz - Aynı Gün Kargolanır", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
@@ -65,7 +66,7 @@ public class GittiGidiyor_TR_Test {
         assertEquals("409029831", link.getSku());
         assertEquals("Aden X67 Fly More Combo 2K (3 Bataryalı Set)", link.getName());
         assertEquals("1249.00", link.getPrice().toString());
-        assertEquals("NA", link.getBrand());
+        assertEquals(Consts.Words.NOT_AVAILABLE, link.getBrand());
         assertEquals("hubsan", link.getSeller());
         assertEquals("Ücretsiz - Aynı Gün Kargolanır", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);

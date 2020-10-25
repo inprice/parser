@@ -2,6 +2,7 @@ package io.inprice.parser.websites.it;
 
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
+import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.Helpers;
 import io.inprice.parser.websites.Website;
 import org.junit.Test;
@@ -52,7 +53,7 @@ public class Ebay_IT_Test {
         assertEquals("113774671899", link.getSku());
         assertEquals("Smith MOTO CROSS OCCHIALI roll off non mai indossato in KTM Colori Rosso", link.getName());
         assertEquals("1.00", link.getPrice().toString());
-        assertEquals("NA", link.getBrand());
+        assertEquals(Consts.Words.NOT_AVAILABLE, link.getBrand());
         assertEquals("elsamia2016", link.getSeller());
         assertEquals("EUR 10,99 Standard", link.getShipment());
         assertTrue(link.getSpecList().size() > 0);
