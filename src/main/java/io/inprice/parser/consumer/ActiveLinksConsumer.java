@@ -15,6 +15,7 @@ import io.inprice.parser.websites.Website;
 public class ActiveLinksConsumer implements Runnable {
 
   private static final Logger log = LoggerFactory.getLogger(ActiveLinksConsumer.class);
+  private static final String PACKAGE_PATH = "io.inprice.parser.websites.";
 
   private Link link;
 
@@ -22,66 +23,47 @@ public class ActiveLinksConsumer implements Runnable {
     this.link = link;
   }
 
-  @SuppressWarnings("incomplete-switch")
   @Override
   public void run() {
-    LinkStatus oldStatus = link.getStatus();
-    BigDecimal oldPrice = link.getPrice();
-
-    boolean shouldBeHandled = true;
-
-    switch (oldStatus) {
-
-      case PAUSED: {
-        if (!LinkStatus.PAUSED.equals(link.getStatus())) {
-          link.setStatus(LinkStatus.PAUSED);
-          shouldBeHandled = false;
-        }
-        break;
-      }
-
-      case RESUMED: {
-        if (!LinkStatus.RESUMED.equals(link.getStatus())) {
-          link.setStatus(link.getPreStatus());
-          shouldBeHandled = false;
-        }
-        break;
-      }
-
-      case TOBE_CLASSIFIED: {
-        shouldBeHandled = false;
+    if (! LinkStatus.PASSIVE_GROUP.equals(link.getStatus().getGroup())) {
+      LinkStatus oldStatus = link.getStatus();
+      BigDecimal oldPrice = link.getPrice();
+  
+      if (LinkStatus.TOBE_CLASSIFIED.equals(link.getStatus())) {
         Site site = SiteFinder.findSiteByUrl(link.getUrl());
         if (site != null) {
           link.setSiteId(site.getId());
           link.setWebsiteClassName(site.getClassName());
           if (site.getStatus() != null) {
             link.setStatus(LinkStatus.valueOf(site.getStatus()));
-          } else {
-            shouldBeHandled = true;
           }
         } else {
           link.setStatus(LinkStatus.TOBE_IMPLEMENTED);
         }
-        break;
       }
 
-    }
-
-    if (shouldBeHandled) {
-      try {
-        Class<?> clazz = Class.forName("io.inprice.parser.websites." + link.getWebsiteClassName());
-        Website website = (Website) clazz.getConstructor().newInstance();
-        website.check(link);
-      } catch (Exception e) {
-        log.error("Failed to find the website", e);
-        link.setStatus(LinkStatus.INTERNAL_ERROR);
-        link.setProblem(e.getMessage());
+      //status may have been made passive in the previous code block, let's check once again
+      if (! LinkStatus.PASSIVE_GROUP.equals(link.getStatus().getGroup())) {
+        if (link.getWebsiteClassName() != null) {
+          try {
+            Class<?> clazz = Class.forName(PACKAGE_PATH + link.getWebsiteClassName());
+            Website website = (Website) clazz.getConstructor().newInstance();
+            website.check(link);
+          } catch (Exception e) {
+            log.error(link.getUrl(), e);
+            link.setStatus(LinkStatus.INTERNAL_ERROR);
+            link.setProblem(e.getMessage());
+          }
+        } else {
+          log.warn("Website class name is null! Status: {}, Url: {} ", link.getStatus(), link.getUrl());
+          link.setStatus(LinkStatus.TOBE_IMPLEMENTED);
+          link.setProblem("UNIMPLEMENTED WEBSITE");
+        }
       }
-    }
 
-    //consumer is placed in Manager project!
-    if (!oldPrice.equals(link.getPrice()) || !oldStatus.equals(link.getStatus())) {
       RedisClient.publishStatusChange(link, oldStatus, oldPrice);
+    } else {
+      log.warn("A passive link came to ActiveLinkConsumer! Status: {}, Url: {} ", link.getStatus(), link.getUrl());
     }
   }
 

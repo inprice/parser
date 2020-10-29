@@ -224,9 +224,9 @@ public abstract class AbstractWebsite implements Website {
       problem = hse.getMessage();
       httpStatus = hse.getStatusCode();
     } catch (Exception e) {
-      log.error(url, e);
+      log.error(e.getMessage() + " -> " + url);
       problem = e.getMessage();
-      httpStatus = -1;
+      httpStatus = 502;
     }
 
     if (problem != null) {
