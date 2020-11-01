@@ -169,6 +169,7 @@ public abstract class AbstractWebsite implements Website {
 
   protected void setLinkStatus(LinkStatus status) {
     link.setStatus(status);
+
   }
 
   protected LinkStatus getLinkStatus() {
@@ -176,7 +177,11 @@ public abstract class AbstractWebsite implements Website {
   }
 
   protected void setLinkStatus(String problem) {
-    link.setStatus(LinkStatus.NETWORK_ERROR);
+    setLinkStatus(LinkStatus.NETWORK_ERROR, problem);
+  }
+
+  protected void setLinkStatus(LinkStatus status, String problem) {
+    link.setStatus(status);
     link.setProblem(problem);
     log.error("{}!", problem);
   }
@@ -262,12 +267,11 @@ public abstract class AbstractWebsite implements Website {
 
       LinkStatus preStatus = link.getStatus();
       if (LinkStatus.AVAILABLE.equals(preStatus)) {
-        link.setStatus(LinkStatus.NETWORK_ERROR);
-        link.setProblem("SOCKET ERROR");
-        link.setHttpStatus(0);
+        setLinkStatus("SOCKET ERROR");
       } else {
-        link.setStatus(LinkStatus.NO_DATA);
+        setLinkStatus(LinkStatus.NO_DATA, "WRONG PAGE");
       }
+      link.setHttpStatus(0);
       log.warn("URL: " + getUrl());
       log.warn(" - Status: {}, Pre.Status: {}", link.getStatus().name(), preStatus.name());
       return;
@@ -286,7 +290,7 @@ public abstract class AbstractWebsite implements Website {
       List<LinkSpec> newList = new ArrayList<>(specList.size());
       for (LinkSpec ls : specList) {
         newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY),
-            fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
+          fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
       }
       link.setSpecList(newList);
     }

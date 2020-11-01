@@ -86,7 +86,7 @@ public class Asos extends AbstractWebsite {
         }
       } else {
         log.error("Failed to fetch data! Status: READ_ERROR");
-        setLinkStatus(LinkStatus.NO_DATA);
+        setLinkStatus(LinkStatus.NO_DATA, "READ ERROR");
       }
     } else {
       setLinkStatus(response);
