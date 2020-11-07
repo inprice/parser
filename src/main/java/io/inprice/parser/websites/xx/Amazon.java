@@ -1,16 +1,15 @@
 package io.inprice.parser.websites.xx;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Amazon Global
@@ -22,10 +21,6 @@ import java.util.List;
  * @author mdpinar
  */
 public class Amazon extends AbstractWebsite {
-
-  public Amazon(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   public boolean isAvailable() {
@@ -205,7 +200,7 @@ public class Amazon extends AbstractWebsite {
 
     val = doc.getElementById("bylineInfo");
     if (val == null || StringUtils.isBlank(val.text())) {
-      val = doc.selectFirst("span.ac-keyword-competitor a");
+      val = doc.selectFirst("span.ac-keyword-link a");
     }
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
@@ -221,8 +216,8 @@ public class Amazon extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = getValueOnlySpecList(doc.select("#feature-bullets li:not(.aok-hidden)"));
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = getValueOnlySpecList(doc.select("#feature-bullets li:not(.aok-hidden)"));
     if (specList == null) {
       specList = getValueOnlySpecList(doc.select("div.content ul li"));
     }

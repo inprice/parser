@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.nl;
 
-import io.inprice.common.meta.CompetitorStatus;
-import io.inprice.common.models.Competitor;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
 import io.inprice.parser.websites.Helpers;
 import io.inprice.parser.websites.Website;
 import org.junit.Test;
@@ -14,62 +14,62 @@ public class MediaMarkt_NL_Test {
     private final String SITE_NAME = "mediamarkt";
     private final String COUNTRY_CODE = "nl";
 
-    private final Website site = new io.inprice.parser.websites.xx.MediaMarkt(new Competitor());
+    private final Website site = new io.inprice.parser.websites.xx.MediaMarkt();
 
     @Test
     public void test_product_1() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("1070699", competitor.getSku());
-        assertEquals("HAMA USB 2.0 verlengkabel 1 ster 0,25m", competitor.getName());
-        assertEquals("6.99", competitor.getPrice().toString());
-        assertEquals("HAMA", competitor.getBrand());
-        assertEquals("Media Markt", competitor.getSeller());
-        assertEquals("Gratis bezorging vanaf € 20", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("1070699", link.getSku());
+        assertEquals("HAMA USB 2.0 verlengkabel 1 ster 0,25m", link.getName());
+        assertEquals("6.99", link.getPrice().toString());
+        assertEquals("HAMA", link.getBrand());
+        assertEquals("Media Markt", link.getSeller());
+        assertEquals("Gratis bezorging vanaf € 20", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("1555572", competitor.getSku());
-        assertEquals("ZANUSSI ZGH65414XS", competitor.getName());
-        assertEquals("299.00", competitor.getPrice().toString());
-        assertEquals("ZANUSSI", competitor.getBrand());
-        assertEquals("Media Markt", competitor.getSeller());
-        assertEquals("Gratis bezorging", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("1555572", link.getSku());
+        assertEquals("ZANUSSI ZGH65414XS", link.getName());
+        assertEquals("299.00", link.getPrice().toString());
+        assertEquals("ZANUSSI", link.getBrand());
+        assertEquals("Media Markt", link.getSeller());
+        assertEquals("Gratis bezorging", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("1484859", competitor.getSku());
-        assertEquals("LOGITECH POP Add-on Home Switch Grijs", competitor.getName());
-        assertEquals("29.00", competitor.getPrice().toString());
-        assertEquals("LOGITECH", competitor.getBrand());
-        assertEquals("Media Markt", competitor.getSeller());
-        assertEquals("Incl. btw excl. verzendkosten", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("1484859", link.getSku());
+        assertEquals("LOGITECH POP Add-on Home Switch Grijs", link.getName());
+        assertEquals("29.00", link.getPrice().toString());
+        assertEquals("LOGITECH", link.getBrand());
+        assertEquals("Media Markt", link.getSeller());
+        assertEquals("Incl. btw excl. verzendkosten", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("1399691", competitor.getSku());
-        assertEquals("Sarah McLachlan - Surfacing | Vinyl", competitor.getName());
-        assertEquals("22.99", competitor.getPrice().toString());
-        assertEquals("BERTUS DISTRIBUTIE BERT", competitor.getBrand());
-        assertEquals("Media Markt", competitor.getSeller());
-        assertEquals("Gratis bezorging", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("1399691", link.getSku());
+        assertEquals("Sarah McLachlan - Surfacing | Vinyl", link.getName());
+        assertEquals("22.99", link.getPrice().toString());
+        assertEquals("BERTUS DISTRIBUTIE BERT", link.getBrand());
+        assertEquals("Media Markt", link.getSeller());
+        assertEquals("Gratis bezorging", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
 }

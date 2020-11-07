@@ -1,15 +1,14 @@
 package io.inprice.parser.websites.tr;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for GittiGidiyor Turkiye
@@ -19,10 +18,6 @@ import java.util.List;
  * @author mdpinar
  */
 public class GittiGidiyor extends AbstractWebsite {
-
-  public GittiGidiyor(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   public boolean isAvailable() {
@@ -112,8 +107,8 @@ public class GittiGidiyor extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specs = getKeyValueSpecList(doc.select("#specs-container ul li"), "span", "strong");
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specs = getKeyValueSpecList(doc.select("#specs-container ul li"), "span", "strong");
     if (specs == null || specs.size() == 0) {
       specs = getKeyValueSpecList(doc.select("div.item-container"), "div.item-column:nth-child(1)", "div.item-column:nth-child(2)");
     }

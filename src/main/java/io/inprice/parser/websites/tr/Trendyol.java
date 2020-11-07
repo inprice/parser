@@ -1,17 +1,16 @@
 package io.inprice.parser.websites.tr;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Trendyol Turkiye
@@ -21,10 +20,6 @@ import java.util.List;
  * @author mdpinar
  */
 public class Trendyol extends AbstractWebsite {
-
-  public Trendyol(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   public boolean isAvailable() {
@@ -110,8 +105,8 @@ public class Trendyol extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     Elements specs = doc.select("div.pr-in-dt-cn ul span li");
     if (specs != null && specs.size() > 0) {
@@ -119,7 +114,7 @@ public class Trendyol extends AbstractWebsite {
       for (Element spec : specs) {
         String[] specChunks = spec.text().split("\\.");
         for (String sp : specChunks) {
-          specList.add(new CompetitorSpec("", sp));
+          specList.add(new LinkSpec("", sp));
         }
       }
     }

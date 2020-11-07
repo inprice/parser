@@ -1,22 +1,20 @@
 package io.inprice.parser.websites.xx;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Ebay Global
- *
  * Contains standard data. Nothing special, all is extracted by css selectors
  *
  * finding by item-id : https://www.ebay.com/itm/372661939240
@@ -25,12 +23,8 @@ import java.util.List;
  */
 public class Ebay extends AbstractWebsite {
 
-  private String brand = "NA";
-  private List<CompetitorSpec> specList;
-
-  public Ebay(Competitor competitor) {
-    super(competitor);
-  }
+  private String brand = Consts.Words.NOT_AVAILABLE;
+  private List<LinkSpec> specList;
 
   @Override
   protected JSONObject getJsonData() {
@@ -127,7 +121,7 @@ public class Ebay extends AbstractWebsite {
 
   @Override
   public String getSeller() {
-    Element val = doc.getElementById("mbgCompetitor");
+    Element val = doc.getElementById("mbgLink");
 
     if (val != null && StringUtils.isNotBlank(val.attr("aria-label"))) {
       String[] sellerChunks = val.attr("aria-label").split(":");
@@ -182,7 +176,7 @@ public class Ebay extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return specList;
   }
 
@@ -202,7 +196,7 @@ public class Ebay extends AbstractWebsite {
               key = tds.get(i).text();
             } else {
               value = tds.get(i).text();
-              specList.add(new CompetitorSpec(key, value));
+              specList.add(new LinkSpec(key, value));
               if (key.matches(BRAND_WORDS)) {
                 brand = value;
               }
@@ -225,7 +219,7 @@ public class Ebay extends AbstractWebsite {
           if (key.matches(BRAND_WORDS)) {
             brand = value;
           }
-          specList.add(new CompetitorSpec(key, value));
+          specList.add(new LinkSpec(key, value));
         }
       }
     }

@@ -1,18 +1,17 @@
 package io.inprice.parser.websites.fr;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for CDiscount France
@@ -27,10 +26,6 @@ public class CDiscount extends AbstractWebsite {
    * holds price info set in getJsonData()
    */
   private JSONObject offers;
-
-  public CDiscount(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   public JSONObject getJsonData() {
@@ -119,15 +114,15 @@ public class CDiscount extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     Elements specs = doc.select("div#fpBulletPointReadMore li");
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
       for (Element spec : specs) {
         String[] specChunks = spec.text().split(":");
-        CompetitorSpec ls = new CompetitorSpec(specChunks[0], "");
+        LinkSpec ls = new LinkSpec(specChunks[0], "");
         if (specChunks.length > 1) {
           ls.setValue(specChunks[1]);
         }
@@ -142,7 +137,7 @@ public class CDiscount extends AbstractWebsite {
         for (Element spec : specs) {
           Elements pairs = spec.select("td");
           if (pairs.size() > 0) {
-            CompetitorSpec ls = new CompetitorSpec(pairs.get(0).text(), "");
+            LinkSpec ls = new LinkSpec(pairs.get(0).text(), "");
             if (pairs.size() > 1) {
               ls.setValue(pairs.get(1).text());
             }

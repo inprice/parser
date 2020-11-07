@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.nl;
 
-import io.inprice.common.meta.CompetitorStatus;
-import io.inprice.common.models.Competitor;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
 import io.inprice.parser.websites.Helpers;
 import org.junit.Test;
 
@@ -13,62 +13,62 @@ public class DeBijenkorf_NL_Test {
     private final String SITE_NAME = "debijenkorf";
     private final String COUNTRY_CODE = "nl";
 
-    private final DeBijenkorf site = new DeBijenkorf(new Competitor());
+    private final DeBijenkorf site = new DeBijenkorf();
 
     @Test
     public void test_product_1() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("3893011758", competitor.getSku());
-        assertEquals("Swarovski Stone Signet ring 5412032", competitor.getName());
-        assertEquals("64.50", competitor.getPrice().toString());
-        assertEquals("Swarovski", competitor.getBrand());
-        assertEquals("DeBijenkorf", competitor.getSeller());
-        assertEquals("Voor 22.00 uur besteld, morgen in huis", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("3893011758", link.getSku());
+        assertEquals("Swarovski Stone Signet ring 5412032", link.getName());
+        assertEquals("64.50", link.getPrice().toString());
+        assertEquals("Swarovski", link.getBrand());
+        assertEquals("DeBijenkorf", link.getSeller());
+        assertEquals("Voor 22.00 uur besteld, morgen in huis", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("4549010000", competitor.getSku());
-        assertEquals("Balenciaga I Love Techno T-shirt met borduring", competitor.getName());
-        assertEquals("279.30", competitor.getPrice().toString());
-        assertEquals("Balenciaga", competitor.getBrand());
-        assertEquals("DeBijenkorf", competitor.getSeller());
-        assertEquals("Voor 22.00 uur besteld, morgen in huis", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("4549010000", link.getSku());
+        assertEquals("Balenciaga I Love Techno T-shirt met borduring", link.getName());
+        assertEquals("279.30", link.getPrice().toString());
+        assertEquals("Balenciaga", link.getBrand());
+        assertEquals("DeBijenkorf", link.getSeller());
+        assertEquals("Voor 22.00 uur besteld, morgen in huis", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("8678010071", competitor.getSku());
-        assertEquals("Seafolly Splendour triangel bikinitop met bloemendessin", competitor.getName());
-        assertEquals("47.20", competitor.getPrice().toString());
-        assertEquals("Seafolly", competitor.getBrand());
-        assertEquals("DeBijenkorf", competitor.getSeller());
-        assertEquals("Voor 22.00 uur besteld, morgen in huis", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("8678010071", link.getSku());
+        assertEquals("Seafolly Splendour triangel bikinitop met bloemendessin", link.getName());
+        assertEquals("47.20", link.getPrice().toString());
+        assertEquals("Seafolly", link.getBrand());
+        assertEquals("DeBijenkorf", link.getSeller());
+        assertEquals("Voor 22.00 uur besteld, morgen in huis", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("7303090536", competitor.getSku());
-        assertEquals("Godiva Gold Rigid Box assortiment bonbons 34 stuks", competitor.getName());
-        assertEquals("48.95", competitor.getPrice().toString());
-        assertEquals("Godiva", competitor.getBrand());
-        assertEquals("DeBijenkorf", competitor.getSeller());
-        assertEquals("Voor 22.00 uur besteld, morgen in huis", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("7303090536", link.getSku());
+        assertEquals("Godiva Gold Rigid Box assortiment bonbons 34 stuks", link.getName());
+        assertEquals("48.95", link.getPrice().toString());
+        assertEquals("Godiva", link.getBrand());
+        assertEquals("DeBijenkorf", link.getSeller());
+        assertEquals("Voor 22.00 uur besteld, morgen in huis", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
 }

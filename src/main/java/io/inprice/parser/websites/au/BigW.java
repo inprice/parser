@@ -1,7 +1,6 @@
 package io.inprice.parser.websites.au;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 import org.json.JSONObject;
@@ -19,17 +18,13 @@ import java.util.List;
  */
 public class BigW extends AbstractWebsite {
 
-  private String brand = "NA";
-  private List<CompetitorSpec> specList;
-
-  public BigW(Competitor competitor) {
-    super(competitor);
-  }
+  private String brand = Consts.Words.NOT_AVAILABLE;
+  private List<LinkSpec> specList;
 
   @Override
   protected JSONObject getJsonData() {
     specList = getKeyValueSpecList(doc.select("div.tab-Specification li"), "div.meta", "div.subMeta");
-    for (CompetitorSpec spec : specList) {
+    for (LinkSpec spec : specList) {
       if (spec.getKey().contains("Brand")) {
         brand = spec.getValue();
         break;
@@ -91,7 +86,7 @@ public class BigW extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return specList;
   }
 }

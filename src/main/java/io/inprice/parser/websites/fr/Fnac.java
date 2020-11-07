@@ -1,18 +1,17 @@
 package io.inprice.parser.websites.fr;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Fnac France
@@ -25,10 +24,6 @@ import java.util.List;
 public class Fnac extends AbstractWebsite {
 
   protected JSONObject offers;
-
-  public Fnac(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   public JSONObject getJsonData() {
@@ -118,8 +113,8 @@ public class Fnac extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     Elements specs = doc.select("table.f-productDetails-table tr");
     if (specs != null) {
@@ -127,9 +122,9 @@ public class Fnac extends AbstractWebsite {
       for (Element spec : specs) {
         Elements pairs = spec.select("td.f-productDetails-cell");
         if (pairs.size() == 1) {
-          specList.add(new CompetitorSpec("", pairs.get(0).text()));
+          specList.add(new LinkSpec("", pairs.get(0).text()));
         } else if (pairs.size() > 1) {
-          specList.add(new CompetitorSpec(pairs.get(0).text(), pairs.get(1).text()));
+          specList.add(new LinkSpec(pairs.get(0).text(), pairs.get(1).text()));
         }
       }
     }

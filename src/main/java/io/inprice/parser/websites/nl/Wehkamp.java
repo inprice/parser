@@ -1,9 +1,8 @@
 package io.inprice.parser.websites.nl;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -11,9 +10,9 @@ import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Wehkamp the Netherlands
@@ -29,10 +28,6 @@ public class Wehkamp extends AbstractWebsite {
    */
   private JSONObject offers;
   private JSONArray properties;
-
-  public Wehkamp(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   public JSONObject getJsonData() {
@@ -121,14 +116,14 @@ public class Wehkamp extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     if (properties != null && properties.length() > 0) {
       specList = new ArrayList<>();
       for (int i = 0; i < properties.length(); i++) {
         JSONObject prop = properties.getJSONObject(i);
-        specList.add(new CompetitorSpec(prop.getString("label"), prop.getString("value")));
+        specList.add(new LinkSpec(prop.getString("label"), prop.getString("value")));
       }
     }
 

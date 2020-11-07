@@ -1,18 +1,17 @@
 package io.inprice.parser.websites.nl;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Bol the Netherlands
@@ -27,10 +26,6 @@ public class Bol extends AbstractWebsite {
    * holds price info set in getJsonData()
    */
   private JSONObject offers;
-
-  public Bol(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   public JSONObject getJsonData() {
@@ -120,8 +115,8 @@ public class Bol extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     Elements specs = doc.select("dl.specs__list");
     if (specs != null && specs.size() > 0) {
@@ -135,7 +130,7 @@ public class Bol extends AbstractWebsite {
           for (int i = 0; i < titles.size(); i++) {
             Element key = titles.get(i);
             Element value = values.get(i);
-            specList.add(new CompetitorSpec(key.text(), value.text()));
+            specList.add(new LinkSpec(key.text(), value.text()));
           }
         }
       }

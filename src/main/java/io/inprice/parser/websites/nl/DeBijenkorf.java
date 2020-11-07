@@ -1,18 +1,17 @@
 package io.inprice.parser.websites.nl;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for DeBijenkorf the Netherlands
@@ -24,10 +23,6 @@ import java.util.List;
 public class DeBijenkorf extends AbstractWebsite {
 
   private JSONObject variant;
-
-  public DeBijenkorf(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   protected JSONObject getJsonData() {
@@ -106,8 +101,8 @@ public class DeBijenkorf extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     if (json != null && json.has("groupedAttributes")) {
       JSONArray groupedAttributes = json.getJSONArray("groupedAttributes");
@@ -120,7 +115,7 @@ public class DeBijenkorf extends AbstractWebsite {
             for (int j = 0; j < attributes.length(); j++) {
               JSONObject attr = attributes.getJSONObject(j);
               if (attr.has("label") && attr.has("value")) {
-                specList.add(new CompetitorSpec(attr.getString("label"), attr.getString("value")));
+                specList.add(new LinkSpec(attr.getString("label"), attr.getString("value")));
               }
             }
           }

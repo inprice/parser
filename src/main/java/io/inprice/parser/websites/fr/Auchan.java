@@ -1,17 +1,16 @@
 package io.inprice.parser.websites.fr;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Auchan France
@@ -21,10 +20,6 @@ import java.util.List;
  * @author mdpinar
  */
 public class Auchan extends AbstractWebsite {
-
-  public Auchan(Competitor competitor) {
-    super(competitor);
-  }
 
   /**
    * Returns json object which holds all the necessity data
@@ -115,8 +110,8 @@ public class Auchan extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     if (json != null && json.has("extendedDescription")) {
       String desc = json.get("extendedDescription").toString();
@@ -124,7 +119,7 @@ public class Auchan extends AbstractWebsite {
         specList = new ArrayList<>();
         String[] descChunks = desc.split("<br/>");
         for (String dsc : descChunks) {
-          specList.add(new CompetitorSpec("", dsc));
+          specList.add(new LinkSpec("", dsc));
         }
       }
     }

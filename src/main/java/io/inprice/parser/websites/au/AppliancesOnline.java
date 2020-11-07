@@ -1,19 +1,18 @@
 package io.inprice.parser.websites.au;
 
-import kong.unirest.HttpResponse;
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
+import kong.unirest.HttpResponse;
 
 /**
  * Parser for AppliancesOnline Australia
@@ -23,10 +22,6 @@ import java.util.List;
  * @author mdpinar
  */
 public class AppliancesOnline extends AbstractWebsite {
-
-  public AppliancesOnline(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   protected String getAlternativeUrl() {
@@ -96,8 +91,8 @@ public class AppliancesOnline extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     HttpResponse<String> response = httpClient
         .get("https://www.appliancesonline.com.au/api/v2/product/specifications/id/" + json.getInt("productId"));
@@ -133,7 +128,7 @@ public class AppliancesOnline extends AbstractWebsite {
                       value = "No";
                   }
 
-                  specList.add(new CompetitorSpec(name, value));
+                  specList.add(new LinkSpec(name, value));
                 }
               }
             }

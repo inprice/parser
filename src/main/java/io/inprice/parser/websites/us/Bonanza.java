@@ -1,18 +1,17 @@
 package io.inprice.parser.websites.us;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Bonanza USA
@@ -29,14 +28,10 @@ public class Bonanza extends AbstractWebsite {
   /*
    * The following data can only be gathered over spec list
    */
-  private String sku = "NA";
-  private String brand = "NA";
+  private String sku = Consts.Words.NOT_AVAILABLE;
+  private String brand = Consts.Words.NOT_AVAILABLE;
   private boolean availability;
-  private List<CompetitorSpec> specList;
-
-  public Bonanza(Competitor competitor) {
-    super(competitor);
-  }
+  private List<LinkSpec> specList;
 
   /**
    * This method is used as a initial data loader using product's spec list. Class
@@ -52,7 +47,7 @@ public class Bonanza extends AbstractWebsite {
       for (Element spec : specs) {
         String key = spec.selectFirst("td.extended_info_label").text().replaceAll(":", "");
         String value = spec.selectFirst("p.extended_info_value_content").text();
-        specList.add(new CompetitorSpec(key, value));
+        specList.add(new LinkSpec(key, value));
 
         if (key.equals("Item number"))
           sku = value;
@@ -127,7 +122,7 @@ public class Bonanza extends AbstractWebsite {
       return val.attr("content");
     }
 
-    val = doc.selectFirst("div.booth_competitor a");
+    val = doc.selectFirst("div.booth_link a");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -155,7 +150,7 @@ public class Bonanza extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return specList;
   }
 }

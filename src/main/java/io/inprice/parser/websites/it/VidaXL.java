@@ -1,17 +1,16 @@
 package io.inprice.parser.websites.it;
 
-import kong.unirest.HttpResponse;
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
+import kong.unirest.HttpResponse;
 
 /**
  * Parser for vidaXL Italy
@@ -23,10 +22,6 @@ import java.util.List;
 public class VidaXL extends AbstractWebsite {
 
   private JSONObject current;
-
-  public VidaXL(Competitor competitor) {
-    super(competitor);
-  }
 
   public String getAuctionId() {
     Element val = doc.getElementById("auctionId");
@@ -136,7 +131,7 @@ public class VidaXL extends AbstractWebsite {
       sb.append(val.text());
     }
 
-    if (sb.length() == 0) sb.append("NA");
+    if (sb.length() == 0) sb.append(Consts.Words.NOT_AVAILABLE);
 
     return sb.toString().replaceAll(" Disponibile Non disponibile", "");
   }
@@ -153,7 +148,7 @@ public class VidaXL extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("ul.specs li"));
   }
 }

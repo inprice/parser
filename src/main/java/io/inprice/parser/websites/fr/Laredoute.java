@@ -1,18 +1,17 @@
 package io.inprice.parser.websites.fr;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Laredoute France
@@ -24,10 +23,6 @@ import java.util.List;
 public class Laredoute extends AbstractWebsite {
 
   private JSONObject offers;
-
-  public Laredoute(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   protected JSONObject getJsonData() {
@@ -123,8 +118,8 @@ public class Laredoute extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
     Element specs = doc.getElementsByTag("dscpdp").first();
     if (specs != null) {
       String[] specChunks;
@@ -136,7 +131,7 @@ public class Laredoute extends AbstractWebsite {
       if (specChunks.length > 0) {
         specList = new ArrayList<>(specChunks.length);
         for (String spec : specChunks) {
-          specList.add(new CompetitorSpec("", spec));
+          specList.add(new LinkSpec("", spec));
         }
       }
     }

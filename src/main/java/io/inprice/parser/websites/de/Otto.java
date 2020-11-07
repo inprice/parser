@@ -1,17 +1,16 @@
 package io.inprice.parser.websites.de;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Otto Deutschland
@@ -23,7 +22,7 @@ import java.util.Set;
  *   b) json object extracted from html body in a script tag (brand) 
  *   c) product object set in getJsonData() by using json object in step b
  *
- * - the html body of competitor's url contains data (in json format) we need 
+ * - the html body of link's url contains data (in json format) we need 
  * - in getJsonData(), we get that json data placed in a specific script tag 
  * - this data is named as product which is hold on a class-level variable
  *
@@ -35,10 +34,6 @@ public class Otto extends AbstractWebsite {
    * the main data provider derived from json placed in html
    */
   private JSONObject product;
-
-  public Otto(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   public JSONObject getJsonData() {
@@ -135,7 +130,7 @@ public class Otto extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("ul.prd_unorderedList li"));
   }
 

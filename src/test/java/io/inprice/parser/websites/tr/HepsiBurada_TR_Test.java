@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.tr;
 
-import io.inprice.common.meta.CompetitorStatus;
-import io.inprice.common.models.Competitor;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
 import io.inprice.parser.websites.Helpers;
 import org.junit.Test;
 
@@ -13,62 +13,62 @@ public class HepsiBurada_TR_Test {
     private final String SITE_NAME = "hepsiburada";
     private final String COUNTRY_CODE = "tr";
 
-    private final HepsiBurada site = new HepsiBurada(new Competitor());
+    private final HepsiBurada site = new HepsiBurada();
 
     @Test
     public void test_product_1() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("TELREVASEG0001", competitor.getSku());
-        assertEquals("Everest Vr-0021 Glasses Vr Box Sanal Gerçeklik Gözlüğü", competitor.getName());
-        assertEquals("101.63", competitor.getPrice().toString());
-        assertEquals("Everest", competitor.getBrand());
-        assertEquals("Hepsiburada", competitor.getSeller());
-        assertEquals("50 TL ve üzeri alışverişlerde kargo bedava!", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("TELREVASEG0001", link.getSku());
+        assertEquals("Everest Vr-0021 Glasses Vr Box Sanal Gerçeklik Gözlüğü", link.getName());
+        assertEquals("101.63", link.getPrice().toString());
+        assertEquals("Everest", link.getBrand());
+        assertEquals("Hepsiburada", link.getSeller());
+        assertEquals("50 TL ve üzeri alışverişlerde kargo bedava!", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_2() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("HBV000003SX33", competitor.getSku());
-        assertEquals("Artdeco Akrilik Boya 140 Ml Beyaz Y-070Y-3619", competitor.getName());
-        assertEquals("5.56", competitor.getPrice().toString());
-        assertEquals("Artdeco", competitor.getBrand());
-        assertEquals("Hepsiburada", competitor.getSeller());
-        assertEquals("50 TL ve üzeri alışverişlerde kargo bedava!", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("HBV000003SX33", link.getSku());
+        assertEquals("Artdeco Akrilik Boya 140 Ml Beyaz Y-070Y-3619", link.getName());
+        assertEquals("5.56", link.getPrice().toString());
+        assertEquals("Artdeco", link.getBrand());
+        assertEquals("Hepsiburada", link.getSeller());
+        assertEquals("50 TL ve üzeri alışverişlerde kargo bedava!", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_3() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("HBV00000JCM2V", competitor.getSku());
-        assertEquals("Hepsiburada Home Modern Style 35 x 35 cm Cam Duvar Saati GLA001", competitor.getName());
-        assertEquals("38.81", competitor.getPrice().toString());
-        assertEquals("Hepsiburada Home", competitor.getBrand());
-        assertEquals("Hepsiburada", competitor.getSeller());
-        assertEquals("50 TL ve üzeri alışverişlerde kargo bedava!", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("HBV00000JCM2V", link.getSku());
+        assertEquals("Hepsiburada Home Modern Style 35 x 35 cm Cam Duvar Saati GLA001", link.getName());
+        assertEquals("38.81", link.getPrice().toString());
+        assertEquals("Hepsiburada Home", link.getBrand());
+        assertEquals("Hepsiburada", link.getSeller());
+        assertEquals("50 TL ve üzeri alışverişlerde kargo bedava!", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
     @Test
     public void test_product_4() {
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals("HBV00000F70TC", competitor.getSku());
-        assertEquals("Hepsiburada Home Kombo Sürgülü Duş Seti", competitor.getName());
-        assertEquals("34.90", competitor.getPrice().toString());
-        assertEquals("Hepsiburada Home", competitor.getBrand());
-        assertEquals("Hepsiburada", competitor.getSeller());
-        assertEquals("50 TL ve üzeri alışverişlerde kargo bedava!", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
+        assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+        assertEquals("HBV00000F70TC", link.getSku());
+        assertEquals("Hepsiburada Home Kombo Sürgülü Duş Seti", link.getName());
+        assertEquals("34.90", link.getPrice().toString());
+        assertEquals("Hepsiburada Home", link.getBrand());
+        assertEquals("Hepsiburada", link.getSeller());
+        assertEquals("50 TL ve üzeri alışverişlerde kargo bedava!", link.getShipment());
+        assertTrue(link.getSpecList().size() > 0);
     }
 
 }

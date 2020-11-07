@@ -1,17 +1,16 @@
 package io.inprice.parser.websites.xx;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Zalando Global
@@ -21,10 +20,6 @@ import java.util.List;
  * @author mdpinar
  */
 public class Zalando extends AbstractWebsite {
-
-  public Zalando(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   public boolean isAvailable() {
@@ -128,8 +123,8 @@ public class Zalando extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
     Elements specs = doc.select("div#z-pdp-detailsSection p.h-text.h-color-black.body.h-m-bottom-xs span");
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
@@ -140,7 +135,7 @@ public class Zalando extends AbstractWebsite {
         if (i < specs.size())
           value = specs.get(i++).text();
         if (StringUtils.isNotBlank(key) && StringUtils.isNotBlank(value))
-          specList.add(new CompetitorSpec(key, value));
+          specList.add(new LinkSpec(key, value));
       }
     }
     return specList;

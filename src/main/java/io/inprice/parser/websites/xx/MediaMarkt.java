@@ -1,18 +1,17 @@
 package io.inprice.parser.websites.xx;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for MediaMarkt Global
@@ -24,10 +23,6 @@ import java.util.List;
 public class MediaMarkt extends AbstractWebsite {
 
   private BigDecimal freeShippingTresholdForNL;
-
-  public MediaMarkt(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   protected JSONObject getJsonData() {
@@ -130,8 +125,8 @@ public class MediaMarkt extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     String parentClass = "specification";
     Elements isParentExist = doc.select("dl." + parentClass);
@@ -142,7 +137,7 @@ public class MediaMarkt extends AbstractWebsite {
     if (specKeys != null && specKeys.size() > 0) {
       specList = new ArrayList<>();
       for (Element key : specKeys) {
-        specList.add(new CompetitorSpec(key.text().replaceAll(":", ""), ""));
+        specList.add(new LinkSpec(key.text().replaceAll(":", ""), ""));
       }
     }
 
@@ -156,7 +151,7 @@ public class MediaMarkt extends AbstractWebsite {
       for (int i = 0; i < specList.size(); i++) {
         Element value = specValues.get(i);
         if (isEmpty) {
-          specList.add(new CompetitorSpec("", value.text()));
+          specList.add(new LinkSpec("", value.text()));
         } else {
           specList.get(i).setValue(value.text());
         }
@@ -168,7 +163,7 @@ public class MediaMarkt extends AbstractWebsite {
       if (specValues != null && specValues.size() > 0) {
         specList = new ArrayList<>();
         for (Element spec : specValues) {
-          specList.add(new CompetitorSpec("", spec.text()));
+          specList.add(new LinkSpec("", spec.text()));
         }
       }
     }

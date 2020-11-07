@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.es;
 
 import kong.unirest.HttpResponse;
-import io.inprice.common.meta.CompetitorStatus;
-import io.inprice.common.models.Competitor;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
 import io.inprice.parser.helpers.HttpClient;
 import io.inprice.parser.websites.Helpers;
 import io.inprice.parser.websites.Website;
@@ -16,140 +16,135 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Apple_ES_Test {
 
-    private final String SITE_NAME = "apple";
-    private final String COUNTRY_CODE = "es";
+  private final String SITE_NAME = "apple";
+  private final String COUNTRY_CODE = "es";
 
-    private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
-    private HttpClient httpClient = Mockito.mock(HttpClient.class);
+  private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
+  private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
-    private final Website site =
-        new io.inprice.parser.websites.xx.Apple(
-            new Competitor(
-                String.format("https://www.apple.com/%s/shop/", COUNTRY_CODE)
-            )
-        );
+  private final Website site = new io.inprice.parser.websites.xx.Apple(COUNTRY_CODE);
 
-    @Test
-    public void test_product_1() {
-        final String sku = "MV7N2TY/A";
-        setMocks(sku);
+  @Test
+  public void test_product_1() {
+    final String sku = "MV7N2TY/A";
+    setMocks(sku);
 
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals(sku, competitor.getSku());
-        assertEquals("AirPods con estuche de carga", competitor.getName());
-        assertEquals("179.00", competitor.getPrice().toString());
-        assertEquals("Apple", competitor.getBrand());
-        assertEquals("Apple", competitor.getSeller());
-        assertEquals("Envío gratuito", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
-    }
+    assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+    assertEquals(sku, link.getSku());
+    assertEquals("AirPods con estuche de carga", link.getName());
+    assertEquals("179.00", link.getPrice().toString());
+    assertEquals("Apple", link.getBrand());
+    assertEquals("Apple", link.getSeller());
+    assertEquals("Envío gratuito", link.getShipment());
+    assertTrue(link.getSpecList().size() > 0);
+  }
 
-    @Test
-    public void test_product_2() {
-        final String sku = "MRTR2Y/A";
-        setMocks(sku);
+  @Test
+  public void test_product_2() {
+    final String sku = "MRTR2Y/A";
+    setMocks(sku);
 
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
+    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals(sku, competitor.getSku());
-        assertEquals("Mac mini", competitor.getName());
-        assertEquals("899.00", competitor.getPrice().toString());
-        assertEquals("Apple", competitor.getBrand());
-        assertEquals("Apple", competitor.getSeller());
-        assertEquals("Envío gratuito", competitor.getShipment());
-        assertNull(competitor.getSpecList());
-    }
+    assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+    assertEquals(sku, link.getSku());
+    assertEquals("Mac mini", link.getName());
+    assertEquals("899.00", link.getPrice().toString());
+    assertEquals("Apple", link.getBrand());
+    assertEquals("Apple", link.getSeller());
+    assertEquals("Envío gratuito", link.getShipment());
+    assertNull(link.getSpecList());
+  }
 
-    @Test
-    public void test_product_3() {
-        final String sku = "MK0C2ZM/A";
-        setMocks(sku);
+  @Test
+  public void test_product_3() {
+    final String sku = "MK0C2ZM/A";
+    setMocks(sku);
 
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
+    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals(sku, competitor.getSku());
-        assertEquals("Apple Pencil", competitor.getName());
-        assertEquals("99.00", competitor.getPrice().toString());
-        assertEquals("Apple", competitor.getBrand());
-        assertEquals("Apple", competitor.getSeller());
-        assertEquals("Envío gratuito", competitor.getShipment());
-        assertTrue(competitor.getSpecList().size() > 0);
-    }
+    assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+    assertEquals(sku, link.getSku());
+    assertEquals("Apple Pencil", link.getName());
+    assertEquals("99.00", link.getPrice().toString());
+    assertEquals("Apple", link.getBrand());
+    assertEquals("Apple", link.getSeller());
+    assertEquals("Envío gratuito", link.getShipment());
+    assertTrue(link.getSpecList().size() > 0);
+  }
 
-    @Test
-    public void test_product_4() {
-        final String sku = "MN932QL/A";
-        setMocks(sku);
+  @Test
+  public void test_product_4() {
+    final String sku = "MN932QL/A";
+    setMocks(sku);
 
-        Competitor competitor = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
+    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
 
-        assertEquals(CompetitorStatus.AVAILABLE, competitor.getStatus());
-        assertEquals(sku, competitor.getSku());
-        assertEquals("iPhone 7 de 128 GB en plata", competitor.getName());
-        assertEquals("639.00", competitor.getPrice().toString());
-        assertEquals("Apple", competitor.getBrand());
-        assertEquals("Apple", competitor.getSeller());
-        assertEquals("Envío gratuito", competitor.getShipment());
-        assertNull(competitor.getSpecList());
-    }
+    assertEquals(LinkStatus.AVAILABLE, link.getStatus());
+    assertEquals(sku, link.getSku());
+    assertEquals("iPhone 7 de 128 GB en plata", link.getName());
+    assertEquals("639.00", link.getPrice().toString());
+    assertEquals("Apple", link.getBrand());
+    assertEquals("Apple", link.getSeller());
+    assertEquals("Envío gratuito", link.getShipment());
+    assertNull(link.getSpecList());
+  }
 
-    private void setMocks(String sku) {
-        final String SHIPMENT_DATA =
-            String.format(
-                "{" +
-                    "'head': {" +
-                    "  'status': '200'," +
-                    "  'data': {}" +
-                    "}," +
-                    "'body': {" +
-                    "  'content': {" +
-                    "    'deliveryMessage': {" +
-                    "      'geoLocated': false," +
-                    "      'dudeCookieSet': false," +
-                    "      '%s': {" +
-                    "        'orderByDeliveryBy': 'Delivery:'," +
-                    "        'deliveryOptionMessages': [" +
-                    "          'In stock'" +
-                    "        ]," +
-                    "        'deliveryOptions': [" +
-                    "          {" +
-                    "            'displayName': 'Standard Shipping'," +
-                    "            'date': 'Within 2-5 business days after shipping'," +
-                    "            'shippingCost': 'Free'" +
-                    "          }" +
-                    "        ]," +
-                    "        'promoMessage': 'Envío gratuito'," +
-                    "        'deliveryOptionsCompetitor': {" +
-                    "          'text': 'Get delivery dates'," +
-                    "          'dataVar': {}," +
-                    "          'newTab': false" +
-                    "        }," +
-                    "        'showDeliveryOptionsCompetitor': true," +
-                    "        'messageType': 'Ship'," +
-                    "        'basePartNumber': 'MTXP2'," +
-                    "        'commitCodeId': '0'," +
-                    "        'defaultLocationEnabled': false," +
-                    "        'idl': false," +
-                    "        'isBuyable': true" +
-                    "      }," +
-                    "      'locationCookieValueFoundForThisCountry': false," +
-                    "      'dudeLocated': false," +
-                    "      'accessibilityDeliveryOptions': 'delivery options'," +
-                    "      'little': false" +
-                    "    }" +
-                    "  }" +
-                    "}" +
-                "}",
-                sku
-            );
+  private void setMocks(String sku) {
+    final String SHIPMENT_DATA =
+      String.format(
+        "{" +
+          "'head': {" +
+          "  'status': '200'," +
+          "  'data': {}" +
+          "}," +
+          "'body': {" +
+          "  'content': {" +
+          "    'deliveryMessage': {" +
+          "      'geoLocated': false," +
+          "      'dudeCookieSet': false," +
+          "      '%s': {" +
+          "        'orderByDeliveryBy': 'Delivery:'," +
+          "        'deliveryOptionMessages': [" +
+          "          'In stock'" +
+          "        ]," +
+          "        'deliveryOptions': [" +
+          "          {" +
+          "            'displayName': 'Standard Shipping'," +
+          "            'date': 'Within 2-5 business days after shipping'," +
+          "            'shippingCost': 'Free'" +
+          "          }" +
+          "        ]," +
+          "        'promoMessage': 'Envío gratuito'," +
+          "        'deliveryOptionsLink': {" +
+          "          'text': 'Get delivery dates'," +
+          "          'dataVar': {}," +
+          "          'newTab': false" +
+          "        }," +
+          "        'showDeliveryOptionsLink': true," +
+          "        'messageType': 'Ship'," +
+          "        'basePartNumber': 'MTXP2'," +
+          "        'commitCodeId': '0'," +
+          "        'defaultLocationEnabled': false," +
+          "        'idl': false," +
+          "        'isBuyable': true" +
+          "      }," +
+          "      'locationCookieValueFoundForThisCountry': false," +
+          "      'dudeLocated': false," +
+          "      'accessibilityDeliveryOptions': 'delivery options'," +
+          "      'little': false" +
+          "    }" +
+          "  }" +
+          "}" +
+        "}",
+        sku
+      );
 
-        when(mockResponse.getStatus()).thenReturn(200);
-        when(mockResponse.getBody()).thenReturn(SHIPMENT_DATA);
-        when(httpClient.get(anyString(), anyString())).thenReturn(mockResponse);
-    }
+    when(mockResponse.getStatus()).thenReturn(200);
+    when(mockResponse.getBody()).thenReturn(SHIPMENT_DATA);
+    when(httpClient.get(anyString(), anyString())).thenReturn(mockResponse);
+  }
 
 }

@@ -1,16 +1,15 @@
 package io.inprice.parser.websites.uk;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Debenhams UK
@@ -25,10 +24,6 @@ public class Debenhams extends AbstractWebsite {
    * holds price info set in getJsonData()
    */
   private JSONObject offers;
-
-  public Debenhams(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   public JSONObject getJsonData() {
@@ -139,7 +134,7 @@ public class Debenhams extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("div.pw-dangerous-html li"));
   }
 

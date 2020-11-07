@@ -1,7 +1,6 @@
 package io.inprice.parser.websites.au;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -19,10 +18,6 @@ import java.util.List;
  * @author mdpinar
  */
 public class Kogan extends AbstractWebsite {
-
-  public Kogan(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   public boolean isAvailable() {
@@ -89,7 +84,7 @@ public class Kogan extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
+  public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("section[itemprop='description'] li"));
   }
 }

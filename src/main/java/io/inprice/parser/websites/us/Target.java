@@ -1,26 +1,25 @@
 package io.inprice.parser.websites.us;
 
-import kong.unirest.HttpResponse;
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
+import kong.unirest.HttpResponse;
 
 /**
  * Parser for Target USA
  *
  * The parsing steps:
  *
- *  - the html body of competitor's url contains data (in json format) we need 
+ *  - the html body of link's url contains data (in json format) we need 
  *  - in getJsonData(), we get that json data by using substring() method of String class 
  *  - this data is named as product which is hold on a class-level variable
  *  - each data (except for availability and specList) can be gathered using product variable
@@ -32,10 +31,6 @@ public class Target extends AbstractWebsite {
   private JSONObject preLoad;
   private JSONObject product;
   private JSONObject priceData;
-
-  public Target(Competitor competitor) {
-    super(competitor);
-  }
 
   private void setPreLoadData() {
     final String preData = findAPart(doc.html(), "__PRELOADED_STATE__= ", "</script>");
@@ -185,8 +180,8 @@ public class Target extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     if (product != null && product.has("itemDetails")) {
       JSONObject details = product.getJSONObject("itemDetails");
@@ -205,7 +200,7 @@ public class Target extends AbstractWebsite {
             } else {
               value = specChunks[0];
             }
-            specList.add(new CompetitorSpec(key.replaceAll(":|<B>", ""), value));
+            specList.add(new LinkSpec(key.replaceAll(":|<B>", ""), value));
           }
         }
       }

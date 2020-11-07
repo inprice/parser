@@ -5,14 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.inprice.common.config.SysProps;
-import io.inprice.common.helpers.RabbitMQ;
 import io.inprice.common.meta.AppEnv;
 import io.inprice.parser.config.Props;
-import io.inprice.parser.consumer.AvailableConsumer;
-import io.inprice.parser.consumer.FailedConsumer;
-import io.inprice.parser.consumer.TobeClassifiedConsumer;
+import io.inprice.parser.consumer.ConsumerManager;
 import io.inprice.parser.helpers.Global;
-import io.inprice.parser.helpers.ThreadPools;
 import kong.unirest.Unirest;
 
 /**
@@ -31,10 +27,7 @@ public class Application {
       Global.isApplicationRunning = true;
 
       config();
-
-      new TobeClassifiedConsumer().start();
-      new AvailableConsumer().start();
-      new FailedConsumer().start();
+      ConsumerManager.start();
 
     }, "app-starter").start();
 
@@ -43,13 +36,12 @@ public class Application {
       Global.isApplicationRunning = false;
 
       log.info(" - Thread pools are shutting down...");
-      ThreadPools.shutdown();
+      ConsumerManager.stop();
 
-      log.info(" - RabbitMQ connection is closing...");
-      RabbitMQ.closeConnection();
-
-      log.info(" - Unirest is shuting down...");
-      Unirest.shutDown(true);
+      if (Unirest.isRunning()) {
+        log.info(" - Unirest is shuting down...");
+        Unirest.shutDown(true);
+      }
 
       log.info("ALL SERVICES IS DONE.");
     }, "shutdown-hook"));

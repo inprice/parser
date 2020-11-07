@@ -1,24 +1,23 @@
 package io.inprice.parser.websites.us;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for BestBuy USA
  *
  * The parsing steps:
  *
- * - the html body of competitor's url contains data (in json format) we need 
+ * - the html body of link's url contains data (in json format) we need 
  * - in getJsonData(), we get that json data by using substring() method of String class 
  * - this data is named as product which is hold on a class-level variable
  * - each data (except for availability and specList) can be gathered using product variable
@@ -31,10 +30,6 @@ public class BestBuy extends AbstractWebsite {
    * the main data provider derived from json placed in html
    */
   private JSONObject offers;
-
-  public BestBuy(Competitor competitor) {
-    super(competitor);
-  }
 
   /**
    * The data we looking for is in html body. So, we get it by using String
@@ -115,8 +110,8 @@ public class BestBuy extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     if (json != null && !json.isNull("description")) {
       String desc = json.getString("description");
@@ -126,7 +121,7 @@ public class BestBuy extends AbstractWebsite {
         String[] descChunks = desc.split(";");
         if (descChunks.length > 0) {
           for (String dsc : descChunks) {
-            specList.add(new CompetitorSpec("", dsc));
+            specList.add(new LinkSpec("", dsc));
           }
         }
       }

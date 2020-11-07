@@ -1,9 +1,8 @@
 package io.inprice.parser.websites.tr;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -11,9 +10,9 @@ import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Teknosa Turkiye
@@ -25,10 +24,6 @@ import java.util.List;
 public class Teknosa extends AbstractWebsite {
 
   private JSONObject offers;
-
-  public Teknosa(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   public JSONObject getJsonData() {
@@ -156,15 +151,15 @@ public class Teknosa extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     Elements specKeys = doc.select("div.product-classifications tr");
     if (specKeys != null && specKeys.size() > 0) {
       specList = new ArrayList<>();
       for (Element key : specKeys) {
         Element val = key.selectFirst("td");
-        specList.add(new CompetitorSpec(val.text(), ""));
+        specList.add(new LinkSpec(val.text(), ""));
       }
     }
 
@@ -179,7 +174,7 @@ public class Teknosa extends AbstractWebsite {
         Element value = specValues.get(i);
         Element val = value.selectFirst("td span");
         if (isEmpty) {
-          specList.add(new CompetitorSpec("", val.text()));
+          specList.add(new LinkSpec("", val.text()));
         } else {
           specList.get(i).setValue(val.text());
         }

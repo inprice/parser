@@ -1,15 +1,14 @@
 package io.inprice.parser.websites.de;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for NotebooksBilliger Deutschland
@@ -19,10 +18,6 @@ import java.util.List;
  * @author mdpinar
  */
 public class NotebooksBilliger extends AbstractWebsite {
-
-  public NotebooksBilliger(Competitor competitor) {
-    super(competitor);
-  }
 
   @Override
   public boolean isAvailable() {
@@ -92,8 +87,8 @@ public class NotebooksBilliger extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = getValueOnlySpecList(doc.select("div#section_info li span"));
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = getValueOnlySpecList(doc.select("div#section_info li span"));
     if (specList == null)
       specList = getKeyValueSpecList(doc.select("table.properties_table tr"), "td.produktDetails_eigenschaft2",
           "td.produktDetails_eigenschaft3");

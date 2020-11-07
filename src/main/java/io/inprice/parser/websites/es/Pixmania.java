@@ -6,19 +6,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kong.unirest.HttpResponse;
-
 import org.json.JSONObject;
 
-import io.inprice.common.models.Competitor;
-import io.inprice.common.models.CompetitorSpec;
+import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
+import kong.unirest.HttpResponse;
 
 /**
  * Parser for Pixmania Spain
  *
- * Please note that: competitor's url (aka main url) is never used for data pulling
+ * Please note that: link's url (aka main url) is never used for data pulling
  *
  * This is a very special case. Pixmania actually provides nothing in html form.
  * So, we need to make two different request to collect all the data we need. 
@@ -41,12 +39,8 @@ public class Pixmania extends AbstractWebsite {
    */
   private JSONObject bestOffer;
 
-  public Pixmania(Competitor competitor) {
-    super(competitor);
-  }
-
   /**
-   * This url is substitute for competitor's original url Since Pixmania provides
+   * This url is substitute for link's original url Since Pixmania provides
    * nothing in html form
    *
    * @return String - the reference url
@@ -198,8 +192,8 @@ public class Pixmania extends AbstractWebsite {
   }
 
   @Override
-  public List<CompetitorSpec> getSpecList() {
-    List<CompetitorSpec> specList = null;
+  public List<LinkSpec> getSpecList() {
+    List<LinkSpec> specList = null;
 
     if (json != null && json.has("description")) {
       final String description = json.getString("description");
@@ -207,7 +201,7 @@ public class Pixmania extends AbstractWebsite {
       if (descChunks.length > 0) {
         specList = new ArrayList<>();
         for (String desc : descChunks) {
-          specList.add(new CompetitorSpec("", desc));
+          specList.add(new LinkSpec("", desc));
         }
       }
     }
