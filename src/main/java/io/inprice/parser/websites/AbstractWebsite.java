@@ -56,7 +56,7 @@ public abstract class AbstractWebsite implements Website {
     }
 
     log.debug("Website: {}, LinkStatus: {}, Time: {}", 
-      link.getWebsiteClassName(), link.getStatus(), (System.currentTimeMillis() - startTime));
+      link.getClassName(), link.getStatus(), (System.currentTimeMillis() - startTime));
   }
 
   public boolean willHtmlBePulled() {
