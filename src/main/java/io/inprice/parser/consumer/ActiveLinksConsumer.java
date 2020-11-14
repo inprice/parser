@@ -5,11 +5,11 @@ import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.inprice.common.helpers.SiteFinder;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
-import io.inprice.common.models.Site;
+import io.inprice.common.info.Site;
 import io.inprice.parser.helpers.RedisClient;
-import io.inprice.parser.site.SiteFinder;
 import io.inprice.parser.websites.Website;
 
 public class ActiveLinksConsumer implements Runnable {
@@ -32,8 +32,8 @@ public class ActiveLinksConsumer implements Runnable {
       if (LinkStatus.TOBE_CLASSIFIED.equals(link.getStatus())) {
         Site site = SiteFinder.findSiteByUrl(link.getUrl());
         if (site != null) {
-          link.setSiteId(site.getId());
-          link.setWebsiteClassName(site.getClassName());
+          link.setPlatform(site.getDomain());
+          link.setClassName(site.getClassName());
           if (site.getStatus() != null) {
             link.setStatus(LinkStatus.valueOf(site.getStatus()));
           }
@@ -44,9 +44,9 @@ public class ActiveLinksConsumer implements Runnable {
 
       //status may have been made passive in the previous code block, let's check once again
       if (! LinkStatus.PASSIVE_GROUP.equals(link.getStatus().getGroup())) {
-        if (link.getWebsiteClassName() != null) {
+        if (link.getClassName() != null) {
           try {
-            Class<?> clazz = Class.forName(PACKAGE_PATH + link.getWebsiteClassName());
+            Class<?> clazz = Class.forName(PACKAGE_PATH + link.getClassName());
             Website website = (Website) clazz.getConstructor().newInstance();
             website.check(link);
           } catch (Exception e) {
