@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import io.inprice.common.helpers.SiteFinder;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
-import io.inprice.common.models.Site;
+import io.inprice.common.info.Site;
 import io.inprice.parser.helpers.RedisClient;
 import io.inprice.parser.websites.Website;
 
