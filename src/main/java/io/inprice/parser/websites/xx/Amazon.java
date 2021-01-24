@@ -20,7 +20,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public class Amazon extends AbstractWebsite {
+public abstract class Amazon extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
@@ -223,4 +223,10 @@ public class Amazon extends AbstractWebsite {
     }
     return specList;
   }
+  
+  @Override
+  public String getSiteName() {
+  	return "amazon";
+  }
+
 }

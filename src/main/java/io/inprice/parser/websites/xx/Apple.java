@@ -21,7 +21,7 @@ import kong.unirest.HttpResponse;
  *
  * @author mdpinar
  */
-public class Apple extends AbstractWebsite {
+public abstract class Apple extends AbstractWebsite {
 
   private static final String REFERRER = "https://www.apple.com/au/shop/buy-ipad/ipad-pro";
 
@@ -176,5 +176,10 @@ public class Apple extends AbstractWebsite {
   protected Link getTestLink() {
     return new Link(String.format("https://www.apple.com/%s/shop/", this.testCountry));
   }
+  
+  @Override
+	public String getSiteName() {
+		return "apple";
+	}
 
 }

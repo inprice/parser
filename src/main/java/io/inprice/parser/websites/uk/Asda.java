@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 import kong.unirest.HttpResponse;
 
@@ -106,5 +107,15 @@ public class Asda extends AbstractWebsite {
   public List<LinkSpec> getSpecList() {
     return null;
   }
+
+  @Override
+  public String getSiteName() {
+  	return "asda";
+  }
+
+  @Override
+	public Country getCountry() {
+		return Consts.Countries.UK;
+	}
 
 }

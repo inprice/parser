@@ -1,29 +1,22 @@
 package io.inprice.parser.websites.au;
 
-import com.google.common.io.CharStreams;
-import com.google.common.io.Resources;
-import kong.unirest.HttpResponse;
-import io.inprice.common.meta.LinkStatus;
-import io.inprice.common.models.Link;
-import io.inprice.parser.helpers.HttpClient;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 import org.json.JSONObject;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
+import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.models.Link;
+import io.inprice.parser.helpers.HttpClient;
+import io.inprice.parser.websites.Helpers;
+import kong.unirest.HttpResponse;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class AppliancesOnline_AU_Test {
-
-  private final String SITE_NAME = "appliancesonline";
-  private final String COUNTRY_CODE = "au";
 
   private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
   private HttpClient httpClient = Mockito.mock(HttpClient.class);
@@ -94,19 +87,6 @@ public class AppliancesOnline_AU_Test {
     assertNull(link.getSpecList());
   }
 
-  private JSONObject getJsonDataFromFile(int no) {
-    String data = null;
-    try {
-      InputStream is = Resources.getResource(String.format("websites/%s/%s_%d.json", COUNTRY_CODE, SITE_NAME, no))
-          .openStream();
-      data = CharStreams.toString(new InputStreamReader(is));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    return new JSONObject(data);
-  }
-
   private void setMock(int no) {
     when(site.getJsonData()).thenReturn(getJsonDataFromFile(no));
     when(site.willHtmlBePulled()).thenReturn(false);
@@ -114,6 +94,14 @@ public class AppliancesOnline_AU_Test {
     when(mockResponse.getStatus()).thenReturn(0);
     when(mockResponse.getBody()).thenReturn(null);
     when(httpClient.get(anyString())).thenReturn(mockResponse);
+  }
+
+  private JSONObject getJsonDataFromFile(int no) {
+    return new JSONObject(
+      Helpers.readFile(
+        String.format("websites/%s/%s_%d.json", site.getCountry().getCode(), site.getSiteName(), no)
+      )
+    );
   }
 
 }

@@ -20,7 +20,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public class Lidl extends AbstractWebsite {
+public abstract class Lidl extends AbstractWebsite {
 
   @Override
   public JSONObject getJsonData() {
@@ -140,4 +140,10 @@ public class Lidl extends AbstractWebsite {
 
     return specList;
   }
+  
+  @Override
+	public String getSiteName() {
+		return "lidl";
+	}
+
 }

@@ -19,7 +19,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public class Bonprix extends AbstractWebsite {
+public abstract class Bonprix extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
@@ -188,4 +188,10 @@ public class Bonprix extends AbstractWebsite {
 
     return specList;
   }
+  
+  @Override
+  	public String getSiteName() {
+  		return "bonprix";
+  	}
+
 }

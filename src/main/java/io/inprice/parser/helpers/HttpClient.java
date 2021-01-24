@@ -60,7 +60,7 @@ public class HttpClient {
     try {
       response = 
         Unirest.post(url)
-          .header("Referrer", UserAgents.findARandomReferer())
+          //.header("Referrer", UserAgents.findARandomReferer())
         .asString();
     } catch (UnirestException e) {
       log.error("Failed to make a POST request", e);
@@ -74,7 +74,7 @@ public class HttpClient {
       response = 
         Unirest.post(url).header("Accept-Language", "en-US,en;q=0.5")
           .header("User-Agent", UserAgents.findARandomUA())
-          .header("Referrer", UserAgents.findARandomReferer())
+          //.header("Referrer", UserAgents.findARandomReferer())
           .body(data)
         .asString();
     } catch (UnirestException e) {

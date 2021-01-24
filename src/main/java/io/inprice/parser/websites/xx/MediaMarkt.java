@@ -20,7 +20,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public class MediaMarkt extends AbstractWebsite {
+public abstract class MediaMarkt extends AbstractWebsite {
 
   private BigDecimal freeShippingTresholdForNL;
 
@@ -170,4 +170,10 @@ public class MediaMarkt extends AbstractWebsite {
 
     return specList;
   }
+
+  @Override
+	public String getSiteName() {
+		return "mediamarkt";
+	}
+
 }

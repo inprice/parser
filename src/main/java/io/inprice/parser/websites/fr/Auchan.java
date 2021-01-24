@@ -10,6 +10,7 @@ import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -126,5 +127,15 @@ public class Auchan extends AbstractWebsite {
 
     return specList;
   }
+
+  @Override
+  public String getSiteName() {
+  	return "auchan";
+  }
+
+  @Override
+	public Country getCountry() {
+		return Consts.Countries.FR;
+	}
 
 }

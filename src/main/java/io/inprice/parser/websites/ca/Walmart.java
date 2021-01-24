@@ -12,6 +12,7 @@ import org.jsoup.nodes.Element;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 import kong.unirest.HttpResponse;
 
@@ -210,4 +211,15 @@ public class Walmart extends AbstractWebsite {
     }
     return specList;
   }
+
+  @Override
+  public String getSiteName() {
+  	return "walmart";
+  }
+
+  @Override
+	public Country getCountry() {
+		return Consts.Countries.CA;
+	}
+
 }

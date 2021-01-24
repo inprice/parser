@@ -19,7 +19,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public class Zalando extends AbstractWebsite {
+public abstract class Zalando extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
@@ -141,4 +141,9 @@ public class Zalando extends AbstractWebsite {
     return specList;
   }
 
+  @Override
+  public String getSiteName() {
+  	return "zalando";
+  }
+  
 }

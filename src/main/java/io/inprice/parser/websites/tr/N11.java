@@ -4,11 +4,16 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
+import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
+import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.helpers.StringHelpers;
+import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -20,6 +25,26 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class N11 extends AbstractWebsite {
 
+  private JSONObject offers;
+
+  @Override
+  protected JSONObject getJsonData() {
+    Elements dataEL = doc.select("script[type='application/ld+json']");
+    if (dataEL != null) {
+      for (DataNode dNode : dataEL.dataNodes()) {
+        JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
+        if (data.has("@type")) {
+          String type = data.getString("@type");
+          if (type.equals("Product") && data.has("offers")) {
+            offers = data.getJSONObject("offers");
+            break;
+          }
+        }
+      }
+    }
+    return super.getJsonData();
+  }
+
   @Override
   public boolean isAvailable() {
     String value = null;
@@ -29,6 +54,11 @@ public class N11 extends AbstractWebsite {
       if (StringUtils.isNotBlank(val.text())) {
         value = val.text();
       } else if (StringUtils.isNotBlank(val.val())) {
+        value = val.val();
+      }
+    } else {
+      val = doc.getElementById("stockCount");
+      if (val != null) {
         value = val.val();
       }
     }
@@ -56,6 +86,12 @@ public class N11 extends AbstractWebsite {
         return (realAmount > 0);
       } catch (Exception ignored) { }
     }
+
+    if (offers != null && offers.has("offerCount")) {
+      Integer xval = NumberUtils.toInteger(offers.getString("offerCount"));
+      return xval != null && xval > 0;
+    }
+
     return false;
   }
 
@@ -85,14 +121,18 @@ public class N11 extends AbstractWebsite {
   public BigDecimal getPrice() {
     String value = null;
 
-    Element val = doc.getElementById("skuPrice");
-    if (val != null && StringUtils.isNotBlank(val.val())) {
-      value = val.val();
+    if (offers != null && offers.has("lowPrice")) {
+      value = offers.getString("lowPrice");
     } else {
-      val = doc.selectFirst(".newPrice ins");
-      if (val == null || StringUtils.isBlank(val.attr("content"))) val = doc.selectFirst("ins.price-now");
-      if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-        value = val.attr("content");
+      Element val = doc.getElementById("skuPrice");
+      if (val != null && StringUtils.isNotBlank(val.val())) {
+        value = val.val();
+      } else {
+        val = doc.selectFirst(".newPrice ins");
+        if (val == null || StringUtils.isBlank(val.attr("content"))) val = doc.selectFirst("ins.price-now");
+        if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+          value = val.attr("content");
+        }
       }
     }
 
@@ -173,4 +213,15 @@ public class N11 extends AbstractWebsite {
 
     return getKeyValueSpecList(specs, keySelector, valSelector);
   }
+
+  @Override
+  public String getSiteName() {
+  	return "n11";
+  }
+
+  @Override
+	public Country getCountry() {
+		return Consts.Countries.TR_DE;
+	}
+
 }

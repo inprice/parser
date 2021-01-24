@@ -17,20 +17,18 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Apple_DE_Test {
 
-  private final String SITE_NAME = "apple";
-  private final String COUNTRY_CODE = "de";
-
+  
   private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
   private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
-  private final Website site = new io.inprice.parser.websites.xx.Apple(COUNTRY_CODE);
+  private final Website site = new AppleDE();
 
   @Test
   public void test_product_1() {
     final String sku = "MR912FD/A";
     setMocks(sku);
 
-    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+    Link link = site.test(Helpers.getHtmlPath(site, 1), httpClient);
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals(sku, link.getSku());
@@ -47,7 +45,7 @@ public class Apple_DE_Test {
     final String sku = "MRT42D/A";
     setMocks(sku);
 
-    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2), httpClient);
+    Link link = site.test(Helpers.getHtmlPath(site, 2), httpClient);
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals(sku, link.getSku());
@@ -64,7 +62,7 @@ public class Apple_DE_Test {
     final String sku = "MTFL2FD/A";
     setMocks(sku);
 
-    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3), httpClient);
+    Link link = site.test(Helpers.getHtmlPath(site, 3), httpClient);
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals(sku, link.getSku());
@@ -81,7 +79,7 @@ public class Apple_DE_Test {
     final String sku = "MRY72ZD/A";
     setMocks(sku);
 
-    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4), httpClient);
+    Link link = site.test(Helpers.getHtmlPath(site, 4), httpClient);
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals(sku, link.getSku());

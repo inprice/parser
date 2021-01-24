@@ -3,6 +3,7 @@ package io.inprice.parser.websites;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.HttpClient;
+import io.inprice.parser.info.Country;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -43,5 +44,10 @@ public interface Website {
 
     //for test purposes
     Link test(String fileName, HttpClient httpClient);
+    
+    String getSiteName();
+
+    //for proxy system
+    Country getCountry();
 
 }

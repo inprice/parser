@@ -21,7 +21,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public class Ebay extends AbstractWebsite {
+public abstract class Ebay extends AbstractWebsite {
 
   private String brand = Consts.Words.NOT_AVAILABLE;
   private List<LinkSpec> specList;
@@ -224,4 +224,10 @@ public class Ebay extends AbstractWebsite {
       }
     }
   }
+  
+  @Override
+  public String getSiteName() {
+  	return "ebay";
+  }
+
 }

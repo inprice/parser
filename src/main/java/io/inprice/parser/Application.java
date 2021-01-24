@@ -1,11 +1,13 @@
 package io.inprice.parser;
 
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+
 import org.apache.http.client.config.CookieSpecs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.inprice.common.config.SysProps;
-import io.inprice.common.meta.AppEnv;
 import io.inprice.parser.config.Props;
 import io.inprice.parser.consumer.ConsumerManager;
 import io.inprice.parser.helpers.Global;
@@ -48,22 +50,30 @@ public class Application {
   }
 
   private static void config() {
-    if (SysProps.APP_ENV().equals(AppEnv.PROD)) {
-      System.setProperty("java.net.useSystemProxies", "true");
-      System.setProperty("http.proxyHost", Props.PROXY_HOST());
-      System.setProperty("http.proxyPort", Props.PROXY_PORT());
-      System.setProperty("https.proxyHost", Props.PROXY_HOST());
-      System.setProperty("https.proxyPort", Props.PROXY_PORT());
-    }
-
-    log.info("Proxy Host: {}", Props.PROXY_HOST());
-    log.info("Proxy Port: {}", Props.PROXY_PORT());
-
+  	//unirest
     Unirest.config()
       .socketTimeout(SysProps.HTTP_CONNECTION_TIMEOUT() * 1000)
       .connectTimeout(SysProps.HTTP_CONNECTION_TIMEOUT() * 1000)
       .cookieSpec(CookieSpecs.STANDARD)
+      .proxy(Props.PROXY_HOST(), Props.PROXY_PORT())
       .setDefaultHeader("Accept-Language", "en-US,en;q=0.5");
+
+    //proxy
+    System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
+    System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
+
+    Authenticator.setDefault(new Authenticator() {
+      @Override
+      protected PasswordAuthentication getPasswordAuthentication() {
+        if (getRequestorType().equals(RequestorType.PROXY)) {
+          return new PasswordAuthentication(Props.PROXY_USERNAME(), (Props.PROXY_PASSWORD()).toCharArray());
+        }
+        return super.getPasswordAuthentication();
+      }
+    });
+    
+    log.info("Proxy is set!");
+  
   }
 
 }

@@ -591,7 +591,7 @@ public class deneme {
             response = Unirest.get("https://www.fnac.com/Nav/API/Article/GetStrate?prid=11562346&catalogRef=1&strateType=DoNotMiss")
                     .headers(headers)
                     .header("User-Agent", UserAgents.findARandomUA())
-                    .header("Referrer", UserAgents.findARandomReferer())
+                    //.header("Referrer", UserAgents.findARandomReferer())
                     .asString();
         } catch (UnirestException e) {
             e.printStackTrace();

@@ -7,8 +7,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.vdurmont.emoji.EmojiParser;
-
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.Connection;
@@ -20,6 +18,8 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vdurmont.emoji.EmojiParser;
+
 import io.inprice.common.config.SysProps;
 import io.inprice.common.helpers.Beans;
 import io.inprice.common.helpers.SqlHelper;
@@ -27,6 +27,7 @@ import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.NumberUtils;
+import io.inprice.parser.config.Props;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.Global;
 import io.inprice.parser.helpers.HttpClient;
@@ -56,7 +57,7 @@ public abstract class AbstractWebsite implements Website {
     }
 
     log.debug("Website: {}, LinkStatus: {}, Time: {}", 
-      link.getClassName(), link.getStatus(), (System.currentTimeMillis() - startTime));
+      link.getPlatform().getClassName(), link.getStatus(), (System.currentTimeMillis() - startTime));
   }
 
   public boolean willHtmlBePulled() {
@@ -207,29 +208,28 @@ public abstract class AbstractWebsite implements Website {
     String problem = null;
     int httpStatus = 200;
 
+    long started = System.currentTimeMillis();
+    String ua = UserAgents.findARandomUA();
+    
     try {
       Connection.Response 
-      response = 
-        Jsoup
-          .connect(url)
+        response = Jsoup.connect(url)
           .headers(Global.standardHeaders)
-          .userAgent(UserAgents.findARandomUA())
-          .referrer(UserAgents.findARandomReferer())
+          .userAgent(ua)
+          .proxy(Props.PROXY_HOST(), Props.PROXY_PORT())
           .timeout(SysProps.HTTP_CONNECTION_TIMEOUT() * 1000)
-          .followRedirects(true)
         .execute();
       response.charset("UTF-8");
 
       doc = response.parse();
+
       link.setProblem(null);
       link.setHttpStatus(200);
-
+      
     } catch (HttpStatusException hse) {
-      log.error(hse.getMessage() + " -> " + url);
       problem = hse.getMessage();
       httpStatus = hse.getStatusCode();
     } catch (Exception e) {
-      log.error(e.getMessage() + " -> " + url);
       problem = e.getMessage();
       httpStatus = 502;
     }
@@ -238,7 +238,14 @@ public abstract class AbstractWebsite implements Website {
       link.setProblem(problem);
       link.setStatus(LinkStatus.NETWORK_ERROR);
       link.setHttpStatus(httpStatus);
+      log.warn("Time: {}ms, Problem: {}, URL: {}", findTimeDiff(started), problem, url);
+    } else {
+    	log.info("Time: {}ms, URL: {}", findTimeDiff(started), url);
     }
+  }
+  
+  private long findTimeDiff(long started) {
+  	return (System.currentTimeMillis()-started)/10;
   }
 
   private String fixLength(String val, int limit) {
@@ -298,8 +305,12 @@ public abstract class AbstractWebsite implements Website {
     if (isAvailable()) {
       link.setStatus(LinkStatus.AVAILABLE);
     } else {
-      link.setStatus(LinkStatus.NOT_AVAILABLE);
-      link.setProblem("INSUFFICIENT STOCK");
+    	if (link.getImportDetailId() == null || StringUtils.isBlank(link.getName())) {
+      	link.setStatus(LinkStatus.NOT_AVAILABLE);
+        link.setProblem("INSUFFICIENT STOCK");
+    	} else {
+    		link.setStatus(LinkStatus.AVAILABLE);
+    	}
     }
   }
 
