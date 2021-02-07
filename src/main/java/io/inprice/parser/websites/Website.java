@@ -16,7 +16,7 @@ import java.util.List;
 public interface Website {
 
     //checks link status and sets data. is implemented in AbstractWebsite
-    void check(Link link);
+    Link check(Link link);
 
     //indicates the availability of the page
     boolean isAvailable();

@@ -30,16 +30,18 @@ public class ActiveLinksConsumer implements Runnable {
       if (link.getPlatform() != null) {
         try {
           Website website = WebsiteHelper.findByClassName(link.getPlatform().getClassName());
-          website.check(link);
+          link = website.check(link);
         } catch (Exception e) {
-          log.error(link.getUrl(), e);
           link.setStatus(LinkStatus.INTERNAL_ERROR);
           link.setProblem(e.getMessage());
+          link.setHttpStatus(500);
+          log.error(link.getUrl(), e);
         }
       } else {
         log.warn("Website platform is null! Status: {}, Url: {} ", link.getStatus(), link.getUrl());
         link.setStatus(LinkStatus.TOBE_IMPLEMENTED);
         link.setProblem("NOT IMPLEMENTED YET");
+        link.setHttpStatus(500);
       }
   
       RedisClient.publishStatusChange(link, oldStatus, oldPrice);

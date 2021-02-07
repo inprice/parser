@@ -34,9 +34,6 @@ public class Asos extends AbstractWebsite {
 
   @Override
   protected JSONObject getJsonData() {
-    LinkStatus preStatus = getLinkStatus();
-    setLinkStatus(LinkStatus.NO_DATA);
-
     final String prodData = findAPart(doc.html(), "window.asos.pdp.config.product =", "};", 1);
     if (StringUtils.isNotBlank(prodData)) {
       offer = new JSONObject(prodData);
@@ -60,6 +57,8 @@ public class Asos extends AbstractWebsite {
         httpClient
         .get("https://www.asos.com/api/product/catalogue/v3/stockprice?store=ROW&productIds=" + sku);
     if (response != null && response.getStatus() > 0 && response.getStatus() < 400) {
+    	
+    	boolean hasDataProblem = true;
 
       if (response.getBody() != null && StringUtils.isNotBlank(response.getBody())) {
         JSONArray items = new JSONArray(response.getBody());
@@ -69,12 +68,12 @@ public class Asos extends AbstractWebsite {
           if (parent.has("productPrice")) {
             JSONObject pprice = parent.getJSONObject("productPrice");
             price = pprice.getJSONObject("current").getBigDecimal("value");
-            setLinkStatus(preStatus);
           }
 
           if (!isAvailable && parent.has("variants")) {
             JSONArray variants = parent.getJSONArray("variants");
             if (variants.length() > 0) {
+            	hasDataProblem = false;
               for (int i = 0; i < variants.length(); i++) {
                 JSONObject var = variants.getJSONObject(i);
                 if (var.getBoolean("isInStock")) {
@@ -85,9 +84,10 @@ public class Asos extends AbstractWebsite {
             }
           }
         }
-      } else {
-        log.error("Failed to fetch data! Status: READ_ERROR");
-        setLinkStatus(LinkStatus.NO_DATA, "READ ERROR");
+      }
+      
+      if (hasDataProblem) {
+      	setLinkStatus(LinkStatus.INVALID_DATA, "Invalid data structure!");
       }
     } else {
       setLinkStatus(response);
