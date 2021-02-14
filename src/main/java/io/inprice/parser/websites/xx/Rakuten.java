@@ -21,7 +21,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public class Rakuten extends AbstractWebsite {
+public abstract class Rakuten extends AbstractWebsite {
 
   private JSONObject offer;
 
@@ -233,4 +233,10 @@ public class Rakuten extends AbstractWebsite {
 
     return specList;
   }
+  
+  @Override
+	public String getSiteName() {
+		return "rakuten";
+	}
+
 }

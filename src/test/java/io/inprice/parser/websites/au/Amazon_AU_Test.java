@@ -11,14 +11,11 @@ import static org.junit.Assert.assertTrue;
 
 public class Amazon_AU_Test {
 
-  private final String SITE_NAME = "amazon";
-  private final String COUNTRY_CODE = "au";
-
-  private final Website site = new io.inprice.parser.websites.xx.Amazon();
+  private final Website site = new AmazonAU();
 
   @Test
   public void test_product_1() {
-    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+    Link link = site.test(Helpers.getHtmlPath(site, 1));
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals("B07FTHCPDP", link.getSku());
@@ -33,7 +30,7 @@ public class Amazon_AU_Test {
 
   @Test
   public void test_product_2() {
-    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+    Link link = site.test(Helpers.getHtmlPath(site, 2));
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals("B072KMX18S", link.getSku());
@@ -47,7 +44,7 @@ public class Amazon_AU_Test {
 
   @Test
   public void test_product_3() {
-    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+    Link link = site.test(Helpers.getHtmlPath(site, 3));
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals("B0755PDKCN", link.getSku());
@@ -61,7 +58,7 @@ public class Amazon_AU_Test {
 
   @Test
   public void test_product_4() {
-    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+    Link link = site.test(Helpers.getHtmlPath(site, 4));
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals("B07G9ZGL9X", link.getSku());

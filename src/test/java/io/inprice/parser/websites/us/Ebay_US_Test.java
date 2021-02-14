@@ -11,14 +11,11 @@ import static org.junit.Assert.assertTrue;
 
 public class Ebay_US_Test {
 
-    private final String SITE_NAME = "ebay";
-    private final String COUNTRY_CODE = "us";
-
-    private final Website site = new io.inprice.parser.websites.xx.Ebay();
+    private final Website site = new EbayUS();
 
     @Test
     public void test_product_1() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Link link = site.test(Helpers.getHtmlPath(site, 1));
 
         assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("192644184854", link.getSku());
@@ -32,7 +29,7 @@ public class Ebay_US_Test {
 
     @Test
     public void test_product_2() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Link link = site.test(Helpers.getHtmlPath(site, 2));
 
         assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("252786445351", link.getSku());
@@ -46,7 +43,7 @@ public class Ebay_US_Test {
 
     @Test
     public void test_product_3() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Link link = site.test(Helpers.getHtmlPath(site, 3));
 
         assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("253288730730", link.getSku());
@@ -60,7 +57,7 @@ public class Ebay_US_Test {
 
     @Test
     public void test_product_4() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Link link = site.test(Helpers.getHtmlPath(site, 4));
 
         assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("223510923884", link.getSku());

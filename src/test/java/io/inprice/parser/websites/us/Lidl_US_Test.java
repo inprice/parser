@@ -1,23 +1,19 @@
 package io.inprice.parser.websites.us;
 
-import com.google.common.io.CharStreams;
-import com.google.common.io.Resources;
-import kong.unirest.HttpResponse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
+import org.junit.Test;
+import org.mockito.Mockito;
+
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.HttpClient;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
+import io.inprice.parser.websites.Helpers;
+import kong.unirest.HttpResponse;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Lidl_US_Test {
@@ -29,7 +25,7 @@ public class Lidl_US_Test {
   public void test_product_1() {
     setMocks(1);
 
-    Link link = new Lidl("https://www.lidl.com/products/285939_A").test(null, httpClient);
+    Link link = new LidlUS("https://www.lidl.com/products/285939_A").test(null, httpClient);
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals("285939_A", link.getSku());
@@ -45,7 +41,7 @@ public class Lidl_US_Test {
   public void test_product_2() {
     setMocks(2);
 
-    Link link = new Lidl("https://www.lidl.com/products/311073_A").test(null, httpClient);
+    Link link = new LidlUS("https://www.lidl.com/products/311073_A").test(null, httpClient);
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals("311073_A", link.getSku());
@@ -61,7 +57,7 @@ public class Lidl_US_Test {
   public void test_product_3() {
     setMocks(3);
 
-    Link link = new Lidl("https://www.lidl.com/products/310436_C").test(null, httpClient);
+    Link link = new LidlUS("https://www.lidl.com/products/310436_C").test(null, httpClient);
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals("310436_C", link.getSku());
@@ -77,7 +73,7 @@ public class Lidl_US_Test {
   public void test_product_4() {
     setMocks(4);
 
-    Link link = new Lidl("https://www.lidl.com/products/1031629").test(null, httpClient);
+    Link link = new LidlUS("https://www.lidl.com/products/1031629").test(null, httpClient);
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals("1031629", link.getSku());
@@ -90,17 +86,13 @@ public class Lidl_US_Test {
   }
 
   private void setMocks(int no) {
-    String data = null;
-    try {
-      InputStream is = Resources.getResource("websites/us/lidl_" + no + ".json").openStream();
-      data = CharStreams.toString(new InputStreamReader(is));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
     when(mockResponse.getStatus()).thenReturn(200);
-    when(mockResponse.getBody()).thenReturn(data);
+    when(mockResponse.getBody()).thenReturn(getFileContent(no));
     when(httpClient.get(anyString())).thenReturn(mockResponse);
+  }
+
+  private String getFileContent(int no) {
+    return Helpers.readFile(String.format("websites/us/lidl_%d.json", no));
   }
 
 }

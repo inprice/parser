@@ -11,6 +11,7 @@ import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -131,4 +132,15 @@ public class Fnac extends AbstractWebsite {
 
     return specList;
   }
+
+  @Override
+  public String getSiteName() {
+  	return "fnac";
+  }
+
+  @Override
+	public Country getCountry() {
+		return Consts.Countries.FR;
+	}
+
 }

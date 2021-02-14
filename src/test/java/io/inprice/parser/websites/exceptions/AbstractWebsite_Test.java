@@ -4,6 +4,7 @@ import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 import org.junit.Test;
 
@@ -119,6 +120,17 @@ public class AbstractWebsite_Test {
     public List<LinkSpec> getSpecList() {
       return null;
     }
+    
+    @Override
+    public String getSiteName() {
+    	return "fake";
+    }
+    
+    @Override
+    public Country getCountry() {
+    	return Consts.Countries.TR_DE;
+    }
+
   }
 
 }

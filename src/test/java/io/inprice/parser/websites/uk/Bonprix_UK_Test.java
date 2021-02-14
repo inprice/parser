@@ -11,14 +11,11 @@ import static org.junit.Assert.assertTrue;
 
 public class Bonprix_UK_Test {
 
-    private final String SITE_NAME = "bonprix";
-    private final String COUNTRY_CODE = "uk";
-
-    private final Website site = new io.inprice.parser.websites.xx.Bonprix();
+    private final Website site = new BonprixUK();
 
     @Test
     public void test_product_1() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Link link = site.test(Helpers.getHtmlPath(site, 1));
 
         assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("936861-128-Black/White", link.getSku());
@@ -32,7 +29,7 @@ public class Bonprix_UK_Test {
 
     @Test
     public void test_product_2() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Link link = site.test(Helpers.getHtmlPath(site, 2));
 
         assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("960056-12-BlackPrint", link.getSku());
@@ -46,7 +43,7 @@ public class Bonprix_UK_Test {
 
     @Test
     public void test_product_3() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Link link = site.test(Helpers.getHtmlPath(site, 3));
 
         assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("948669-12-BerryMarl", link.getSku());
@@ -60,7 +57,7 @@ public class Bonprix_UK_Test {
 
     @Test
     public void test_product_4() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Link link = site.test(Helpers.getHtmlPath(site, 4));
 
         assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("912263-1-GreyStripe", link.getSku());

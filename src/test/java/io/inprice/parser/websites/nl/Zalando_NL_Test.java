@@ -11,14 +11,11 @@ import static org.junit.Assert.assertTrue;
 
 public class Zalando_NL_Test {
 
-    private final String SITE_NAME = "zalando";
-    private final String COUNTRY_CODE = "nl";
-
-    private final Website site = new io.inprice.parser.websites.xx.Zalando();
+    private final Website site = new ZalandoNL();
 
     @Test
     public void test_product_1() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+        Link link = site.test(Helpers.getHtmlPath(site, 1));
 
         assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("BJ282H006-K12", link.getSku());
@@ -32,7 +29,7 @@ public class Zalando_NL_Test {
 
     @Test
     public void test_product_2() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+        Link link = site.test(Helpers.getHtmlPath(site, 2));
 
         assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("MQ581F008-O11", link.getSku());
@@ -46,7 +43,7 @@ public class Zalando_NL_Test {
 
     @Test
     public void test_product_3() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+        Link link = site.test(Helpers.getHtmlPath(site, 3));
 
         assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("VE052L00M-F11", link.getSku());
@@ -60,7 +57,7 @@ public class Zalando_NL_Test {
 
     @Test
     public void test_product_4() {
-        Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+        Link link = site.test(Helpers.getHtmlPath(site, 4));
 
         assertEquals(LinkStatus.AVAILABLE, link.getStatus());
         assertEquals("1MI22P01E-K11", link.getSku());

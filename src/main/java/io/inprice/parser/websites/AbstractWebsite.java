@@ -2,25 +2,24 @@ package io.inprice.parser.websites;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.vdurmont.emoji.EmojiParser;
-
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
-import org.jsoup.Connection;
-import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.inprice.common.config.SysProps;
+import com.vdurmont.emoji.EmojiParser;
+
 import io.inprice.common.helpers.Beans;
 import io.inprice.common.helpers.SqlHelper;
 import io.inprice.common.meta.LinkStatus;
@@ -28,9 +27,8 @@ import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.helpers.Global;
 import io.inprice.parser.helpers.HttpClient;
-import io.inprice.parser.helpers.UserAgents;
+import io.inprice.parser.helpers.ProxyHelper;
 import kong.unirest.HttpResponse;
 
 public abstract class AbstractWebsite implements Website {
@@ -44,19 +42,15 @@ public abstract class AbstractWebsite implements Website {
   protected JSONObject json;
 
   @Override
-  public void check(Link link) {
-    this.link = link;
-    long startTime = System.currentTimeMillis();
+  public Link check(Link link) {
+    this.link = SerializationUtils.clone(link);
 
     if (willHtmlBePulled()) {
-      openPage();
-      if (link.getProblem() == null) read();
+      if (openPage()) read();
     } else {
       read();
     }
-
-    log.debug("Website: {}, LinkStatus: {}, Time: {}", 
-      link.getClassName(), link.getStatus(), (System.currentTimeMillis() - startTime));
+    return this.link;
   }
 
   public boolean willHtmlBePulled() {
@@ -167,78 +161,54 @@ public abstract class AbstractWebsite implements Website {
     return raw.replaceAll("((?<=(\\{|\\[|\\,|:))\\s*')|('\\s*(?=(\\}|(\\])|(\\,|:))))", "\"");
   }
 
-  protected void setLinkStatus(LinkStatus status) {
-    link.setStatus(status);
-
-  }
-
   protected LinkStatus getLinkStatus() {
     return link.getStatus();
   }
 
-  protected void setLinkStatus(String problem) {
+  protected void setLinkStatus(HttpResponse<String> response) {
+  	String problem = "Empty response!";
+    if (response != null) {
+    	problem = response.getStatusText();
+      link.setHttpStatus(response.getStatus());
+    }
     setLinkStatus(LinkStatus.NETWORK_ERROR, problem);
   }
 
   protected void setLinkStatus(LinkStatus status, String problem) {
     link.setStatus(status);
-    link.setProblem(problem);
-    log.error("{}!", problem);
+    link.setProblem(problem.toUpperCase());
   }
 
-  protected void setLinkStatus(HttpResponse<String> response) {
-    link.setStatus(LinkStatus.NETWORK_ERROR);
-    if (response != null) {
-      link.setProblem("DATA FETCHING ERROR");
-      link.setHttpStatus(response.getStatus());
-      log.error("{}! Http Status: {}", link.getProblem(), response.getStatus());
-    } else {
-      link.setProblem("EMPTY RESPONSE");
-      log.error("{}!", link.getProblem());
-    }
-  }
-
-  protected void openPage() {
+  protected boolean openPage() {
     String url = getAlternativeUrl();
     if (url == null) {
       url = getUrl();
     }
 
+    long started = System.currentTimeMillis();
+    
     String problem = null;
     int httpStatus = 200;
-
+    
     try {
-      Connection.Response 
-      response = 
-        Jsoup
-          .connect(url)
-          .headers(Global.standardHeaders)
-          .userAgent(UserAgents.findARandomUA())
-          .referrer(UserAgents.findARandomReferer())
-          .timeout(SysProps.HTTP_CONNECTION_TIMEOUT() * 1000)
-          .followRedirects(true)
-        .execute();
-      response.charset("UTF-8");
-
-      doc = response.parse();
-      link.setProblem(null);
-      link.setHttpStatus(200);
-
-    } catch (HttpStatusException hse) {
-      log.error(hse.getMessage() + " -> " + url);
-      problem = hse.getMessage();
-      httpStatus = hse.getStatusCode();
+      WebDriver driver = new RemoteWebDriver(new URL("http://127.0.0.1:9515"), ProxyHelper.getChromeOptions());
+      driver.get(url);
+    	doc = Jsoup.parse(driver.getPageSource());
+      driver.quit();
     } catch (Exception e) {
-      log.error(e.getMessage() + " -> " + url);
-      problem = e.getMessage();
-      httpStatus = 502;
+    	problem = e.getMessage();
+    	httpStatus = 502;
     }
 
     if (problem != null) {
-      link.setProblem(problem);
-      link.setStatus(LinkStatus.NETWORK_ERROR);
+      setLinkStatus(LinkStatus.NETWORK_ERROR, problem);
       link.setHttpStatus(httpStatus);
+      log.warn("Time: {}ms, Problem: {}, URL: {}", (System.currentTimeMillis()-started)/10, problem, url);
+    } else {
+    	log.info("Time: {}ms, URL: {}", (System.currentTimeMillis()-started)/10, url);
     }
+    
+    return (problem == null);
   }
 
   private String fixLength(String val, int limit) {
@@ -251,29 +221,29 @@ public abstract class AbstractWebsite implements Website {
   }
 
   private void read() {
-    json = getJsonData();
+  	LinkStatus oldStatus = link.getStatus();
 
-    // getJsonData method may return a network or socket error. thus, we need to check if it is so
-    if (LinkStatus.NETWORK_ERROR.equals(link.getStatus())) {
+    json = getJsonData();
+    
+    // getJsonData method may return an error. thus, we need to check if it is so
+    if (! oldStatus.equals(link.getStatus()) && ! LinkStatus.ACTIVE_GROUP.equals(link.getStatus().getGroup())) {
       return;
     }
 
     // price settings
     BigDecimal price = getPrice();
-    link.setPrice(price.setScale(2, RoundingMode.HALF_UP));
-
     if ((price == null || price.compareTo(BigDecimal.ONE) <= 0)
     && (getName() == null || Consts.Words.NOT_AVAILABLE.equals(getName()))) {
 
-      LinkStatus preStatus = link.getStatus();
-      if (LinkStatus.AVAILABLE.equals(preStatus)) {
-        setLinkStatus("SOCKET ERROR");
+      if (LinkStatus.AVAILABLE.equals(oldStatus)) {
+        setLinkStatus(LinkStatus.NOT_AVAILABLE, "DATA AVAILABILITY PROBLEM");
       } else {
-        setLinkStatus(LinkStatus.NO_DATA, "WRONG PAGE");
+        setLinkStatus(LinkStatus.NO_DATA, "PAGE HAS NO DATA");
       }
-      link.setHttpStatus(0);
+      link.setHttpStatus(404);
+
       log.warn("URL: " + getUrl());
-      log.warn(" - Status: {}, Pre.Status: {}", link.getStatus().name(), preStatus.name());
+      log.warn(" - Status: {}, Pre.Status: {}", link.getStatus().name(), oldStatus.name());
       return;
     }
 
@@ -298,9 +268,13 @@ public abstract class AbstractWebsite implements Website {
     if (isAvailable()) {
       link.setStatus(LinkStatus.AVAILABLE);
     } else {
-      link.setStatus(LinkStatus.NOT_AVAILABLE);
-      link.setProblem("INSUFFICIENT STOCK");
+    	if (link.getImportDetailId() == null || StringUtils.isBlank(link.getName())) {
+      	setLinkStatus(LinkStatus.NOT_AVAILABLE, "INSUFFICIENT STOCK");
+    	} else {
+    		link.setStatus(LinkStatus.AVAILABLE);
+    	}
     }
+    
   }
 
 }

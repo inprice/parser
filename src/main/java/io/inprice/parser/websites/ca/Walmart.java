@@ -12,6 +12,7 @@ import org.jsoup.nodes.Element;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 import kong.unirest.HttpResponse;
 
@@ -88,9 +89,6 @@ public class Walmart extends AbstractWebsite {
    */
   @Override
   public JSONObject getJsonData() {
-    LinkStatus preStatus = getLinkStatus();
-    setLinkStatus(LinkStatus.NO_DATA);
-
     final String payload = getPayload();
 
     if (payload != null && StringUtils.isNotBlank(payload)) {
@@ -98,16 +96,17 @@ public class Walmart extends AbstractWebsite {
       if (response != null && response.getStatus() > 0 && response.getStatus() < 400) {
         JSONObject product = new JSONObject(response.getBody());
 
+        boolean hasDataProblem = true;
+
         if (product.has("skus") && product.has("offers")) {
           JSONObject skus = product.getJSONObject("skus");
           JSONObject offers = product.getJSONObject("offers");
-
-          setLinkStatus(preStatus);
 
           if (!skus.isEmpty()) {
             for (String s : skus.keySet()) {
               JSONArray hashArray = skus.getJSONArray(s);
               if (hashArray.length() > 0) {
+              	hasDataProblem = false;
                 for (int i = 0; i < hashArray.length(); i++) {
                   JSONObject offer = offers.getJSONObject(hashArray.getString(i));
                   if (!offer.isEmpty()) {
@@ -119,14 +118,16 @@ public class Walmart extends AbstractWebsite {
               }
             }
           }
-        } else {
-          log.error("Failed to fetch data! LinkStatus: NO_DATA");
+        }
+
+        if (hasDataProblem) {
+        	setLinkStatus(LinkStatus.INVALID_DATA, "Invalid data structure!");
         }
       } else {
         setLinkStatus(response);
       }
     } else {
-      setLinkStatus("Failed to create payload");
+      setLinkStatus(LinkStatus.NETWORK_ERROR, "Failed to fetch payload from the source");
     }
 
     return null;
@@ -210,4 +211,15 @@ public class Walmart extends AbstractWebsite {
     }
     return specList;
   }
+
+  @Override
+  public String getSiteName() {
+  	return "walmart";
+  }
+
+  @Override
+	public Country getCountry() {
+		return Consts.Countries.CA;
+	}
+
 }

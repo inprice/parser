@@ -17,9 +17,6 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Walmart_CA_Test {
 
-  private final String SITE_NAME = "walmart";
-  private final String COUNTRY_CODE = "ca";
-
   private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
   private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
@@ -33,7 +30,7 @@ public class Walmart_CA_Test {
     when(mockResponse.getBody()).thenReturn("{}");
     when(httpClient.post(anyString(), anyString())).thenReturn(mockResponse);
 
-    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+    Link link = site.test(Helpers.getHtmlPath(site, 1), httpClient);
 
     assertEquals(LinkStatus.NO_DATA, link.getStatus());
   }
@@ -46,7 +43,7 @@ public class Walmart_CA_Test {
     when(mockResponse.getBody()).thenReturn(null);
     when(httpClient.post(anyString(), anyString())).thenReturn(mockResponse);
 
-    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1), httpClient);
+    Link link = site.test(Helpers.getHtmlPath(site, 1), httpClient);
 
     assertTrue(link.getHttpStatus() == 400);
     assertEquals(LinkStatus.NETWORK_ERROR, link.getStatus());

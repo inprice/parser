@@ -8,7 +8,11 @@
       "projectName": "parser",
       "mainClass": "io.inprice.parser.Application",
       "env": {
-        "APP_ENV": "DEV"
+        "APP_ENV": "DEV",
+        "PROXY_HOST": "proxy.packetstream.io",
+        "PROXY_PORT": 31112,
+        "PROXY_USERNAME": "mdumlupinar",
+        "PROXY_PASSWORD": "f2mvm4wMBeuBC2xP",
       }
     }
   ]

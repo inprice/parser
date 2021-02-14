@@ -9,6 +9,7 @@ import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -128,5 +129,15 @@ public class Etsy extends AbstractWebsite {
   public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("div.listing-page-overview-component p"));
   }
+
+  @Override
+  public String getSiteName() {
+  	return "etsy";
+  }
+
+  @Override
+	public Country getCountry() {
+		return Consts.Countries.US;
+	}
 
 }

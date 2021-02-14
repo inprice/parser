@@ -11,14 +11,11 @@ import static org.junit.Assert.assertTrue;
 
 public class BigW_AU_Test {
 
-  private final String SITE_NAME = "bigw";
-  private final String COUNTRY_CODE = "au";
-
-  private final Website site = new io.inprice.parser.websites.au.BigW();
+  private final Website site = new BigW();
 
   @Test
   public void test_product_1() {
-    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 1));
+    Link link = site.test(Helpers.getHtmlPath(site, 1));
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals("827030", link.getSku());
@@ -32,7 +29,7 @@ public class BigW_AU_Test {
 
   @Test
   public void test_product_2() {
-    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 2));
+    Link link = site.test(Helpers.getHtmlPath(site, 2));
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals("33770", link.getSku());
@@ -46,7 +43,7 @@ public class BigW_AU_Test {
 
   @Test
   public void test_product_3() {
-    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 3));
+    Link link = site.test(Helpers.getHtmlPath(site, 3));
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals("820960", link.getSku());
@@ -60,7 +57,7 @@ public class BigW_AU_Test {
 
   @Test
   public void test_product_4() {
-    Link link = site.test(Helpers.getHtmlPath(SITE_NAME, COUNTRY_CODE, 4));
+    Link link = site.test(Helpers.getHtmlPath(site, 4));
 
     assertEquals(LinkStatus.AVAILABLE, link.getStatus());
     assertEquals("821107", link.getSku());

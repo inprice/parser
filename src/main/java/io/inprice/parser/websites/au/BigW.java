@@ -2,6 +2,7 @@ package io.inprice.parser.websites.au;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
@@ -89,4 +90,15 @@ public class BigW extends AbstractWebsite {
   public List<LinkSpec> getSpecList() {
     return specList;
   }
+  
+  @Override
+	public String getSiteName() {
+		return "bigw";
+	}
+
+  @Override
+	public Country getCountry() {
+		return Consts.Countries.AU;
+	}
+
 }

@@ -11,6 +11,7 @@ import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -153,4 +154,15 @@ public class Bonanza extends AbstractWebsite {
   public List<LinkSpec> getSpecList() {
     return specList;
   }
+
+  @Override
+  public String getSiteName() {
+  	return "bonanza";
+  }
+
+  @Override
+	public Country getCountry() {
+		return Consts.Countries.US;
+	}
+
 }
