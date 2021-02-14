@@ -9,29 +9,26 @@ import java.util.List;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
-import org.jsoup.Connection;
-import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vdurmont.emoji.EmojiParser;
 
-import io.inprice.common.config.SysProps;
 import io.inprice.common.helpers.Beans;
 import io.inprice.common.helpers.SqlHelper;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.NumberUtils;
-import io.inprice.parser.config.Props;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.helpers.Global;
 import io.inprice.parser.helpers.HttpClient;
-import io.inprice.parser.helpers.UserAgents;
+import io.inprice.parser.helpers.ProxyHelper;
 import kong.unirest.HttpResponse;
 
 public abstract class AbstractWebsite implements Website {
@@ -189,26 +186,15 @@ public abstract class AbstractWebsite implements Website {
     }
 
     long started = System.currentTimeMillis();
-    String ua = UserAgents.findARandomUA();
     
     String problem = null;
     int httpStatus = 200;
     
     try {
-      Connection.Response 
-        response = Jsoup.connect(url)
-          .headers(Global.standardHeaders)
-          .userAgent(ua)
-          .proxy(Props.PROXY_HOST(), Props.PROXY_PORT())
-          .timeout(SysProps.HTTP_CONNECTION_TIMEOUT() * 1000)
-        .execute();
-      response.charset("UTF-8");
-
-      doc = response.parse();
-
-    } catch (HttpStatusException hse) {
-      problem = hse.getMessage();
-      httpStatus = hse.getStatusCode();
+      WebDriver driver = new RemoteWebDriver(new URL("http://127.0.0.1:9515"), ProxyHelper.getChromeOptions());
+      driver.get(url);
+    	doc = Jsoup.parse(driver.getPageSource());
+      driver.quit();
     } catch (Exception e) {
     	problem = e.getMessage();
     	httpStatus = 502;
@@ -261,8 +247,6 @@ public abstract class AbstractWebsite implements Website {
       return;
     }
 
-    log.info("Kısım 2.4");
-    
     // other settings
     link.setSku(fixLength(getSku(), Consts.Limits.SKU));
     link.setName(fixLength(getName(), Consts.Limits.NAME));

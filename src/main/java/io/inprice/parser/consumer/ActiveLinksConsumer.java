@@ -23,31 +23,27 @@ public class ActiveLinksConsumer implements Runnable {
 
   @Override
   public void run() {
-    if (! LinkStatus.PASSIVE_GROUP.equals(link.getStatus().getGroup())) {
-      LinkStatus oldStatus = link.getStatus();
-      BigDecimal oldPrice = link.getPrice();
-  
-      if (link.getPlatform() != null) {
-        try {
-          Website website = WebsiteHelper.findByClassName(link.getPlatform().getClassName());
-          link = website.check(link);
-        } catch (Exception e) {
-          link.setStatus(LinkStatus.INTERNAL_ERROR);
-          link.setProblem(e.getMessage());
-          link.setHttpStatus(500);
-          log.error(link.getUrl(), e);
-        }
-      } else {
-        log.warn("Website platform is null! Status: {}, Url: {} ", link.getStatus(), link.getUrl());
-        link.setStatus(LinkStatus.TOBE_IMPLEMENTED);
-        link.setProblem("NOT IMPLEMENTED YET");
+    LinkStatus oldStatus = link.getStatus();
+    BigDecimal oldPrice = link.getPrice();
+
+    if (link.getPlatform() != null) {
+      try {
+        Website website = WebsiteHelper.findByClassName(link.getPlatform().getClassName());
+        link = website.check(link);
+      } catch (Exception e) {
+        link.setStatus(LinkStatus.INTERNAL_ERROR);
+        link.setProblem(e.getMessage());
         link.setHttpStatus(500);
+        log.error(link.getUrl(), e);
       }
-  
-      RedisClient.publishStatusChange(link, oldStatus, oldPrice);
     } else {
-      log.warn("A passive link came to ActiveLinkConsumer! Status: {}, Url: {} ", link.getStatus(), link.getUrl());
+      log.warn("Website platform is null! Status: {}, Url: {} ", link.getStatus(), link.getUrl());
+      link.setStatus(LinkStatus.TOBE_IMPLEMENTED);
+      link.setProblem("NOT IMPLEMENTED YET");
+      link.setHttpStatus(500);
     }
+
+    RedisClient.publishStatusChange(link, oldStatus, oldPrice);
   }
 
 }

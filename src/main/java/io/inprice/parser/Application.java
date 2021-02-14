@@ -61,6 +61,7 @@ public class Application {
     //proxy
     System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
     System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
+    System.setProperty("webdriver.chrome.silentLogging", "true");
 
     Authenticator.setDefault(new Authenticator() {
       @Override

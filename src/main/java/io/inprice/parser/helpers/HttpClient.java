@@ -19,7 +19,7 @@ public class HttpClient {
     try {
       response = 
         Unirest.get(url)
-          .header("User-Agent", UserAgents.findARandomUA())
+      		.header("User-Agent", UserAgents.getRandomUserAgent())
         .asString();
     } catch (UnirestException e) {
       log.error("Failed to make a GET request", e);
@@ -32,7 +32,7 @@ public class HttpClient {
     try {
       response = 
         Unirest.get(url)
-          .header("User-Agent", UserAgents.findARandomUA())
+          .header("User-Agent", UserAgents.getRandomUserAgent())
           .header("Referrer", referrer)
         .asString();
     } catch (UnirestException e) {
@@ -47,7 +47,7 @@ public class HttpClient {
       GetRequest get = 
         Unirest.get(url)
           .headers(headers)
-          .header("User-Agent", UserAgents.findARandomUA());
+          .header("User-Agent", UserAgents.getRandomUserAgent());
       response = get.asString();
     } catch (UnirestException e) {
       log.error("Failed to make a GET request with headers", e);
@@ -73,7 +73,7 @@ public class HttpClient {
     try {
       response = 
         Unirest.post(url).header("Accept-Language", "en-US,en;q=0.5")
-          .header("User-Agent", UserAgents.findARandomUA())
+        	.header("User-Agent", UserAgents.getRandomUserAgent())
           //.header("Referrer", UserAgents.findARandomReferer())
           .body(data)
         .asString();
