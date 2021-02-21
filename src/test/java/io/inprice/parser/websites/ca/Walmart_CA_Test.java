@@ -88,12 +88,14 @@ public class Walmart_CA_Test {
     when(site.getUrl()).thenReturn("");
     
     when(mockResponse.getStatus()).thenReturn(200);
-    when(mockResponse.getBody()).thenReturn(getFileContent(no));
+    //when(mockResponse.getBody()).thenReturn(getFileContent(no));
     when(httpClient.post(anyString(), anyString())).thenReturn(mockResponse);
   }
 
+  /*
   private String getFileContent(int no) {
     return Helpers.readFile(String.format("websites/%s/%s_%d.json", site.getCountry().getCode(), site.getSiteName(), no));
   }
+  */
 
 }

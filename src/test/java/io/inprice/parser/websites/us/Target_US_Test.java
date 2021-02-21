@@ -89,7 +89,8 @@ public class Target_US_Test {
   }
 
   private String getFileContent(int no) {
-    return Helpers.readFile(String.format("websites/%s/%s_%d.json", site.getCountry().getCode(), site.getSiteName(), no));
+    //return Helpers.readFile(String.format("websites/%s/%s_%d.json", site.getCountry().getCode(), site.getSiteName(), no));
+  	return "";
   }
 
 }

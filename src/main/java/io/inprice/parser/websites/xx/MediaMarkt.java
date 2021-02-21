@@ -171,9 +171,4 @@ public abstract class MediaMarkt extends AbstractWebsite {
     return specList;
   }
 
-  @Override
-	public String getSiteName() {
-		return "mediamarkt";
-	}
-
 }

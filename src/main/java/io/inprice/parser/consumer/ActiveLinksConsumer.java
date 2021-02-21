@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
+import io.inprice.common.utils.StringUtils;
 import io.inprice.parser.helpers.RedisClient;
 import io.inprice.parser.helpers.WebsiteHelper;
 import io.inprice.parser.websites.Website;
@@ -32,7 +33,7 @@ public class ActiveLinksConsumer implements Runnable {
         link = website.check(link);
       } catch (Exception e) {
         link.setStatus(LinkStatus.INTERNAL_ERROR);
-        link.setProblem(e.getMessage());
+        link.setProblem(StringUtils.clearErrorMessage(e.getMessage()));
         link.setHttpStatus(500);
         log.error(link.getUrl(), e);
       }

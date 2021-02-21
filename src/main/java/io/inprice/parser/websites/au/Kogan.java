@@ -1,15 +1,14 @@
 package io.inprice.parser.websites.au;
 
-import io.inprice.common.models.LinkSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Kogan Australia
@@ -88,15 +87,5 @@ public class Kogan extends AbstractWebsite {
   public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("section[itemprop='description'] li"));
   }
-  
-  @Override
-	public String getSiteName() {
-		return "kogan";
-	}
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.AU;
-	}
 
 }

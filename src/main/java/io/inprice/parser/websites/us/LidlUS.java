@@ -11,7 +11,6 @@ import org.json.JSONObject;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 import kong.unirest.HttpResponse;
 
@@ -142,15 +141,5 @@ public class LidlUS extends AbstractWebsite {
   protected Link getTestLink() {
     return new Link(this.testLinkUrl);
   }
-
-  @Override
-  public String getSiteName() {
-  	return "lidl";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.US;
-	}
 
 }

@@ -13,7 +13,6 @@ import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -213,15 +212,5 @@ public class N11 extends AbstractWebsite {
 
     return getKeyValueSpecList(specs, keySelector, valSelector);
   }
-
-  @Override
-  public String getSiteName() {
-  	return "n11";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.TR_DE;
-	}
 
 }

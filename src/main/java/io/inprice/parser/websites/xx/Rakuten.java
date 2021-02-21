@@ -233,10 +233,5 @@ public abstract class Rakuten extends AbstractWebsite {
 
     return specList;
   }
-  
-  @Override
-	public String getSiteName() {
-		return "rakuten";
-	}
 
 }

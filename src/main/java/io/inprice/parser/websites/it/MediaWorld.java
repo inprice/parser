@@ -9,7 +9,6 @@ import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -98,15 +97,5 @@ public class MediaWorld extends AbstractWebsite {
     return getKeyValueSpecList(doc.select("li.content__Tech__row"), "div.Tech-row__inner__key",
         "div.Tech-row__inner__value");
   }
-
-  @Override
-  public String getSiteName() {
-  	return "mediaworld";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.IT;
-	}
 
 }

@@ -1,14 +1,15 @@
 package io.inprice.parser.websites.au;
 
-import io.inprice.common.models.LinkSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
-import io.inprice.parser.websites.AbstractWebsite;
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
-import java.math.BigDecimal;
-import java.util.List;
+import io.inprice.common.models.LinkSpec;
+import io.inprice.common.utils.StringUtils;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for BigW Australia
@@ -34,7 +35,7 @@ public class BigW extends AbstractWebsite {
 
     final String prodData = findAPart(doc.html(), "'products': [", "}]", 1);
     if (prodData != null) {
-      return new JSONObject(fixQuotes(prodData));
+      return new JSONObject(StringUtils.fixQuotes(prodData));
     }
 
     return super.getJsonData();
@@ -90,15 +91,5 @@ public class BigW extends AbstractWebsite {
   public List<LinkSpec> getSpecList() {
     return specList;
   }
-  
-  @Override
-	public String getSiteName() {
-		return "bigw";
-	}
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.AU;
-	}
 
 }

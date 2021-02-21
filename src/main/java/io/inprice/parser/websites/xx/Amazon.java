@@ -88,12 +88,15 @@ public abstract class Amazon extends AbstractWebsite {
     if (price == null) {
       price = doc.getElementById("priceblock_ourprice");
       if (price != null) {
-        Element integer = price.selectFirst("span.price-large");
-        if (integer != null) {
-          Element decimal = integer.nextElementSibling();
-          if (decimal != null) {
-            strPrice = integer.text().trim() + "." + decimal.text().trim();
-            return new BigDecimal(cleanDigits(strPrice));
+      	price = doc.getElementById("price_inside_buybox");
+      	if (price != null) {
+          Element integer = price.selectFirst("span.price-large");
+          if (integer != null) {
+            Element decimal = integer.nextElementSibling();
+            if (decimal != null) {
+              strPrice = integer.text().trim() + "." + decimal.text().trim();
+              return new BigDecimal(cleanDigits(strPrice));
+            }
           }
         }
       }
@@ -222,11 +225,6 @@ public abstract class Amazon extends AbstractWebsite {
       specList = getValueOnlySpecList(doc.select("div.content ul li"));
     }
     return specList;
-  }
-  
-  @Override
-  public String getSiteName() {
-  	return "amazon";
   }
 
 }

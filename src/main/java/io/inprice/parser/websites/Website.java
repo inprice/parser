@@ -1,12 +1,11 @@
 package io.inprice.parser.websites;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.HttpClient;
-import io.inprice.parser.info.Country;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * A common interface for websites. So, all of them must implement this interface.
@@ -44,10 +43,5 @@ public interface Website {
 
     //for test purposes
     Link test(String fileName, HttpClient httpClient);
-    
-    String getSiteName();
-
-    //for proxy system
-    Country getCountry();
 
 }

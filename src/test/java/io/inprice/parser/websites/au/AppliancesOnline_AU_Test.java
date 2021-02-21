@@ -5,14 +5,12 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import org.json.JSONObject;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.parser.helpers.HttpClient;
-import io.inprice.parser.websites.Helpers;
 import kong.unirest.HttpResponse;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -88,7 +86,7 @@ public class AppliancesOnline_AU_Test {
   }
 
   private void setMock(int no) {
-    when(site.getJsonData()).thenReturn(getJsonDataFromFile(no));
+    //when(site.getJsonData()).thenReturn(getJsonDataFromFile(no));
     when(site.willHtmlBePulled()).thenReturn(false);
 
     when(mockResponse.getStatus()).thenReturn(0);
@@ -96,6 +94,7 @@ public class AppliancesOnline_AU_Test {
     when(httpClient.get(anyString())).thenReturn(mockResponse);
   }
 
+  /*
   private JSONObject getJsonDataFromFile(int no) {
     return new JSONObject(
       Helpers.readFile(
@@ -103,5 +102,6 @@ public class AppliancesOnline_AU_Test {
       )
     );
   }
+  */
 
 }

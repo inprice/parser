@@ -11,7 +11,6 @@ import org.json.JSONObject;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 import kong.unirest.HttpResponse;
 
@@ -140,15 +139,5 @@ public class AppliancesOnline extends AbstractWebsite {
 
     return specList;
   }
-
-  @Override
-	public String getSiteName() {
-		return "appliancesonline";
-	}
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.AU;
-	}
   
 }

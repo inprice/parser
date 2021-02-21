@@ -188,10 +188,5 @@ public abstract class Bonprix extends AbstractWebsite {
 
     return specList;
   }
-  
-  @Override
-  	public String getSiteName() {
-  		return "bonprix";
-  	}
 
 }

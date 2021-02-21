@@ -8,7 +8,6 @@ import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -81,15 +80,5 @@ public class TheGoodGuys extends AbstractWebsite {
   public List<LinkSpec> getSpecList() {
     return getKeyValueSpecList(doc.select("section#keyftr li"), "small", "h2");
   }
-
-  @Override
-	public String getSiteName() {
-		return "thegoodguys";
-	}
-  
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.AU;
-	}
 
 }

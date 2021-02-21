@@ -84,12 +84,14 @@ public class CanadianTire_CA_Test {
 
   private void setMock(int no) {
     when(mockResponse.getStatus()).thenReturn(200);
-    when(mockResponse.getBody()).thenReturn(getFileContent(no));
+    //when(mockResponse.getBody()).thenReturn(getFileContent(no));
     when(httpClient.get(anyString())).thenReturn(mockResponse);
   }
 
+  /*
   private String getFileContent(int no) {
     return Helpers.readFile(String.format("websites/%s/%s_%d.json", site.getCountry().getCode(), site.getSiteName(), no));
   }
+  */
 
 }

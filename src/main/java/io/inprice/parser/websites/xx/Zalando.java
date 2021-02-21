@@ -140,10 +140,5 @@ public abstract class Zalando extends AbstractWebsite {
     }
     return specList;
   }
-
-  @Override
-  public String getSiteName() {
-  	return "zalando";
-  }
   
 }

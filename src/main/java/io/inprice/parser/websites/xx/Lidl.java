@@ -29,7 +29,6 @@ public abstract class Lidl extends AbstractWebsite {
     if (prodData != null) {
       return new JSONObject(prodData);
     }
-
     return null;
   }
 
@@ -140,10 +139,5 @@ public abstract class Lidl extends AbstractWebsite {
 
     return specList;
   }
-  
-  @Override
-	public String getSiteName() {
-		return "lidl";
-	}
 
 }

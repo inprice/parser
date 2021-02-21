@@ -8,7 +8,6 @@ import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -95,15 +94,5 @@ public class Electroking extends AbstractWebsite {
   public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("div.product-description li"));
   }
-
-  @Override
-  public String getSiteName() {
-  	return "electroking";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.ES;
-	}
 
 }

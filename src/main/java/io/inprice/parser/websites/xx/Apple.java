@@ -29,16 +29,6 @@ public abstract class Apple extends AbstractWebsite {
   private JSONObject product;
   private boolean available;
 
-  private String testCountry;
-
-  public Apple() {
-    super();
-  }
-
-  public Apple(String testCountry) {
-    this.testCountry = testCountry;
-  }
-
   @Override
   public JSONObject getJsonData() {
   	boolean hasDataProblem = true;
@@ -170,12 +160,8 @@ public abstract class Apple extends AbstractWebsite {
 
   @Override
   protected Link getTestLink() {
-    return new Link(String.format("https://www.apple.com/%s/shop/", this.testCountry));
+  	//TODO: ulke kodu hatali!
+    return new Link(String.format("https://www.apple.com/%s/shop/", "us"));
   }
-  
-  @Override
-	public String getSiteName() {
-		return "apple";
-	}
 
 }

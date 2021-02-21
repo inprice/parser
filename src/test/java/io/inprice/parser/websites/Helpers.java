@@ -9,7 +9,8 @@ import java.nio.charset.StandardCharsets;
 public class Helpers {
 
   public static String getHtmlPath(Website website, int no) {
-    return String.format("websites/%s/%s_%d.html", website.getCountry().getCode(), website.getSiteName(), no);
+    //return String.format("websites/%s/%s_%d.html", website.getCountry().getCode(), website.getSiteName(), no);
+  	return "";
   }
 
   public static String getEmptyHtmlPath() {

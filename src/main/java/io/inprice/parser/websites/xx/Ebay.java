@@ -224,10 +224,5 @@ public abstract class Ebay extends AbstractWebsite {
       }
     }
   }
-  
-  @Override
-  public String getSiteName() {
-  	return "ebay";
-  }
 
 }

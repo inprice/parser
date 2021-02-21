@@ -8,7 +8,6 @@ import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -94,15 +93,5 @@ public class HepsiBurada extends AbstractWebsite {
     final String result = findAPart(doc.html(), indicator, ",");
     return "true".equalsIgnoreCase(result);
   }
-
-  @Override
-  public String getSiteName() {
-  	return "hepsiburada";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.TR;
-	}
 
 }

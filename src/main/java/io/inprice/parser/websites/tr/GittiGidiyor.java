@@ -8,7 +8,6 @@ import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -115,15 +114,5 @@ public class GittiGidiyor extends AbstractWebsite {
     }
     return specs;
   }
-
-  @Override
-  public String getSiteName() {
-  	return "gittigidiyor";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.TR_DE;
-	}
 
 }

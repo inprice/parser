@@ -9,7 +9,6 @@ import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -101,15 +100,5 @@ public class CoolBlue extends AbstractWebsite {
     return getKeyValueSpecList(doc.select("div.product-specs__list-item.js-product-specs--list-item"),
         ".product-specs__item-title", ".product-specs__item-spec");
   }
-
-  @Override
-  public String getSiteName() {
-  	return "coolblue";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.NL;
-	}
 
 }

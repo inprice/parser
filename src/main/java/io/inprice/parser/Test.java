@@ -5,7 +5,10 @@ import io.inprice.common.utils.NumberUtils;
 public class Test {
   
   public static void main(String[] args) {
-    System.out.println(NumberUtils.extractPrice("3.453.451,88 TL "));
+  	String[] vals = {"timedout", "TIMED OUT", "tImEOuT", "tImEdOuT", "hasan", "veli"};
+  	for (String val : vals) {
+  		System.out.println(val + ": " + val.matches("(?i)time.*out"));
+		}
   }
 
 }
