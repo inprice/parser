@@ -41,7 +41,7 @@ public class TheGoodGuys extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("h1.titleItems_head");
+    Element val = doc.selectFirst("h1.pdp__main-title");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }

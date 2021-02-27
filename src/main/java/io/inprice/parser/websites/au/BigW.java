@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.json.JSONObject;
-import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.StringUtils;
@@ -20,22 +19,11 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class BigW extends AbstractWebsite {
 
-  private String brand = Consts.Words.NOT_AVAILABLE;
-  private List<LinkSpec> specList;
-
   @Override
   protected JSONObject getJsonData() {
-    specList = getKeyValueSpecList(doc.select("div.tab-Specification li"), "div.meta", "div.subMeta");
-    for (LinkSpec spec : specList) {
-      if (spec.getKey().contains("Brand")) {
-        brand = spec.getValue();
-        break;
-      }
-    }
-
     final String prodData = findAPart(doc.html(), "'products': [", "}]", 1);
     if (prodData != null) {
-      return new JSONObject(StringUtils.fixQuotes(prodData));
+    	return new JSONObject(StringUtils.fixQuotes(prodData));
     }
 
     return super.getJsonData();
@@ -43,15 +31,13 @@ public class BigW extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element increaeBtn = doc.getElementById("increase_quantity_JS");
-    return (increaeBtn != null);
+    return (doc.getElementById("increase_quantity_JS") != null);
   }
 
   @Override
   public String getSku() {
-    Element code = doc.selectFirst("div[data-productcode]");
-    if (code != null) {
-      return code.attr("data-productcode");
+    if (json != null && json.has("id")) {
+      return json.getString("id");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -84,12 +70,22 @@ public class BigW extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    return brand;
+    if (json != null && json.has("brand")) {
+    	return json.getString("brand");
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return specList;
+  	List<LinkSpec> specList = getKeyValueSpecList(doc.select("div.tab-Specification li"), "div.meta", "div.subMeta");
+  	List<LinkSpec> featureList = getValueOnlySpecList(doc.select("div.contentList li"), "div.meta");
+
+  	if (specList != null && featureList == null) return specList;
+  	if (featureList != null && specList == null) return featureList;
+
+  	featureList.addAll(specList);
+  	return featureList;
   }
 
 }

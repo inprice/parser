@@ -15,7 +15,7 @@ import io.inprice.parser.helpers.HttpClient;
 public interface Website {
 
     //checks link status and sets data. is implemented in AbstractWebsite
-    Link check(Link link);
+    void check(Link link);
 
     //indicates the availability of the page
     boolean isAvailable();

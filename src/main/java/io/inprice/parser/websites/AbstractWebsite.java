@@ -2,13 +2,13 @@ package io.inprice.parser.websites;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.Connection;
@@ -24,14 +24,14 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vdurmont.emoji.EmojiParser;
-
 import io.inprice.common.config.SysProps;
 import io.inprice.common.helpers.Beans;
 import io.inprice.common.helpers.SqlHelper;
+import io.inprice.common.meta.AppEnv;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
+import io.inprice.common.models.Platform;
 import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.config.Props;
 import io.inprice.parser.helpers.Consts;
@@ -40,6 +40,14 @@ import io.inprice.parser.helpers.HttpClient;
 import io.inprice.parser.helpers.UserAgents;
 import kong.unirest.HttpResponse;
 
+/**
+ * TODO: zalando --75%
+ * TODO: bigw --> 100%, loading_main_page_first --> true, extra_timeout --> 5
+ * TODO: kogan --75%
+ * TODO: thegoodguys --80%, extra_timeout --> 5
+ * @author mdpinar
+ *
+ */
 public abstract class AbstractWebsite implements Website {
 
 	protected static final Logger log = LoggerFactory.getLogger(AbstractWebsite.class);
@@ -50,12 +58,15 @@ public abstract class AbstractWebsite implements Website {
 	private LinkStatus oldStatus;
 
 	protected Document doc;
+	protected Platform platform;
+
 	protected JSONObject json;
 
 	@Override
-	public Link check(Link link) {
-		this.link = SerializationUtils.clone(link);
-		this.oldStatus = this.link.getStatus();
+	public void check(Link link) {
+		this.link = link;
+		this.platform = link.getPlatform();
+		this.oldStatus = link.getStatus();
 
 		if (willHtmlBePulled()) {
 			if (openPage())
@@ -63,7 +74,6 @@ public abstract class AbstractWebsite implements Website {
 		} else {
 			read();
 		}
-		return this.link;
 	}
 
 	public boolean willHtmlBePulled() {
@@ -122,15 +132,15 @@ public abstract class AbstractWebsite implements Website {
 		if (specs != null && specs.size() > 0) {
 			specList = new ArrayList<>();
 			for (Element spec : specs) {
+				LinkSpec ls = new LinkSpec("", spec.text());
 				if (StringUtils.isNotBlank(spec.text())) {
-					LinkSpec ls = new LinkSpec("", spec.text());
 					if (sep != null && ls.getValue().indexOf(sep) > 0) {
 						String[] specChunks = ls.getValue().split(sep);
 						ls.setKey(specChunks[0]);
 						ls.setValue(specChunks[1]);
 					}
-					specList.add(ls);
 				}
+				specList.add(ls);
 			}
 		}
 		return specList;
@@ -161,11 +171,15 @@ public abstract class AbstractWebsite implements Website {
 	}
 
 	protected String findAPart(String html, String starting, String ending, int plus) {
-		int start = html.indexOf(starting) + starting.length();
+		return findAPart(html, starting, ending, plus, 0);
+	}
+	
+	protected String findAPart(String html, String starting, String ending, int plus, int startPointOffset) {
+		int start = html.indexOf(starting) + (startPointOffset <= 0 ? starting.length() : 0);
 		int end = html.indexOf(ending, start) + plus;
 
 		if (start > starting.length() && end > start) {
-			return html.substring(start, end);
+			return html.substring(start + startPointOffset, end);
 		}
 
 		return null;
@@ -221,7 +235,6 @@ public abstract class AbstractWebsite implements Website {
       		"--disable-gpu",
       		"--disable-dev-shm-usage",
       		"--no-sandbox",
-      		"--blink-settings=imagesEnabled=false",
       		"--ignore-certificate-errors",
       		"--user-agent=" + UserAgents.getRandomUserAgent()
   			);
@@ -230,9 +243,13 @@ public abstract class AbstractWebsite implements Website {
       	webDriver.manage().timeouts().pageLoadTimeout(SysProps.HTTP_CONNECTION_TIMEOUT() + link.getPlatform().getExtraTimeout(), TimeUnit.SECONDS);
       	if (link.getPlatform().isLoadingMainPageFirst()) {
       		webDriver.get("https://www." + link.getPlatform().getDomain());
-      		//some websites need to a resting time before a new request.
-      		//here, we are giving a twenty percent chance to wait one second more!
-      		int waitPossibility = (int)(Math.random() * 100)+1; //(1..100)
+      		//TODO: buradan kaldirilmali? hatali bu! bunun yerine bir object pool kullanilacak
+      		//bu pool ayaga kalkarken ihtiyac duyan tum siteler icin 1 kez get yapilarak objeler olusturulup poola konacak!
+
+      		
+      		//some websites need some resting time before making a new request.
+      		//here, we are giving a twenty percent chance for it!
+      		int waitPossibility = (int)(Math.random() * 100)+1; //between 1 and 100 (both inclusive)
       		if (waitPossibility <= 20) {
       			try {
 							Thread.sleep(1000);
@@ -243,7 +260,7 @@ public abstract class AbstractWebsite implements Website {
   			doc = Jsoup.parse(webDriver.getPageSource());
   			webDriver.close();
   		} catch (TimeoutException e) {
-  			problem = "TIMED OUT! RETRYING...";
+				problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
   			httpStatus = 408;
   			log.error("Failed to load page: {}", e.getMessage());
   		} catch (MalformedURLException e) {
@@ -261,6 +278,7 @@ public abstract class AbstractWebsite implements Website {
           .headers(Global.standardHeaders)
           .userAgent(UserAgents.getRandomUserAgent())
           .proxy(Props.PROXY_HOST(), Props.PROXY_PORT())
+          .ignoreContentType(true)
           .timeout(SysProps.HTTP_CONNECTION_TIMEOUT() * 1000)
         .execute();
         response.charset("UTF-8");
@@ -287,7 +305,7 @@ public abstract class AbstractWebsite implements Website {
 
 		if (problem != null) {
 			problem = io.inprice.common.utils.StringUtils.clearErrorMessage(problem);
-			if (problem.matches("(?i)time.*out")) {
+			if (problem.toLowerCase().contains("time out") || problem.toLowerCase().contains("timed out")) {
 				setLinkStatus(LinkStatus.TIMED_OUT, problem);
 			} else {
 				setLinkStatus(LinkStatus.NETWORK_ERROR, problem);
@@ -304,7 +322,7 @@ public abstract class AbstractWebsite implements Website {
 	private String fixLength(String val, int limit) {
 		if (val == null) return null;
 
-		String newForm = EmojiParser.removeAllEmojis(io.inprice.common.utils.StringUtils.fixQuotes(val)).trim();
+		String newForm = io.inprice.common.utils.StringUtils.clearEmojies(val);
 		if (StringUtils.isNotBlank(newForm) && newForm.length() > limit)
 			return SqlHelper.clear(newForm.substring(0, limit));
 		else
@@ -319,9 +337,11 @@ public abstract class AbstractWebsite implements Website {
 			return;
 		}
 
-		// price settings
+		// base settings
+		String name = getName();
 		BigDecimal price = getPrice();
-		if (price == null || getName() == null || price.compareTo(BigDecimal.ONE) < 0 || Consts.Words.NOT_AVAILABLE.equals(getName())) {
+
+		if (price == null || name == null || price.compareTo(BigDecimal.ONE) < 0 || Consts.Words.NOT_AVAILABLE.equals(name)) {
 			if (LinkStatus.AVAILABLE.equals(oldStatus)) {
 				setLinkStatus(LinkStatus.NOT_AVAILABLE, "AVAILABILITY PROBLEM");
 			} else {
@@ -336,21 +356,25 @@ public abstract class AbstractWebsite implements Website {
 
 		// other settings
 		link.setSku(fixLength(getSku(), Consts.Limits.SKU));
-		link.setName(fixLength(getName(), Consts.Limits.NAME));
-		link.setPrice(price);
-		link.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
-		link.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
-		link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
+		link.setName(fixLength(name, Consts.Limits.NAME));
+		link.setPrice(price.setScale(2, RoundingMode.HALF_UP));
 
-		// spec list editing
-		List<LinkSpec> specList = getSpecList();
-		if (specList != null && specList.size() > 0) {
-			List<LinkSpec> newList = new ArrayList<>(specList.size());
-			for (LinkSpec ls : specList) {
-				newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY),
-				    fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
-			}
-			link.setSpecList(newList);
+		// if it is not a product import
+		if (AppEnv.DEV.equals(SysProps.APP_ENV()) || link.getImportDetailId() == null) {
+  		link.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
+  		link.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
+  		link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
+
+  		// spec list editing
+  		List<LinkSpec> specList = getSpecList();
+  		if (specList != null && specList.size() > 0) {
+  			List<LinkSpec> newList = new ArrayList<>(specList.size());
+  			for (LinkSpec ls : specList) {
+  				newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY),
+  				    fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
+  			}
+  			link.setSpecList(newList);
+  		}
 		}
 
 		if (isAvailable()) {

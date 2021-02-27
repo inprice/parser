@@ -9,12 +9,13 @@ import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.utils.StringUtils;
 import io.inprice.parser.helpers.RedisClient;
-import io.inprice.parser.helpers.WebsiteHelper;
 import io.inprice.parser.websites.Website;
 
 public class ActiveLinksConsumer implements Runnable {
 
   private static final Logger log = LoggerFactory.getLogger(ActiveLinksConsumer.class);
+
+  private static final String PACKAGE_PATH = "io.inprice.parser.websites.";
 
   private Link link;
 
@@ -29,8 +30,9 @@ public class ActiveLinksConsumer implements Runnable {
 
     if (link.getPlatform() != null) {
       try {
-        Website website = WebsiteHelper.findByClassName(link.getPlatform().getClassName());
-        link = website.check(link);
+        Class<?> clazz = Class.forName(PACKAGE_PATH + link.getPlatform().getClassName());
+        Website website = (Website) clazz.getConstructor().newInstance();
+        website.check(link);
       } catch (Exception e) {
         link.setStatus(LinkStatus.INTERNAL_ERROR);
         link.setProblem(StringUtils.clearErrorMessage(e.getMessage()));

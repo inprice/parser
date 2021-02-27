@@ -13,6 +13,7 @@ import io.inprice.common.models.Link;
 import io.inprice.parser.helpers.HttpClient;
 import io.inprice.parser.websites.Helpers;
 import io.inprice.parser.websites.Website;
+import io.inprice.parser.websites.xx.Apple;
 import kong.unirest.HttpResponse;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -21,7 +22,7 @@ public class Apple_AU_Test {
   private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
   private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
-  private final Website site = new AppleAU();
+  private final Website site = new Apple() {};
 
   @Test
   public void test_product_1() {

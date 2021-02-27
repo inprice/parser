@@ -21,33 +21,36 @@ public class Kogan extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element val = doc.selectFirst("link[itemProp='availability']");
-    if (val != null && StringUtils.isNotBlank(val.attr("href"))) {
-      return val.attr("href").contains("InStock");
-    }
-    return false;
+    return (doc.getElementById("form-add-to-cart") != null);
   }
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("p[itemProp='model']");
+    Element val = doc.selectFirst("meta[itemProp='sku']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
+    }
+    
+    val = doc.selectFirst("p[itemProp='model']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
+    
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("h1[itemprop='name']");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-
-    val = doc.selectFirst("meta[property='og:title']");
+    Element val = doc.selectFirst("meta[property='og:title']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
+    
+    val = doc.selectFirst("h1[itemprop='name']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+    
     return Consts.Words.NOT_AVAILABLE;
   }
 
@@ -57,19 +60,33 @@ public class Kogan extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }
+    
+    val = doc.selectFirst("h5[itemProp='price']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
+    }
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getSeller() {
-    return "Kogan";
+    Element val = doc.selectFirst("a[href$='terms-and-conditions']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+    return "Kogan.com";
   }
 
   @Override
   public String getShipment() {
-    Element val = doc.selectFirst("div[itemprop='offers'] span[role='tooltip']");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
+    Element shippingEL = doc.selectFirst("h5[itemProp='price']");
+    if (shippingEL != null) {
+    	String text = shippingEL.text();
+    	if (text.toLowerCase().contains("free shipping")) {
+    		return "FREE SHIPPING";
+    	} else {
+    		return "SEE THE CONDITIONS";
+    	}
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -85,7 +102,7 @@ public class Kogan extends AbstractWebsite {
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(doc.select("section[itemprop='description'] li"));
+    return getKeyValueSpecList(doc.select("section#specs-accordion dl"), "dt", "dd");
   }
 
 }
