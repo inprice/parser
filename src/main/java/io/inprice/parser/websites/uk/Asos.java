@@ -32,7 +32,7 @@ public class Asos extends AbstractWebsite {
   private JSONObject offer;
 
   @Override
-  protected JSONObject getJsonData() {
+  protected void getJsonData() {
     final String prodData = findAPart(doc.html(), "window.asos.pdp.config.product =", "};", 1);
     if (StringUtils.isNotBlank(prodData)) {
       offer = new JSONObject(prodData);
@@ -91,8 +91,6 @@ public class Asos extends AbstractWebsite {
     } else {
       setLinkStatus(response);
     }
-
-    return super.getJsonData();
   }
 
   @Override

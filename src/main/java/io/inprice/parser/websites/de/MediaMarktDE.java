@@ -27,10 +27,11 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class MediaMarktDE extends AbstractWebsite {
 
+	private JSONObject json;
   private JSONObject article;
 
   @Override
-  protected JSONObject getJsonData() {
+  protected void getJsonData() {
     final String prodData = findAPart(doc.html(), "__PRELOADED_STATE__ = ", "};", 1);
 
     if (prodData != null) {
@@ -38,17 +39,13 @@ public class MediaMarktDE extends AbstractWebsite {
       if (data.has("reduxInitialStore")) {
         JSONObject store = data.getJSONObject("reduxInitialStore");
         if (store.has("select")) {
-          JSONObject prod = store.getJSONObject("select");
-
-          if (prod.has("article")) {
-            article = prod.getJSONObject("article");
+        	json = store.getJSONObject("select");
+          if (json.has("article")) {
+            article = json.getJSONObject("article");
           }
-
-          return prod;
         }
       }
     }
-    return null;
   }
 
   @Override

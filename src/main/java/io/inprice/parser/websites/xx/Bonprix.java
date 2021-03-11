@@ -19,7 +19,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public abstract class Bonprix extends AbstractWebsite {
+public class Bonprix extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {

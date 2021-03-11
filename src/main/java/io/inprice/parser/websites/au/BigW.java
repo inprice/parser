@@ -18,15 +18,13 @@ import io.inprice.parser.websites.AbstractWebsite;
  * @author mdpinar
  */
 public class BigW extends AbstractWebsite {
+	
+	private JSONObject json;
 
   @Override
-  protected JSONObject getJsonData() {
-    final String prodData = findAPart(doc.html(), "'products': [", "}]", 1);
-    if (prodData != null) {
-    	return new JSONObject(StringUtils.fixQuotes(prodData));
-    }
-
-    return super.getJsonData();
+  protected void getJsonData() {
+    String prodData = findAPart(doc.html(), "'products': [", "}]", 1);
+    if (prodData != null) json = new JSONObject(StringUtils.fixQuotes(prodData));
   }
 
   @Override

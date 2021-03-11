@@ -11,6 +11,7 @@ import io.inprice.common.config.SysProps;
 import io.inprice.parser.config.Props;
 import io.inprice.parser.consumer.ConsumerManager;
 import io.inprice.parser.helpers.Global;
+import io.inprice.parser.helpers.HtmlUnitManager;
 import kong.unirest.Unirest;
 
 /**
@@ -44,6 +45,9 @@ public class Application {
         log.info(" - Unirest is shuting down...");
         Unirest.shutDown(true);
       }
+
+      log.info(" - HtmlUnit service is shutting down...");
+      HtmlUnitManager.stop();
 
       log.info("ALL SERVICES IS DONE.");
     }, "shutdown-hook"));

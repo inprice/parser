@@ -27,7 +27,7 @@ public class N11 extends AbstractWebsite {
   private JSONObject offers;
 
   @Override
-  protected JSONObject getJsonData() {
+  protected void getJsonData() {
     Elements dataEL = doc.select("script[type='application/ld+json']");
     if (dataEL != null) {
       for (DataNode dNode : dataEL.dataNodes()) {
@@ -41,7 +41,6 @@ public class N11 extends AbstractWebsite {
         }
       }
     }
-    return super.getJsonData();
   }
 
   @Override

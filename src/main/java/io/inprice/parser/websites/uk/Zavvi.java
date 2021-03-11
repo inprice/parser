@@ -27,6 +27,7 @@ public class Zavvi extends AbstractWebsite {
   /*
    * the main data provider derived from json placed in html
    */
+	private JSONObject json;
   private JSONObject product;
 
   /**
@@ -35,23 +36,20 @@ public class Zavvi extends AbstractWebsite {
    * @return json - partially has product data
    */
   @Override
-  public JSONObject getJsonData() {
+  public void getJsonData() {
     Element dataEL = doc.selectFirst("script[type='application/ld+json']");
     if (dataEL != null) {
-      JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
+    	json = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
 
-      if (data.has("offers")) {
-        JSONArray offersArray = data.getJSONArray("offers");
+      if (json.has("offers")) {
+        JSONArray offersArray = json.getJSONArray("offers");
         if (!offersArray.isEmpty()) {
           if (offersArray.getJSONObject(0).has("sku")) {
             product = offersArray.getJSONObject(0);
           }
         }
       }
-
-      return data;
     }
-    return super.getJsonData();
   }
 
   @Override

@@ -19,14 +19,14 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public abstract class Zalando extends AbstractWebsite {
+public class Zalando extends AbstractWebsite {
 	
 	private JSONObject info;
 	private JSONObject price;
 	private JSONArray details;
 	
 	@Override
-	protected JSONObject getJsonData() {
+	protected void getJsonData() {
 		String rawJson = findAPart(doc.html(), "![CDATA[{\"layout\"", "}]]", 1, 8);
 		
 		if (StringUtils.isNotBlank(rawJson)) {
@@ -46,8 +46,6 @@ public abstract class Zalando extends AbstractWebsite {
 				}
 			}
 		}
-
-		return super.getJsonData();
 	}
 
   @Override

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -23,9 +22,8 @@ public class MediaWorld extends AbstractWebsite {
   private Element product;
 
   @Override
-  protected JSONObject getJsonData() {
+  protected void getJsonData() {
     product = doc.selectFirst("div.product-detail-main-container");
-    return super.getJsonData();
   }
 
   @Override

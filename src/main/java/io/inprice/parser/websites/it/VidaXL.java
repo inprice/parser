@@ -32,11 +32,10 @@ public class VidaXL extends AbstractWebsite {
   }
 
   @Override
-  protected JSONObject getJsonData() {
+  protected void getJsonData() {
     String auctionId = getAuctionId();
     if (auctionId != null) {
-      HttpResponse<String> response = httpClient
-          .get("https://www.vidaxl.it/platform/index.php?m=auction&a=getAuctionsList&id=" + auctionId);
+      HttpResponse<String> response = httpClient.get("https://www.vidaxl.it/platform/index.php?m=auction&a=getAuctionsList&id=" + auctionId);
       if (response.getStatus() == 200 && StringUtils.isNotBlank(response.getBody())) {
         JSONObject auction = new JSONObject(response.getBody());
         if (auction.has("current")) {
@@ -44,8 +43,6 @@ public class VidaXL extends AbstractWebsite {
         }
       }
     }
-
-    return null;
   }
 
   @Override

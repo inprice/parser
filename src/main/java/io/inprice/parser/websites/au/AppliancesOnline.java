@@ -22,6 +22,8 @@ import kong.unirest.HttpResponse;
  * @author mdpinar
  */
 public class AppliancesOnline extends AbstractWebsite {
+	
+	private JSONObject json;
 
   @Override
   protected String getAlternativeUrl() {
@@ -31,10 +33,8 @@ public class AppliancesOnline extends AbstractWebsite {
   }
 
   @Override
-  protected JSONObject getJsonData() {
-    if (doc != null)
-      return new JSONObject(doc.body().html());
-    return null;
+  protected void getJsonData() {
+    if (doc != null) json = new JSONObject(doc.body().html());
   }
 
   @Override

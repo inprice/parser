@@ -25,13 +25,15 @@ public class CDiscount extends AbstractWebsite {
   /*
    * holds price info set in getJsonData()
    */
+	private JSONObject json;
   private JSONObject offers;
 
   @Override
-  public JSONObject getJsonData() {
+  public void getJsonData() {
     Elements scripts = doc.select("script[type='application/ld+json']");
     if (scripts != null && StringUtils.isNotBlank(scripts.html())) {
-      Element dataEL = null;
+      
+    	Element dataEL = null;
       for (Element script : scripts) {
         if (script.html().contains("itemCondition")) {
           dataEL = script;
@@ -39,16 +41,12 @@ public class CDiscount extends AbstractWebsite {
         }
       }
       if (dataEL != null) {
-        JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
-        if (data.has("offers")) {
-          if (data.has("offers")) {
-            offers = data.getJSONObject("offers");
-          }
+      	json = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
+        if (json.has("offers")) {
+          offers = json.getJSONObject("offers");
         }
-        return data;
       }
     }
-    return super.getJsonData();
   }
 
   @Override

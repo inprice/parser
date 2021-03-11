@@ -1,11 +1,11 @@
 package io.inprice.parser.websites.us;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -13,122 +13,100 @@ import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Parser for BestBuy USA
- *
- * The parsing steps:
- *
- * - the html body of link's url contains data (in json format) we need 
- * - in getJsonData(), we get that json data by using substring() method of String class 
- * - this data is named as product which is hold on a class-level variable
- * - each data (except for availability and specList) can be gathered using product variable
+ * Parser for Best Buy USA!
  *
  * @author mdpinar
  */
 public class BestBuy extends AbstractWebsite {
-
-  /*
-   * the main data provider derived from json placed in html
-   */
-  private JSONObject offers;
-
-  /**
-   * The data we looking for is in html body. So, we get it by using String
-   * manipulations
-   */
-  @Override
-  public JSONObject getJsonData() {
-    Element dataEL = doc.select("div[data-reactroot] script[type='application/ld+json']").last();
-    if (dataEL != null) {
-      JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
-      if (data.has("offers")) {
-        offers = data.getJSONObject("offers");
-      }
-
-      return data;
-    }
-
-    return super.getJsonData();
-  }
-
+	
+	private String referer;
+	
+	@Override
+	protected String getAlternativeUrl() {
+		String url = getUrl();
+		boolean hasIntl = url.indexOf("intl=nosplash") > 0;
+		
+		if (hasIntl) {
+			referer = url.replaceAll(".intl=nosplash", "");
+		} else {
+			referer = url;
+			url = url + (url.indexOf("?") > 0 ? "&" : "?") + "intl=nosplash";
+		}
+		return url;
+	}
+	
+	@Override
+	protected Map<String, String> getExtraHeaders() {
+		Map<String, String> headers = new HashMap<>(3);
+		headers.put("Referer", referer);
+		headers.put("DNT", "1");
+		headers.put("Upgrade-Insecure-Requests", "1");
+		return headers;
+	}
+	
   @Override
   public boolean isAvailable() {
-    if (offers != null && offers.has("availability")) {
-      return offers.getString("availability").contains("InStock");
-    }
-    return false;
+    return (doc.selectFirst(".inactive-product-message") == null);
   }
 
   @Override
   public String getSku() {
-    if (json != null && json.has("sku")) {
-      return json.getString("sku");
+    Element val = doc.selectFirst(".sku .product-data-value");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    if (json != null && json.has("name")) {
-      return json.getString("name");
+    Element val = doc.selectFirst(".sku-title h1");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    if (offers != null && offers.has("price")) {
-      return new BigDecimal(cleanDigits(offers.getString("price")));
+    Element val = doc.selectFirst(".priceView-hero-price .sr-only");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return new BigDecimal(cleanDigits(val.text()));
     }
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getSeller() {
-    if (offers != null && !offers.isNull("seller")) {
-      JSONObject seller = offers.getJSONObject("seller");
-      if (seller != null) {
-        return seller.getString("name");
-      }
-    }
     return "Best Buy";
   }
 
   @Override
   public String getShipment() {
-    return "Sold and shipped by " + getSeller();
+    Element shippingEL = doc.selectFirst("h5[itemProp='price']");
+    if (shippingEL != null) {
+    	String text = shippingEL.text();
+    	if (text.toLowerCase().contains("free shipping")) {
+    		return "FREE SHIPPING";
+    	} else {
+    		return "SEE THE CONDITIONS";
+    	}
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getBrand() {
-    if (json != null && !json.isNull("brand")) {
-      JSONObject brand = json.getJSONObject("brand");
-      if (brand != null) {
-        return brand.getString("name");
-      }
+    Element val = doc.selectFirst("a.btn-brand-link");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
-
-    if (json != null && !json.isNull("description")) {
-      String desc = json.getString("description");
-      if (StringUtils.isNotBlank(desc)) {
-        specList = new ArrayList<>();
-
-        String[] descChunks = desc.split(";");
-        if (descChunks.length > 0) {
-          for (String dsc : descChunks) {
-            specList.add(new LinkSpec("", dsc));
-          }
-        }
-      }
-
-    }
-
-    return specList;
+    return getKeyValueSpecList(doc.select(".specs-table ul"), "li .row-title", "li .row-value");
   }
 
 }

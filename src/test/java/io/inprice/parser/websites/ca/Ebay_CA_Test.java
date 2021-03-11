@@ -1,18 +1,20 @@
 package io.inprice.parser.websites.ca;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.Helpers;
 import io.inprice.parser.websites.Website;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import io.inprice.parser.websites.xx.Ebay;
 
 public class Ebay_CA_Test {
 
-	private final Website site = new EbayCA();
+	private final Website site = new Ebay() {};
 
 	@Test
 	public void test_product_1() {

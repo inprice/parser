@@ -20,6 +20,8 @@ import io.inprice.parser.websites.AbstractWebsite;
  * @author mdpinar
  */
 public class Auchan extends AbstractWebsite {
+	
+	private JSONObject json;
 
   /**
    * Returns json object which holds all the necessity data
@@ -27,14 +29,9 @@ public class Auchan extends AbstractWebsite {
    * @return json - product data
    */
   @Override
-  public JSONObject getJsonData() {
-    final String prodData = findAPart(doc.html(), "var product = ", "};", 1);
-
-    if (prodData != null) {
-      return new JSONObject(prodData);
-    }
-
-    return super.getJsonData();
+  public void getJsonData() {
+    String prodData = findAPart(doc.html(), "var product = ", "};", 1);
+    if (prodData != null) json = new JSONObject(prodData);
   }
 
   @Override

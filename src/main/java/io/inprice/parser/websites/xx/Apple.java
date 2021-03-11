@@ -20,15 +20,14 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public abstract class Apple extends AbstractWebsite {
+public class Apple extends AbstractWebsite {
 
+	private JSONObject json;
 	private boolean isAvailable;
 	private String shippingPrice;
   
   @Override
-  protected JSONObject getJsonData() {
-  	JSONObject summary = null;
-
+  protected void getJsonData() {
   	String rawJson = findAPart(doc.html(), "var configData = ", "};", 1);
 
   	if (StringUtils.isNotBlank(rawJson)) {
@@ -45,7 +44,7 @@ public abstract class Apple extends AbstractWebsite {
       		if (initData.has("content")) {
       			JSONObject content = initData.getJSONObject("content");
       			if (content.has("summary")) {
-      				summary = content.getJSONObject	("summary");
+      				json = content.getJSONObject	("summary");
       			}
       		}
     		}
@@ -56,8 +55,6 @@ public abstract class Apple extends AbstractWebsite {
     		}
     	}
     }
-
-    return summary;
   }
   
   @Override

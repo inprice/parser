@@ -22,23 +22,22 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class DeBijenkorf extends AbstractWebsite {
 
+	private JSONObject json;
   private JSONObject variant;
 
   @Override
-  protected JSONObject getJsonData() {
+  protected void getJsonData() {
     final String prodData = findAPart(doc.html(), "Data.product =", "};", 1);
 
     if (prodData != null) {
       JSONObject data = new JSONObject(prodData);
       if (data.has("product")) {
-        JSONObject product = data.getJSONObject("product");
-        if (product.has("currentVariantProduct")) {
-          variant = product.getJSONObject("currentVariantProduct");
+      	json = data.getJSONObject("product");
+        if (json.has("currentVariantProduct")) {
+          variant = json.getJSONObject("currentVariantProduct");
         }
-        return product;
       }
     }
-    return super.getJsonData();
   }
 
   @Override

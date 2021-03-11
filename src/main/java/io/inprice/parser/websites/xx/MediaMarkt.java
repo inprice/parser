@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -20,19 +19,17 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public abstract class MediaMarkt extends AbstractWebsite {
+public class MediaMarkt extends AbstractWebsite {
 
   private BigDecimal freeShippingTresholdForNL;
 
   @Override
-  protected JSONObject getJsonData() {
+  protected void getJsonData() {
     final String tresholdForNL = findAPart(doc.html(), "bezorgkostenDrempel =", ";");
 
     if (tresholdForNL != null) {
       freeShippingTresholdForNL = new BigDecimal(cleanDigits(tresholdForNL));
     }
-
-    return super.getJsonData();
   }
 
   @Override

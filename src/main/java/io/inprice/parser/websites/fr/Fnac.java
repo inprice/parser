@@ -23,19 +23,18 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Fnac extends AbstractWebsite {
 
+	protected JSONObject json;
   protected JSONObject offers;
 
   @Override
-  public JSONObject getJsonData() {
+  public void getJsonData() {
     Element dataEL = doc.selectFirst("script[type='application/ld+json']");
     if (dataEL != null) {
-      JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
-      if (data.has("offers")) {
-        offers = data.getJSONObject("offers");
+    	json = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
+      if (json.has("offers")) {
+        offers = json.getJSONObject("offers");
       }
-      return data;
     }
-    return super.getJsonData();
   }
 
   @Override

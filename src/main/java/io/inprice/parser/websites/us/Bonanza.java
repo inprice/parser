@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -40,7 +39,7 @@ public class Bonanza extends AbstractWebsite {
    * @return nothing!
    */
   @Override
-  protected JSONObject getJsonData() {
+  protected void getJsonData() {
     Elements specs = doc.select("table.extended_info_table tr.extended_info_row");
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
@@ -63,7 +62,6 @@ public class Bonanza extends AbstractWebsite {
         }
       }
     }
-    return super.getJsonData();
   }
 
   @Override

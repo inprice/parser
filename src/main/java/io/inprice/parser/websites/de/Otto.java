@@ -33,23 +33,22 @@ public class Otto extends AbstractWebsite {
   /*
    * the main data provider derived from json placed in html
    */
+	private JSONObject json;
   private JSONObject product;
 
   @Override
-  public JSONObject getJsonData() {
+  public void getJsonData() {
     Element val = doc.selectFirst("script#productDataJson");
     if (val != null) {
-      JSONObject result = new JSONObject(val.dataNodes().get(0).getWholeData());
-      if (!result.isEmpty() && result.has("variations")) {
-        JSONObject variations = result.getJSONObject("variations");
+    	json = new JSONObject(val.dataNodes().get(0).getWholeData());
+      if (json.has("variations")) {
+        JSONObject variations = json.getJSONObject("variations");
         Set<String> keySet = variations.keySet();
         if (keySet != null && keySet.size() > 0) {
           product = variations.getJSONObject(keySet.iterator().next());
         }
       }
-      return result;
     }
-    return super.getJsonData();
   }
 
   @Override

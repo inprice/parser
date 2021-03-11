@@ -20,16 +20,14 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public abstract class Lidl extends AbstractWebsite {
+public class Lidl extends AbstractWebsite {
 
+	private JSONObject json;
+	
   @Override
-  public JSONObject getJsonData() {
-    final String prodData = findAPart(doc.html(), "var dynamic_tm_data = ", "};", 1);
-
-    if (prodData != null) {
-      return new JSONObject(prodData);
-    }
-    return null;
+  public void getJsonData() {
+    String prodData = findAPart(doc.html(), "var dynamic_tm_data = ", "};", 1);
+    if (prodData != null) json = new JSONObject(prodData);
   }
 
   @Override

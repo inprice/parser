@@ -20,7 +20,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public abstract class Amazon extends AbstractWebsite {
+public class Amazon extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {

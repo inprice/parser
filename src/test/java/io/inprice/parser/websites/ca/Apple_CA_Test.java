@@ -1,17 +1,21 @@
 package io.inprice.parser.websites.ca;
 
-import kong.unirest.HttpResponse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
+import org.junit.Test;
+import org.mockito.Mockito;
+
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.parser.helpers.HttpClient;
 import io.inprice.parser.websites.Helpers;
 import io.inprice.parser.websites.Website;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
+import io.inprice.parser.websites.xx.Apple;
+import kong.unirest.HttpResponse;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Apple_CA_Test {
@@ -19,7 +23,7 @@ public class Apple_CA_Test {
   private HttpResponse mockResponse = Mockito.mock(HttpResponse.class);
   private HttpClient httpClient = Mockito.mock(HttpClient.class);
 
-  private final Website site = new AppleCA();
+  private final Website site = new Apple() {};
 
   @Test
   public void test_product_1() {

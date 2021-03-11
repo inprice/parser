@@ -26,11 +26,12 @@ public class Wehkamp extends AbstractWebsite {
   /*
    * holds price info set in getJsonData()
    */
+	private JSONObject json;
   private JSONObject offers;
   private JSONArray properties;
 
   @Override
-  public JSONObject getJsonData() {
+  public void getJsonData() {
     final String props = findAPart(doc.html(), "\"properties\":", "]", 1);
 
     if (props != null) {
@@ -41,15 +42,13 @@ public class Wehkamp extends AbstractWebsite {
     if (dataEL != null && dataEL.size() > 0) {
       for (int i = 0; i < dataEL.size(); i++) {
         if (dataEL.get(i).dataNodes().get(0).getWholeData().indexOf("brand") > 0) {
-          JSONObject data = new JSONObject(dataEL.get(i).dataNodes().get(0).getWholeData().replace("\r\n", " "));
-          if (data.has("offers")) {
-            offers = data.getJSONObject("offers");
+        	json = new JSONObject(dataEL.get(i).dataNodes().get(0).getWholeData().replace("\r\n", " "));
+          if (json.has("offers")) {
+            offers = json.getJSONObject("offers");
           }
-          return data;
         }
       }
     }
-    return super.getJsonData();
   }
 
   @Override

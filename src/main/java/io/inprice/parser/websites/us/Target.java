@@ -32,23 +32,6 @@ public class Target extends AbstractWebsite {
   private JSONObject product;
   private JSONObject priceData;
 
-  private void setPreLoadData() {
-    final String preData = findAPart(doc.html(), "__PRELOADED_STATE__= ", "</script>");
-
-    if (preData != null) {
-      preLoad = new JSONObject(preData);
-      if (preLoad.has("product")) {
-        JSONObject prod = preLoad.getJSONObject("product");
-        if (prod.has("productDetails")) {
-          JSONObject details = prod.getJSONObject("productDetails");
-          if (details.has("item")) {
-            product = details.getJSONObject("item");
-          }
-        }
-      }
-    }
-  }
-
   private String getApiKey() {
     if (preLoad != null && preLoad.has("config")) {
       JSONObject config = preLoad.getJSONObject("config");
@@ -74,9 +57,21 @@ public class Target extends AbstractWebsite {
   }
 
   @Override
-  protected JSONObject getJsonData() {
-    setPreLoadData();
-    return super.getJsonData();
+  protected void getJsonData() {
+    final String preData = findAPart(doc.html(), "__PRELOADED_STATE__= ", "</script>");
+
+    if (preData != null) {
+      preLoad = new JSONObject(preData);
+      if (preLoad.has("product")) {
+        JSONObject prod = preLoad.getJSONObject("product");
+        if (prod.has("productDetails")) {
+          JSONObject details = prod.getJSONObject("productDetails");
+          if (details.has("item")) {
+            product = details.getJSONObject("item");
+          }
+        }
+      }
+    }
   }
 
   private void setPriceData() {

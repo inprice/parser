@@ -26,6 +26,7 @@ public class LidlUS extends AbstractWebsite {
 
   private final String url = "https://mobileapi.lidl.com/v1/products/";
 
+  private JSONObject json;
   private String sku;
   private String testLinkUrl;
 
@@ -43,7 +44,7 @@ public class LidlUS extends AbstractWebsite {
   }
 
   @Override
-  public JSONObject getJsonData() {
+  public void getJsonData() {
     final int index = getUrl().indexOf("/products/");
     final String[] urlChunks = getUrl().split("/");
 
@@ -51,11 +52,9 @@ public class LidlUS extends AbstractWebsite {
       sku = urlChunks[urlChunks.length - 1];
       HttpResponse<String> response = httpClient.get(url + sku);
       if (response.getStatus() < 400) {
-        return new JSONObject(response.getBody());
+      	json = new JSONObject(response.getBody());
       }
     }
-
-    return null;
   }
 
   @Override

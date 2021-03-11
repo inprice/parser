@@ -19,7 +19,8 @@ public class HttpClient {
     try {
       response = 
         Unirest.get(url)
-      		.header("User-Agent", UserAgents.getRandomUserAgent())
+      		//.header("User-Agent", UserAgents.getRandomUserAgent())
+      		.header("Referer", "https://www.canadiantire.ca/en/pdp/paderno-classic-fry-pan-combo-2-pk-3996866p.html")
         .asString();
     } catch (UnirestException e) {
       log.error("Failed to make a GET request", e);

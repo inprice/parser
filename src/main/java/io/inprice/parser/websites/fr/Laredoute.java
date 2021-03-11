@@ -22,26 +22,22 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Laredoute extends AbstractWebsite {
 
+	private JSONObject json;
   private JSONObject offers;
 
   @Override
-  protected JSONObject getJsonData() {
+  protected void getJsonData() {
     Element dataEL = doc.selectFirst("script[type='application/ld+json']");
     if (dataEL != null) {
-      JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
-      if (data.has("offers")) {
-        offers = data.getJSONObject("offers");
-
+    	json = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
+      if (json.has("offers")) {
+        offers = json.getJSONObject("offers");
         try {
-          JSONArray jarray = offers.getJSONArray("offers");
-          offers = jarray.getJSONObject(0);
-        } catch (Exception e) {
-          //
-        }
+          JSONArray arr = offers.getJSONArray("offers");
+          offers = arr.getJSONObject(0);
+        } catch (Exception e) { }
       }
-      return data;
     }
-    return super.getJsonData();
   }
 
   @Override

@@ -21,7 +21,7 @@ import kong.unirest.HttpResponse;
  */
 public class Asda extends AbstractWebsite {
 
-  private JSONObject product;
+  private JSONObject json;
 
   /**
    * Returns json object which holds all the essential data
@@ -29,7 +29,7 @@ public class Asda extends AbstractWebsite {
    * @return json - product data
    */
   @Override
-  public JSONObject getJsonData() {
+  public void getJsonData() {
     String[] urlChunks = getUrl().split("/");
 
     if (urlChunks.length > 1) {
@@ -41,44 +41,42 @@ public class Asda extends AbstractWebsite {
           if (prod.has("items")) {
             JSONArray items = prod.getJSONArray("items");
             if (items.length() > 0) {
-              product = items.getJSONObject(0);
+              json = items.getJSONObject(0);
             }
           }
         }
       }
     }
-
-    return null;
   }
 
   @Override
   public boolean isAvailable() {
-    if (product != null && product.has("availability")) {
-      return "A".equals(product.getString("availability"));
+    if (json != null && json.has("availability")) {
+      return "A".equals(json.getString("availability"));
     }
     return false;
   }
 
   @Override
   public String getSku() {
-    if (product != null && product.has("id")) {
-      return product.getString("id");
+    if (json != null && json.has("id")) {
+      return json.getString("id");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    if (product != null && product.has("name")) {
-      return product.getString("name");
+    if (json != null && json.has("name")) {
+      return json.getString("name");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    if (product != null && product.has("price")) {
-      return new BigDecimal(cleanDigits(product.getString("price")));
+    if (json != null && json.has("price")) {
+      return new BigDecimal(cleanDigits(json.getString("price")));
     }
 
     return BigDecimal.ZERO;
@@ -96,8 +94,8 @@ public class Asda extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    if (product != null && product.has("brandName")) {
-      return product.getString("brandName");
+    if (json != null && json.has("brandName")) {
+      return json.getString("brandName");
     }
     return Consts.Words.NOT_AVAILABLE;
   }

@@ -4,107 +4,112 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
-import kong.unirest.HttpResponse;
 
 /**
  * Parser for CanadianTire Canada
  *
- * Please note that: link's url (aka main url) is never used for data pulling
- *
- * This is a very special case. CanadianTire provides too limited data in html
- * form. So, we need to make a json request to collect all the data we need.
- *
- * in getJsonData(), the data is pulled with a payload whose steps are explained
- * above
+ * Please note that html can be pulled completely after js render!
  *
  * @author mdpinar
  */
 public class CanadianTire extends AbstractWebsite {
-
-  /**
-   * Returns payload as key value query string
-   *
-   * @return String - as query parameter payload
-   */
-  private String getPayload() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("SKU=");
-    sb.append(getSku());
-    sb.append("&");
-    sb.append("Store=0144");
-    sb.append("&");
-    sb.append("Banner=CTR");
-    sb.append("&");
-    sb.append("isKiosk=FALSE");
-    sb.append("&");
-    sb.append("Language=E");
-    sb.append("&");
-    sb.append("_");
-    sb.append(new Date().getTime());
-    return sb.toString();
-  }
-
-  /**
-   * Request the data with a constant url with product-id and payload. Besides,
-   * data handles best-offer which holds some important data
-   *
-   * @return JSONObject - json
-   */
-  @Override
-  public JSONObject getJsonData() {
-    HttpResponse<String> response = httpClient.get("https://www.canadiantire.ca/ESB/PriceAvailability?" + getPayload());
-    if (response != null && response.getStatus() < 400) {
-      JSONArray data = new JSONArray(response.getBody());
-      if (!data.isEmpty()) {
-        return data.getJSONObject(0);
-      }
+	
+	private JSONObject json;
+	
+	@Override
+	protected void renderExtra(WebDriver webDriver) {
+		String name = getName();
+		BigDecimal price = BigDecimal.ZERO;
+		
+  	Element priceEL = doc.selectFirst("span.price__reg-value");
+    if (priceEL != null) {
+    	price = new BigDecimal(cleanDigits(priceEL.text()));
     }
-    return null;
-  }
+		
+		if (StringUtils.isNotBlank(name) && ! Consts.Words.NOT_AVAILABLE.equals(name) && (price.compareTo(BigDecimal.ZERO) <= 0)) {
+  		try {
+  	    StringBuilder payload = new StringBuilder("https://api-triangle.canadiantire.ca/esb/PriceAvailability?SKU=");
+  	    payload.append(getSku());
+  	    payload.append("&");
+  	    payload.append("Store=0144");
+  	    payload.append("&");
+  	    payload.append("Banner=CTR");
+  	    payload.append("&");
+  	    payload.append("isKiosk=FALSE");
+  	    payload.append("&");
+  	    payload.append("Language=E");
+  	    payload.append("&=");
+  	    payload.append("_");
+  	    payload.append(new Date().getTime());
+  			webDriver.navigate().to(payload.toString());
+  			
+  			String rawJson = webDriver.findElement(By.tagName("pre")).getText();
+				JSONArray arr = new JSONArray(rawJson);
+				json = arr.getJSONObject(0);
+
+    	} catch (Exception e) {
+    		log.error("Failed to do extra: {}", e.getMessage());
+    	}
+		}
+	}
 
   @Override
   public boolean isAvailable() {
-    if (json != null && json.has("IsOnline")) {
-      JSONObject isOnline = json.getJSONObject("IsOnline");
-      return "Y".equalsIgnoreCase(isOnline.getString("Sellable"));
-    }
-    return false;
+  	if (json != null && json.has("IsOnline")) {
+  		JSONObject isOnline = json.getJSONObject("IsOnline");
+  		if (! isOnline.isEmpty()) {
+  			return isOnline.getString("Sellable").equals("Y");
+  		}
+  	}
+
+  	Elements quantities = doc.select("span.instock-quantity");
+  	return (quantities != null && quantities.size() > 1);
   }
 
   @Override
   public String getSku() {
-    Element sku = doc.selectFirst("div[data-sku]");
-    if (sku != null) {
-      return sku.attr("data-sku").split(":")[0];
-    }
-    return Consts.Words.NOT_AVAILABLE;
+  	String url = getUrl();
+		int pPoint = url.indexOf("p.");
+		return url.substring(pPoint-7, pPoint);
   }
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst("meta[property='og:title']");
+    Element name = doc.selectFirst(".js-product-name");
     if (name != null) {
-      return name.attr("content").replaceAll(" \\| Canadian Tire", "");
+      return name.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    if (json != null) {
-      if (json.has("Promo")) {
-        return json.getJSONObject("Promo").getBigDecimal("Price");
-      }
-      if (json.has("Price")) {
-        return json.getBigDecimal("Price");
-      }
+  	if (json != null) {
+  		if (json.has("Promo")) {
+    		JSONObject promo = json.getJSONObject("Promo");
+    		if (! promo.isEmpty()) {
+    			return promo.getBigDecimal("Price");
+    		}
+  		}
+  		if (json.has("Price")) {
+  			return json.getBigDecimal("Price");
+  		}
+  	}
+
+  	Element price = doc.selectFirst("span.price__reg-value");
+    if (price != null) {
+      return new BigDecimal(cleanDigits(price.text()));
     }
     return BigDecimal.ZERO;
   }
@@ -122,8 +127,7 @@ public class CanadianTire extends AbstractWebsite {
   @Override
   public String getBrand() {
     Element brand = doc.selectFirst("img.brand-logo-link__img");
-    if (brand == null)
-      brand = doc.selectFirst("img.brand-footer__logo");
+    if (brand == null) brand = doc.selectFirst("img.brand-footer__logo");
 
     if (brand != null) {
       return brand.attr("alt");

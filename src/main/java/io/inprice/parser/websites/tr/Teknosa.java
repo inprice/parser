@@ -23,10 +23,11 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Teknosa extends AbstractWebsite {
 
+	private JSONObject json;
   private JSONObject offers;
 
   @Override
-  public JSONObject getJsonData() {
+  public void getJsonData() {
     Element dataEL = doc.getElementById("schemaJSON");
     if (dataEL != null) {
       // user reviews may cause encoding problems and can be huge amount of data
@@ -34,13 +35,11 @@ public class Teknosa extends AbstractWebsite {
       // thus, they are trimmed with the help of regex
       String html = dataEL.html();
       html = html.replaceAll("(?s)\\s*\"review\":.*\\],", "");
-      JSONObject data = new JSONObject(html);
-      if (data.has("offers")) {
-        offers = data.getJSONObject("offers");
+      json = new JSONObject(html);
+      if (json.has("offers")) {
+        offers = json.getJSONObject("offers");
       }
-      return data;
     }
-    return super.getJsonData();
   }
 
   @Override

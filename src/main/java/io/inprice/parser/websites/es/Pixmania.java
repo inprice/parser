@@ -37,6 +37,7 @@ public class Pixmania extends AbstractWebsite {
   /*
    * the main data derived from json gotten server via getSubUrl()
    */
+	private JSONObject json;
   private JSONObject bestOffer;
 
   /**
@@ -105,28 +106,25 @@ public class Pixmania extends AbstractWebsite {
    * @return JSONObject - json
    */
   @Override
-  public JSONObject getJsonData() {
+  public void getJsonData() {
     final String productId = findProductId();
     if (productId != null) {
 
       final Map<String, String> payload = getPayload();
       if (payload != null) {
 
-        HttpResponse<String> response = httpClient
-            .get(String.format("https://www.pixmania.es/api/pcm/products/%s", productId), payload);
+        HttpResponse<String> response = httpClient.get(String.format("https://www.pixmania.es/api/pcm/products/%s", productId), payload);
         if (response != null && response.getStatus() < 400) {
           JSONObject data = new JSONObject(response.getBody());
           if (data.has("product")) {
-            JSONObject productEL = data.getJSONObject("product");
-            if (productEL.has("best_offer")) {
-              bestOffer = productEL.getJSONObject("best_offer");
+          	json = data.getJSONObject("product");
+            if (json.has("best_offer")) {
+              bestOffer = json.getJSONObject("best_offer");
             }
-            return productEL;
           }
         }
       }
     }
-    return null;
   }
 
   @Override

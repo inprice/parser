@@ -23,19 +23,18 @@ public class Debenhams extends AbstractWebsite {
   /*
    * holds price info set in getJsonData()
    */
+	private JSONObject json;
   private JSONObject offers;
 
   @Override
-  public JSONObject getJsonData() {
+  public void getJsonData() {
     Element dataEL = doc.selectFirst("script[type='application/ld+json']");
     if (dataEL != null) {
-      JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
-      if (data.has("offers")) {
-        offers = data.getJSONObject("offers");
+    	json = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
+      if (json.has("offers")) {
+        offers = json.getJSONObject("offers");
       }
-      return data;
     }
-    return super.getJsonData();
   }
 
   @Override

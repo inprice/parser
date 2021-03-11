@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -21,16 +20,15 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public abstract class Ebay extends AbstractWebsite {
+public class Ebay extends AbstractWebsite {
 
   private String brand = Consts.Words.NOT_AVAILABLE;
   private List<LinkSpec> specList;
 
   @Override
-  protected JSONObject getJsonData() {
+  protected void getJsonData() {
     // for handling brand name at first hand
     buildSpecList();
-    return super.getJsonData();
   }
 
   @Override
