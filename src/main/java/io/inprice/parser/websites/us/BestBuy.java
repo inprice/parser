@@ -1,12 +1,13 @@
 package io.inprice.parser.websites.us;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
+
+import com.gargoylesoftware.htmlunit.HttpHeader;
+import com.gargoylesoftware.htmlunit.WebRequest;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -36,14 +37,17 @@ public class BestBuy extends AbstractWebsite {
 	}
 	
 	@Override
-	protected Map<String, String> getExtraHeaders() {
-		Map<String, String> headers = new HashMap<>(3);
-		headers.put("Referer", referer);
-		headers.put("DNT", "1");
-		headers.put("Upgrade-Insecure-Requests", "1");
-		return headers;
+	protected void beforeRequest(WebRequest req) {
+		req.setAdditionalHeader(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,/*;q=0.8");
+    req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
+    req.setAdditionalHeader(HttpHeader.ACCEPT_ENCODING, "gzip, deflate, br");
+    req.setAdditionalHeader(HttpHeader.CONNECTION, "keep-alive");
+		req.setAdditionalHeader(HttpHeader.REFERER, referer);
+		req.setAdditionalHeader(HttpHeader.DNT, "1");
+		req.setAdditionalHeader(HttpHeader.UPGRADE_INSECURE_REQUESTS, "1");
+		req.setAdditionalHeader("TE", "Trailers");
 	}
-	
+
   @Override
   public boolean isAvailable() {
     return (doc.selectFirst(".inactive-product-message") == null);

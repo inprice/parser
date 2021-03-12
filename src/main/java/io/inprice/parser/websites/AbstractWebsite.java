@@ -6,46 +6,21 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.impl.EnglishReasonPhraseCatalog;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.jsoup.Connection;
-import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.logging.LogEntries;
-import org.openqa.selenium.logging.LogEntry;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
@@ -61,10 +36,7 @@ import io.inprice.common.models.Platform;
 import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.config.Props;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.helpers.Global;
-import io.inprice.parser.helpers.HtmlUnitManager;
 import io.inprice.parser.helpers.HttpClient;
-import io.inprice.parser.helpers.UserAgents;
 import kong.unirest.HttpResponse;
 
 /**
@@ -219,10 +191,16 @@ public abstract class AbstractWebsite implements Website {
 		}
 		setLinkStatus(LinkStatus.NETWORK_ERROR, problem);
 	}
-
+	
 	protected void setLinkStatus(LinkStatus status, String problem) {
 		link.setStatus(status);
 		link.setProblem(problem.toUpperCase());
+	}
+
+	protected void setLinkStatus(LinkStatus status, String problem, int httpStatus) {
+		link.setStatus(status);
+		link.setProblem(problem.toUpperCase());
+		link.setHttpStatus(httpStatus);
 	}
 
 	protected boolean openPage() {
@@ -235,188 +213,41 @@ public abstract class AbstractWebsite implements Website {
 
 		String problem = null;
 		int httpStatus = -1;
-		
-		boolean viaBrowser = false;
-		int randomPossibilty = 0;
 
-		if (link.getPlatform().getBrowserPossibility() >= 100) {
-			randomPossibilty = 100;
-		} else if (link.getPlatform().getBrowserPossibility() > 0) {
-			randomPossibilty = (int)(Math.random() * 100)+1;
-		}
+		//do you hate internet explorer like me!
+		try (WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER, Props.PROXY_HOST(), Props.PROXY_PORT());) {
+      webClient.getOptions().setThrowExceptionOnScriptError(false);
+      webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 
-		//via chrome browser
-		if (randomPossibilty > 0 && randomPossibilty <= link.getPlatform().getBrowserPossibility()) {
-			viaBrowser = true;
-			WebDriver webDriver = null;
-  		try {
-    		ChromeOptions options = new ChromeOptions();
-      	options.addArguments(
-					"--headless",
-    			"--start-maximized",
-      		"--disable-gpu",
-      		"--disable-dev-shm-usage",
-      		"--no-sandbox",
-      		"--ignore-certificate-errors",
-    			"--disable-blink-features=AutomationControlled"    		 
-  			);
-      	options.setExperimentalOption("useAutomationExtension", false);
-      	options.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));    
-      	
-        LoggingPreferences logPrefs = new LoggingPreferences();
-        logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
-        options.setCapability("goog:loggingPrefs", logPrefs);
-      	
-      	webDriver = new RemoteWebDriver(new URL(Props.WEBDRIVER_URL()), options);
-      	webDriver.manage().timeouts().pageLoadTimeout(SysProps.HTTP_CONNECTION_TIMEOUT() + link.getPlatform().getExtraTimeout(), TimeUnit.SECONDS);
-      	if (StringUtils.isNotBlank(link.getPlatform().getLoadUrlFirst())) {
-      		//TODO: buradan kaldirilmali? hatali bu! bunun yerine bir object pool kullanilacak
-      		//bu pool ayaga kalkarken ihtiyac duyan tum siteler icin 1 kez get yapilarak objeler olusturulup poola konacak!
-      		try {
-      			webDriver.get("https://" + link.getPlatform().getLoadUrlFirst());
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-      	}
+      //proxy settings
+      DefaultCredentialsProvider scp = new DefaultCredentialsProvider();
+      scp.addCredentials(Props.PROXY_USERNAME(), Props.PROXY_PASSWORD(), Props.PROXY_HOST(), Props.PROXY_PORT(), null);
+      webClient.setCredentialsProvider(scp);
 
-      	if (StringUtils.isNotBlank(link.getPlatform().getLoadUrlFirst())) {
-      		webDriver.navigate().to(url);
-      	} else {
-      		webDriver.get(url);
-      	}
-  			
-  			LogEntries logs = webDriver.manage().logs().get(LogType.PERFORMANCE);
-  			for (Iterator<LogEntry> it = logs.iterator(); it.hasNext();) {
-          LogEntry entry = it.next();
-          try {
-            JSONObject json = new JSONObject(entry.getMessage());
-            JSONObject message = json.getJSONObject("message");
-            String method = message.getString("method");
-            if (method != null && "Network.responseReceived".equals(method)) {
-              JSONObject params = message.getJSONObject("params");
-              JSONObject response = params.getJSONObject("response");
-              String messageUrl = response.getString("url");
-              if (url.equals(messageUrl)) {
-              	httpStatus = response.getInt("status");
-                break;
-              }
-            }
-          } catch (JSONException e) {
-            e.printStackTrace();
-          }
-        }  			
-  			
-  			if (httpStatus >= 400) {
-  				problem = EnglishReasonPhraseCatalog.INSTANCE.getReason(httpStatus, Locale.ENGLISH);
-  			} else {
-  				String pageSource = null;
-  				if (link.getPlatform().isJsRenderedBody()) {
-  	  			String javascript = "return arguments[0].innerHTML";
-  	  			pageSource = (String)((JavascriptExecutor)webDriver).executeScript(javascript, webDriver.findElement(By.tagName("html")));
-  				} else {
-  					pageSource = webDriver.getPageSource();
-  				}
-  				doc = Jsoup.parse(pageSource);
-  			}
-  			//some websites like canadiantire needs extra http call for some data such as price and stock availability.
-  			renderExtra(webDriver);
+      //we need to separate the request as some classes need to set some specific headers and cookies before requesting
+    	WebRequest req = new WebRequest(new URL(url));
+    	beforeRequest(req);
 
-  			webDriver.close();
-  		} catch (TimeoutException e) {
-  			//TODO: burasi cok iyi olmadi?!?! sayfada spesific bir element aranip yoksa timeout oldu diye isaretlenmeli!!!
-  			WebElement html = webDriver.findElement(By.tagName("html"));
-  			if (html.isDisplayed()) {
-  				doc = Jsoup.parse(webDriver.getPageSource());
-  			} else {
-  				problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
-    			httpStatus = 408;
-    			log.error("Timed out: {}", e.getMessage());
-  			}
-  		} catch (WebDriverException e) {
-				problem = "ACCESS ERROR!";
-				httpStatus = 407;
-				log.error("Reaching error: {}", e.getMessage());
-  		} catch (MalformedURLException e) {
-  			problem = "INCOMPATIBLE URL!";
-  			httpStatus = 400;
-  			log.error("Failed to load page: {}", e.getMessage());
-  		} finally {
-  			if (webDriver != null) {
-  				webDriver.quit();
-  			}
-  		}
-
-		} else {
-
-			//via htmlunit
-			if (link.getPlatform().isHtmlUnitRendering()) {
-		    try {
-		    	WebClient webClient = HtmlUnitManager.getClient();
-
-		    	//setting extra headers
-    			if (getExtraHeaders() != null) {
-    				Set<Entry<String, String>> entries = getExtraHeaders().entrySet();
-  		      for (Entry<String, String> header: entries) {
-  		      	webClient.addRequestHeader(header.getKey(), header.getValue());
-  		  		}
-    			}
-
-					WebResponse res = webClient.loadWebResponse(new WebRequest(new URL(url)));
-		    	doc = Jsoup.parse(res.getContentAsString());
-	  			renderExtra(webClient);
-		    } catch (SocketTimeoutException set) {
-  				problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
-    			httpStatus = 408;
-    			log.error("Timed out: {}", set.getMessage());
-				} catch (IOException e) {
-					e.printStackTrace();
-    			problem = e.getMessage();
-    			httpStatus = 502;
-				}
-
-			} else { //via jsoup
-    		try {
-    			
-		    	//setting extra headers
-    			Map<String, String> headers = new HashMap<>(Global.standardHeaders);
-    			if (getExtraHeaders() != null) {
-    				Set<Entry<String, String>> entries = getExtraHeaders().entrySet();
-  		      for (Entry<String, String> header: entries) {
-  		      	headers.put(header.getKey(), header.getValue());
-  		      }
-    			}
-
-          Connection.Response 
-            response = Jsoup.connect(url)
-            	.userAgent(UserAgents.getRandomUserAgent())
-              .headers(headers)
-              .proxy(Props.PROXY_HOST(), Props.PROXY_PORT())
-              .timeout((SysProps.HTTP_CONNECTION_TIMEOUT() + link.getPlatform().getExtraTimeout()) * 1000)
-            .execute();
-          response.charset("UTF-8");
-      
-          doc = response.parse();
-          httpStatus = response.statusCode();
-        } catch (HttpStatusException hse) {
-          problem = hse.getMessage();
-          httpStatus = hse.getStatusCode();
-    		} catch (Exception e) {
-    			problem = e.getMessage();
-    			httpStatus = 502;
-    		}
+			WebResponse res = webClient.loadWebResponse(req);
+			if (res.getStatusCode() < 400) {
+  			doc = Jsoup.parse(res.getContentAsString());
+  			afterRequest(webClient);
+			} else {
+				problem = res.getStatusMessage();
+				httpStatus = res.getStatusCode();
 			}
+
+    } catch (SocketTimeoutException set) {
+			problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
+			httpStatus = 408;
+			log.error("Timed out: {}", set.getMessage());
+		} catch (IOException e) {
+			e.printStackTrace();
+			problem = e.getMessage();
+			httpStatus = 502;
 		}
 
-		//instant express for logging
-		String logPart = String.format(
-			"Status: %d, Time: %dms, [%s via %s], Expected/Random: (%d/%d)",
-			httpStatus,
-			(System.currentTimeMillis() - started) / 10, 
-			link.getPlatform().getName(), 
-			(viaBrowser ? "Chrome" : (link.getPlatform().isHtmlUnitRendering() ? "HtmlUnit" : "JSoup")), 
-			link.getPlatform().getBrowserPossibility(),
-			randomPossibilty
-		);
+		String logPart = String.format("Platform: %s, Status: %d, Time: %dms", link.getPlatform().getDomain(), httpStatus, (System.currentTimeMillis() - started) / 10);
 
 		if (problem != null) {
 			problem = io.inprice.common.utils.StringUtils.clearErrorMessage(problem);
@@ -426,9 +257,9 @@ public abstract class AbstractWebsite implements Website {
 				setLinkStatus(LinkStatus.NETWORK_ERROR, problem);
 			}
 			link.setHttpStatus(httpStatus);
-			log.warn("----FAILED---- {}, Problem: {}, URL: {}", logPart, problem, url);
+			log.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, problem, url);
 		} else {
-			log.info("--SUCCESSFUL-- {}", logPart);
+			log.info("-SUCCESSFUL- {}", logPart);
 		}
 
 		return (problem == null);
@@ -525,17 +356,13 @@ public abstract class AbstractWebsite implements Website {
 		link.setHttpStatus(404);
 	}
 	
-	protected void renderExtra(WebDriver webDriver) {
-		//for an implementation you should look at canadiantire class
-	}
-
-	protected void renderExtra(WebClient webClient) {
-		//for an implementation you should look at walmart class
+	protected void beforeRequest(WebRequest req) {
+		//for an implementation you should look at us.bestbuy class
 	}
 	
-	protected Map<String, String> getExtraHeaders() {
-		//for an implementation you should look at us.bestbuy class
-		return null;
+	protected void afterRequest(WebClient webClient) {
+		//for an implementation you should look at canadiantire class
+		//for an implementation you should look at walmart class
 	}
 
 }

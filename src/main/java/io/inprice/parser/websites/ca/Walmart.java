@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.NoHttpResponseException;
 import org.json.JSONObject;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Element;
@@ -37,17 +36,12 @@ public class Walmart extends AbstractWebsite {
 	private int httpStatus;
 	private String problem;
 	
-	/**
-	 * Please remember that webDriver is always null!!!
-	 */
 	@Override
-	protected void renderExtra(WebClient webClient) {
+	protected void afterRequest(WebClient webClient) {
 		if (doc == null) {
 			log.warn("Doc is null!");
 			return; 
 		}
-		
-		//bir sekilde sayfada javascript calistirmak lazim .... misal showTime
 		
     Elements dataEL = doc.select("script[type='application/ld+json']");
     if (dataEL != null) {
@@ -92,11 +86,6 @@ public class Walmart extends AbstractWebsite {
     String postalCode = html.substring(pos, html.indexOf("\"", pos)).substring(0, 3);
 
 		try {
-			WebRequest req = new WebRequest(new URL("https://www.walmart.ca/api/product-page/v2/price-offer"));
-			req.setHttpMethod(HttpMethod.POST);
-			req.setAdditionalHeader("Accept", "application/json");
-			req.setAdditionalHeader("content-type", "application/json");
-			
 			StringBuilder payload = new StringBuilder();
 			payload.append("{\"fsa\":\"");
 			payload.append(postalCode);
@@ -111,6 +100,10 @@ public class Walmart extends AbstractWebsite {
 			payload.append("\",\"experience\":\"");
 			payload.append(experience);
 			payload.append("\"}");
+
+			WebRequest req = new WebRequest(new URL("https://www.walmart.ca/api/product-page/v2/price-offer"), HttpMethod.POST);
+			req.setAdditionalHeader("Accept", "application/json");
+			req.setAdditionalHeader("content-type", "application/json");
 			req.setRequestBody(payload.toString());
 
 	    WebResponse res = webClient.loadWebResponse(req);
@@ -211,10 +204,10 @@ public class Walmart extends AbstractWebsite {
     }
     return specList;
   }
-  
+
   protected void detectProblem() {
   	if (problem != null) {
-  		setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""));
+  		setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), httpStatus);
   		return;
   	}
 

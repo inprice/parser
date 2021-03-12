@@ -1,17 +1,25 @@
 package io.inprice.parser.websites.ca;
 
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 
+import com.gargoylesoftware.htmlunit.HttpHeader;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.WebResponse;
+
+import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
@@ -24,11 +32,14 @@ import io.inprice.parser.websites.AbstractWebsite;
  * @author mdpinar
  */
 public class CanadianTire extends AbstractWebsite {
-	
-	private JSONObject json;
+
+  private JSONObject json;
+
+  private int httpStatus;
+	private String problem;
 	
 	@Override
-	protected void renderExtra(WebDriver webDriver) {
+	protected void afterRequest(WebClient webClient) {
 		String name = getName();
 		BigDecimal price = BigDecimal.ZERO;
 		
@@ -39,25 +50,37 @@ public class CanadianTire extends AbstractWebsite {
 		
 		if (StringUtils.isNotBlank(name) && ! Consts.Words.NOT_AVAILABLE.equals(name) && (price.compareTo(BigDecimal.ZERO) <= 0)) {
   		try {
-  	    StringBuilder payload = new StringBuilder("https://api-triangle.canadiantire.ca/esb/PriceAvailability?SKU=");
-  	    payload.append(getSku());
-  	    payload.append("&");
-  	    payload.append("Store=0144");
-  	    payload.append("&");
-  	    payload.append("Banner=CTR");
-  	    payload.append("&");
-  	    payload.append("isKiosk=FALSE");
-  	    payload.append("&");
-  	    payload.append("Language=E");
-  	    payload.append("&=");
-  	    payload.append("_");
-  	    payload.append(new Date().getTime());
-  			webDriver.navigate().to(payload.toString());
-  			
-  			String rawJson = webDriver.findElement(By.tagName("pre")).getText();
-				JSONArray arr = new JSONArray(rawJson);
-				json = arr.getJSONObject(0);
+  	    StringBuilder offerUrl = new StringBuilder("https://api-triangle.canadiantire.ca/esb/PriceAvailability?SKU=");
+  	    offerUrl.append(getSku());
+  	    offerUrl.append("&");
+  	    offerUrl.append("Store=0144");
+  	    offerUrl.append("&");
+  	    offerUrl.append("Banner=CTR");
+  	    offerUrl.append("&");
+  	    offerUrl.append("isKiosk=FALSE");
+  	    offerUrl.append("&");
+  	    offerUrl.append("Language=E");
+  	    offerUrl.append("&=");
+  	    offerUrl.append("_");
+  	    offerUrl.append(new Date().getTime());
 
+  			WebRequest req = new WebRequest(new URL(offerUrl.toString()), HttpMethod.GET);
+  			req.setAdditionalHeader(HttpHeader.ACCEPT, "application/json");
+  			req.setAdditionalHeader(HttpHeader.CONTENT_TYPE, "application/json");
+
+  			WebResponse res = webClient.loadWebResponse(req);
+  	    if (res.getStatusCode() < 400) {
+  	    	Document subDoc = Jsoup.parse(res.getContentAsString());
+  	    	Element pre = subDoc.selectFirst("pre");
+  	    	if (pre == null) pre = subDoc.body();
+
+  				JSONArray arr = new JSONArray(pre.text());
+  				json = arr.getJSONObject(0);
+  	    } else {
+  	    	httpStatus = res.getStatusCode();
+  	    	problem = res.getStatusMessage();
+  	    }
+  	    
     	} catch (Exception e) {
     		log.error("Failed to do extra: {}", e.getMessage());
     	}
@@ -138,6 +161,15 @@ public class CanadianTire extends AbstractWebsite {
   @Override
   public List<LinkSpec> getSpecList() {
     return getValueOnlySpecList(doc.select("div.pdp-details-features__items li"));
+  }
+
+  protected void detectProblem() {
+  	if (problem != null) {
+  		setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), httpStatus);
+  		return;
+  	}
+
+  	super.detectProblem();
   }
 
 }

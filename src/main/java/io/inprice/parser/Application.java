@@ -1,17 +1,10 @@
 package io.inprice.parser;
 
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-
-import org.apache.http.client.config.CookieSpecs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.inprice.common.config.SysProps;
-import io.inprice.parser.config.Props;
 import io.inprice.parser.consumer.ConsumerManager;
 import io.inprice.parser.helpers.Global;
-import io.inprice.parser.helpers.HtmlUnitManager;
 import kong.unirest.Unirest;
 
 /**
@@ -29,7 +22,7 @@ public class Application {
     new Thread(() -> {
       Global.isApplicationRunning = true;
 
-      config();
+      //config();
       ConsumerManager.start();
 
     }, "app-starter").start();
@@ -46,15 +39,13 @@ public class Application {
         Unirest.shutDown(true);
       }
 
-      log.info(" - HtmlUnit service is shutting down...");
-      HtmlUnitManager.stop();
-
       log.info("ALL SERVICES IS DONE.");
     }, "shutdown-hook"));
   }
 
+  /*
   private static void config() {
-  	//unirest
+  	 unirest
     Unirest.config()
       .socketTimeout(SysProps.HTTP_CONNECTION_TIMEOUT() * 1000)
       .connectTimeout(SysProps.HTTP_CONNECTION_TIMEOUT() * 1000)
@@ -69,6 +60,7 @@ public class Application {
     Authenticator.setDefault(new Authenticator() {
       @Override
       protected PasswordAuthentication getPasswordAuthentication() {
+      	System.out.println("PASSWORD AUTH HIT!");
         if (getRequestorType().equals(RequestorType.PROXY)) {
           return new PasswordAuthentication(Props.PROXY_USERNAME(), (Props.PROXY_PASSWORD()).toCharArray());
         }
@@ -77,7 +69,8 @@ public class Application {
     });
     
     log.info("Proxy is set!");
-  
+
   }
+   */
 
 }
