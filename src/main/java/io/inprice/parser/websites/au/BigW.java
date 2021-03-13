@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.StringUtils;
@@ -18,18 +20,26 @@ import io.inprice.parser.websites.AbstractWebsite;
  * @author mdpinar
  */
 public class BigW extends AbstractWebsite {
-	
-	private JSONObject json;
 
-  @Override
-  protected void getJsonData() {
-    String prodData = findAPart(doc.html(), "'products': [", "}]", 1);
+	private Document dom;
+	private JSONObject json;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+
+		String prodData = findAPart(html, "'products': [", "}]", 1);
     if (prodData != null) json = new JSONObject(StringUtils.fixQuotes(prodData));
-  }
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
 
   @Override
   public boolean isAvailable() {
-    return (doc.getElementById("increase_quantity_JS") != null);
+    return (dom.getElementById("increase_quantity_JS") != null);
   }
 
   @Override
@@ -57,6 +67,14 @@ public class BigW extends AbstractWebsite {
   }
 
   @Override
+  public String getBrand() {
+    if (json != null && json.has("brand")) {
+    	return json.getString("brand");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
   public String getSeller() {
     return "Big W";
   }
@@ -67,17 +85,9 @@ public class BigW extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    if (json != null && json.has("brand")) {
-    	return json.getString("brand");
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-  	List<LinkSpec> specList = getKeyValueSpecList(doc.select("div.tab-Specification li"), "div.meta", "div.subMeta");
-  	List<LinkSpec> featureList = getValueOnlySpecList(doc.select("div.contentList li"), "div.meta");
+  	List<LinkSpec> specList = getKeyValueSpecList(dom.select("div.tab-Specification li"), "div.meta", "div.subMeta");
+  	List<LinkSpec> featureList = getValueOnlySpecList(dom.select("div.contentList li"), "div.meta");
 
   	if (specList != null && featureList == null) return specList;
   	if (featureList != null && specList == null) return featureList;

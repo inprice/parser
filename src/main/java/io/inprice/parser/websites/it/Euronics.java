@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -19,41 +21,56 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Euronics extends AbstractWebsite {
 
-  private Element base;
+	private Document dom;
+	private Element prod;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+    prod = dom.getElementsByTag("trackingProduct").first();
+	}
 
-  @Override
-  protected void getJsonData() {
-    base = doc.getElementsByTag("trackingProduct").first();
-  }
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
 
   @Override
   public boolean isAvailable() {
-    Element val = doc.selectFirst("span.productDetails__availability.not-available");
+    Element val = dom.selectFirst("span.productDetails__availability.not-available");
     return (val == null || StringUtils.isBlank(val.text()));
   }
 
   @Override
   public String getSku() {
-    if (base != null) {
-      return base.attr("productId");
+    if (prod != null) {
+      return prod.attr("productId");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    if (base != null) {
-      return base.attr("productName");
+    if (prod != null) {
+      return prod.attr("productName");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    if (base != null) {
-      return new BigDecimal(cleanDigits(base.attr("price")));
+    if (prod != null) {
+      return new BigDecimal(cleanDigits(prod.attr("price")));
     }
     return BigDecimal.ZERO;
+  }
+
+  @Override
+  public String getBrand() {
+    if (prod != null) {
+      return prod.attr("brand");
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -63,14 +80,14 @@ public class Euronics extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = doc.selectFirst("span.productDetails__label.productDetails__label--left");
+    Element val = dom.selectFirst("span.productDetails__label.productDetails__label--left");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       StringBuilder sb = new StringBuilder();
 
       sb.append(val.text());
       sb.append(" ");
 
-      val = doc.selectFirst("span.productDetails__label.productDetails__label--right");
+      val = dom.selectFirst("span.productDetails__label.productDetails__label--right");
       if (val != null && StringUtils.isNotBlank(val.text())) {
         sb.append(val.text());
       }
@@ -81,16 +98,8 @@ public class Euronics extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    if (base != null) {
-      return base.attr("brand");
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(doc.select("ul.productDetails__specifications li"));
+    return getValueOnlySpecList(dom.select("ul.productDetails__specifications li"));
   }
 
 }

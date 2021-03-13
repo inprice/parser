@@ -1,5 +1,6 @@
 package io.inprice.parser.websites.ca;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
@@ -7,10 +8,15 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.gargoylesoftware.htmlunit.HttpHeader;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
@@ -28,22 +34,30 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Walmart extends AbstractWebsite {
 
+	private static final Logger log = LoggerFactory.getLogger(Walmart.class);
+
+	private Document dom;
+
 	private String sku;
 	private String name;
 	private String brand;
 	private JSONObject json;
-	
-	private int httpStatus;
-	private String problem;
+	private String features;
 	
 	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+		features = findAPart(html, "featuresSpecifications\":\"", "\",\"type\"");
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
+
+	@Override
 	protected void afterRequest(WebClient webClient) {
-		if (doc == null) {
-			log.warn("Doc is null!");
-			return; 
-		}
-		
-    Elements dataEL = doc.select("script[type='application/ld+json']");
+    Elements dataEL = dom.select("script[type='application/ld+json']");
     if (dataEL != null) {
       for (DataNode dNode : dataEL.dataNodes()) {
         JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
@@ -67,7 +81,7 @@ public class Walmart extends AbstractWebsite {
     	return;
     }
 		
-    String html = doc.html();
+    String html = dom.html();
     
     String ind = "\"item\":{\"id\":\"";
     int pos = html.indexOf(ind)+ind.length();
@@ -102,8 +116,8 @@ public class Walmart extends AbstractWebsite {
 			payload.append("\"}");
 
 			WebRequest req = new WebRequest(new URL("https://www.walmart.ca/api/product-page/v2/price-offer"), HttpMethod.POST);
-			req.setAdditionalHeader("Accept", "application/json");
-			req.setAdditionalHeader("content-type", "application/json");
+  		req.setAdditionalHeader(HttpHeader.ACCEPT, "application/json");
+  		req.setAdditionalHeader(HttpHeader.CONTENT_TYPE, "application/json");
 			req.setRequestBody(payload.toString());
 
 	    WebResponse res = webClient.loadWebResponse(req);
@@ -117,10 +131,10 @@ public class Walmart extends AbstractWebsite {
   	    	}
   	    }
 	    } else {
-	    	httpStatus = res.getStatusCode();
-	    	problem = res.getStatusMessage();
-	    }
-		} catch (Exception e) {
+      	setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), res.getStatusCode());
+      }
+		} catch (IOException e) {
+			setLinkStatus(LinkStatus.NETWORK_ERROR, e.getMessage(), 400);
 			log.error("Failed to post data to Walmart to fetch product price!", e);
 		}
 		
@@ -156,6 +170,11 @@ public class Walmart extends AbstractWebsite {
   }
 
   @Override
+  public String getBrand() {
+    return brand;
+  }
+
+  @Override
   public String getSeller() {
   	if (json != null && json.has("sellerInfo")) {
   		JSONObject sellerInfo = json.getJSONObject("sellerInfo");
@@ -166,12 +185,12 @@ public class Walmart extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-  	Element shipment = doc.selectFirst("div[data-automation='fulfillment-options-shipping']");
+  	Element shipment = dom.selectFirst("div[data-automation='fulfillment-options-shipping']");
   	if (shipment != null) {
       return shipment.text();
     }
 
-  	shipment = doc.selectFirst("div[data-automation='fulfillment-options-pickup']");
+  	shipment = dom.selectFirst("div[data-automation='fulfillment-options-pickup']");
   	if (shipment != null) {
       return shipment.text();
     }
@@ -180,14 +199,7 @@ public class Walmart extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    return brand;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    final String features = findAPart(doc.html(), "featuresSpecifications\":\"", "\",\"type\"");
-
     List<LinkSpec> specList = null;
 
     if (features != null) {
@@ -206,18 +218,13 @@ public class Walmart extends AbstractWebsite {
   }
 
   protected void detectProblem() {
-  	if (problem != null) {
-  		setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), httpStatus);
-  		return;
-  	}
-
-  	String title = doc.title();
+  	String title = dom.title();
 		if (title.contains("Verify Your Identity")) {
 			setLinkStatus(LinkStatus.BLOCKED, "BLOCKED!" + (getRetry() < 3 ? " RETRYING..." : ""));
 			return;
 		}
 
-  	Elements h1s = doc.select("h1");
+  	Elements h1s = dom.select("h1");
   	if (h1s != null && h1s.size() > 0) {
   		for (Element h1: h1s) {
 				if (h1.text().contains("Clean up in Aisle 404")) {

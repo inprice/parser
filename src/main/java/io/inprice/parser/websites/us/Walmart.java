@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -20,6 +22,20 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Walmart extends AbstractWebsite {
 
+	private Document dom;
+	private boolean isAvailable;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+		isAvailable = (html.indexOf("\"availabilityStatus\":\"IN_STOCK\"") > 0);
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
+
   /**
    * Returns availability status looking at html body
    *
@@ -27,12 +43,12 @@ public class Walmart extends AbstractWebsite {
    */
   @Override
   public boolean isAvailable() {
-    return doc.html().contains("\"availabilityStatus\":\"IN_STOCK\"");
+    return isAvailable;
   }
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("meta[itemprop='sku']");
+    Element val = dom.selectFirst("meta[itemprop='sku']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
@@ -41,7 +57,7 @@ public class Walmart extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("h1[itemprop='name']");
+    Element val = dom.selectFirst("h1[itemprop='name']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
@@ -50,7 +66,7 @@ public class Walmart extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.selectFirst("span[itemprop='price']");
+    Element val = dom.selectFirst("span[itemprop='price']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }
@@ -58,8 +74,17 @@ public class Walmart extends AbstractWebsite {
   }
 
   @Override
+  public String getBrand() {
+    Element val = dom.selectFirst("span[itemprop='brand']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
   public String getSeller() {
-    Element val = doc.selectFirst("a[data-tl-id='ProductSellerInfo-SellerName']");
+    Element val = dom.selectFirst("a[data-tl-id='ProductSellerInfo-SellerName']");
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
@@ -70,33 +95,24 @@ public class Walmart extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = doc.selectFirst(".free-shipping-msg");
+    Element val = dom.selectFirst(".free-shipping-msg");
     if (val == null || StringUtils.isBlank(val.text())) {
-      val = doc.selectFirst("div.prod-pickupMessageAccess span");
+      val = dom.selectFirst("div.prod-pickupMessageAccess span");
     }
     if (val == null || StringUtils.isBlank(val.text())) {
-      val = doc.selectFirst("span.copy-small.font-bold");
+      val = dom.selectFirst("span.copy-small.font-bold");
     }
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
 
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
-  public String getBrand() {
-    Element val = doc.selectFirst("span[itemprop='brand']");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(doc.select("div#product-about li"));
+    return getValueOnlySpecList(dom.select("div#product-about li"));
   }
 
 }

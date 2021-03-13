@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -30,15 +32,16 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Otto extends AbstractWebsite {
 
-  /*
-   * the main data provider derived from json placed in html
-   */
+	private Document dom;
+
 	private JSONObject json;
   private JSONObject product;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
 
-  @Override
-  public void getJsonData() {
-    Element val = doc.selectFirst("script#productDataJson");
+    Element val = dom.selectFirst("script#productDataJson");
     if (val != null) {
     	json = new JSONObject(val.dataNodes().get(0).getWholeData());
       if (json.has("variations")) {
@@ -49,7 +52,12 @@ public class Otto extends AbstractWebsite {
         }
       }
     }
-  }
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
 
   @Override
   public boolean isAvailable() {
@@ -64,7 +72,7 @@ public class Otto extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("meta[itemprop='sku']");
+    Element val = dom.selectFirst("meta[itemprop='sku']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
@@ -85,9 +93,9 @@ public class Otto extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.getElementById("reducedPriceAmount");
+    Element val = dom.getElementById("reducedPriceAmount");
     if (val == null || StringUtils.isBlank(val.text())) {
-      val = doc.getElementById("normalPriceAmount");
+      val = dom.getElementById("normalPriceAmount");
     }
 
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
@@ -102,6 +110,14 @@ public class Otto extends AbstractWebsite {
     }
 
     return BigDecimal.ZERO;
+  }
+
+  @Override
+  public String getBrand() {
+    if (json != null && json.has("brand")) {
+      return json.getString("brand");
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -121,16 +137,8 @@ public class Otto extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    if (json != null && json.has("brand")) {
-      return json.getString("brand");
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(doc.select("ul.prd_unorderedList li"));
+    return getValueOnlySpecList(dom.select("ul.prd_unorderedList li"));
   }
 
 }

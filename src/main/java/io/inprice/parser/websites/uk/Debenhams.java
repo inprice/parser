@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -20,26 +22,32 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Debenhams extends AbstractWebsite {
 
-  /*
-   * holds price info set in getJsonData()
-   */
+	private Document dom;
+
 	private JSONObject json;
   private JSONObject offers;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
 
-  @Override
-  public void getJsonData() {
-    Element dataEL = doc.selectFirst("script[type='application/ld+json']");
+    Element dataEL = dom.selectFirst("script[type='application/ld+json']");
     if (dataEL != null) {
     	json = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
       if (json.has("offers")) {
         offers = json.getJSONObject("offers");
       }
     }
-  }
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
 
   @Override
   public boolean isAvailable() {
-    Element val = doc.selectFirst("meta[name='twitter:data2']");
+    Element val = dom.selectFirst("meta[name='twitter:data2']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return "In Stock".equals(val.attr("content"));
     }
@@ -59,7 +67,7 @@ public class Debenhams extends AbstractWebsite {
       }
     }
 
-    Element sku = doc.selectFirst("span.item-number-value");
+    Element sku = dom.selectFirst("span.item-number-value");
     if (sku != null) {
       return sku.text();
     }
@@ -73,7 +81,7 @@ public class Debenhams extends AbstractWebsite {
       return json.getString("name");
     }
 
-    Element val = doc.selectFirst("div#ProductTitle span.title");
+    Element val = dom.selectFirst("div#ProductTitle span.title");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -92,31 +100,13 @@ public class Debenhams extends AbstractWebsite {
         }
       }
       
-      Element val = doc.selectFirst("span.VersionOfferPrice img");
+      Element val = dom.selectFirst("span.VersionOfferPrice img");
       if (val != null && StringUtils.isNotBlank(val.attr("alt"))) {
         return new BigDecimal(cleanDigits(val.attr("alt")));
       }
     }
 
     return BigDecimal.ZERO;
-  }
-
-  @Override
-  public String getSeller() {
-    return "Debenhams";
-  }
-
-  @Override
-  public String getShipment() {
-    Element val = doc.selectFirst("div.pw-dangerous-html.dbh-content");
-    if (val == null || StringUtils.isBlank(val.text())) {
-      val = doc.getElementById("hd3");
-    }
-
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-    return "In-store pickup";
   }
 
   @Override
@@ -133,8 +123,26 @@ public class Debenhams extends AbstractWebsite {
   }
 
   @Override
+  public String getSeller() {
+    return "Debenhams";
+  }
+
+  @Override
+  public String getShipment() {
+    Element val = dom.selectFirst("div.pw-dangerous-html.dbh-content");
+    if (val == null || StringUtils.isBlank(val.text())) {
+      val = dom.getElementById("hd3");
+    }
+
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+    return "In-store pickup";
+  }
+
+  @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(doc.select("div.pw-dangerous-html li"));
+    return getValueOnlySpecList(dom.select("div.pw-dangerous-html li"));
   }
 
 }

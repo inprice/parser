@@ -7,6 +7,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -24,20 +26,18 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Zavvi extends AbstractWebsite {
 
-  /*
-   * the main data provider derived from json placed in html
-   */
-	private JSONObject json;
-  private JSONObject product;
+	private Document dom;
 
-  /**
-   * Returns some info of the product as json
-   *
-   * @return json - partially has product data
-   */
-  @Override
-  public void getJsonData() {
-    Element dataEL = doc.selectFirst("script[type='application/ld+json']");
+	private boolean isAvailable;
+	private JSONObject json;
+  private JSONObject prod;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+		isAvailable = (html.indexOf("'productStatus':'Available'") >= 0);
+
+    Element dataEL = dom.selectFirst("script[type='application/ld+json']");
     if (dataEL != null) {
     	json = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
 
@@ -45,28 +45,27 @@ public class Zavvi extends AbstractWebsite {
         JSONArray offersArray = json.getJSONArray("offers");
         if (!offersArray.isEmpty()) {
           if (offersArray.getJSONObject(0).has("sku")) {
-            product = offersArray.getJSONObject(0);
+            prod = offersArray.getJSONObject(0);
           }
         }
       }
     }
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
   }
 
   @Override
   public boolean isAvailable() {
-    /*
-    Element val = doc.selectFirst("p.productStockInformation_prefix");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text().contains("In stock");
-    }
-    */
-    return doc.html().indexOf("'productStatus':'Available'") >= 0;
+    return isAvailable;
   }
 
   @Override
   public String getSku() {
-    if (product != null) {
-      return product.getString("sku");
+    if (prod != null) {
+      return prod.getString("sku");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -81,24 +80,10 @@ public class Zavvi extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (product != null) {
-      return product.getBigDecimal("price");
+    if (prod != null) {
+      return prod.getBigDecimal("price");
     }
     return BigDecimal.ZERO;
-  }
-
-  @Override
-  public String getSeller() {
-    return "Zavvi";
-  }
-
-  @Override
-  public String getShipment() {
-    Element val = doc.selectFirst("div.productDeliveryAndReturns_message");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -110,9 +95,23 @@ public class Zavvi extends AbstractWebsite {
   }
 
   @Override
+  public String getSeller() {
+    return "Zavvi";
+  }
+
+  @Override
+  public String getShipment() {
+    Element val = dom.selectFirst("div.productDeliveryAndReturns_message");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
   public List<LinkSpec> getSpecList() {
     List<LinkSpec> specList = null;
-    Elements specs = doc.select("div.productDescription_contentWrapper");
+    Elements specs = dom.select("div.productDescription_contentWrapper");
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
       for (Element spec : specs) {

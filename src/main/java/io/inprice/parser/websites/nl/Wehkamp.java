@@ -7,6 +7,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -23,22 +25,20 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Wehkamp extends AbstractWebsite {
 
-  /*
-   * holds price info set in getJsonData()
-   */
+	private Document dom;
+
 	private JSONObject json;
   private JSONObject offers;
   private JSONArray properties;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
 
-  @Override
-  public void getJsonData() {
-    final String props = findAPart(doc.html(), "\"properties\":", "]", 1);
+		String props = findAPart(html, "\"properties\":", "]", 1);
+    if (props != null) properties = new JSONArray(props);
 
-    if (props != null) {
-      properties = new JSONArray(props);
-    }
-
-    Elements dataEL = doc.select("script[type='application/ld+json']");
+    Elements dataEL = dom.select("script[type='application/ld+json']");
     if (dataEL != null && dataEL.size() > 0) {
       for (int i = 0; i < dataEL.size(); i++) {
         if (dataEL.get(i).dataNodes().get(0).getWholeData().indexOf("brand") > 0) {
@@ -49,7 +49,12 @@ public class Wehkamp extends AbstractWebsite {
         }
       }
     }
-  }
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
 
   @Override
   public boolean isAvailable() {
@@ -87,6 +92,14 @@ public class Wehkamp extends AbstractWebsite {
   }
 
   @Override
+  public String getBrand() {
+    if (json != null && json.has("brand")) {
+      return json.getJSONObject("brand").getString("name");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
   public String getSeller() {
     if (offers != null && offers.has("seller")) {
       JSONObject seller = offers.getJSONObject("seller");
@@ -98,16 +111,8 @@ public class Wehkamp extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    if (json != null && json.has("brand")) {
-      return json.getJSONObject("brand").getString("name");
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public String getShipment() {
-    Element val = doc.selectFirst("span.margin-vertical-xsmall.font-weight-light");
+    Element val = dom.selectFirst("span.margin-vertical-xsmall.font-weight-light");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }

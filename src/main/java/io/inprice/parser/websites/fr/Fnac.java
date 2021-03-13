@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -23,19 +25,28 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Fnac extends AbstractWebsite {
 
+	private Document dom;
+
 	protected JSONObject json;
   protected JSONObject offers;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
 
-  @Override
-  public void getJsonData() {
-    Element dataEL = doc.selectFirst("script[type='application/ld+json']");
+		Element dataEL = dom.selectFirst("script[type='application/ld+json']");
     if (dataEL != null) {
     	json = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
       if (json.has("offers")) {
         offers = json.getJSONObject("offers");
       }
     }
-  }
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
 
   @Override
   public boolean isAvailable() {
@@ -76,6 +87,17 @@ public class Fnac extends AbstractWebsite {
   }
 
   @Override
+  public String getBrand() {
+    if (json != null && json.has("brand")) {
+      JSONObject brand = json.getJSONObject("brand");
+      if (brand.has("name")) {
+        return brand.getString("name");
+      }
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
   public String getSeller() {
     if (offers != null && offers.has("seller")) {
       JSONObject seller = offers.getJSONObject("seller");
@@ -88,9 +110,9 @@ public class Fnac extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = doc.selectFirst("p.f-buyBox-shipping");
+    Element val = dom.selectFirst("p.f-buyBox-shipping");
     if (val == null || StringUtils.isBlank(val.text())) {
-      val = doc.selectFirst("div.f-productSpecialsOffers-offerParagraphWrapper");
+      val = dom.selectFirst("div.f-productSpecialsOffers-offerParagraphWrapper");
     }
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
@@ -101,21 +123,10 @@ public class Fnac extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    if (json != null && json.has("brand")) {
-      JSONObject brand = json.getJSONObject("brand");
-      if (brand.has("name")) {
-        return brand.getString("name");
-      }
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
     List<LinkSpec> specList = null;
 
-    Elements specs = doc.select("table.f-productDetails-table tr");
+    Elements specs = dom.select("table.f-productDetails-table tr");
     if (specs != null) {
       specList = new ArrayList<>();
       for (Element spec : specs) {

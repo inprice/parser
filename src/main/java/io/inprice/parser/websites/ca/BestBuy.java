@@ -21,27 +21,28 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class BestBuy extends AbstractWebsite {
 
-  /*
-   * the main data provider derived from json placed in html
-   */
+	private String html;
+
 	private JSONObject json;
   private JSONObject product;
+	
+	@Override
+	protected void setHtml(String html) {
+		this.html = html;
 
-  /**
-   * The data we looking for is in html body. So, we get it by using String
-   * manipulations
-   */
-  @Override
-  public void getJsonData() {
-    String rawJson = findAPart(doc.html(), "\"product\":", ",\"productSellers\":{");
-
+    String rawJson = findAPart(html, "\"product\":", ",\"productSellers\":{");
     if (StringUtils.isNotBlank(rawJson)) {
       json = new JSONObject(rawJson);
       if (json != null && json.has("product")) {
       	product = json.getJSONObject("product");
       }
     }
-  }
+	}
+
+	@Override
+	protected String getHtml() {
+		return html;
+	}
 
   @Override
   public boolean isAvailable() {
@@ -96,6 +97,14 @@ public class BestBuy extends AbstractWebsite {
   }
 
   @Override
+  public String getBrand() {
+    if (product != null && product.has("brandName")) {
+      return product.getString("brandName");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
   public String getSeller() {
     if (product != null && !product.isNull("seller")) {
       JSONObject seller = product.getJSONObject("seller");
@@ -109,14 +118,6 @@ public class BestBuy extends AbstractWebsite {
   @Override
   public String getShipment() {
     return "Sold and shipped by " + getSeller();
-  }
-
-  @Override
-  public String getBrand() {
-    if (product != null && product.has("brandName")) {
-      return product.getString("brandName");
-    }
-    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override

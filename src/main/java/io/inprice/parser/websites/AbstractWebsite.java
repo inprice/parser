@@ -2,7 +2,6 @@ package io.inprice.parser.websites;
 
 import static io.inprice.parser.helpers.Global.WEB_CLIENT_POOL;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,8 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
@@ -26,16 +23,13 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 
 import io.inprice.common.config.SysProps;
-import io.inprice.common.helpers.Beans;
 import io.inprice.common.helpers.SqlHelper;
 import io.inprice.common.meta.AppEnv;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
-import io.inprice.common.models.Platform;
 import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.helpers.HttpClient;
 import kong.unirest.HttpResponse;
 
 /**
@@ -44,34 +38,25 @@ import kong.unirest.HttpResponse;
  */
 public abstract class AbstractWebsite implements Website {
 
-	protected static final Logger log = LoggerFactory.getLogger(AbstractWebsite.class);
-
-	protected HttpClient httpClient = Beans.getSingleton(HttpClient.class);
+	private static final Logger log = LoggerFactory.getLogger(AbstractWebsite.class);
 
 	private Link link;
 	private LinkStatus oldStatus;
 
-	protected Document doc;
-	protected Platform platform;
+	protected abstract void setHtml(String html);
+	protected abstract String getHtml();
 
 	@Override
 	public void check(Link link) {
 		this.link = link;
-		this.platform = link.getPlatform();
 		this.oldStatus = link.getStatus();
 
-		if (willHtmlBePulled()) {
-			if (openPage()) read();
-		} else {
-			read();
-		}
+		if (openPage()) read();
 	}
 
-	protected boolean openPage() {
+	private boolean openPage() {
 		String url = getAlternativeUrl();
-		if (StringUtils.isBlank(url)) {
-			url = getUrl();
-		}
+		if (StringUtils.isBlank(url)) url = getUrl();
 
 		long started = System.currentTimeMillis();
 
@@ -87,7 +72,7 @@ public abstract class AbstractWebsite implements Website {
 
 			WebResponse res = webClient.loadWebResponse(req);
 			if (res.getStatusCode() < 400) {
-  			doc = Jsoup.parse(res.getContentAsString());
+  			setHtml(res.getContentAsString());
   			afterRequest(webClient);
 			} else {
 				problem = res.getStatusMessage();
@@ -125,9 +110,7 @@ public abstract class AbstractWebsite implements Website {
 	}
 
 	private void read() {
-		getJsonData();
-
-		// getJsonData method may return an error. thus, we need to check if it is so
+		//setHtml method may set a different group. thus, we need to check if it is so
 		if (!LinkStatus.ACTIVE_GROUP.equals(link.getStatus().getGroup())) {
 			return;
 		}
@@ -176,53 +159,13 @@ public abstract class AbstractWebsite implements Website {
 
 	}
 
-	public boolean willHtmlBePulled() {
-		return true;
-	}
-
 	@Override
 	public String getUrl() {
-		if (link == null) link = getTestLink();
 		return link.getUrl();
 	}
 	
 	protected int getRetry() {
 		return link.getRetry();
-	}
-
-	@Override
-	public Link test(String fileName) {
-		return test(fileName, null);
-	}
-
-	@Override
-	public Link test(String fileName, HttpClient httpClient) {
-		this.link = getTestLink();
-		if (httpClient != null) this.httpClient = httpClient;
-
-		try {
-			if (willHtmlBePulled()) {
-				URL path = ClassLoader.getSystemResource(fileName);
-				File input = new File(path.toURI());
-				doc = Jsoup.parse(input, "UTF-8");
-			}
-			read();
-		} catch (Exception e) {
-			log.error("Failed to fetch the page during test!", e);
-		}
-		return link;
-	}
-
-	protected Link getTestLink() {
-		return new Link();
-	}
-
-	protected String getAlternativeUrl() {
-		return null;
-	}
-
-	protected void getJsonData() {
-
 	}
 
 	protected List<LinkSpec> getValueOnlySpecList(Elements specs) {
@@ -335,7 +278,7 @@ public abstract class AbstractWebsite implements Website {
 		log.warn(" - Status: {}, Pre.Status: {}, File: {}", link.getStatus().name(), oldStatus.name(), sb.toString());
 		
 		try (PrintWriter out = new PrintWriter(sb.toString())) {
-	    out.println(doc.html());
+	    out.println(getHtml());
 		} catch (FileNotFoundException e) {
 			log.error("Failed to journal the problem!", e);
 		}		
@@ -350,13 +293,9 @@ public abstract class AbstractWebsite implements Website {
 		link.setHttpStatus(404);
 	}
 	
-	protected void beforeRequest(WebRequest req) {
-		//for an implementation you should look at us.bestbuy class
-	}
-	
-	protected void afterRequest(WebClient webClient) {
-		//for an implementation you should look at canadiantire class
-		//for an implementation you should look at walmart class
-	}
+	protected void beforeRequest(WebRequest req) { }
+	protected void afterRequest(WebClient webClient) { }
+
+	protected String getAlternativeUrl() { return null; }
 
 }

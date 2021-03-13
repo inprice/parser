@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import com.gargoylesoftware.htmlunit.HttpHeader;
@@ -19,9 +21,20 @@ import io.inprice.parser.websites.AbstractWebsite;
  * @author mdpinar
  */
 public class BestBuy extends AbstractWebsite {
-	
+
+	private Document dom;
 	private String referer;
 	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
+
 	@Override
 	protected String getAlternativeUrl() {
 		String url = getUrl();
@@ -50,12 +63,12 @@ public class BestBuy extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    return (doc.selectFirst(".inactive-product-message") == null);
+    return (dom.selectFirst(".inactive-product-message") == null);
   }
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst(".sku .product-data-value");
+    Element val = dom.selectFirst(".sku .product-data-value");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -64,7 +77,7 @@ public class BestBuy extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst(".sku-title h1");
+    Element val = dom.selectFirst(".sku-title h1");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -73,11 +86,20 @@ public class BestBuy extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.selectFirst(".priceView-hero-price .sr-only");
+    Element val = dom.selectFirst(".priceView-hero-price .sr-only");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return new BigDecimal(cleanDigits(val.text()));
     }
     return BigDecimal.ZERO;
+  }
+
+  @Override
+  public String getBrand() {
+    Element val = dom.selectFirst("a.btn-brand-link");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -87,7 +109,7 @@ public class BestBuy extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element shippingEL = doc.selectFirst("h5[itemProp='price']");
+    Element shippingEL = dom.selectFirst("h5[itemProp='price']");
     if (shippingEL != null) {
     	String text = shippingEL.text();
     	if (text.toLowerCase().contains("free shipping")) {
@@ -100,17 +122,8 @@ public class BestBuy extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    Element val = doc.selectFirst("a.btn-brand-link");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    return getKeyValueSpecList(doc.select(".specs-table ul"), "li .row-title", "li .row-value");
+    return getKeyValueSpecList(dom.select(".specs-table ul"), "li .row-title", "li .row-value");
   }
 
 }

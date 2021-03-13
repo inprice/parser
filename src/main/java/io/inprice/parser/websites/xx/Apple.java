@@ -22,14 +22,17 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Apple extends AbstractWebsite {
 
+	private String html;
+
 	private JSONObject json;
 	private boolean isAvailable;
 	private String shippingPrice;
-  
-  @Override
-  protected void getJsonData() {
-  	String rawJson = findAPart(doc.html(), "var configData = ", "};", 1);
+	
+	@Override
+	protected void setHtml(String html) {
+		this.html = html;
 
+  	String rawJson = findAPart(html, "var configData = ", "};", 1);
   	if (StringUtils.isNotBlank(rawJson)) {
     	//these tags have no surrounding double quotes, lets add!
     	String[] tagsWODblQuotes = { "productCategoriesData", "initData", "purchaseInfo" };
@@ -55,8 +58,14 @@ public class Apple extends AbstractWebsite {
     		}
     	}
     }
-  }
-  
+		
+	}
+
+	@Override
+	protected String getHtml() {
+		return this.html;
+	}
+
   @Override
   public boolean isAvailable() {
     return isAvailable;

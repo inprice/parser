@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -21,9 +23,21 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Gigas101 extends AbstractWebsite {
 
+	private Document dom;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
+
   @Override
   public boolean isAvailable() {
-    Element val = doc.selectFirst("meta[property='product:availability']");
+    Element val = dom.selectFirst("meta[property='product:availability']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content").trim().contains("instock");
     }
@@ -32,7 +46,7 @@ public class Gigas101 extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("meta[property='product:retailer_part_no']");
+    Element val = dom.selectFirst("meta[property='product:retailer_part_no']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
@@ -41,7 +55,7 @@ public class Gigas101 extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("h1[itemprop='name']");
+    Element val = dom.selectFirst("h1[itemprop='name']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -50,11 +64,20 @@ public class Gigas101 extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.selectFirst("meta[property='product:sale_price:amount']");
+    Element val = dom.selectFirst("meta[property='product:sale_price:amount']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }
     return BigDecimal.ZERO;
+  }
+
+  @Override
+  public String getBrand() {
+    Element val = dom.selectFirst("meta[property='product:brand']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -64,7 +87,7 @@ public class Gigas101 extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Elements vals = doc.select("div.availability div#codigosku");
+    Elements vals = dom.select("div.availability div#codigosku");
     if (vals != null && !vals.isEmpty()) {
       for (int i = 0; i < vals.size(); i++) {
         Element note = vals.get(i);
@@ -77,19 +100,10 @@ public class Gigas101 extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    Element val = doc.selectFirst("meta[property='product:brand']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content");
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
     List<LinkSpec> specList = null;
 
-    Elements specs = doc.select("div#desc_prop tr");
+    Elements specs = dom.select("div#desc_prop tr");
 
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();

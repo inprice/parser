@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -22,15 +24,16 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Bol extends AbstractWebsite {
 
-  /*
-   * holds price info set in getJsonData()
-   */
+	private Document dom;
+
 	private JSONObject json;
   private JSONObject offers;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
 
-  @Override
-  public void getJsonData() {
-    Elements scripts = doc.select("script[type='application/ld+json']");
+    Elements scripts = dom.select("script[type='application/ld+json']");
     if (scripts != null) {
       Element dataEL = null;
       for (Element script : scripts) {
@@ -46,7 +49,12 @@ public class Bol extends AbstractWebsite {
         }
       }
     }
-  }
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
 
   @Override
   public boolean isAvailable() {
@@ -81,17 +89,6 @@ public class Bol extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    if (offers != null && offers.has("seller")) {
-      JSONObject seller = offers.getJSONObject("seller");
-      if (seller.has("name")) {
-        return seller.getString("name");
-      }
-    }
-    return "bol.com";
-  }
-
-  @Override
   public String getBrand() {
     if (json != null && json.has("brand")) {
       JSONObject brand = json.getJSONObject("brand");
@@ -103,8 +100,19 @@ public class Bol extends AbstractWebsite {
   }
 
   @Override
+  public String getSeller() {
+    if (offers != null && offers.has("seller")) {
+      JSONObject seller = offers.getJSONObject("seller");
+      if (seller.has("name")) {
+        return seller.getString("name");
+      }
+    }
+    return "bol.com";
+  }
+
+  @Override
   public String getShipment() {
-    Element val = doc.selectFirst("ul.buy-block__usps.check-list--succes.check-list--usps li");
+    Element val = dom.selectFirst("ul.buy-block__usps.check-list--succes.check-list--usps li");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -115,7 +123,7 @@ public class Bol extends AbstractWebsite {
   public List<LinkSpec> getSpecList() {
     List<LinkSpec> specList = null;
 
-    Elements specs = doc.select("dl.specs__list");
+    Elements specs = dom.select("dl.specs__list");
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
       for (Element spec : specs) {

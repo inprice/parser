@@ -20,15 +20,18 @@ import io.inprice.parser.websites.AbstractWebsite;
  * @author mdpinar
  */
 public class Zalando extends AbstractWebsite {
+
+	private String html;
 	
 	private JSONObject info;
 	private JSONObject price;
 	private JSONArray details;
 	
 	@Override
-	protected void getJsonData() {
-		String rawJson = findAPart(doc.html(), "![CDATA[{\"layout\"", "}]]", 1, 8);
-		
+	protected void setHtml(String html) {
+		this.html = html;
+
+		String rawJson = findAPart(html, "![CDATA[{\"layout\"", "}]]", 1, 8);
 		if (StringUtils.isNotBlank(rawJson)) {
 			JSONObject json = new JSONObject(rawJson);
 			if (json != null && json.has("model")) {
@@ -48,6 +51,11 @@ public class Zalando extends AbstractWebsite {
 		}
 	}
 
+	@Override
+	protected String getHtml() {
+		return html;
+	}
+	
   @Override
   public boolean isAvailable() {
   	if (info != null && info.has("available")) {
@@ -85,16 +93,6 @@ public class Zalando extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Zalando";
-  }
-
-  @Override
-  public String getShipment() {
-    return "Standard";
-  }
-
-  @Override
   public String getBrand() {
   	if (info != null && info.has("brand")) {
   		JSONObject brand = info.getJSONObject("brand");
@@ -103,6 +101,16 @@ public class Zalando extends AbstractWebsite {
   		}
   	}
     return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public String getSeller() {
+    return "Zalando";
+  }
+
+  @Override
+  public String getShipment() {
+    return "Standard";
   }
 
   @Override

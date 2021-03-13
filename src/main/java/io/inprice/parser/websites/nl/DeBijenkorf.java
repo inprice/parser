@@ -7,6 +7,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -22,28 +24,37 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class DeBijenkorf extends AbstractWebsite {
 
-	private JSONObject json;
-  private JSONObject variant;
+	private Document dom;
 
-  @Override
-  protected void getJsonData() {
-    final String prodData = findAPart(doc.html(), "Data.product =", "};", 1);
+	private JSONObject json;
+  private JSONObject prod;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+
+    String prodData = findAPart(html, "Data.product =", "};", 1);
 
     if (prodData != null) {
       JSONObject data = new JSONObject(prodData);
       if (data.has("product")) {
       	json = data.getJSONObject("product");
         if (json.has("currentVariantProduct")) {
-          variant = json.getJSONObject("currentVariantProduct");
+          prod = json.getJSONObject("currentVariantProduct");
         }
       }
     }
-  }
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
 
   @Override
   public boolean isAvailable() {
-    if (variant != null && variant.has("availability")) {
-      JSONObject availability = variant.getJSONObject("availability");
+    if (prod != null && prod.has("availability")) {
+      JSONObject availability = prod.getJSONObject("availability");
       return availability.has("available") && availability.getBoolean("available");
     }
     return false;
@@ -67,25 +78,11 @@ public class DeBijenkorf extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (variant != null && variant.has("sellingPrice")) {
-      JSONObject sellingPrice = variant.getJSONObject("sellingPrice");
+    if (prod != null && prod.has("sellingPrice")) {
+      JSONObject sellingPrice = prod.getJSONObject("sellingPrice");
       return sellingPrice.getBigDecimal("value");
     }
     return BigDecimal.ZERO;
-  }
-
-  @Override
-  public String getSeller() {
-    return "DeBijenkorf";
-  }
-
-  @Override
-  public String getShipment() {
-    Element val = doc.selectFirst("a[href='#dbk-ocp-delivery-info']");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -95,6 +92,20 @@ public class DeBijenkorf extends AbstractWebsite {
       if (brand.has("name")) {
         return brand.getString("name");
       }
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public String getSeller() {
+    return "DeBijenkorf";
+  }
+
+  @Override
+  public String getShipment() {
+    Element val = dom.selectFirst("a[href='#dbk-ocp-delivery-info']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }

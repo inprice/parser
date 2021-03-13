@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -20,22 +22,28 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class CoolBlue extends AbstractWebsite {
 
-  /*
-   * holds price info set in getJsonData()
-   */
+	private Document dom;
+
 	private JSONObject json;
   private JSONObject offers;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
 
-  @Override
-  public void getJsonData() {
-    Element dataEL = doc.selectFirst("script[type='application/ld+json']");
+    Element dataEL = dom.selectFirst("script[type='application/ld+json']");
     if (dataEL != null) {
     	json = new JSONObject(dataEL.dataNodes().get(0).getWholeData().replace("\r\n", " "));
       if (json.has("offers")) {
         offers = json.getJSONObject("offers");
       }
     }
-  }
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
 
   @Override
   public boolean isAvailable() {
@@ -73,11 +81,6 @@ public class CoolBlue extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "CoolBlue";
-  }
-
-  @Override
   public String getBrand() {
     if (json != null && json.has("brand")) {
       return json.getJSONObject("brand").getString("name");
@@ -86,8 +89,13 @@ public class CoolBlue extends AbstractWebsite {
   }
 
   @Override
+  public String getSeller() {
+    return "CoolBlue";
+  }
+
+  @Override
   public String getShipment() {
-    Element val = doc.selectFirst("span.js-delivery-information-usp");
+    Element val = dom.selectFirst("span.js-delivery-information-usp");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -96,7 +104,7 @@ public class CoolBlue extends AbstractWebsite {
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return getKeyValueSpecList(doc.select("div.product-specs__list-item.js-product-specs--list-item"),
+    return getKeyValueSpecList(dom.select("div.product-specs__list-item.js-product-specs--list-item"),
         ".product-specs__item-title", ".product-specs__item-spec");
   }
 

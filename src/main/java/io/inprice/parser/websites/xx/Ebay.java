@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -22,38 +24,45 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Ebay extends AbstractWebsite {
 
-  private String brand = Consts.Words.NOT_AVAILABLE;
+	private Document dom;
+	
+  private String brand;
   private List<LinkSpec> specList;
 
-  @Override
-  protected void getJsonData() {
-    // for handling brand name at first hand
-    buildSpecList();
-  }
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+		buildSpecList();
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
 
   @Override
   public boolean isAvailable() {
-    Element val = doc.getElementById("vi-quantity__select-box");
+    Element val = dom.getElementById("vi-quantity__select-box");
     if (val != null) return true;
 
-    val = doc.selectFirst("#qtySubTxt span");
+    val = dom.selectFirst("#qtySubTxt span");
     if (val != null) return true;
 
-    val = doc.selectFirst("a[data-action-name='BUY_IT_NOW']");
+    val = dom.selectFirst("a[data-action-name='BUY_IT_NOW']");
     if (val != null) return true;
 
-    val = doc.selectFirst("span[itemprop='availableAtOrFrom']");
+    val = dom.selectFirst("span[itemprop='availableAtOrFrom']");
     return (val != null);
   }
 
   @Override
   public String getSku() {
-    Element val = doc.getElementById("descItemNumber");
+    Element val = dom.getElementById("descItemNumber");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
 
-    val = doc.selectFirst("a[data-itemid]");
+    val = dom.selectFirst("a[data-itemid]");
     if (val != null && StringUtils.isNotBlank(val.attr("data-itemid"))) {
       return val.attr("data-itemid");
     }
@@ -62,19 +71,19 @@ public class Ebay extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("span#vi-lkhdr-itmTitl");
-    if (val == null) val = doc.selectFirst("title");
+    Element val = dom.selectFirst("span#vi-lkhdr-itmTitl");
+    if (val == null) val = dom.selectFirst("title");
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
 
-    val = doc.selectFirst("h1.product-title");
+    val = dom.selectFirst("h1.product-title");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
 
-    val = doc.selectFirst("a[data-itemid]");
+    val = dom.selectFirst("a[data-itemid]");
     if (val != null && StringUtils.isNotBlank(val.attr("etafsharetitle"))) {
       return val.attr("etafsharetitle");
     }
@@ -85,26 +94,26 @@ public class Ebay extends AbstractWebsite {
   public BigDecimal getPrice() {
     String strPrice = null;
 
-    Element val = doc.getElementById("convbinPrice");
-    if (val == null) val = doc.getElementById("convbidPrice");
+    Element val = dom.getElementById("convbinPrice");
+    if (val == null) val = dom.getElementById("convbidPrice");
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
       strPrice = val.text();
     } else {
-      val = doc.getElementById("prcIsum");
-      if (val == null) val = doc.getElementById("prcIsum_bidPrice");
+      val = dom.getElementById("prcIsum");
+      if (val == null) val = dom.getElementById("prcIsum_bidPrice");
 
       if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
         strPrice = val.attr("content");
       } else {
-        val = doc.getElementById("mm-saleDscPrc");
+        val = dom.getElementById("mm-saleDscPrc");
         if (val != null && StringUtils.isNotBlank(val.text())) {
           strPrice = val.text();
         }
       }
 
       if (val == null) {
-        val = doc.selectFirst("div.price");
+        val = dom.selectFirst("div.price");
         if (val != null && StringUtils.isNotBlank(val.text())) {
           strPrice = val.text();
         }
@@ -118,8 +127,13 @@ public class Ebay extends AbstractWebsite {
   }
 
   @Override
+  public String getBrand() {
+    return brand;
+  }
+
+  @Override
   public String getSeller() {
-    Element val = doc.getElementById("mbgLink");
+    Element val = dom.getElementById("mbgLink");
 
     if (val != null && StringUtils.isNotBlank(val.attr("aria-label"))) {
       String[] sellerChunks = val.attr("aria-label").split(":");
@@ -127,8 +141,8 @@ public class Ebay extends AbstractWebsite {
         return sellerChunks[1];
       }
     } else {
-      val = doc.selectFirst("div.seller-persona a");
-      if (val == null) val = doc.selectFirst("span.mbg-nw");
+      val = dom.selectFirst("div.seller-persona a");
+      if (val == null) val = dom.selectFirst("span.mbg-nw");
 
       if (val != null && StringUtils.isNotBlank(val.text())) {
         return val.text();
@@ -140,37 +154,32 @@ public class Ebay extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = doc.getElementById("fshippingCost");
+    Element val = dom.getElementById("fshippingCost");
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
       String left = val.text();
       String right = "";
 
-      val = doc.getElementById("fShippingSvc");
+      val = dom.getElementById("fShippingSvc");
       if (val != null && StringUtils.isNotBlank(val.text())) {
         right = val.text();
       }
       return left + " " + right;
     }
 
-    val = doc.selectFirst("#shSummary span");
-    if (val == null || StringUtils.isBlank(val.text())) val = doc.selectFirst("span.logistics-cost");
+    val = dom.selectFirst("#shSummary span");
+    if (val == null || StringUtils.isBlank(val.text())) val = dom.selectFirst("span.logistics-cost");
 
     if (val != null && StringUtils.isNotBlank(val.text()) && !"|".equals(val.text().trim())) {
       return val.text();
     } else {
-      val = doc.getElementById("shSummary");
+      val = dom.getElementById("shSummary");
       if (val != null && StringUtils.isNotBlank(val.text())) {
         return val.text();
       }
     }
 
     return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
-  public String getBrand() {
-    return brand;
   }
 
   @Override
@@ -181,7 +190,9 @@ public class Ebay extends AbstractWebsite {
   private final String BRAND_WORDS = "(Brand|Marca|Marke|Marque).";
 
   private void buildSpecList() {
-    Elements specs = doc.select("table[role='presentation']:not(#itmSellerDesc) tr");
+  	brand = Consts.Words.NOT_AVAILABLE;
+
+    Elements specs = dom.select("table[role='presentation']:not(#itmSellerDesc) tr");
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
       for (Element row : specs) {
@@ -205,7 +216,7 @@ public class Ebay extends AbstractWebsite {
         }
       }
     } else {
-      specs = doc.select("#ProductDetails li div");
+      specs = dom.select("#ProductDetails li div");
       if (specs != null && specs.size() > 0) {
         specList = new ArrayList<>();
         for (int i = 0; i < specs.size(); i++) {

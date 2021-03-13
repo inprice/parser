@@ -7,6 +7,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -22,12 +24,18 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Laredoute extends AbstractWebsite {
 
+	private Document dom;
+	private String price;
+
 	private JSONObject json;
   private JSONObject offers;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+		price = findAPart(html, "\"SalePriceAfterWithCharges\":", ",");
 
-  @Override
-  protected void getJsonData() {
-    Element dataEL = doc.selectFirst("script[type='application/ld+json']");
+		Element dataEL = dom.selectFirst("script[type='application/ld+json']");
     if (dataEL != null) {
     	json = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
       if (json.has("offers")) {
@@ -38,7 +46,12 @@ public class Laredoute extends AbstractWebsite {
         } catch (Exception e) { }
       }
     }
-  }
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
 
   @Override
   public boolean isAvailable() {
@@ -51,7 +64,7 @@ public class Laredoute extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = doc.getElementById("vendorsList");
+    Element val = dom.getElementById("vendorsList");
     if (val != null && StringUtils.isNotBlank(val.attr("data-prodid"))) {
       return val.attr("data-prodid");
     }
@@ -69,8 +82,6 @@ public class Laredoute extends AbstractWebsite {
   @Override
   public BigDecimal getPrice() {
     if (isAvailable()) {
-      final String price = findAPart(doc.html(), "\"SalePriceAfterWithCharges\":", ",");
-
       if (price != null) {
         return new BigDecimal(cleanDigits(price));
       }
@@ -80,6 +91,17 @@ public class Laredoute extends AbstractWebsite {
       }
     }
     return BigDecimal.ZERO;
+  }
+
+  @Override
+  public String getBrand() {
+    if (json != null && json.has("brand")) {
+      JSONObject brand = json.getJSONObject("brand");
+      if (brand.has("name")) {
+        return brand.getString("name");
+      }
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -95,7 +117,7 @@ public class Laredoute extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = doc.selectFirst("li.delivery-info-item.delivery-info.delivery-info-content");
+    Element val = dom.selectFirst("li.delivery-info-item.delivery-info.delivery-info-content");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -103,20 +125,9 @@ public class Laredoute extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    if (json != null && json.has("brand")) {
-      JSONObject brand = json.getJSONObject("brand");
-      if (brand.has("name")) {
-        return brand.getString("name");
-      }
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
     List<LinkSpec> specList = null;
-    Element specs = doc.getElementsByTag("dscpdp").first();
+    Element specs = dom.getElementsByTag("dscpdp").first();
     if (specs != null) {
       String[] specChunks;
       if (specs.text().indexOf("•") > 0)

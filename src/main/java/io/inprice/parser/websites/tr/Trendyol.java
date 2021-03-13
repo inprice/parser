@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -21,15 +23,27 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Trendyol extends AbstractWebsite {
 
+	private Document dom;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
+
   @Override
   public boolean isAvailable() {
-    Element val = doc.selectFirst("button.add-to-bs");
+    Element val = dom.selectFirst("button.add-to-bs");
     return (val != null);
   }
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("link[rel='canonical']");
+    Element val = dom.selectFirst("link[rel='canonical']");
     if (val != null && StringUtils.isNotBlank(val.attr("href"))) {
       String[] linkChunks = val.attr("href").split("-");
       if (linkChunks.length > 0) {
@@ -41,12 +55,12 @@ public class Trendyol extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("meta[name='twitter:title']");
+    Element val = dom.selectFirst("meta[name='twitter:title']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
 
-    val = doc.selectFirst("pr-nm");
+    val = dom.selectFirst("pr-nm");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -55,7 +69,7 @@ public class Trendyol extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.selectFirst("meta[name='twitter:data1']");
+    Element val = dom.selectFirst("meta[name='twitter:data1']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }
@@ -63,13 +77,23 @@ public class Trendyol extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    Element val = doc.selectFirst("span.pr-in-dt-spn");
+  public String getBrand() {
+    Element val = dom.selectFirst("div.pr-in-cn div.pr-in-br a");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
 
-    val = doc.selectFirst("meta[name='twitter:description']");
+    return getSeller();
+  }
+
+  @Override
+  public String getSeller() {
+    Element val = dom.selectFirst("span.pr-in-dt-spn");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+
+    val = dom.selectFirst("meta[name='twitter:description']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       String[] sellerChunks = val.attr("content").split(":");
       if (sellerChunks.length > 0) {
@@ -82,12 +106,12 @@ public class Trendyol extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = doc.selectFirst("div.stamp.crg div");
+    Element val = dom.selectFirst("div.stamp.crg div");
     if (val != null) {
       return "Kargo Bedava";
     }
 
-    val = doc.selectFirst("span.pr-in-dt-spn");
+    val = dom.selectFirst("span.pr-in-dt-spn");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text().trim() + " tarafından gönderilecektir.";
     }
@@ -95,20 +119,10 @@ public class Trendyol extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    Element val = doc.selectFirst("div.pr-in-cn div.pr-in-br a");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-
-    return getSeller();
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
     List<LinkSpec> specList = null;
 
-    Elements specs = doc.select("div.pr-in-dt-cn ul span li");
+    Elements specs = dom.select("div.pr-in-dt-cn ul span li");
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
       for (Element spec : specs) {

@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -17,9 +19,21 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Sanal extends AbstractWebsite {
 
+	private Document dom;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
+
   @Override
   public boolean isAvailable() {
-    Element val = doc.getElementById("available");
+    Element val = dom.getElementById("available");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return Boolean.parseBoolean(val.text().trim());
     }
@@ -28,7 +42,7 @@ public class Sanal extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = doc.getElementById("sku");
+    Element val = dom.getElementById("sku");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -37,7 +51,7 @@ public class Sanal extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.getElementById("name");
+    Element val = dom.getElementById("name");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -46,7 +60,7 @@ public class Sanal extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.getElementById("price");
+    Element val = dom.getElementById("price");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return new BigDecimal(cleanDigits(val.text()));
     }
@@ -55,7 +69,7 @@ public class Sanal extends AbstractWebsite {
 
   @Override
   public String getSeller() {
-    Element val = doc.getElementById("seller");
+    Element val = dom.getElementById("seller");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -64,7 +78,7 @@ public class Sanal extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = doc.getElementById("shipment");
+    Element val = dom.getElementById("shipment");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -73,7 +87,7 @@ public class Sanal extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element val = doc.getElementById("brand");
+    Element val = dom.getElementById("brand");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }

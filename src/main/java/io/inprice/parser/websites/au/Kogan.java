@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -19,19 +21,31 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Kogan extends AbstractWebsite {
 
+	private Document dom;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
+
   @Override
   public boolean isAvailable() {
-    return (doc.getElementById("form-add-to-cart") != null);
+    return (dom.getElementById("form-add-to-cart") != null);
   }
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("meta[itemProp='sku']");
+    Element val = dom.selectFirst("meta[itemProp='sku']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
     
-    val = doc.selectFirst("p[itemProp='model']");
+    val = dom.selectFirst("p[itemProp='model']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -41,12 +55,12 @@ public class Kogan extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("meta[property='og:title']");
+    Element val = dom.selectFirst("meta[property='og:title']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
     
-    val = doc.selectFirst("h1[itemprop='name']");
+    val = dom.selectFirst("h1[itemprop='name']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -56,12 +70,12 @@ public class Kogan extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.selectFirst("meta[property='product:price:amount']");
+    Element val = dom.selectFirst("meta[property='product:price:amount']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }
     
-    val = doc.selectFirst("h5[itemProp='price']");
+    val = dom.selectFirst("h5[itemProp='price']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }
@@ -69,8 +83,17 @@ public class Kogan extends AbstractWebsite {
   }
 
   @Override
+  public String getBrand() {
+    Element val = dom.selectFirst("meta[itemProp='name']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
+    }
+    return "Kogan";
+  }
+
+  @Override
   public String getSeller() {
-    Element val = doc.selectFirst("a[href$='terms-and-conditions']");
+    Element val = dom.selectFirst("a[href$='terms-and-conditions']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -79,7 +102,7 @@ public class Kogan extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element shippingEL = doc.selectFirst("h5[itemProp='price']");
+    Element shippingEL = dom.selectFirst("h5[itemProp='price']");
     if (shippingEL != null) {
     	String text = shippingEL.text();
     	if (text.toLowerCase().contains("free shipping")) {
@@ -92,17 +115,8 @@ public class Kogan extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    Element val = doc.selectFirst("meta[itemProp='name']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content");
-    }
-    return "Kogan";
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    return getKeyValueSpecList(doc.select("section#specs-accordion dl"), "dt", "dd");
+    return getKeyValueSpecList(dom.select("section#specs-accordion dl"), "dt", "dd");
   }
 
 }

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -22,13 +24,21 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Lidl extends AbstractWebsite {
 
+	private Document dom;
 	private JSONObject json;
 	
-  @Override
-  public void getJsonData() {
-    String prodData = findAPart(doc.html(), "var dynamic_tm_data = ", "};", 1);
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+
+		String prodData = findAPart(html, "var dynamic_tm_data = ", "};", 1);
     if (prodData != null) json = new JSONObject(prodData);
-  }
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
 
   @Override
   public boolean isAvailable() {
@@ -63,26 +73,12 @@ public class Lidl extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Lidl";
-  }
-
-  @Override
-  public String getShipment() {
-    Element shipment = doc.selectFirst("div.delivery span");
-    if (shipment != null) {
-      return shipment.text();
-    }
-    return "In-store pickup";
-  }
-
-  @Override
   public String getBrand() {
     if (json != null && json.has("productbrand")) {
       return json.getString("productbrand");
     }
 
-    Element brand = doc.selectFirst("div.brand div.brand__claim");
+    Element brand = dom.selectFirst("div.brand div.brand__claim");
     if (brand != null && !brand.text().isEmpty()) {
       return brand.text();
     }
@@ -96,10 +92,24 @@ public class Lidl extends AbstractWebsite {
   }
 
   @Override
+  public String getSeller() {
+    return "Lidl";
+  }
+
+  @Override
+  public String getShipment() {
+    Element shipment = dom.selectFirst("div.delivery span");
+    if (shipment != null) {
+      return shipment.text();
+    }
+    return "In-store pickup";
+  }
+
+  @Override
   public List<LinkSpec> getSpecList() {
     List<LinkSpec> specList = null;
 
-    Elements specs = doc.select("div.product-detail-hero li");
+    Elements specs = dom.select("div.product-detail-hero li");
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
       for (Element spec : specs) {
@@ -110,9 +120,9 @@ public class Lidl extends AbstractWebsite {
       return specList;
     }
 
-    specs = doc.select("div.attributebox__keyfacts li");
+    specs = dom.select("div.attributebox__keyfacts li");
     if (specs == null || specs.size() == 0)
-      specs = doc.select("div#detail-tab-0 li");
+      specs = dom.select("div#detail-tab-0 li");
 
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
@@ -133,7 +143,7 @@ public class Lidl extends AbstractWebsite {
     }
 
     if (specs == null || specs.size() == 0)
-      return getValueOnlySpecList(doc.select("div#detailtabProductDescriptionTab li"));
+      return getValueOnlySpecList(dom.select("div#detailtabProductDescriptionTab li"));
 
     return specList;
   }

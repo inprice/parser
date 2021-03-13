@@ -5,6 +5,8 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -22,9 +24,21 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Amazon extends AbstractWebsite {
 
+	private Document dom;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
+
   @Override
   public boolean isAvailable() {
-    Element val = doc.getElementById("availability");
+    Element val = dom.getElementById("availability");
     if (val != null) {
       Element span = val.selectFirst("span.a-color-success");
       if (span == null) {
@@ -35,20 +49,20 @@ public class Amazon extends AbstractWebsite {
       return (val.text().toLowerCase().indexOf("in stock") > -1);
     }
 
-    val = doc.getElementById("ebooksProductTitle");
-    if (val == null) val = doc.getElementById("add-to-cart-button");
+    val = dom.getElementById("ebooksProductTitle");
+    if (val == null) val = dom.getElementById("add-to-cart-button");
 
     return (val != null);
   }
 
   @Override
   public String getSku() {
-    Element val = doc.getElementById("ASIN");
+    Element val = dom.getElementById("ASIN");
     if (val != null && StringUtils.isNotBlank(val.val())) {
       return val.val();
     }
 
-    val = doc.selectFirst("input[name='ASIN.0']");
+    val = dom.selectFirst("input[name='ASIN.0']");
     if (val != null && StringUtils.isNotBlank(val.val())) {
       return val.val();
     }
@@ -58,9 +72,9 @@ public class Amazon extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.getElementById("productTitle");
+    Element val = dom.getElementById("productTitle");
     if (val == null || StringUtils.isBlank(val.text())) {
-      val = doc.getElementById("ebooksProductTitle");
+      val = dom.getElementById("ebooksProductTitle");
     }
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
@@ -84,11 +98,11 @@ public class Amazon extends AbstractWebsite {
   public BigDecimal getPrice() {
     String strPrice = null;
 
-    Element price = doc.getElementById("priceblock_dealprice");
+    Element price = dom.getElementById("priceblock_dealprice");
     if (price == null) {
-      price = doc.getElementById("priceblock_ourprice");
+      price = dom.getElementById("priceblock_ourprice");
       if (price != null) {
-      	price = doc.getElementById("price_inside_buybox");
+      	price = dom.getElementById("price_inside_buybox");
       	if (price != null) {
           Element integer = price.selectFirst("span.price-large");
           if (integer != null) {
@@ -103,27 +117,27 @@ public class Amazon extends AbstractWebsite {
     }
 
     if (price == null)
-      price = doc.selectFirst("div#buybox span.a-color-price");
+      price = dom.selectFirst("div#buybox span.a-color-price");
 
     if (price != null) {
       strPrice = price.text();
     } else {
-      price = doc.getElementById("cerberus-data-metrics");
+      price = dom.getElementById("cerberus-data-metrics");
       if (price != null)
         strPrice = price.attr("data-asin-price");
     }
 
     if (strPrice == null || strPrice.isEmpty()) {
-      price = doc.selectFirst(".header-price");
+      price = dom.selectFirst(".header-price");
       if (price == null)
-        price = doc.selectFirst("span.a-size-base.a-color-price.a-color-price");
+        price = dom.selectFirst("span.a-size-base.a-color-price.a-color-price");
       if (price == null)
-        price = doc.selectFirst(".a-size-medium.a-color-price.offer-price.a-text-normal");
+        price = dom.selectFirst(".a-size-medium.a-color-price.offer-price.a-text-normal");
 
       if (price != null) {
         strPrice = price.text();
       } else {
-        price = doc.selectFirst(".price-large");
+        price = dom.selectFirst(".price-large");
         if (price != null) {
           String left = cleanDigits(price.text());
           String right = "00";
@@ -133,7 +147,7 @@ public class Amazon extends AbstractWebsite {
           strPrice = left + "." + right;
         } else {
           // if price is a range like 100 - 300
-          price = doc.getElementById("priceblock_ourprice");
+          price = dom.getElementById("priceblock_ourprice");
         }
       }
     }
@@ -158,10 +172,34 @@ public class Amazon extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    Element val = doc.getElementById("sellerProfileTriggerId");
+  public String getBrand() {
+    Element val = dom.getElementById("mbc");
+    if (val != null && StringUtils.isNotBlank(val.attr("data-brand"))) {
+      return val.attr("data-brand");
+    }
+
+    val = dom.getElementById("bylineInfo");
     if (val == null || StringUtils.isBlank(val.text())) {
-      val = doc.selectFirst("span.mbcMerchantName");
+      val = dom.selectFirst("span.ac-keyword-link a");
+    }
+
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+
+    val = dom.selectFirst("span[data-hook='cm_cr_skyfall_medley_group']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+
+    return "Amazon";
+  }
+
+  @Override
+  public String getSeller() {
+    Element val = dom.getElementById("sellerProfileTriggerId");
+    if (val == null || StringUtils.isBlank(val.text())) {
+      val = dom.selectFirst("span.mbcMerchantName");
     }
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
@@ -172,21 +210,21 @@ public class Amazon extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = doc.getElementById("price-shipping-message");
+    Element val = dom.getElementById("price-shipping-message");
 
-    if (val == null || StringUtils.isBlank(val.text())) val = doc.selectFirst(".shipping3P");
-    if (val == null || StringUtils.isBlank(val.text())) val = doc.getElementById("mbc-shipping-free-1");
-    if (val == null || StringUtils.isBlank(val.text())) val = doc.getElementById("mbc-shipping-sss-returns-free-1");
-    if (val == null || StringUtils.isBlank(val.text())) val = doc.getElementById("mbc-shipping-sss-eligible-1");
-    if (val == null || StringUtils.isBlank(val.text())) val = doc.getElementById("ddmDeliveryMessage");
-    if (val == null || StringUtils.isBlank(val.text())) val = doc.getElementById("deliverTo");
-    if (val == null || StringUtils.isBlank(val.text())) val = doc.getElementById("delivery-message");
+    if (val == null || StringUtils.isBlank(val.text())) val = dom.selectFirst(".shipping3P");
+    if (val == null || StringUtils.isBlank(val.text())) val = dom.getElementById("mbc-shipping-free-1");
+    if (val == null || StringUtils.isBlank(val.text())) val = dom.getElementById("mbc-shipping-sss-returns-free-1");
+    if (val == null || StringUtils.isBlank(val.text())) val = dom.getElementById("mbc-shipping-sss-eligible-1");
+    if (val == null || StringUtils.isBlank(val.text())) val = dom.getElementById("ddmDeliveryMessage");
+    if (val == null || StringUtils.isBlank(val.text())) val = dom.getElementById("deliverTo");
+    if (val == null || StringUtils.isBlank(val.text())) val = dom.getElementById("delivery-message");
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text().replaceAll("Learn more", "");
     }
 
-    val = doc.getElementById("buybox-see-all-buying-choices-announce");
+    val = dom.getElementById("buybox-see-all-buying-choices-announce");
     if (val != null) {
       return "See all offers";
     }
@@ -195,34 +233,10 @@ public class Amazon extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    Element val = doc.getElementById("mbc");
-    if (val != null && StringUtils.isNotBlank(val.attr("data-brand"))) {
-      return val.attr("data-brand");
-    }
-
-    val = doc.getElementById("bylineInfo");
-    if (val == null || StringUtils.isBlank(val.text())) {
-      val = doc.selectFirst("span.ac-keyword-link a");
-    }
-
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-
-    val = doc.selectFirst("span[data-hook='cm_cr_skyfall_medley_group']");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-
-    return "Amazon";
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = getValueOnlySpecList(doc.select("#feature-bullets li:not(.aok-hidden)"));
+    List<LinkSpec> specList = getValueOnlySpecList(dom.select("#feature-bullets li:not(.aok-hidden)"));
     if (specList == null) {
-      specList = getValueOnlySpecList(doc.select("div.content ul li"));
+      specList = getValueOnlySpecList(dom.select("div.content ul li"));
     }
     return specList;
   }

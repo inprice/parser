@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -22,15 +24,16 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class CDiscount extends AbstractWebsite {
 
-  /*
-   * holds price info set in getJsonData()
-   */
+	private Document dom;
+
 	private JSONObject json;
   private JSONObject offers;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
 
-  @Override
-  public void getJsonData() {
-    Elements scripts = doc.select("script[type='application/ld+json']");
+    Elements scripts = dom.select("script[type='application/ld+json']");
     if (scripts != null && StringUtils.isNotBlank(scripts.html())) {
       
     	Element dataEL = null;
@@ -47,7 +50,12 @@ public class CDiscount extends AbstractWebsite {
         }
       }
     }
-  }
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
 
   @Override
   public boolean isAvailable() {
@@ -84,10 +92,21 @@ public class CDiscount extends AbstractWebsite {
   }
 
   @Override
+  public String getBrand() {
+    if (json != null && json.has("brand")) {
+      JSONObject merchant = json.getJSONObject("brand");
+      if (merchant.has("name")) {
+        return merchant.getString("name");
+      }
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
   public String getSeller() {
-    Element seller = doc.selectFirst("a.fpSellerName");
+    Element seller = dom.selectFirst("a.fpSellerName");
     if (seller == null)
-      seller = doc.selectFirst("span.logoCDS");
+      seller = dom.selectFirst("span.logoCDS");
 
     if (seller != null) {
       return seller.text();
@@ -101,21 +120,10 @@ public class CDiscount extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    if (json != null && json.has("brand")) {
-      JSONObject merchant = json.getJSONObject("brand");
-      if (merchant.has("name")) {
-        return merchant.getString("name");
-      }
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
     List<LinkSpec> specList = null;
 
-    Elements specs = doc.select("div#fpBulletPointReadMore li");
+    Elements specs = dom.select("div#fpBulletPointReadMore li");
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
       for (Element spec : specs) {
@@ -129,7 +137,7 @@ public class CDiscount extends AbstractWebsite {
     }
 
     if (specList == null) {
-      specs = doc.select("table.fpDescTb tr");
+      specs = dom.select("table.fpDescTb tr");
       if (specs != null && specs.size() > 0) {
         specList = new ArrayList<>();
         for (Element spec : specs) {

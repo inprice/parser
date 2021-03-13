@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -21,9 +23,21 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class EPrice extends AbstractWebsite {
 
+	private Document dom;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
+
   @Override
   public boolean isAvailable() {
-    Element val = doc.selectFirst("meta[itemprop='availability']");
+    Element val = dom.selectFirst("meta[itemprop='availability']");
     if (val != null) {
       return val.attr("content").contains("InStock");
     }
@@ -32,7 +46,7 @@ public class EPrice extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("meta[itemprop='sku']");
+    Element val = dom.selectFirst("meta[itemprop='sku']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
@@ -41,7 +55,7 @@ public class EPrice extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("h1[itemprop='name']");
+    Element val = dom.selectFirst("h1[itemprop='name']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -50,7 +64,7 @@ public class EPrice extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.selectFirst("span[itemprop='price']");
+    Element val = dom.selectFirst("span[itemprop='price']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return new BigDecimal(cleanDigits(val.text()));
     }
@@ -58,8 +72,17 @@ public class EPrice extends AbstractWebsite {
   }
 
   @Override
+  public String getBrand() {
+    Element val = dom.selectFirst("meta[itemprop='brand']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
   public String getSeller() {
-    Element val = doc.selectFirst("p.infoSeller a strong");
+    Element val = dom.selectFirst("p.infoSeller a strong");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -72,19 +95,10 @@ public class EPrice extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    Element val = doc.selectFirst("meta[itemprop='brand']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content");
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = getKeyValueSpecList(doc.select("#anchorCar li"), "span", "a");
+    List<LinkSpec> specList = getKeyValueSpecList(dom.select("#anchorCar li"), "span", "a");
     if (specList == null) {
-      Elements specs = doc.select("#anchorTech li");
+      Elements specs = dom.select("#anchorTech li");
       if (specs != null && specs.size() > 0) {
         specList = new ArrayList<>();
         for (Element spec : specs) {
@@ -99,7 +113,7 @@ public class EPrice extends AbstractWebsite {
     }
 
     if (specList == null) {
-      Elements specs = doc.select("#anchorDesc p");
+      Elements specs = dom.select("#anchorDesc p");
       if (specs != null && specs.size() > 0) {
         specList = new ArrayList<>();
         for (Element spec : specs) {

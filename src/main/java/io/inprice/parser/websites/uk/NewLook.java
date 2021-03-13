@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -19,9 +21,21 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class NewLook extends AbstractWebsite {
 
+	private Document dom;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
+
   @Override
   public boolean isAvailable() {
-    Element val = doc.selectFirst("meta[itemprop='availability']");
+    Element val = dom.selectFirst("meta[itemprop='availability']");
     if (val != null) {
       return val.attr("content").trim().equals("inStock");
     }
@@ -30,7 +44,7 @@ public class NewLook extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("meta[itemprop='sku']");
+    Element val = dom.selectFirst("meta[itemprop='sku']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
@@ -39,7 +53,7 @@ public class NewLook extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("li.active.list__item span[property='name']");
+    Element val = dom.selectFirst("li.active.list__item span[property='name']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -48,11 +62,20 @@ public class NewLook extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.selectFirst("meta[itemprop='price']");
+    Element val = dom.selectFirst("meta[itemprop='price']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }
     return BigDecimal.ZERO;
+  }
+
+  @Override
+  public String getBrand() {
+    Element val = dom.selectFirst("section[itemprop='brand'] meta[itemprop='name']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -62,7 +85,7 @@ public class NewLook extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = doc.selectFirst("span.product-delivery-link a");
+    Element val = dom.selectFirst("span.product-delivery-link a");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -70,17 +93,8 @@ public class NewLook extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    Element val = doc.selectFirst("section[itemprop='brand'] meta[itemprop='name']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content");
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(doc.select("div.product-details--description.cms p"));
+    return getValueOnlySpecList(dom.select("div.product-details--description.cms p"));
   }
 
 }

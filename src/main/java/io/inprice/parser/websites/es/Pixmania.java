@@ -1,17 +1,26 @@
 package io.inprice.parser.websites.es;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.gargoylesoftware.htmlunit.HttpHeader;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.WebResponse;
+
+import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
-import kong.unirest.HttpResponse;
 
 /**
  * Parser for Pixmania Spain
@@ -22,7 +31,7 @@ import kong.unirest.HttpResponse;
  * So, we need to make two different request to collect all the data we need. 
  *    a) The first is for token info pulled by product-id, whose steps are explained below 
  *    b) The second is for the data 
- * Besides, in order to make the first request we also need to get product-id,  which is in place the main url
+ * Besides, in order to make the first request we also need to get product-id,  which a part of the main url
  *
  * Product-id 
  *  - is derived from url by splitting it up by dash - 
@@ -34,11 +43,66 @@ import kong.unirest.HttpResponse;
  */
 public class Pixmania extends AbstractWebsite {
 
-  /*
-   * the main data derived from json gotten server via getSubUrl()
-   */
+	private static final Logger log = LoggerFactory.getLogger(Pixmania.class);
+	
+	private String html;
+
 	private JSONObject json;
   private JSONObject bestOffer;
+	
+	@Override
+	protected void setHtml(String html) {
+		this.html = html;
+	}
+
+	@Override
+	protected String getHtml() {
+		return html;
+	}
+	
+	@Override
+	protected void afterRequest(WebClient webClient) {
+    final String productId = findProductId();
+    if (productId != null) {
+
+    	String token = null;
+      JSONObject tokenData = new JSONObject(html);
+      if (tokenData.has("session")) {
+      	token = tokenData.getJSONObject("session").getString("token");
+      }
+
+      if (StringUtils.isNotBlank(token)) {
+    		try {
+    			WebRequest req = new WebRequest(new URL("https://www.pixmania.es/api/pcm/products/" + productId), HttpMethod.GET);
+    			req.setAdditionalHeader(HttpHeader.ACCEPT, "application/json");
+    			req.setAdditionalHeader(HttpHeader.CONTENT_TYPE, "application/json");
+    			req.setAdditionalHeader("Authorization", "Bearer " + token);
+    			req.setAdditionalHeader("Language", "es-ES");
+
+    			WebResponse res = webClient.loadWebResponse(req);
+    	    if (res.getStatusCode() < 400) {
+            JSONObject data = new JSONObject(res.getContentAsString());
+            if (data.has("product")) {
+            	json = data.getJSONObject("product");
+              if (json.has("best_offer")) {
+                bestOffer = json.getJSONObject("best_offer");
+              }
+            }
+    	    } else {
+          	setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), res.getStatusCode());
+          }
+    		} catch (IOException e) {
+    			setLinkStatus(LinkStatus.NETWORK_ERROR, e.getMessage(), 400);
+    			log.error("Failed to fetch extra data", e);
+      	}
+      } else {
+      	setLinkStatus(LinkStatus.NETWORK_ERROR, "DATA PROBLEM (token)!" + (getRetry() < 3 ? " RETRYING..." : ""));
+    	}
+    } else {
+    	setLinkStatus(LinkStatus.NETWORK_ERROR, "DATA PROBLEM (prod_id)!" + (getRetry() < 3 ? " RETRYING..." : ""));
+    }
+	}
+	
 
   /**
    * This url is substitute for link's original url Since Pixmania provides
@@ -66,65 +130,6 @@ public class Pixmania extends AbstractWebsite {
       }
     }
     return null;
-  }
-
-  /**
-   * Returns token taken place in html body as json format
-   *
-   * @return String - token derived from html body
-   */
-  private String getToken() {
-    if (doc != null) {
-      JSONObject tokenData = new JSONObject(doc.body().text());
-      if (tokenData.has("session")) {
-        return tokenData.getJSONObject("session").getString("token");
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Returns payload as key value maps
-   *
-   * @return Map - payload required for having the data
-   */
-  public Map<String, String> getPayload() {
-    String token = getToken();
-    if (token != null) {
-      Map<String, String> payload = new HashMap<>();
-      payload.put("Authorization", "Bearer " + token);
-      payload.put("Language", "es-ES");
-      return payload;
-    }
-    return null;
-  }
-
-  /**
-   * Request the data with a constant url with product-id and payload. Besides,
-   * data handles best-offer which holds some important data
-   *
-   * @return JSONObject - json
-   */
-  @Override
-  public void getJsonData() {
-    final String productId = findProductId();
-    if (productId != null) {
-
-      final Map<String, String> payload = getPayload();
-      if (payload != null) {
-
-        HttpResponse<String> response = httpClient.get(String.format("https://www.pixmania.es/api/pcm/products/%s", productId), payload);
-        if (response != null && response.getStatus() < 400) {
-          JSONObject data = new JSONObject(response.getBody());
-          if (data.has("product")) {
-          	json = data.getJSONObject("product");
-            if (json.has("best_offer")) {
-              bestOffer = json.getJSONObject("best_offer");
-            }
-          }
-        }
-      }
-    }
   }
 
   @Override

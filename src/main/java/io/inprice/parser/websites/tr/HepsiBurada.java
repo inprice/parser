@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -19,14 +21,34 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class HepsiBurada extends AbstractWebsite {
 
+	private Document dom;
+	private boolean isAvailable;
+	private boolean isFreeShipping;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+
+    String found = findAPart(html, "\"isInStock\":", ",");
+    isAvailable = ("true".equalsIgnoreCase(found));
+    
+    found = findAPart(html, "\"freeShipping\":", ",");
+    isFreeShipping = ("true".equalsIgnoreCase(found));
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
+
   @Override
   public boolean isAvailable() {
-    return isTrue("\"isInStock\":");
+    return isAvailable;
   }
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("#addToCartForm input[name='sku']");
+    Element val = dom.selectFirst("#addToCartForm input[name='sku']");
     if (val != null && StringUtils.isNotBlank(val.val())) {
       return val.val();
     }
@@ -35,9 +57,9 @@ public class HepsiBurada extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.getElementById("product-name");
+    Element val = dom.getElementById("product-name");
     if (val == null || StringUtils.isBlank(val.text())) {
-      val = doc.selectFirst("span[itemprop='name']");
+      val = dom.selectFirst("span[itemprop='name']");
     }
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
@@ -48,7 +70,7 @@ public class HepsiBurada extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.selectFirst("span[itemprop='price']");
+    Element val = dom.selectFirst("span[itemprop='price']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }
@@ -56,8 +78,17 @@ public class HepsiBurada extends AbstractWebsite {
   }
 
   @Override
+  public String getBrand() {
+    Element val = dom.selectFirst("span[itemprop='brand']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
   public String getSeller() {
-    Element val = doc.selectFirst("span.seller a");
+    Element val = dom.selectFirst("span.seller a");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -66,32 +97,16 @@ public class HepsiBurada extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = doc.selectFirst("label.campaign-text span");
+    Element val = dom.selectFirst("label.campaign-text span");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
-
-    boolean freeShipping = isTrue("\"freeShipping\":");
-    return "Ücretsiz Kargo: " + (freeShipping ? "Evet" : "Hayır");
-  }
-
-  @Override
-  public String getBrand() {
-    Element val = doc.selectFirst("span[itemprop='brand']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content");
-    }
-    return Consts.Words.NOT_AVAILABLE;
+    return "Ücretsiz Kargo: " + (isFreeShipping ? "Evet" : "Hayır");
   }
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return getKeyValueSpecList(doc.select(".data-list.tech-spec tr"), "th", "td");
-  }
-
-  private boolean isTrue(String indicator) {
-    final String result = findAPart(doc.html(), indicator, ",");
-    return "true".equalsIgnoreCase(result);
+    return getKeyValueSpecList(dom.select(".data-list.tech-spec tr"), "th", "td");
   }
 
 }

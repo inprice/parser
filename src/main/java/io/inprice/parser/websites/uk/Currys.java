@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -21,21 +23,26 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Currys extends AbstractWebsite {
 
-  /*
-   * the main data provider derived from json placed in html
-   */
+	private Document dom;
   private JSONObject json;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
 
-  @Override
-  public void getJsonData() {
-    Element dataEL = doc.getElementById("app.digitalData");
+    Element dataEL = dom.getElementById("app.digitalData");
     if (dataEL != null) {
       JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
       if (data.has("product") && !data.getJSONArray("product").isEmpty()) {
         json = data.getJSONArray("product").getJSONObject(0);
       }
     }
-  }
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
 
   @Override
   public boolean isAvailable() {
@@ -71,20 +78,6 @@ public class Currys extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Currys";
-  }
-
-  @Override
-  public String getShipment() {
-    Element val = doc.getElementById("delivery");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text().replaceAll("More info", "");
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public String getBrand() {
     if (json != null && json.has("manufacturer")) {
       return json.getString("manufacturer");
@@ -93,8 +86,22 @@ public class Currys extends AbstractWebsite {
   }
 
   @Override
+  public String getSeller() {
+    return "Currys";
+  }
+
+  @Override
+  public String getShipment() {
+    Element val = dom.getElementById("delivery");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text().replaceAll("More info", "");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(doc.select("div.product-highlight li"));
+    return getValueOnlySpecList(dom.select("div.product-highlight li"));
   }
 
 }

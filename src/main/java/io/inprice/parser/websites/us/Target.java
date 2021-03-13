@@ -1,6 +1,8 @@
 package io.inprice.parser.websites.us;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,11 +10,19 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.gargoylesoftware.htmlunit.HttpHeader;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.WebResponse;
+
+import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
-import kong.unirest.HttpResponse;
 
 /**
  * Parser for Target USA
@@ -28,38 +38,22 @@ import kong.unirest.HttpResponse;
  */
 public class Target extends AbstractWebsite {
 
+	private static final Logger log = LoggerFactory.getLogger(Target.class);
+
+	private final String prodUrl = "https://groceries.asda.com/api/items/view?itemid=";
+	
+	private String html;
+	private WebClient webClient;
+	
   private JSONObject preLoad;
   private JSONObject product;
   private JSONObject priceData;
-
-  private String getApiKey() {
-    if (preLoad != null && preLoad.has("config")) {
-      JSONObject config = preLoad.getJSONObject("config");
-      if (config.has("firefly")) {
-        return config.getJSONObject("firefly").getString("apiKey");
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Returns payload as key value query string
-   *
-   * @return String - as query parameter payload
-   */
-  private String getPayload() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("pricing_store_id=1531");
-    sb.append("&");
-    sb.append("key=");
-    sb.append(getApiKey());
-    return sb.toString();
-  }
-
+  
   @Override
-  protected void getJsonData() {
-    final String preData = findAPart(doc.html(), "__PRELOADED_STATE__= ", "</script>");
+	protected void setHtml(String html) {
+  	this.html = html;
 
+    String preData = findAPart(html, "__PRELOADED_STATE__= ", "</script>");
     if (preData != null) {
       preLoad = new JSONObject(preData);
       if (preLoad.has("product")) {
@@ -74,16 +68,15 @@ public class Target extends AbstractWebsite {
     }
   }
 
-  private void setPriceData() {
-    HttpResponse<String> response = httpClient
-        .get("https://redsky.target.com/web/pdp_location/v1/tcin/" + getSku() + "?" + getPayload());
-    if (response != null && response.getStatus() < 400) {
-      JSONObject priceEL = new JSONObject(response.getBody());
-      if (!priceEL.isEmpty()) {
-        priceData = priceEL.getJSONObject("price");
-      }
-    }
-  }
+  @Override
+	protected String getHtml() {
+		return html;
+	}
+
+	@Override
+	protected void afterRequest(WebClient webClient) {
+		this.webClient = webClient;
+	}
 
   @Override
   public boolean isAvailable() {
@@ -152,6 +145,14 @@ public class Target extends AbstractWebsite {
   }
 
   @Override
+  public String getBrand() {
+    if (product != null && product.has("manufacturerBrand")) {
+      return product.getString("manufacturerBrand");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
   public String getSeller() {
     if (product != null && product.has("productVendorName")) {
       String seller = product.getString("productVendorName");
@@ -164,14 +165,6 @@ public class Target extends AbstractWebsite {
   @Override
   public String getShipment() {
     return "Free order pickup";
-  }
-
-  @Override
-  public String getBrand() {
-    if (product != null && product.has("manufacturerBrand")) {
-      return product.getString("manufacturerBrand");
-    }
-    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -202,5 +195,47 @@ public class Target extends AbstractWebsite {
     }
     return specList;
   }
+
+	private void setPriceData() {
+    if (preLoad != null && preLoad.has("config")) {
+      JSONObject config = preLoad.getJSONObject("config");
+      if (config.has("firefly")) {
+        String apiKey = config.getJSONObject("firefly").getString("apiKey");
+        if (StringUtils.isNotBlank(apiKey)) {
+      		try {
+      	    StringBuilder newUrl = new StringBuilder();
+      	    newUrl.append(prodUrl);
+      	    newUrl.append(getSku());
+      	    newUrl.append("?pricing_store_id=1531");
+      	    newUrl.append("&key=");
+      	    newUrl.append(apiKey);
+
+        		WebRequest req = new WebRequest(new URL(newUrl.toString()), HttpMethod.GET);
+        		req.setAdditionalHeader(HttpHeader.ACCEPT, "application/json");
+        		req.setAdditionalHeader(HttpHeader.CONTENT_TYPE, "application/json");
+      
+        		WebResponse res = webClient.loadWebResponse(req);
+            if (res.getStatusCode() < 400) {
+              JSONObject priceEL = new JSONObject(res.getContentAsString());
+              if (!priceEL.isEmpty()) {
+                priceData = priceEL.getJSONObject("price");
+              }
+            } else {
+            	setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), res.getStatusCode());
+            }
+      		} catch (IOException e) {
+      			setLinkStatus(LinkStatus.NETWORK_ERROR, e.getMessage(), 400);
+      			log.error("Failed to fetch current", e);
+      		}
+        } else {
+        	setLinkStatus(LinkStatus.NETWORK_ERROR, "DATA PROBLEM (api_key)!" + (getRetry() < 3 ? " RETRYING..." : ""));
+        }
+      } else {
+      	setLinkStatus(LinkStatus.NETWORK_ERROR, "DATA PROBLEM (firefly)!" + (getRetry() < 3 ? " RETRYING..." : ""));
+      }
+    } else {
+    	setLinkStatus(LinkStatus.NETWORK_ERROR, "DATA PROBLEM (preload)!" + (getRetry() < 3 ? " RETRYING..." : ""));
+    }
+	}
 
 }

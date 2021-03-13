@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -19,9 +21,23 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class NotebooksBilliger extends AbstractWebsite {
 
+	private Document dom;
+	private String brandName;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+		brandName = findAPart(html, "\"productBrand\":\"", "\"");
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
+
   @Override
   public boolean isAvailable() {
-    Element val = doc.selectFirst("div.availability_widget span.list_names");
+    Element val = dom.selectFirst("div.availability_widget span.list_names");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text().contains("Abholbereit");
     }
@@ -30,7 +46,7 @@ public class NotebooksBilliger extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("div#product_page_detail");
+    Element val = dom.selectFirst("div#product_page_detail");
     if (val != null && StringUtils.isNotBlank(val.attr("data-products-number"))) {
       return val.attr("data-products-number");
     }
@@ -39,7 +55,7 @@ public class NotebooksBilliger extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("meta[property='og:title']");
+    Element val = dom.selectFirst("meta[property='og:title']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
@@ -48,12 +64,27 @@ public class NotebooksBilliger extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.getElementById("product_detail_price");
+    Element val = dom.getElementById("product_detail_price");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }
 
     return BigDecimal.ZERO;
+  }
+
+  @Override
+  public String getBrand() {
+    if (StringUtils.isNotBlank(brandName)) {
+      return brandName;
+    }
+
+    Element val = dom.selectFirst("div.product_headline div.image_container img");
+    if (val != null && StringUtils.isNotBlank(val.attr("alt"))) {
+      String alt = val.attr("alt");
+      return alt.substring(0, alt.lastIndexOf(" "));
+    }
+
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -63,7 +94,7 @@ public class NotebooksBilliger extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = doc.selectFirst("div.sameday img");
+    Element val = dom.selectFirst("div.sameday img");
     if (val != null && StringUtils.isNotBlank(val.attr("alt"))) {
       return val.attr("alt");
     }
@@ -71,26 +102,10 @@ public class NotebooksBilliger extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    Element val = doc.selectFirst("div.product_headline div.image_container img");
-    if (val != null && StringUtils.isNotBlank(val.attr("alt"))) {
-      String alt = val.attr("alt");
-      return alt.substring(0, alt.lastIndexOf(" "));
-    }
-
-    final String brandName = findAPart(doc.html(), "\"productBrand\":\"", "\"");
-    if (StringUtils.isNotBlank(brandName)) {
-      return brandName;
-    }
-
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = getValueOnlySpecList(doc.select("div#section_info li span"));
+    List<LinkSpec> specList = getValueOnlySpecList(dom.select("div#section_info li span"));
     if (specList == null)
-      specList = getKeyValueSpecList(doc.select("table.properties_table tr"), "td.produktDetails_eigenschaft2",
+      specList = getKeyValueSpecList(dom.select("table.properties_table tr"), "td.produktDetails_eigenschaft2",
           "td.produktDetails_eigenschaft3");
 
     return specList;

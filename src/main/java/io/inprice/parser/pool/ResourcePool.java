@@ -15,12 +15,12 @@ import org.slf4j.LoggerFactory;
  * @since 2021-03-12
  *
  */
-public abstract class ResourcePool<T> {
+public abstract class ResourcePool<R> {
 
 	private static final Logger log = LoggerFactory.getLogger(ResourcePool.class);
 
-	private final BlockingQueue<T> pool;
-	private final Set<T> set;
+	private final BlockingQueue<R> pool;
+	private final Set<R> set;
 
 	private final String name;
 	private final int size;
@@ -34,9 +34,9 @@ public abstract class ResourcePool<T> {
 		this.size = size;
 	}
 
-	abstract T createNewOne();
-	abstract void setFree(T resource);
-	abstract boolean isHealthy(T resource);
+	abstract R createNewOne();
+	abstract void setFree(R resource);
+	abstract boolean isHealthy(R resource);
 
 	public void setup() {
 		if (isPoolActive == false) {
@@ -59,9 +59,9 @@ public abstract class ResourcePool<T> {
 		log.info("{} pool is shut down!", name);
 	}
 
-	public T acquire() {
+	public R acquire() {
 		if (isPoolActive == false) return null;
-		T resource;
+		R resource;
 		try {
 			resource = pool.take();
 		} catch (InterruptedException e) {
@@ -72,13 +72,13 @@ public abstract class ResourcePool<T> {
 		boolean healthy = isHealthy(resource);
 		if (healthy == false) {
 			resource = createNewOne();
-			log.info("A {} is expired so a new one is created!", name);
+			log.info("A {} is refreshed!", name);
 		}
 		set.add(resource);
 		return resource;
 	}
 
-	public void release(T resource) {
+	public void release(R resource) {
 		if (isPoolActive == false) return;
 		if (resource != null && set.contains(resource)) {
   		pool.add(resource);

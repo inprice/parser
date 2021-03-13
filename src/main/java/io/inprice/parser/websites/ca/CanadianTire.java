@@ -1,5 +1,6 @@
 package io.inprice.parser.websites.ca;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Date;
@@ -12,6 +13,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.gargoylesoftware.htmlunit.HttpHeader;
 import com.gargoylesoftware.htmlunit.HttpMethod;
@@ -33,17 +36,27 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class CanadianTire extends AbstractWebsite {
 
-  private JSONObject json;
-
-  private int httpStatus;
-	private String problem;
+	private static final Logger log = LoggerFactory.getLogger(CanadianTire.class);
 	
+	private Document dom;
+  private JSONObject json;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
+
 	@Override
 	protected void afterRequest(WebClient webClient) {
 		String name = getName();
 		BigDecimal price = BigDecimal.ZERO;
 		
-  	Element priceEL = doc.selectFirst("span.price__reg-value");
+  	Element priceEL = dom.selectFirst("span.price__reg-value");
     if (priceEL != null) {
     	price = new BigDecimal(cleanDigits(priceEL.text()));
     }
@@ -70,19 +83,18 @@ public class CanadianTire extends AbstractWebsite {
 
   			WebResponse res = webClient.loadWebResponse(req);
   	    if (res.getStatusCode() < 400) {
-  	    	Document subDoc = Jsoup.parse(res.getContentAsString());
-  	    	Element pre = subDoc.selectFirst("pre");
-  	    	if (pre == null) pre = subDoc.body();
+  	    	Document subdom = Jsoup.parse(res.getContentAsString());
+  	    	Element pre = subdom.selectFirst("pre");
+  	    	if (pre == null) pre = subdom.body();
 
   				JSONArray arr = new JSONArray(pre.text());
   				json = arr.getJSONObject(0);
   	    } else {
-  	    	httpStatus = res.getStatusCode();
-  	    	problem = res.getStatusMessage();
-  	    }
-  	    
-    	} catch (Exception e) {
-    		log.error("Failed to do extra: {}", e.getMessage());
+        	setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), res.getStatusCode());
+        }
+  		} catch (IOException e) {
+  			setLinkStatus(LinkStatus.NETWORK_ERROR, e.getMessage(), 400);
+  			log.error("Failed to fetch extra data", e);
     	}
 		}
 	}
@@ -96,7 +108,7 @@ public class CanadianTire extends AbstractWebsite {
   		}
   	}
 
-  	Elements quantities = doc.select("span.instock-quantity");
+  	Elements quantities = dom.select("span.instock-quantity");
   	return (quantities != null && quantities.size() > 1);
   }
 
@@ -109,7 +121,7 @@ public class CanadianTire extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element name = doc.selectFirst(".js-product-name");
+    Element name = dom.selectFirst(".js-product-name");
     if (name != null) {
       return name.text();
     }
@@ -130,11 +142,22 @@ public class CanadianTire extends AbstractWebsite {
   		}
   	}
 
-  	Element price = doc.selectFirst("span.price__reg-value");
+  	Element price = dom.selectFirst("span.price__reg-value");
     if (price != null) {
       return new BigDecimal(cleanDigits(price.text()));
     }
     return BigDecimal.ZERO;
+  }
+
+  @Override
+  public String getBrand() {
+    Element brand = dom.selectFirst("img.brand-logo-link__img");
+    if (brand == null) brand = dom.selectFirst("img.brand-footer__logo");
+
+    if (brand != null) {
+      return brand.attr("alt");
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -148,28 +171,8 @@ public class CanadianTire extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    Element brand = doc.selectFirst("img.brand-logo-link__img");
-    if (brand == null) brand = doc.selectFirst("img.brand-footer__logo");
-
-    if (brand != null) {
-      return brand.attr("alt");
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(doc.select("div.pdp-details-features__items li"));
-  }
-
-  protected void detectProblem() {
-  	if (problem != null) {
-  		setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), httpStatus);
-  		return;
-  	}
-
-  	super.detectProblem();
+    return getValueOnlySpecList(dom.select("div.pdp-details-features__items li"));
   }
 
 }

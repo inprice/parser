@@ -7,6 +7,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
@@ -27,13 +29,16 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class MediaMarktDE extends AbstractWebsite {
 
+	private Document dom;
+
 	private JSONObject json;
   private JSONObject article;
+	
+	@Override
+	protected void setHtml(String html) {
+		dom = Jsoup.parse(html);
 
-  @Override
-  protected void getJsonData() {
-    final String prodData = findAPart(doc.html(), "__PRELOADED_STATE__ = ", "};", 1);
-
+    String prodData = findAPart(html, "__PRELOADED_STATE__ = ", "};", 1);
     if (prodData != null) {
       JSONObject data = new JSONObject(prodData);
       if (data.has("reduxInitialStore")) {
@@ -46,11 +51,16 @@ public class MediaMarktDE extends AbstractWebsite {
         }
       }
     }
-  }
+	}
+
+	@Override
+	protected String getHtml() {
+		return dom.html();
+	}
 
   @Override
   public boolean isAvailable() {
-    Element val = doc.selectFirst("div[data-test='mms-delivery-online-availability']");
+    Element val = dom.selectFirst("div[data-test='mms-delivery-online-availability']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return true;
     }
@@ -69,7 +79,7 @@ public class MediaMarktDE extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("link[itemProp='url']");
+    Element val = dom.selectFirst("link[itemProp='url']");
     if (val != null && StringUtils.isNotBlank(val.attr("href"))) {
       String[] urlChunks = val.attr("href").split("-");
       if (urlChunks.length > 0) {
@@ -86,7 +96,7 @@ public class MediaMarktDE extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("h1[itemProp='name']");
+    Element val = dom.selectFirst("h1[itemProp='name']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
@@ -99,7 +109,7 @@ public class MediaMarktDE extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.selectFirst("meta[itemProp='price']");
+    Element val = dom.selectFirst("meta[itemProp='price']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }
@@ -114,13 +124,27 @@ public class MediaMarktDE extends AbstractWebsite {
   }
 
   @Override
+  public String getBrand() {
+    if (article != null && article.has("manufacturer")) {
+      return article.getString("manufacturer");
+    }
+
+    Element val = dom.selectFirst("meta[itemProp='name']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
+    }
+
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
   public String getSeller() {
     return "Media Markt";
   }
 
   @Override
   public String getShipment() {
-    Element val = doc.selectFirst("div[data-test='mms-delivery-online-availability']");
+    Element val = dom.selectFirst("div[data-test='mms-delivery-online-availability']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -146,22 +170,8 @@ public class MediaMarktDE extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    if (article != null && article.has("manufacturer")) {
-      return article.getString("manufacturer");
-    }
-
-    Element val = doc.selectFirst("meta[itemProp='name']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content");
-    }
-
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = getKeyValueSpecList(doc.select("tr[class^=TableRow__]"), "td:nth-child(1)", "td:nth-child(2)");
+    List<LinkSpec> specList = getKeyValueSpecList(dom.select("tr[class^=TableRow__]"), "td:nth-child(1)", "td:nth-child(2)");
     if (specList != null && specList.size() > 0) return specList;
 
     if (article != null && article.has("mainFeatures")) {
