@@ -1,5 +1,7 @@
 package io.inprice.parser.websites;
 
+import static io.inprice.parser.helpers.Global.WEB_CLIENT_POOL;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,8 +21,6 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
@@ -34,7 +34,6 @@ import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.models.Platform;
 import io.inprice.common.utils.NumberUtils;
-import io.inprice.parser.config.Props;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.HttpClient;
 import kong.unirest.HttpResponse;
@@ -66,6 +65,115 @@ public abstract class AbstractWebsite implements Website {
 		} else {
 			read();
 		}
+	}
+
+	protected boolean openPage() {
+		String url = getAlternativeUrl();
+		if (StringUtils.isBlank(url)) {
+			url = getUrl();
+		}
+
+		long started = System.currentTimeMillis();
+
+		String problem = null;
+		int httpStatus = -1;
+
+		WebClient webClient = null;
+		try {
+    	WebRequest req = new WebRequest(new URL(url));
+    	beforeRequest(req);
+
+			webClient = WEB_CLIENT_POOL.acquire();
+
+			WebResponse res = webClient.loadWebResponse(req);
+			if (res.getStatusCode() < 400) {
+  			doc = Jsoup.parse(res.getContentAsString());
+  			afterRequest(webClient);
+			} else {
+				problem = res.getStatusMessage();
+				httpStatus = res.getStatusCode();
+			}
+
+    } catch (SocketTimeoutException set) {
+			problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
+			httpStatus = 408;
+			log.error("Timed out: {}", set.getMessage());
+		} catch (IOException e) {
+			e.printStackTrace();
+			problem = e.getMessage();
+			httpStatus = 502;
+		} finally {
+			if (webClient != null) WEB_CLIENT_POOL.release(webClient);
+		}
+
+		String logPart = String.format("Platform: %s, Status: %d, Time: %dms", link.getPlatform().getDomain(), httpStatus, (System.currentTimeMillis() - started) / 10);
+
+		if (problem != null) {
+			problem = io.inprice.common.utils.StringUtils.clearErrorMessage(problem);
+			if (problem.toLowerCase().contains("time out") || problem.toLowerCase().contains("timed out")) {
+				setLinkStatus(LinkStatus.TIMED_OUT, problem);
+			} else {
+				setLinkStatus(LinkStatus.NETWORK_ERROR, problem);
+			}
+			link.setHttpStatus(httpStatus);
+			log.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, problem, url);
+		} else {
+			log.info("-SUCCESSFUL- {}", logPart);
+		}
+
+		return (problem == null);
+	}
+
+	private void read() {
+		getJsonData();
+
+		// getJsonData method may return an error. thus, we need to check if it is so
+		if (!LinkStatus.ACTIVE_GROUP.equals(link.getStatus().getGroup())) {
+			return;
+		}
+
+		// base settings
+		String name = getName();
+		BigDecimal price = getPrice();
+
+		if (price == null || name == null || price.compareTo(BigDecimal.ONE) < 0 || Consts.Words.NOT_AVAILABLE.equals(name)) {
+			analyseTheProblem();
+			return;
+		}
+
+		// other settings
+		link.setSku(fixLength(getSku(), Consts.Limits.SKU));
+		link.setName(fixLength(name, Consts.Limits.NAME));
+		link.setPrice(price.setScale(2, RoundingMode.HALF_UP));
+
+		// if it is not a product import
+		if (AppEnv.DEV.equals(SysProps.APP_ENV()) || link.getImportDetailId() == null) {
+  		link.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
+  		link.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
+  		link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
+
+  		// spec list editing
+  		List<LinkSpec> specList = getSpecList();
+  		if (specList != null && specList.size() > 0) {
+  			List<LinkSpec> newList = new ArrayList<>(specList.size());
+  			for (LinkSpec ls : specList) {
+  				newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY),
+  				    fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
+  			}
+  			link.setSpecList(newList);
+  		}
+		}
+
+		if (isAvailable()) {
+			link.setStatus(LinkStatus.AVAILABLE);
+		} else {
+			if (link.getImportDetailId() == null || StringUtils.isBlank(link.getName())) {
+				setLinkStatus(LinkStatus.NOT_AVAILABLE, "INSUFFICIENT STOCK");
+			} else {
+				link.setStatus(LinkStatus.AVAILABLE);
+			}
+		}
+
 	}
 
 	public boolean willHtmlBePulled() {
@@ -203,68 +311,6 @@ public abstract class AbstractWebsite implements Website {
 		link.setHttpStatus(httpStatus);
 	}
 
-	protected boolean openPage() {
-		String url = getAlternativeUrl();
-		if (StringUtils.isBlank(url)) {
-			url = getUrl();
-		}
-
-		long started = System.currentTimeMillis();
-
-		String problem = null;
-		int httpStatus = -1;
-
-		//do you hate internet explorer like me!
-		try (WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER, Props.PROXY_HOST(), Props.PROXY_PORT());) {
-      webClient.getOptions().setThrowExceptionOnScriptError(false);
-      webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-
-      //proxy settings
-      DefaultCredentialsProvider scp = new DefaultCredentialsProvider();
-      scp.addCredentials(Props.PROXY_USERNAME(), Props.PROXY_PASSWORD(), Props.PROXY_HOST(), Props.PROXY_PORT(), null);
-      webClient.setCredentialsProvider(scp);
-
-      //we need to separate the request as some classes need to set some specific headers and cookies before requesting
-    	WebRequest req = new WebRequest(new URL(url));
-    	beforeRequest(req);
-
-			WebResponse res = webClient.loadWebResponse(req);
-			if (res.getStatusCode() < 400) {
-  			doc = Jsoup.parse(res.getContentAsString());
-  			afterRequest(webClient);
-			} else {
-				problem = res.getStatusMessage();
-				httpStatus = res.getStatusCode();
-			}
-
-    } catch (SocketTimeoutException set) {
-			problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
-			httpStatus = 408;
-			log.error("Timed out: {}", set.getMessage());
-		} catch (IOException e) {
-			e.printStackTrace();
-			problem = e.getMessage();
-			httpStatus = 502;
-		}
-
-		String logPart = String.format("Platform: %s, Status: %d, Time: %dms", link.getPlatform().getDomain(), httpStatus, (System.currentTimeMillis() - started) / 10);
-
-		if (problem != null) {
-			problem = io.inprice.common.utils.StringUtils.clearErrorMessage(problem);
-			if (problem.toLowerCase().contains("time out") || problem.toLowerCase().contains("timed out")) {
-				setLinkStatus(LinkStatus.TIMED_OUT, problem);
-			} else {
-				setLinkStatus(LinkStatus.NETWORK_ERROR, problem);
-			}
-			link.setHttpStatus(httpStatus);
-			log.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, problem, url);
-		} else {
-			log.info("-SUCCESSFUL- {}", logPart);
-		}
-
-		return (problem == null);
-	}
-
 	private String fixLength(String val, int limit) {
 		if (val == null) return null;
 
@@ -273,58 +319,6 @@ public abstract class AbstractWebsite implements Website {
 			return SqlHelper.clear(newForm.substring(0, limit));
 		else
 			return SqlHelper.clear(newForm);
-	}
-
-	private void read() {
-		getJsonData();
-
-		// getJsonData method may return an error. thus, we need to check if it is so
-		if (!LinkStatus.ACTIVE_GROUP.equals(link.getStatus().getGroup())) {
-			return;
-		}
-
-		// base settings
-		String name = getName();
-		BigDecimal price = getPrice();
-
-		if (price == null || name == null || price.compareTo(BigDecimal.ONE) < 0 || Consts.Words.NOT_AVAILABLE.equals(name)) {
-			analyseTheProblem();
-			return;
-		}
-
-		// other settings
-		link.setSku(fixLength(getSku(), Consts.Limits.SKU));
-		link.setName(fixLength(name, Consts.Limits.NAME));
-		link.setPrice(price.setScale(2, RoundingMode.HALF_UP));
-
-		// if it is not a product import
-		if (AppEnv.DEV.equals(SysProps.APP_ENV()) || link.getImportDetailId() == null) {
-  		link.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
-  		link.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
-  		link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
-
-  		// spec list editing
-  		List<LinkSpec> specList = getSpecList();
-  		if (specList != null && specList.size() > 0) {
-  			List<LinkSpec> newList = new ArrayList<>(specList.size());
-  			for (LinkSpec ls : specList) {
-  				newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY),
-  				    fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
-  			}
-  			link.setSpecList(newList);
-  		}
-		}
-
-		if (isAvailable()) {
-			link.setStatus(LinkStatus.AVAILABLE);
-		} else {
-			if (link.getImportDetailId() == null || StringUtils.isBlank(link.getName())) {
-				setLinkStatus(LinkStatus.NOT_AVAILABLE, "INSUFFICIENT STOCK");
-			} else {
-				link.setStatus(LinkStatus.AVAILABLE);
-			}
-		}
-
 	}
 
 	private void analyseTheProblem() {

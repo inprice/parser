@@ -12,11 +12,28 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 
+import io.inprice.parser.pool.WebClientPool;
+
 public class Test {
+	
+	public static void main(String[] args) throws IOException {
+		WebClientPool pool = new WebClientPool();
+		pool.setup();
+
+		WebClient webClient = pool.acquire();
+		
+  	WebRequest req = new WebRequest(new URL("https://www.bestbuy.com/site/compex-ayre-wireless-rapid-recovery-compression-boots-black/6413832.p?skuId=6413832"));
+
+		WebResponse res = webClient.loadWebResponse(req);
+		System.out.println(res.getContentAsString());
+		
+		pool.release(webClient);
+		pool.shutdown();
+	}
 	
 	private static String referrer;
 	
-	public static void main(String[] args) {
+	public static void main5(String[] args) {
 		System.out.println(getAlternativeUrl("https://www.bestbuy.com/site/compex-ayre-wireless-rapid-recovery-compression-boots-black/6413832.p?skuId=6413832&intl=nosplash"));
 		System.out.println(referrer);
 		
