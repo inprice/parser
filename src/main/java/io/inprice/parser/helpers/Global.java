@@ -1,11 +1,11 @@
 package io.inprice.parser.helpers;
 
-import io.inprice.parser.pool.WebClientPool;
+import io.inprice.parser.pool.HtmlUnitPool;
 
 public class Global {
 
   public static volatile boolean isApplicationRunning;
   
-  public static WebClientPool WEB_CLIENT_POOL = new WebClientPool();
+  public static HtmlUnitPool HTMLUNIT_POOL = new HtmlUnitPool();
 
 }

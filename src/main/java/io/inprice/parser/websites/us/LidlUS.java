@@ -37,19 +37,8 @@ public class LidlUS extends AbstractWebsite {
 	
   private final String prodUrl = "https://mobileapi.lidl.com/v1/products/";
 
-	private String html;
   private String sku;
   private JSONObject json;
-	
-	@Override
-	protected void setHtml(String html) {
-		this.html = html;
-	}
-
-	@Override
-	protected String getHtml() {
-		return html;
-	}
 
 	@Override
 	protected void afterRequest(WebClient webClient) {

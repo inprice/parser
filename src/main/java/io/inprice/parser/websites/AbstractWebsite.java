@@ -1,34 +1,54 @@
 package io.inprice.parser.websites;
 
-import static io.inprice.parser.helpers.Global.WEB_CLIENT_POOL;
+import static io.inprice.parser.helpers.Global.HTMLUNIT_POOL;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.impl.EnglishReasonPhraseCatalog;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.logging.LogEntries;
+import org.openqa.selenium.logging.LogEntry;
+import org.openqa.selenium.logging.LogType;
+import org.openqa.selenium.logging.LoggingPreferences;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.WebResponse;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import io.inprice.common.config.SysProps;
 import io.inprice.common.helpers.SqlHelper;
-import io.inprice.common.meta.AppEnv;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
+import io.inprice.common.models.Platform;
 import io.inprice.common.utils.NumberUtils;
+import io.inprice.parser.config.Props;
 import io.inprice.parser.helpers.Consts;
 import kong.unirest.HttpResponse;
 
@@ -39,12 +59,19 @@ import kong.unirest.HttpResponse;
 public abstract class AbstractWebsite implements Website {
 
 	private static final Logger log = LoggerFactory.getLogger(AbstractWebsite.class);
+	
+	/**
+	 * There are two kind of html handler; a) External chrome browser, b) Internal HtmlUnit (default one)
+	 */
+	protected static enum Renderer {
+		HTMLUNIT, //internal and default one
+		CHROME;  //external and optional
+	}
 
 	private Link link;
 	private LinkStatus oldStatus;
-
-	protected abstract void setHtml(String html);
-	protected abstract String getHtml();
+	
+	private String html;
 
 	@Override
 	public void check(Link link) {
@@ -52,6 +79,10 @@ public abstract class AbstractWebsite implements Website {
 		this.oldStatus = link.getStatus();
 
 		if (openPage()) read();
+	}
+	
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
 	}
 
 	private boolean openPage() {
@@ -61,34 +92,116 @@ public abstract class AbstractWebsite implements Website {
 		long started = System.currentTimeMillis();
 
 		String problem = null;
-		int httpStatus = -1;
+		int httpStatus = 200;
 
-		WebClient webClient = null;
-		try {
-    	WebRequest req = new WebRequest(new URL(url));
-    	beforeRequest(req);
+		if (Renderer.HTMLUNIT.equals(getRenderer())) {
+			WebClient webClient = null;
+			try {
+	    	WebRequest req = new WebRequest(new URL(url));
+	    	beforeRequest(req);
 
-			webClient = WEB_CLIENT_POOL.acquire();
+				webClient = HTMLUNIT_POOL.acquire();
 
-			WebResponse res = webClient.loadWebResponse(req);
-			if (res.getStatusCode() < 400) {
-  			setHtml(res.getContentAsString());
-  			afterRequest(webClient);
-			} else {
-				problem = res.getStatusMessage();
-				httpStatus = res.getStatusCode();
+				HtmlPage page = webClient.getPage(req);
+				if (page.getWebResponse().getStatusCode() < 400) {
+					httpStatus = page.getWebResponse().getStatusCode();
+	  			setHtml(page.getTextContent());
+	  			afterRequest(webClient);
+				} else {
+					problem = page.getWebResponse().getStatusMessage();
+					httpStatus = page.getWebResponse().getStatusCode();
+				}
+
+	    } catch (SocketTimeoutException set) {
+				problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
+				httpStatus = 408;
+				log.error("Timed out: {}", set.getMessage());
+			} catch (IOException e) {
+				e.printStackTrace();
+				problem = e.getMessage();
+				httpStatus = 502;
+			} finally {
+				if (webClient != null) HTMLUNIT_POOL.release(webClient);
 			}
+		}
 
-    } catch (SocketTimeoutException set) {
-			problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
-			httpStatus = 408;
-			log.error("Timed out: {}", set.getMessage());
-		} catch (IOException e) {
-			e.printStackTrace();
-			problem = e.getMessage();
-			httpStatus = 502;
-		} finally {
-			if (webClient != null) WEB_CLIENT_POOL.release(webClient);
+		if (Renderer.CHROME.equals(getRenderer())) {
+  		RemoteWebDriver webDriver = null;
+  		try {
+    		ChromeOptions options = new ChromeOptions();
+      	options.addArguments(
+      		"--disable-gpu",
+      		"--disable-dev-shm-usage",
+      		"--no-sandbox",
+      		"--ignore-certificate-errors",
+    			"--disable-blink-features=AutomationControlled"
+  			);
+        LoggingPreferences logPrefs = new LoggingPreferences();
+        logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
+        options.setCapability("goog:loggingPrefs", logPrefs);
+      	
+        webDriver = new RemoteWebDriver(new URL(Props.WEBDRIVER_URL()), options);
+      	webDriver.manage().timeouts().pageLoadTimeout(SysProps.HTTP_CONNECTION_TIMEOUT(), TimeUnit.SECONDS);
+    		webDriver.get(url);
+    		
+  			LogEntries logs = webDriver.manage().logs().get(LogType.PERFORMANCE);
+  			for (Iterator<LogEntry> it = logs.iterator(); it.hasNext();) {
+          LogEntry entry = it.next();
+          try {
+            JSONObject json = new JSONObject(entry.getMessage());
+            JSONObject message = json.getJSONObject("message");
+            String method = message.getString("method");
+            if (method != null && "Network.responseReceived".equals(method)) {
+              JSONObject params = message.getJSONObject("params");
+              JSONObject response = params.getJSONObject("response");
+              String messageUrl = response.getString("url");
+              if (url.equals(messageUrl)) {
+              	httpStatus = response.getInt("status");
+                break;
+              }
+            }
+          } catch (JSONException e) {
+            e.printStackTrace();
+          }
+        }  			
+    		
+  			if (httpStatus >= 400) {
+  				problem = EnglishReasonPhraseCatalog.INSTANCE.getReason(httpStatus, Locale.ENGLISH);
+  			} else {
+  				String pageSource = null;
+  				if (link.getPlatform().isJsRenderedBody()) {
+  	  			String javascript = "return arguments[0].innerHTML";
+  	  			pageSource = (String)((JavascriptExecutor)webDriver).executeScript(javascript, webDriver.findElement(By.tagName("html")));
+  				} else {
+  					pageSource = webDriver.getPageSource();
+  				}
+  				setHtml(pageSource);
+  			}
+  			//some websites like canadiantire needs extra http call for some data such as price and stock availability.
+  			//renderExtra(webDriver);
+  
+  			webDriver.close();
+  		} catch (TimeoutException e) {
+  			//TODO: burasi cok iyi olmadi?!?! sayfada spesific bir element aranip yoksa timeout oldu diye isaretlenmeli!!!
+  			WebElement html = webDriver.findElement(By.tagName("html"));
+  			if (html.isDisplayed()) {
+  				setHtml(html.getText());
+  			} else {
+  				problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
+    			httpStatus = 408;
+    			log.error("Timed out: {}", e.getMessage());
+  			}
+  		} catch (WebDriverException e) {
+  			problem = "ACCESS ERROR!";
+  			httpStatus = 407;
+  			log.error("Reaching error: {}", e.getMessage());
+  		} catch (MalformedURLException e) {
+  			e.printStackTrace();
+  			problem = "MALFORMED URL!";
+  			httpStatus = 500;
+			} finally {
+  			if (webDriver != null) webDriver.quit();
+  		}
 		}
 
 		String logPart = String.format("Platform: %s, Status: %d, Time: %dms", link.getPlatform().getDomain(), httpStatus, (System.currentTimeMillis() - started) / 10);
@@ -96,13 +209,13 @@ public abstract class AbstractWebsite implements Website {
 		if (problem != null) {
 			problem = io.inprice.common.utils.StringUtils.clearErrorMessage(problem);
 			if (problem.toLowerCase().contains("time out") || problem.toLowerCase().contains("timed out")) {
-				setLinkStatus(LinkStatus.TIMED_OUT, problem);
+				setLinkStatus(LinkStatus.TIMED_OUT, problem, (httpStatus != 200 ? httpStatus : 408));
 			} else {
-				setLinkStatus(LinkStatus.NETWORK_ERROR, problem);
+				setLinkStatus((httpStatus == 404 ? LinkStatus.NOT_FOUND : LinkStatus.NETWORK_ERROR), problem, (httpStatus != 200 ? httpStatus : 206));
 			}
-			link.setHttpStatus(httpStatus);
 			log.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, problem, url);
 		} else {
+			link.setHttpStatus(httpStatus);
 			log.info("-SUCCESSFUL- {}", logPart);
 		}
 
@@ -130,7 +243,7 @@ public abstract class AbstractWebsite implements Website {
 		link.setPrice(price.setScale(2, RoundingMode.HALF_UP));
 
 		// if it is not a product import
-		if (AppEnv.DEV.equals(SysProps.APP_ENV()) || link.getImportDetailId() == null) {
+		if (link.getImportDetailId() == null) {
   		link.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
   		link.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
   		link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
@@ -140,8 +253,7 @@ public abstract class AbstractWebsite implements Website {
   		if (specList != null && specList.size() > 0) {
   			List<LinkSpec> newList = new ArrayList<>(specList.size());
   			for (LinkSpec ls : specList) {
-  				newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY),
-  				    fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
+  				newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY), fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
   			}
   			link.setSpecList(newList);
   		}
@@ -166,6 +278,10 @@ public abstract class AbstractWebsite implements Website {
 	
 	protected int getRetry() {
 		return link.getRetry();
+	}
+	
+	protected Platform getPlatform() {
+		return link.getPlatform();
 	}
 
 	protected List<LinkSpec> getValueOnlySpecList(Elements specs) {
@@ -278,10 +394,18 @@ public abstract class AbstractWebsite implements Website {
 		log.warn(" - Status: {}, Pre.Status: {}, File: {}", link.getStatus().name(), oldStatus.name(), sb.toString());
 		
 		try (PrintWriter out = new PrintWriter(sb.toString())) {
-	    out.println(getHtml());
+	    out.println(this.html);
 		} catch (FileNotFoundException e) {
 			log.error("Failed to journal the problem!", e);
 		}		
+	}
+	
+	protected void setHtml(String html) {
+		this.html = html;
+	}
+	
+	protected String getHtml() {
+		return this.html;
 	}
 	
 	protected void detectProblem() {

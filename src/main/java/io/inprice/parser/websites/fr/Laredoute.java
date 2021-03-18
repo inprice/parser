@@ -32,6 +32,8 @@ public class Laredoute extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
+
 		dom = Jsoup.parse(html);
 		price = findAPart(html, "\"SalePriceAfterWithCharges\":", ",");
 
@@ -46,11 +48,6 @@ public class Laredoute extends AbstractWebsite {
         } catch (Exception e) { }
       }
     }
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override

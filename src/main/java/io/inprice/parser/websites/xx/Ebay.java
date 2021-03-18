@@ -31,13 +31,10 @@ public class Ebay extends AbstractWebsite {
 
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
+
 		dom = Jsoup.parse(html);
 		buildSpecList();
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override
@@ -154,6 +151,8 @@ public class Ebay extends AbstractWebsite {
 
   @Override
   public String getShipment() {
+  	String res = Consts.Words.NOT_AVAILABLE;
+
     Element val = dom.getElementById("fshippingCost");
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
@@ -164,22 +163,28 @@ public class Ebay extends AbstractWebsite {
       if (val != null && StringUtils.isNotBlank(val.text())) {
         right = val.text();
       }
-      return left + " " + right;
+      res = left + " " + right;
     }
 
-    val = dom.selectFirst("#shSummary span");
-    if (val == null || StringUtils.isBlank(val.text())) val = dom.selectFirst("span.logistics-cost");
-
-    if (val != null && StringUtils.isNotBlank(val.text()) && !"|".equals(val.text().trim())) {
-      return val.text();
-    } else {
-      val = dom.getElementById("shSummary");
-      if (val != null && StringUtils.isNotBlank(val.text())) {
-        return val.text();
+    if (res.equals(Consts.Words.NOT_AVAILABLE)) {
+      val = dom.selectFirst("#shSummary span");
+      if (val == null || StringUtils.isBlank(val.text())) val = dom.selectFirst("span.logistics-cost");
+  
+      if (val != null && StringUtils.isNotBlank(val.text()) && !"|".equals(val.text().trim())) {
+      	res = val.text();
+      } else {
+        val = dom.getElementById("shSummary");
+        if (val != null && StringUtils.isNotBlank(val.text())) {
+        	res = val.text();
+        }
       }
     }
 
-    return Consts.Words.NOT_AVAILABLE;
+    if (!res.equals(Consts.Words.NOT_AVAILABLE)) {
+    	if (res.indexOf("not ship") > 0 && res.indexOf("-") > 0) res = res.split("-")[1];
+    }
+
+    return res;
   }
 
   @Override
@@ -192,7 +197,7 @@ public class Ebay extends AbstractWebsite {
   private void buildSpecList() {
   	brand = Consts.Words.NOT_AVAILABLE;
 
-    Elements specs = dom.select("table[role='presentation']:not(#itmSellerDesc) tr");
+    Elements specs = dom.select("div.itemAttr table[role='presentation']:not(#itmSellerDesc) tr");
     if (specs != null && specs.size() > 0) {
       specList = new ArrayList<>();
       for (Element row : specs) {
@@ -202,7 +207,7 @@ public class Ebay extends AbstractWebsite {
           String value;
           for (int i = 0; i < tds.size(); i++) {
             if (i % 2 == 0) {
-              key = tds.get(i).text();
+              key = tds.get(i).text().replace(":", "");
             } else {
               value = tds.get(i).text();
               specList.add(new LinkSpec(key, value));

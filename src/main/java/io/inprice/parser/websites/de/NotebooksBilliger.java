@@ -26,13 +26,10 @@ public class NotebooksBilliger extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
+
 		dom = Jsoup.parse(html);
 		brandName = findAPart(html, "\"productBrand\":\"", "\"");
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override

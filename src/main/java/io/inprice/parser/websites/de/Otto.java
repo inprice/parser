@@ -39,6 +39,7 @@ public class Otto extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
     Element val = dom.selectFirst("script#productDataJson");
@@ -52,11 +53,6 @@ public class Otto extends AbstractWebsite {
         }
       }
     }
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override

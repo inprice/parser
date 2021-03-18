@@ -28,6 +28,7 @@ public class Currys extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
     Element dataEL = dom.getElementById("app.digitalData");
@@ -37,11 +38,6 @@ public class Currys extends AbstractWebsite {
         json = data.getJSONArray("product").getJSONObject(0);
       }
     }
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override

@@ -26,13 +26,10 @@ public class Euronics extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
+
 		dom = Jsoup.parse(html);
     prod = dom.getElementsByTag("trackingProduct").first();
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override

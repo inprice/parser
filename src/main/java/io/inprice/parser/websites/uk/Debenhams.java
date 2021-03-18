@@ -29,6 +29,7 @@ public class Debenhams extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
     Element dataEL = dom.selectFirst("script[type='application/ld+json']");
@@ -38,11 +39,6 @@ public class Debenhams extends AbstractWebsite {
         offers = json.getJSONObject("offers");
       }
     }
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override

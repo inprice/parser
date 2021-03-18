@@ -50,6 +50,7 @@ public class Asos extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
     String prodData = findAPart(html, "window.asos.pdp.config.product =", "};", 1);
@@ -69,11 +70,6 @@ public class Asos extends AbstractWebsite {
     } else {
       sku = getSku();
     }
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
 	@Override

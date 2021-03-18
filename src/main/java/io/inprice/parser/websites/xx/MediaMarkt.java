@@ -28,17 +28,13 @@ public class MediaMarkt extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
     String tresholdForNL = findAPart(html, "bezorgkostenDrempel =", ";");
     if (tresholdForNL != null) {
       freeShippingTresholdForNL = new BigDecimal(cleanDigits(tresholdForNL));
     }
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override

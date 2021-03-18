@@ -44,13 +44,10 @@ public class VidaXL extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
+
 		dom = Jsoup.parse(html);
 		brand = findAPart(html, "\"brand\":\"", "\"");
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
 	@Override

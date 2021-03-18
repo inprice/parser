@@ -34,6 +34,8 @@ public class Zavvi extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
+
 		dom = Jsoup.parse(html);
 		isAvailable = (html.indexOf("'productStatus':'Available'") >= 0);
 
@@ -51,11 +53,6 @@ public class Zavvi extends AbstractWebsite {
       }
     }
 	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
-  }
 
   @Override
   public boolean isAvailable() {

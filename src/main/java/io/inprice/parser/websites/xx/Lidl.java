@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -29,15 +30,11 @@ public class Lidl extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
 		String prodData = findAPart(html, "var dynamic_tm_data = ", "};", 1);
     if (prodData != null) json = new JSONObject(prodData);
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override
@@ -142,9 +139,20 @@ public class Lidl extends AbstractWebsite {
       }
     }
 
-    if (specs == null || specs.size() == 0)
-      return getValueOnlySpecList(dom.select("div#detailtabProductDescriptionTab li"));
-
+    if (specs == null || specs.size() == 0) specList = getValueOnlySpecList(dom.select("div#detailtabProductDescriptionTab li"));
+    if (specs == null || specs.size() == 0) specList = getValueOnlySpecList(dom.select("article.textbody li"));
+    
+    if (specList != null && specList.size() > 0) {
+    	for (int i = 0; i < specList.size(); i++) {
+				LinkSpec spec = specList.get(i);
+				if (StringUtils.isBlank(spec.getKey()) && spec.getValue().indexOf(":") > 0) {
+					String[] pair = spec.getValue().split(":");
+					spec.setKey(pair[0]);
+					spec.setValue(pair[1]);
+				}
+			}
+    }
+    
     return specList;
   }
 

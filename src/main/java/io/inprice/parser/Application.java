@@ -21,7 +21,7 @@ public class Application {
     new Thread(() -> {
       isApplicationRunning = true;
       
-      WEB_CLIENT_POOL.setup();
+      HTMLUNIT_POOL.setup();
 
       ConsumerManager.start();
 
@@ -31,9 +31,9 @@ public class Application {
       log.info("APPLICATION IS TERMINATING...");
       isApplicationRunning = false;
       
-      log.info(" - WebClient pool is shutting down...");
-      WEB_CLIENT_POOL.shutdown();
-
+      log.info(" - HtmlUnit pool is shutting down...");
+      HTMLUNIT_POOL.shutdown();
+      
       log.info(" - Thread pools are shutting down...");
       ConsumerManager.stop();
 

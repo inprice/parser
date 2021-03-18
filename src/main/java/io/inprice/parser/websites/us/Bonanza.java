@@ -36,6 +36,7 @@ public class Bonanza extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
     Elements specs = dom.select("table.extended_info_table tr.extended_info_row");
@@ -54,11 +55,6 @@ public class Bonanza extends AbstractWebsite {
         }
       }
     }
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override

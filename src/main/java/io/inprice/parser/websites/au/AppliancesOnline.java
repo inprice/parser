@@ -34,22 +34,15 @@ public class AppliancesOnline extends AbstractWebsite {
 
 	private static final Logger log = LoggerFactory.getLogger(AppliancesOnline.class);
 	
-	private String html;
-
 	private JSONObject json;
 	private JSONObject specs;
 	
 	@Override
 	protected void setHtml(String html) {
-		this.html = html;
+		super.setHtml(html);
 		this.json = new JSONObject(html);
 	}
 
-	@Override
-	protected String getHtml() {
-		return this.html;
-	}
-	
 	@Override
 	protected void afterRequest(WebClient webClient) {
 		String specsUrl = "https://www.appliancesonline.com.au/api/v2/product/specifications/id/" + json.getInt("productId");
@@ -164,7 +157,7 @@ public class AppliancesOnline extends AbstractWebsite {
                     value = "No";
                 }
 
-                specList.add(new LinkSpec(name, value));
+                specList.add(new LinkSpec(name, value.replaceAll("&#9679; ", "& ")));
               }
             }
           }

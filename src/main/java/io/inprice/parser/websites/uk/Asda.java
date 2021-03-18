@@ -34,18 +34,7 @@ public class Asda extends AbstractWebsite {
 
 	private final String prodUrl = "https://groceries.asda.com/api/items/view?itemid=";
 	
-	private String html;
   private JSONObject json;
-	
-	@Override
-	protected void setHtml(String html) {
-		this.html = html;
-	}
-
-	@Override
-	protected String getHtml() {
-		return html;
-	}
 
 	@Override
 	protected void afterRequest(WebClient webClient) {

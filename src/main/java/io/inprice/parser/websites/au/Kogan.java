@@ -1,12 +1,14 @@
 package io.inprice.parser.websites.au;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -25,12 +27,8 @@ public class Kogan extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
 		dom = Jsoup.parse(html);
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override
@@ -116,7 +114,42 @@ public class Kogan extends AbstractWebsite {
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return getKeyValueSpecList(dom.select("section#specs-accordion dl"), "dt", "dd");
+  	List<LinkSpec> specList = getKeyValueSpecList(dom.select("section#specs-accordion dl"), "dt", "dd");
+  	
+  	if (specList == null || specList.size() == 0) {
+  		Elements descPs = dom.select("section[itemprop='description'] p");
+  		if (descPs != null && descPs.size() > 0) {
+  			specList = new ArrayList<>();
+  			for (int i = 0; i < descPs.size(); i++) {
+					String key = "";
+  				String value = descPs.get(i).text();
+  				if (value.indexOf("●") > -1) {
+  					String[] features = value.split("●");
+  					for (int j = 0; j < features.length; j++) {
+  						String val = features[j];
+  						if (StringUtils.isBlank(val)) continue;
+  						if (val.indexOf(":") > 0) {
+  	  					String[] pair = val.split(":");
+  	  					key = pair[0];
+  	  					val = pair[1];
+  	  					specList.add(new LinkSpec(key, val));
+  	  				} else {
+  	  					specList.add(new LinkSpec("", val));
+  	  				}
+  					}
+  				} else if (value.indexOf(":") > 0) {
+  					String[] pair = value.split(":");
+  					key = pair[0];
+  					value = pair[1];
+  					specList.add(new LinkSpec(key, value));
+  				} else {
+  					specList.add(new LinkSpec("", value));
+  				}
+				}
+  		}
+  	}
+  	
+  	return specList;
   }
 
 }

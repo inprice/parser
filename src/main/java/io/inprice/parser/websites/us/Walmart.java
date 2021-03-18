@@ -27,13 +27,10 @@ public class Walmart extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
+
 		dom = Jsoup.parse(html);
 		isAvailable = (html.indexOf("\"availabilityStatus\":\"IN_STOCK\"") > 0);
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   /**

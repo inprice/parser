@@ -22,11 +22,13 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class HepsiBurada extends AbstractWebsite {
 
 	private Document dom;
+
 	private boolean isAvailable;
 	private boolean isFreeShipping;
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
     String found = findAPart(html, "\"isInStock\":", ",");
@@ -34,11 +36,6 @@ public class HepsiBurada extends AbstractWebsite {
     
     found = findAPart(html, "\"freeShipping\":", ",");
     isFreeShipping = ("true".equalsIgnoreCase(found));
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override

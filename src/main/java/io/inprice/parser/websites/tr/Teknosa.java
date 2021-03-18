@@ -32,6 +32,7 @@ public class Teknosa extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
 		Element dataEL = dom.getElementById("schemaJSON");
@@ -46,11 +47,6 @@ public class Teknosa extends AbstractWebsite {
         offers = json.getJSONObject("offers");
       }
     }
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override

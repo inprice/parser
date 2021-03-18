@@ -26,13 +26,10 @@ public class MediaWorld extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
+
 		dom = Jsoup.parse(html);
 		prod = dom.selectFirst("div.product-detail-main-container");
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 	
   @Override

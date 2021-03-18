@@ -42,7 +42,6 @@ public class Target extends AbstractWebsite {
 
 	private final String prodUrl = "https://groceries.asda.com/api/items/view?itemid=";
 	
-	private String html;
 	private WebClient webClient;
 	
   private JSONObject preLoad;
@@ -51,7 +50,7 @@ public class Target extends AbstractWebsite {
   
   @Override
 	protected void setHtml(String html) {
-  	this.html = html;
+		super.setHtml(html);
 
     String preData = findAPart(html, "__PRELOADED_STATE__= ", "</script>");
     if (preData != null) {
@@ -67,11 +66,6 @@ public class Target extends AbstractWebsite {
       }
     }
   }
-
-  @Override
-	protected String getHtml() {
-		return html;
-	}
 
 	@Override
 	protected void afterRequest(WebClient webClient) {

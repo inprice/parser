@@ -27,17 +27,13 @@ public class Argos extends AbstractWebsite {
 
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
     String found = findAPart(html, "\"globallyOutOfStock\":", ",");
     isAvailable = ("false".equalsIgnoreCase(found));
 
     brand = findAPart(html, "\"brand\":\"", "\",");
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override

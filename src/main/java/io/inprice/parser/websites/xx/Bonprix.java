@@ -10,6 +10,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.gargoylesoftware.htmlunit.HttpHeader;
+import com.gargoylesoftware.htmlunit.WebRequest;
+
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
@@ -27,12 +30,15 @@ public class Bonprix extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
 		dom = Jsoup.parse(html);
 	}
 
 	@Override
-	protected String getHtml() {
-		return dom.html();
+	protected void beforeRequest(WebRequest req) {
+		//TODO: zamanasimi ihtimaline karsin bir zaman sonra bu bir daha test edilmeli. 2021-03-14
+		//normalde ilk once anasayfsnin yuklenmesi ile SID cookie yukleniyor. SID isinde sorun olmasi durumunda, once anasayfa yuklettirilecek!
+		req.setAdditionalHeader(HttpHeader.COOKIE, "SID=%7B42ED5934%2DB8C8%2D4B21%2DBCFF%2D4FE33209A7F9%7D");
 	}
 
   @Override

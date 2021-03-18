@@ -21,14 +21,12 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class BestBuy extends AbstractWebsite {
 
-	private String html;
-
 	private JSONObject json;
   private JSONObject product;
 	
 	@Override
 	protected void setHtml(String html) {
-		this.html = html;
+		super.setHtml(html);
 
     String rawJson = findAPart(html, "\"product\":", ",\"productSellers\":{");
     if (StringUtils.isNotBlank(rawJson)) {
@@ -37,11 +35,6 @@ public class BestBuy extends AbstractWebsite {
       	product = json.getJSONObject("product");
       }
     }
-	}
-
-	@Override
-	protected String getHtml() {
-		return html;
 	}
 
   @Override

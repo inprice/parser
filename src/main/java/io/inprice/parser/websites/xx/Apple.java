@@ -22,28 +22,25 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Apple extends AbstractWebsite {
 
-	private String html;
-
 	private JSONObject json;
 	private boolean isAvailable;
 	private String shippingPrice;
 	
 	@Override
 	protected void setHtml(String html) {
-		this.html = html;
+		super.setHtml(html);
 
   	String rawJson = findAPart(html, "var configData = ", "};", 1);
   	if (StringUtils.isNotBlank(rawJson)) {
-    	//these tags have no surrounding double quotes, lets add!
-    	String[] tagsWODblQuotes = { "productCategoriesData", "initData", "purchaseInfo" };
-    	for (String part: tagsWODblQuotes) {
-  			rawJson = rawJson.replaceAll("("+part+")", "\"$1\"");
-  		}
+
+  		rawJson = rawJson.replaceFirst("productCategoriesData", "\"productCategoriesData\"");
+  		rawJson = rawJson.replaceFirst("initData", "\"initData\"");
+  		rawJson = rawJson.replaceFirst("purchaseInfo", "\"purchaseInfo\"");
     	
-    	JSONObject json =  new JSONObject(rawJson);
-    	if (! json.isEmpty()) {
-    		if (json.has("initData")) {
-    			JSONObject initData = json.getJSONObject("initData");
+    	JSONObject wholeJson =  new JSONObject(rawJson);
+    	if (! wholeJson.isEmpty()) {
+    		if (wholeJson.has("initData")) {
+    			JSONObject initData = wholeJson.getJSONObject("initData");
       		if (initData.has("content")) {
       			JSONObject content = initData.getJSONObject("content");
       			if (content.has("summary")) {
@@ -51,19 +48,14 @@ public class Apple extends AbstractWebsite {
       			}
       		}
     		}
-    		if (json.has("purchaseInfo")) {
-    			JSONObject purchaseInfo = json.getJSONObject("purchaseInfo");
+    		if (wholeJson.has("purchaseInfo")) {
+    			JSONObject purchaseInfo = wholeJson.getJSONObject("purchaseInfo");
     			isAvailable = (purchaseInfo.has("isBuyable") && purchaseInfo.getBoolean("isBuyable"));
     			if (purchaseInfo.has("shippingPrice")) shippingPrice = Jsoup.parse(purchaseInfo.getString("shippingPrice")).text();
     		}
     	}
     }
 		
-	}
-
-	@Override
-	protected String getHtml() {
-		return this.html;
 	}
 
   @Override
@@ -107,6 +99,11 @@ public class Apple extends AbstractWebsite {
   }
 
   @Override
+  public String getBrand() {
+    return "Apple";
+  }
+
+  @Override
   public String getSeller() {
     return "Apple";
   }
@@ -120,11 +117,6 @@ public class Apple extends AbstractWebsite {
   	}
   	if (StringUtils.isNotBlank(shippingPrice)) return shippingPrice;
     return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
-  public String getBrand() {
-    return "Apple";
   }
 
   @Override

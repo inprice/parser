@@ -26,15 +26,11 @@ public class BigW extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
 		String prodData = findAPart(html, "'products': [", "}]", 1);
     if (prodData != null) json = new JSONObject(StringUtils.fixQuotes(prodData));
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override

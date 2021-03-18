@@ -74,7 +74,7 @@ public abstract class ResourcePool<R> {
 			resource = createNewOne();
 			log.info("A {} is refreshed!", name);
 		}
-		set.add(resource);
+		if (resource != null) set.add(resource);
 		return resource;
 	}
 
@@ -92,4 +92,8 @@ public abstract class ResourcePool<R> {
 		return isPoolActive;
 	}
 
+  public String getName() {
+  	return name;
+  }
+	
 }

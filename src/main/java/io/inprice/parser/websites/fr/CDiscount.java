@@ -31,6 +31,7 @@ public class CDiscount extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
     Elements scripts = dom.select("script[type='application/ld+json']");
@@ -50,11 +51,6 @@ public class CDiscount extends AbstractWebsite {
         }
       }
     }
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override

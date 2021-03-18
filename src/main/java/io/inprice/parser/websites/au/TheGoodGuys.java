@@ -25,12 +25,8 @@ public class TheGoodGuys extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
+		super.setHtml(html);
 		dom = Jsoup.parse(html);
-	}
-
-	@Override
-	protected String getHtml() {
-		return dom.html();
 	}
 
   @Override
@@ -92,7 +88,7 @@ public class TheGoodGuys extends AbstractWebsite {
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return getKeyValueSpecList(dom.select("section#keyftr li"), "small", "h2");
+  	return getKeyValueSpecList(dom.select("table.speci_area tr"), "th", "td");
   }
 
 }

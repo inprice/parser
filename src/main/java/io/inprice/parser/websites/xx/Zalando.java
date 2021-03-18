@@ -21,15 +21,13 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Zalando extends AbstractWebsite {
 
-	private String html;
-	
 	private JSONObject info;
 	private JSONObject price;
 	private JSONArray details;
 	
 	@Override
 	protected void setHtml(String html) {
-		this.html = html;
+		super.setHtml(html);
 
 		String rawJson = findAPart(html, "![CDATA[{\"layout\"", "}]]", 1, 8);
 		if (StringUtils.isNotBlank(rawJson)) {
@@ -49,11 +47,6 @@ public class Zalando extends AbstractWebsite {
 				}
 			}
 		}
-	}
-
-	@Override
-	protected String getHtml() {
-		return html;
 	}
 	
   @Override
@@ -129,6 +122,8 @@ public class Zalando extends AbstractWebsite {
 							if (keyVal != null && keyVal.has("name") && keyVal.has("values")) {
 								String key = keyVal.getString("name");
 								String val = keyVal.getString("values");
+								
+								if (StringUtils.isNotBlank(key) && key.indexOf("_") > 0) continue;
 								if (StringUtils.isNotBlank(key) || StringUtils.isNotBlank(val))
 				          specList.add(new LinkSpec(key, val));
 							}

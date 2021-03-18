@@ -45,20 +45,8 @@ public class Pixmania extends AbstractWebsite {
 
 	private static final Logger log = LoggerFactory.getLogger(Pixmania.class);
 	
-	private String html;
-
 	private JSONObject json;
   private JSONObject bestOffer;
-	
-	@Override
-	protected void setHtml(String html) {
-		this.html = html;
-	}
-
-	@Override
-	protected String getHtml() {
-		return html;
-	}
 	
 	@Override
 	protected void afterRequest(WebClient webClient) {
@@ -66,7 +54,7 @@ public class Pixmania extends AbstractWebsite {
     if (productId != null) {
 
     	String token = null;
-      JSONObject tokenData = new JSONObject(html);
+      JSONObject tokenData = new JSONObject(getHtml());
       if (tokenData.has("session")) {
       	token = tokenData.getJSONObject("session").getString("token");
       }
