@@ -26,6 +26,17 @@ public class BestBuy extends AbstractWebsite {
 	private String referer;
 	
 	@Override
+	protected void beforeRequest(WebRequest req) {
+		req.setAdditionalHeader(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,/*;q=0.8");
+    req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
+    req.setAdditionalHeader(HttpHeader.ACCEPT_ENCODING, "gzip, deflate, br");
+		req.setAdditionalHeader(HttpHeader.REFERER, referer);
+		req.setAdditionalHeader(HttpHeader.DNT, "1");
+		req.setAdditionalHeader(HttpHeader.UPGRADE_INSECURE_REQUESTS, "1");
+		req.setAdditionalHeader("TE", "Trailers");
+	}
+	
+	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
 		dom = Jsoup.parse(html);
@@ -43,18 +54,6 @@ public class BestBuy extends AbstractWebsite {
 			url = url + (url.indexOf("?") > 0 ? "&" : "?") + "intl=nosplash";
 		}
 		return url;
-	}
-	
-	@Override
-	protected void beforeRequest(WebRequest req) {
-		req.setAdditionalHeader(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,/*;q=0.8");
-    req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
-    req.setAdditionalHeader(HttpHeader.ACCEPT_ENCODING, "gzip, deflate, br");
-    req.setAdditionalHeader(HttpHeader.CONNECTION, "keep-alive");
-		req.setAdditionalHeader(HttpHeader.REFERER, referer);
-		req.setAdditionalHeader(HttpHeader.DNT, "1");
-		req.setAdditionalHeader(HttpHeader.UPGRADE_INSECURE_REQUESTS, "1");
-		req.setAdditionalHeader("TE", "Trailers");
 	}
 
   @Override

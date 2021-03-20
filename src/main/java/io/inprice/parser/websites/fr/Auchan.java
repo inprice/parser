@@ -109,7 +109,8 @@ public class Auchan extends AbstractWebsite {
 
   @Override
   public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+    List<LinkSpec> specList = getKeyValueSpecList(dom.select("ul.product-aside--list"), "span.product-aside--listSubtitle", "span.product-aside--listValue");
+    if (specList != null && specList.size() > 0) return specList;
 
     if (json != null && json.has("extendedDescription")) {
       String desc = json.get("extendedDescription").toString();

@@ -3,10 +3,7 @@ package io.inprice.parser.websites.es;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import org.json.JSONObject;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -21,59 +18,58 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class UlaBox extends AbstractWebsite {
 
-	private Document dom;
+	private JSONObject json;
 	
 	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
-		dom = Jsoup.parse(html);
+		
+		String rawJson = findAPart(html, "\\\"product\\\":{\\\"product\\\":", "}}\",", 2, 0);
+		rawJson = rawJson.replace("\\\"", "\"");
+		rawJson = rawJson.replace(":\"{\"", ":{\"");
+		rawJson = rawJson.replace("]}}\",", "]}},");
+		json = new JSONObject(rawJson);
 	}
 
   @Override
   public boolean isAvailable() {
-    Element val = dom.selectFirst("div.product-shop");
-    if (val != null && StringUtils.isNotBlank(val.attr("data-product-qty"))) {
-      try {
-        int qty = new Integer(cleanDigits(val.attr("data-product-qty")));
-        return qty > 0;
-      } catch (Exception ignored) { }
-    }
+		if (json != null && json.has("unitQuantity")) {
+			return json.getInt("unitQuantity") > 0;
+		}
     return false;
   }
 
   @Override
   public String getSku() {
-    Element val = dom.selectFirst("div.product-shop");
-    if (val != null && StringUtils.isNotBlank(val.attr("data-product-id"))) {
-      return val.attr("data-product-id");
-    }
+		if (json != null && json.has("id")) {
+			return ""+json.getLong("id");
+		}
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element val = dom.selectFirst("div.product-shop");
-    if (val != null && StringUtils.isNotBlank(val.attr("data-product-name"))) {
-      return val.attr("data-product-name");
+  	if (json != null && json.has("name")) {
+      return json.getString("name");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element val = dom.selectFirst("div.product-shop");
-    if (val != null && StringUtils.isNotBlank(val.attr("data-price"))) {
-      return new BigDecimal(cleanDigits(val.attr("data-price")));
+  	if (json != null && json.has("price")) {
+  		JSONObject price = json.getJSONObject("price");
+  		return price.getBigDecimal("value");
     }
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getBrand() {
-    Element val = dom.selectFirst("span.milli a.js-pjax");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
+  	if (json != null && json.has("brand")) {
+			JSONObject brand = json.getJSONObject("brand");
+			return brand.getString("name");
+		}
     return Consts.Words.NOT_AVAILABLE;
   }
 
@@ -84,10 +80,6 @@ public class UlaBox extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = dom.selectFirst("div.value-description");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
     return Consts.Words.NOT_AVAILABLE;
   }
 

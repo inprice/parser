@@ -3,6 +3,7 @@ package io.inprice.parser.websites.xx;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -27,18 +28,23 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class Bonprix extends AbstractWebsite {
 
 	private Document dom;
+
+	@Override
+	protected void beforeRequest(WebRequest req) {
+		//INFO: normally sid value is created when homepage loading. as a workaround, we may visit homepage first in case of sid creation problem!
+		try {
+  		String sid = UUID.randomUUID().toString().toUpperCase();
+  		sid = "SID={" + sid + "}";
+  		req.setAdditionalHeader(HttpHeader.COOKIE, sid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
 		dom = Jsoup.parse(html);
-	}
-
-	@Override
-	protected void beforeRequest(WebRequest req) {
-		//TODO: zamanasimi ihtimaline karsin bir zaman sonra bu bir daha test edilmeli. 2021-03-14
-		//normalde ilk once anasayfsnin yuklenmesi ile SID cookie yukleniyor. SID isinde sorun olmasi durumunda, once anasayfa yuklettirilecek!
-		req.setAdditionalHeader(HttpHeader.COOKIE, "SID=%7B42ED5934%2DB8C8%2D4B21%2DBCFF%2D4FE33209A7F9%7D");
 	}
 
   @Override

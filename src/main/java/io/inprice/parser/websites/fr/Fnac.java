@@ -7,12 +7,14 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.helpers.StringHelpers;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -35,11 +37,20 @@ public class Fnac extends AbstractWebsite {
 		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
-		Element dataEL = dom.selectFirst("script[type='application/ld+json']");
+    Elements dataEL = dom.select("script[type='application/ld+json']");
     if (dataEL != null) {
-    	json = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
-      if (json.has("offers")) {
-        offers = json.getJSONObject("offers");
+      for (DataNode dNode : dataEL.dataNodes()) {
+        JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
+        if (data.has("@type")) {
+          String type = data.getString("@type");
+          if (type.equals("Product")) {
+          	json = data;
+          	if (json.has("offers")) {
+          		offers = json.getJSONObject("offers");
+          	}
+            break;
+          }
+        }
       }
     }
 	}
@@ -74,10 +85,8 @@ public class Fnac extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (isAvailable()) {
-      if (offers != null && offers.has("price")) {
-        return offers.getBigDecimal("price");
-      }
+    if (offers != null && offers.has("price")) {
+      return offers.getBigDecimal("price");
     }
     return BigDecimal.ZERO;
   }
@@ -106,9 +115,9 @@ public class Fnac extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = dom.selectFirst("p.f-buyBox-shipping");
+    Element val = dom.selectFirst(".f-buyBox-shipping");
     if (val == null || StringUtils.isBlank(val.text())) {
-      val = dom.selectFirst("div.f-productSpecialsOffers-offerParagraphWrapper");
+      val = dom.selectFirst(".f-productSpecialsOffers-offerParagraphWrapper");
     }
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
@@ -120,7 +129,8 @@ public class Fnac extends AbstractWebsite {
 
   @Override
   public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  	List<LinkSpec> specList = getKeyValueSpecList(dom.select("div.characteristicsStrate__list dl"), "dt", "dd");
+  	if (specList != null && specList.size() > 0) return specList;
 
     Elements specs = dom.select("table.f-productDetails-table tr");
     if (specs != null) {

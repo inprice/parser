@@ -23,7 +23,6 @@ import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
-import io.inprice.parser.websites.es.Pixmania;
 
 /**
  * Parser for vidaXL Italy
@@ -34,7 +33,7 @@ import io.inprice.parser.websites.es.Pixmania;
  */
 public class VidaXL extends AbstractWebsite {
 
-	private static final Logger log = LoggerFactory.getLogger(Pixmania.class);
+	private static final Logger log = LoggerFactory.getLogger(VidaXL.class);
 
 	private final String prodUrl = "https://www.vidaxl.it/platform/index.php?m=auction&a=getAuctionsList&id=";
 	

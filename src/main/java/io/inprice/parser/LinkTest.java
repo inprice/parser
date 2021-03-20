@@ -1,17 +1,19 @@
 package io.inprice.parser;
 
+import static io.inprice.parser.helpers.Global.HTMLUNIT_POOL;
+
 import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
 import io.inprice.parser.websites.Website;
-import io.inprice.parser.websites.de.MediaMarktDE;
+import io.inprice.parser.websites.fr.Laredoute;
 
 public class LinkTest {
 
-	private static Website website = new MediaMarktDE();
-	private static String url = "https://www.saturn.de/de/product/_hp-officejet-6950-2166497.html";
+	private static Website website = new Laredoute();
+	private static String url = "https://www.laredoute.com/ppdp/prod-350154056.aspx#shoppingtool=treestructureflyout";
 	
 	public static void main(String[] args) {
-		//HTMLUNIT_POOL.setup();
+		HTMLUNIT_POOL.setup();
 
 		Platform platform = new Platform();
 		platform.setName("Test Site");
@@ -25,7 +27,7 @@ public class LinkTest {
 		website.check(link);
 		printout(link);
 		
-		//HTMLUNIT_POOL.shutdown();
+		HTMLUNIT_POOL.shutdown();
 	}
 	
 	private static void printout(Link link) {

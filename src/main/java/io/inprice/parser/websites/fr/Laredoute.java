@@ -8,11 +8,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.gargoylesoftware.htmlunit.HttpHeader;
+import com.gargoylesoftware.htmlunit.WebRequest;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.helpers.StringHelpers;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -25,27 +31,43 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class Laredoute extends AbstractWebsite {
 
 	private Document dom;
-	private String price;
 
 	private JSONObject json;
   private JSONObject offers;
 	
 	@Override
+	protected void beforeRequest(WebRequest req) {
+		req.setAdditionalHeader(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,/*;q=0.8");
+    req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
+    req.setAdditionalHeader(HttpHeader.ACCEPT_ENCODING, "gzip, deflate, br");
+		req.setAdditionalHeader(HttpHeader.CACHE_CONTROL, "max-age=0");
+	}
+	
+	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
-
 		dom = Jsoup.parse(html);
-		price = findAPart(html, "\"SalePriceAfterWithCharges\":", ",");
 
-		Element dataEL = dom.selectFirst("script[type='application/ld+json']");
+    Elements dataEL = dom.select("script[type='application/ld+json']");
     if (dataEL != null) {
-    	json = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
-      if (json.has("offers")) {
-        offers = json.getJSONObject("offers");
-        try {
-          JSONArray arr = offers.getJSONArray("offers");
-          offers = arr.getJSONObject(0);
-        } catch (Exception e) { }
+      for (DataNode dNode : dataEL.dataNodes()) {
+        JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
+        if (data.has("@type")) {
+          String type = data.getString("@type");
+          if (type.equals("Product")) {
+          	json = data;
+          	if (json.has("offers")) {
+              try {
+              	offers = json.getJSONObject("offers");
+              	if (offers == null) {
+                  JSONArray arr = offers.getJSONArray("offers");
+                  offers = arr.getJSONObject(0);
+              	}
+              } catch (Exception e) { }
+          	}
+            break;
+          }
+        }
       }
     }
 	}
@@ -61,9 +83,8 @@ public class Laredoute extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = dom.getElementById("vendorsList");
-    if (val != null && StringUtils.isNotBlank(val.attr("data-prodid"))) {
-      return val.attr("data-prodid");
+    if (json != null && json.has("sku")) {
+      return json.getString("sku");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -78,14 +99,8 @@ public class Laredoute extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (isAvailable()) {
-      if (price != null) {
-        return new BigDecimal(cleanDigits(price));
-      }
-
-      if (offers != null && offers.has("price")) {
-        return offers.getBigDecimal("price");
-      }
+    if (offers != null && offers.has("price")) {
+      return offers.getBigDecimal("price");
     }
     return BigDecimal.ZERO;
   }

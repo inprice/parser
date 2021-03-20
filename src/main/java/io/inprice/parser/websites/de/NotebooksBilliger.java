@@ -4,12 +4,16 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.helpers.StringHelpers;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -22,65 +26,73 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class NotebooksBilliger extends AbstractWebsite {
 
 	private Document dom;
-	private String brandName;
+	private JSONObject prod;
 	
 	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
-
 		dom = Jsoup.parse(html);
-		brandName = findAPart(html, "\"productBrand\":\"", "\"");
+
+    Elements dataEL = dom.select("script[type='application/ld+json']");
+    if (dataEL != null) {
+      for (DataNode dNode : dataEL.dataNodes()) {
+        JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
+        if (data.has("@type") && data.getString("@type").equals("Product")) {
+          prod = data;
+          break;
+        }
+      }
+    }
 	}
 
   @Override
   public boolean isAvailable() {
-    Element val = dom.selectFirst("div.availability_widget span.list_names");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text().contains("Abholbereit");
-    }
+  	if (prod != null && prod.has("offers")) {
+  		JSONObject offer = prod.getJSONObject("offers");
+  		if (!offer.isEmpty()) {
+  			String availability = offer.getString("availability");
+  			return (StringUtils.isNotBlank(availability) && availability.contains("InStock"));
+  		}
+  	}
     return false;
   }
 
   @Override
   public String getSku() {
-    Element val = dom.selectFirst("div#product_page_detail");
-    if (val != null && StringUtils.isNotBlank(val.attr("data-products-number"))) {
-      return val.attr("data-products-number");
-    }
+  	if (prod != null && prod.has("sku")) {
+			return prod.getString("sku");
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element val = dom.selectFirst("meta[property='og:title']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content");
-    }
+  	if (prod != null && prod.has("name")) {
+			return prod.getString("name");
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element val = dom.getElementById("product_detail_price");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return new BigDecimal(cleanDigits(val.attr("content")));
-    }
-
+  	if (prod != null && prod.has("offers")) {
+  		JSONObject offer = prod.getJSONObject("offers");
+  		if (!offer.isEmpty()) {
+  			String price = offer.getString("price");
+  			return new BigDecimal(cleanDigits(price));
+  		}
+  	}
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getBrand() {
-    if (StringUtils.isNotBlank(brandName)) {
-      return brandName;
-    }
-
-    Element val = dom.selectFirst("div.product_headline div.image_container img");
-    if (val != null && StringUtils.isNotBlank(val.attr("alt"))) {
-      String alt = val.attr("alt");
-      return alt.substring(0, alt.lastIndexOf(" "));
-    }
-
+  	if (prod != null && prod.has("offers")) {
+  		JSONObject brand = prod.getJSONObject("brand");
+  		if (!brand.isEmpty()) {
+  			return brand.getString("name");
+  		}
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
@@ -91,21 +103,21 @@ public class NotebooksBilliger extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = dom.selectFirst("div.sameday img");
-    if (val != null && StringUtils.isNotBlank(val.attr("alt"))) {
-      return val.attr("alt");
+    Element val = dom.selectFirst(".product-price__info-wrapper > .product-price__info");
+    if (val != null) {
+      return val.text();
     }
     return "Abholung im Geschäft";
   }
 
   @Override
   public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = getValueOnlySpecList(dom.select("div#section_info li span"));
-    if (specList == null)
-      specList = getKeyValueSpecList(dom.select("table.properties_table tr"), "td.produktDetails_eigenschaft2",
-          "td.produktDetails_eigenschaft3");
-
-    return specList;
+  	return 
+    		getKeyValueSpecList(
+  				dom.select("table.properties_table tr"), 
+  				"td.produktDetails_eigenschaft2",
+  				"td.produktDetails_eigenschaft3"
+				);
   }
 
 }

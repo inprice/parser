@@ -21,9 +21,8 @@ public class HtmlUnitPool extends ResourcePool<WebClient> {
 
 	@Override
 	public WebClient createNewOne() {
-		//do you hate internet explorer like me!
-		//WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER, Props.PROXY_HOST(), Props.PROXY_PORT());
-		WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER);
+		//WebClient webClient = new WebClient(BrowserVersion.FIREFOX, Props.PROXY_HOST(), Props.PROXY_PORT());
+		WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
     webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 

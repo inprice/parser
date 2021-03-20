@@ -37,9 +37,10 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gargoylesoftware.htmlunit.HttpHeader;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.WebResponse;
 
 import io.inprice.common.config.SysProps;
 import io.inprice.common.helpers.SqlHelper;
@@ -86,9 +87,6 @@ public abstract class AbstractWebsite implements Website {
 	}
 
 	private boolean openPage() {
-		String url = getAlternativeUrl();
-		if (StringUtils.isBlank(url)) url = getUrl();
-
 		long started = System.currentTimeMillis();
 
 		String problem = null;
@@ -97,19 +95,16 @@ public abstract class AbstractWebsite implements Website {
 		if (Renderer.HTMLUNIT.equals(getRenderer())) {
 			WebClient webClient = null;
 			try {
-	    	WebRequest req = new WebRequest(new URL(url));
-	    	beforeRequest(req);
-
 				webClient = HTMLUNIT_POOL.acquire();
+				WebResponse res = makeRequest(webClient);
 
-				HtmlPage page = webClient.getPage(req);
-				if (page.getWebResponse().getStatusCode() < 400) {
-					httpStatus = page.getWebResponse().getStatusCode();
-	  			setHtml(page.getTextContent());
+				if (res.getStatusCode() < 400) {
+					httpStatus = res.getStatusCode();
+	  			setHtml(res.getContentAsString());
 	  			afterRequest(webClient);
 				} else {
-					problem = page.getWebResponse().getStatusMessage();
-					httpStatus = page.getWebResponse().getStatusCode();
+					problem = res.getStatusMessage();
+					httpStatus = res.getStatusCode();
 				}
 
 	    } catch (SocketTimeoutException set) {
@@ -142,7 +137,7 @@ public abstract class AbstractWebsite implements Website {
       	
         webDriver = new RemoteWebDriver(new URL(Props.WEBDRIVER_URL()), options);
       	webDriver.manage().timeouts().pageLoadTimeout(SysProps.HTTP_CONNECTION_TIMEOUT(), TimeUnit.SECONDS);
-    		webDriver.get(url);
+    		webDriver.get(getUrl());
     		
   			LogEntries logs = webDriver.manage().logs().get(LogType.PERFORMANCE);
   			for (Iterator<LogEntry> it = logs.iterator(); it.hasNext();) {
@@ -155,7 +150,7 @@ public abstract class AbstractWebsite implements Website {
               JSONObject params = message.getJSONObject("params");
               JSONObject response = params.getJSONObject("response");
               String messageUrl = response.getString("url");
-              if (url.equals(messageUrl)) {
+              if (getUrl().equals(messageUrl)) {
               	httpStatus = response.getInt("status");
                 break;
               }
@@ -169,7 +164,7 @@ public abstract class AbstractWebsite implements Website {
   				problem = EnglishReasonPhraseCatalog.INSTANCE.getReason(httpStatus, Locale.ENGLISH);
   			} else {
   				String pageSource = null;
-  				if (link.getPlatform().isJsRenderedBody()) {
+  				if (isJsRendered()) {
   	  			String javascript = "return arguments[0].innerHTML";
   	  			pageSource = (String)((JavascriptExecutor)webDriver).executeScript(javascript, webDriver.findElement(By.tagName("html")));
   				} else {
@@ -213,7 +208,7 @@ public abstract class AbstractWebsite implements Website {
 			} else {
 				setLinkStatus((httpStatus == 404 ? LinkStatus.NOT_FOUND : LinkStatus.NETWORK_ERROR), problem, (httpStatus != 200 ? httpStatus : 206));
 			}
-			log.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, problem, url);
+			log.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, problem, getUrl());
 		} else {
 			link.setHttpStatus(httpStatus);
 			log.info("-SUCCESSFUL- {}", logPart);
@@ -269,6 +264,17 @@ public abstract class AbstractWebsite implements Website {
 			}
 		}
 
+	}
+	
+	protected WebResponse makeRequest(WebClient webClient) throws MalformedURLException, IOException {
+		String url = getAlternativeUrl();
+		if (StringUtils.isBlank(url)) url = getUrl();
+
+		WebRequest req = new WebRequest(new URL(url));
+		req.setAdditionalHeader(HttpHeader.CONNECTION, "keep-alive");
+
+  	beforeRequest(req);
+		return webClient.loadWebResponse(req);
 	}
 
 	@Override
@@ -420,6 +426,9 @@ public abstract class AbstractWebsite implements Website {
 	protected void beforeRequest(WebRequest req) { }
 	protected void afterRequest(WebClient webClient) { }
 
+	protected boolean isJsRendered() { return false; }
+	protected boolean willHtmlBePulled() { return true; }
+	
 	protected String getAlternativeUrl() { return null; }
 
 }
