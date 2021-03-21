@@ -97,11 +97,6 @@ public class Zalando extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Zalando";
-  }
-
-  @Override
   public String getShipment() {
     return "Standard";
   }

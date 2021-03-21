@@ -95,7 +95,7 @@ public class Kogan extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
-    return "Kogan.com";
+    return super.getSeller();
   }
 
   @Override

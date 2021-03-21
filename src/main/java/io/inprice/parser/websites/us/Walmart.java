@@ -87,7 +87,7 @@ public class Walmart extends AbstractWebsite {
       return val.text();
     }
 
-    return "Walmart";
+    return super.getSeller();
   }
 
   @Override

@@ -97,7 +97,7 @@ public class Trendyol extends AbstractWebsite {
       }
     }
 
-    return "Trendyol";
+    return super.getSeller();
   }
 
   @Override

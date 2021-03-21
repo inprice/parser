@@ -78,11 +78,6 @@ public class Otto extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Otto";
-  }
-
-  @Override
   public String getShipment() {
     Element val = dom.selectFirst("span.prd_price__note");
     if (val != null) {

@@ -77,11 +77,6 @@ public class Gigas101 extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "101Gigas";
-  }
-
-  @Override
   public String getShipment() {
     Elements vals = dom.select("div.availability div#codigosku");
     if (vals != null && !vals.isEmpty()) {

@@ -91,11 +91,6 @@ public class Argos extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Argos";
-  }
-
-  @Override
   public String getShipment() {
     final String staticPart = "In-store pickup";
 

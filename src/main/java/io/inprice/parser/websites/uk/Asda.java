@@ -114,11 +114,6 @@ public class Asda extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Asda";
-  }
-
-  @Override
   public String getShipment() {
     return "In-store pickup.";
   }

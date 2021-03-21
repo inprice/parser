@@ -99,7 +99,7 @@ public class Etsy extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.attr("data-to_username"))) {
       return val.attr("data-to_username");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return super.getSeller();
   }
 
   @Override

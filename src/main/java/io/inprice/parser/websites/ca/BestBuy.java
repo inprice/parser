@@ -105,7 +105,7 @@ public class BestBuy extends AbstractWebsite {
         return seller.getString("name");
       }
     }
-    return "Best Buy";
+    return super.getSeller();
   }
 
   @Override

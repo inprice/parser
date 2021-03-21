@@ -129,11 +129,6 @@ public class MediaMarktDE extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return getPlatform().getName();
-  }
-
-  @Override
   public String getShipment() {
     return shipping;
   }

@@ -93,11 +93,6 @@ public class DeBijenkorf extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "DeBijenkorf";
-  }
-
-  @Override
   public String getShipment() {
     Element val = dom.selectFirst("a[href='#dbk-ocp-delivery-info']");
     if (val != null && StringUtils.isNotBlank(val.text())) {

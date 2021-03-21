@@ -24,10 +24,19 @@ public class UlaBox extends AbstractWebsite {
 	protected void setHtml(String html) {
 		super.setHtml(html);
 		
-		String rawJson = findAPart(html, "\\\"product\\\":{\\\"product\\\":", "}}\",", 2, 0);
+		String rawJson = null;
+		if (html.indexOf("}]},") > -1) {
+			rawJson = findAPart(html, "\\\"product\\\":{\\\"product\\\":", "}]},", 3, 0);
+		} else {
+			rawJson = findAPart(html, "\\\"product\\\":{\\\"product\\\":", "}}\",", 2, 0);
+		}
 		rawJson = rawJson.replace("\\\"", "\"");
 		rawJson = rawJson.replace(":\"{\"", ":{\"");
 		rawJson = rawJson.replace("]}}\",", "]}},");
+		rawJson = rawJson.replace("\\u003c", "<");
+		rawJson = rawJson.replace("\\u003e", ">");
+		rawJson = rawJson.replace("\\\"", "\"");
+		
 		json = new JSONObject(rawJson);
 	}
 
@@ -71,11 +80,6 @@ public class UlaBox extends AbstractWebsite {
 			return brand.getString("name");
 		}
     return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
-  public String getSeller() {
-    return "UlaBox";
   }
 
   @Override

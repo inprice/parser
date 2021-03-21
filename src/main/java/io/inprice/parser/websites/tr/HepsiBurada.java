@@ -89,7 +89,7 @@ public class HepsiBurada extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return super.getSeller();
   }
 
   @Override

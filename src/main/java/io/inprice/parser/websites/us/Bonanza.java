@@ -127,7 +127,7 @@ public class Bonanza extends AbstractWebsite {
       return val.text();
     }
 
-    return "Bonanza";
+    return super.getSeller();
   }
 
   @Override

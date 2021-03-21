@@ -116,11 +116,6 @@ public class Teknosa extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Teknosa";
-  }
-
-  @Override
   public String getShipment() {
     Element val = dom.selectFirst("div.pw-dangerous-html.dbh-content");
     if (val == null || StringUtils.isBlank(val.text())) {

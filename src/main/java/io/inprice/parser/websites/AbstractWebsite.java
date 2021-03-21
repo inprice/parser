@@ -271,8 +271,12 @@ public abstract class AbstractWebsite implements Website {
 		if (StringUtils.isBlank(url)) url = getUrl();
 
 		WebRequest req = new WebRequest(new URL(url));
+		req.setAdditionalHeader(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+		req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
+		req.setAdditionalHeader(HttpHeader.ACCEPT_ENCODING, "gzip, deflate, br");
 		req.setAdditionalHeader(HttpHeader.CONNECTION, "keep-alive");
-
+		req.setAdditionalHeader(HttpHeader.CACHE_CONTROL, "max-age=0");
+		
   	beforeRequest(req);
 		return webClient.loadWebResponse(req);
 	}
@@ -374,6 +378,10 @@ public abstract class AbstractWebsite implements Website {
 		link.setStatus(status);
 		link.setProblem(problem.toUpperCase());
 		link.setHttpStatus(httpStatus);
+	}
+	
+	public String getSeller() {
+		return getPlatform().getName();
 	}
 
 	private String fixLength(String val, int limit) {

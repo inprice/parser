@@ -1,11 +1,10 @@
-package io.inprice.parser.websites.fr;
+package io.inprice.parser.websites.xx;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
@@ -19,18 +18,18 @@ import io.inprice.parser.helpers.StringHelpers;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Parser for Laredoute France
+ * Parser for vidaXL Italy
  *
  * Contains standard data, all is extracted by css selectors
  *
  * @author mdpinar
  */
-public class Laredoute extends AbstractWebsite {
+public class VidaXL extends AbstractWebsite {
 
 	private Document dom;
 
-	private JSONObject json;
-  private JSONObject offers;
+	protected JSONObject json;
+  protected JSONObject offers;
 	
 	@Override
 	protected void setHtml(String html) {
@@ -46,13 +45,7 @@ public class Laredoute extends AbstractWebsite {
           if (type.equals("Product")) {
           	json = data;
           	if (json.has("offers")) {
-              try {
-              	offers = json.getJSONObject("offers");
-              	if (offers == null) {
-                  JSONArray arr = offers.getJSONArray("offers");
-                  offers = arr.getJSONObject(0);
-              	}
-              } catch (Exception e) { }
+          		offers = json.getJSONObject("offers");
           	}
             break;
           }
@@ -70,10 +63,14 @@ public class Laredoute extends AbstractWebsite {
     return false;
   }
 
+
   @Override
   public String getSku() {
-    if (json != null && json.has("sku")) {
-      return json.getString("sku");
+    if (json != null) {
+      if (json.has("sku"))
+        return json.getString("sku");
+      if (json.has("prid"))
+        return "" + json.getInt("prid");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -88,61 +85,64 @@ public class Laredoute extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (offers != null && offers.has("price")) {
-      return offers.getBigDecimal("price");
+    if (offers != null) {
+    	if (offers.has("price")) {
+    		return offers.getBigDecimal("price");
+    	}
+    	if (offers.has("priceSpecification")) {
+    		JSONObject pspec = offers.getJSONObject("priceSpecification");
+    		if (pspec != null && pspec.has("price")) {
+    			return pspec.getBigDecimal("price");
+    		}
+    	}
     }
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getBrand() {
-    if (json != null && json.has("brand")) {
-      JSONObject brand = json.getJSONObject("brand");
-      if (brand.has("name")) {
-        return brand.getString("name");
-      }
+    Element val = dom.selectFirst("meta[itemprop='brand']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getSeller() {
-    if (offers != null && offers.has("seller")) {
-      JSONObject seller = offers.getJSONObject("seller");
-      if (seller.has("name")) {
-        return seller.getString("name");
-      }
+    if (json != null && json.has("name")) {
+      return json.getString("name");
     }
     return super.getSeller();
   }
 
   @Override
   public String getShipment() {
-    Element val = dom.selectFirst("li.delivery-info-item.delivery-info.delivery-info-content");
+    Element val = dom.selectFirst("ul.product-details li:nth-child(2)");
     if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
+      return val.text().replace("checkmark", "");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
-    Element specs = dom.getElementsByTag("dscpdp").first();
-    if (specs != null) {
-      String[] specChunks;
-      if (specs.text().indexOf("•") > 0)
-        specChunks = specs.text().split("•");
-      else
-        specChunks = specs.text().split("\\.");
+  	List<LinkSpec> specList = null;
 
-      if (specChunks.length > 0) {
-        specList = new ArrayList<>(specChunks.length);
-        for (String spec : specChunks) {
-          specList.add(new LinkSpec("", spec));
-        }
-      }
-    }
+  	Elements specsEL = dom.select("div.product-specifications__text li");
+  	if (specsEL != null && specsEL.size() > 0) {
+  		specList = new ArrayList<>(specsEL.size());
+  		for (int i = 0; i < specsEL.size(); i++) {
+				Element specEL = specsEL.get(i);
+				String[] pair = specEL.text().split(":");
+				if (pair.length == 1) {
+					specList.add(new LinkSpec("", pair[0]));
+				} else {
+					specList.add(new LinkSpec(pair[0], pair[1]));
+				}
+			}
+  	}
+  	
     return specList;
   }
 

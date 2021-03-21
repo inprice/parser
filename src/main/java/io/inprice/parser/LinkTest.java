@@ -5,12 +5,12 @@ import static io.inprice.parser.helpers.Global.HTMLUNIT_POOL;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
 import io.inprice.parser.websites.Website;
-import io.inprice.parser.websites.fr.Laredoute;
+import io.inprice.parser.websites.xx.VidaXL;
 
 public class LinkTest {
 
-	private static Website website = new Laredoute();
-	private static String url = "https://www.laredoute.com/ppdp/prod-350154056.aspx#shoppingtool=treestructureflyout";
+	private static Website website = new VidaXL();
+	private static String url = "https://www.vidaxl.it/e/8718475894377/vidaxl-lampada-da-soffitto-bianca-trasparente-cristalli-acrilici-5-e14";
 	
 	public static void main(String[] args) {
 		HTMLUNIT_POOL.setup();

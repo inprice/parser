@@ -94,7 +94,7 @@ public class Auchan extends AbstractWebsite {
         return vendor.getString("merchantName");
       }
     }
-    return "Auchan";
+    return super.getSeller();
   }
 
   @Override

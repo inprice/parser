@@ -157,11 +157,6 @@ public class CanadianTire extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "CanadianTire";
-  }
-
-  @Override
   public String getShipment() {
     return "In-store pickup";
   }

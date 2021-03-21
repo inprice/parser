@@ -125,11 +125,6 @@ public class Bonprix extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Bonprix";
-  }
-
-  @Override
   public String getShipment() {
     Element val = dom.selectFirst("div[data-controller='infoicon'] div.info-text");
     if (val != null && StringUtils.isNotBlank(val.text())) {

@@ -82,11 +82,6 @@ public class Currys extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Currys";
-  }
-
-  @Override
   public String getShipment() {
     Element val = dom.getElementById("delivery");
     if (val != null && StringUtils.isNotBlank(val.text())) {

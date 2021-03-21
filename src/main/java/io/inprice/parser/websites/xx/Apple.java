@@ -104,11 +104,6 @@ public class Apple extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Apple";
-  }
-
-  @Override
   public String getShipment() {
   	if (json != null && json.has("freeShipping")) {
   		if (StringUtils.isNotBlank(json.getString("freeShipping"))) {

@@ -94,7 +94,7 @@ public class MediaMarkt extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
-    return "Media Markt";
+    return super.getSeller();
   }
 
   @Override

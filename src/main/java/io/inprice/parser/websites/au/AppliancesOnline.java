@@ -115,11 +115,6 @@ public class AppliancesOnline extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Appliance Online";
-  }
-
-  @Override
   public String getShipment() {
     return "Check delivery cost";
   }

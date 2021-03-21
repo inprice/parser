@@ -75,11 +75,6 @@ public class NewLook extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "NewLook";
-  }
-
-  @Override
   public String getShipment() {
     Element val = dom.selectFirst("span.product-delivery-link a");
     if (val != null && StringUtils.isNotBlank(val.text())) {

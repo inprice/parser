@@ -103,7 +103,7 @@ public class Bol extends AbstractWebsite {
         return seller.getString("name");
       }
     }
-    return "bol.com";
+    return super.getSeller();
   }
 
   @Override

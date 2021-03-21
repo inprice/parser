@@ -1,12 +1,14 @@
 package io.inprice.parser.websites.it;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -71,11 +73,6 @@ public class Euronics extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Euronics";
-  }
-
-  @Override
   public String getShipment() {
     Element val = dom.selectFirst("span.productDetails__label.productDetails__label--left");
     if (val != null && StringUtils.isNotBlank(val.text())) {
@@ -96,7 +93,34 @@ public class Euronics extends AbstractWebsite {
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(dom.select("ul.productDetails__specifications li"));
+  	List<LinkSpec> specList = null;
+
+  	Elements specs = dom.select("div.product__specificationsContent .content__abstractText");
+  	if (specs != null && specs.size() > 0) {
+  		specList = new ArrayList<>(specs.size());
+  		for (int i = 0; i < specs.size(); i++) {
+				Element spec = specs.get(i);
+
+  			String key = spec.selectFirst(".product__specificationItem").text();
+
+  			String val = "";
+  			Element valEL = spec.selectFirst(".product__specificationItemDetail");
+  			if (valEL.hasClass("i-check")) {
+  				val = "Yes";
+  			} if (valEL.hasClass("i-accordion_close")) {
+  				val = "No";
+  			} else {
+  				val = valEL.text();
+  			}
+  			specList.add(new LinkSpec(key, val));
+  		}
+  	}
+
+  	if (specList == null || specList.size() == 0) {
+  		specList = getValueOnlySpecList(dom.select("ul.productDetails__specifications li"));
+  	}
+  	
+  	return specList;
   }
 
 }

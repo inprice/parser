@@ -85,11 +85,6 @@ public class CoolBlue extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "CoolBlue";
-  }
-
-  @Override
   public String getShipment() {
     Element val = dom.selectFirst("span.js-delivery-information-usp");
     if (val != null && StringUtils.isNotBlank(val.text())) {

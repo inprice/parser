@@ -71,11 +71,6 @@ public class BigW extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Big W";
-  }
-
-  @Override
   public String getShipment() {
     return "In-store pickup";
   }

@@ -89,11 +89,6 @@ public class Lidl extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Lidl";
-  }
-
-  @Override
   public String getShipment() {
     Element shipment = dom.selectFirst("div.delivery span");
     if (shipment != null) {

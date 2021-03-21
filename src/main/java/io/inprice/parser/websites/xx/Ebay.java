@@ -69,8 +69,6 @@ public class Ebay extends AbstractWebsite {
   @Override
   public String getName() {
     Element val = dom.selectFirst("span#vi-lkhdr-itmTitl");
-    if (val == null) val = dom.selectFirst("title");
-
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -84,7 +82,8 @@ public class Ebay extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.attr("etafsharetitle"))) {
       return val.attr("etafsharetitle");
     }
-    return Consts.Words.NOT_AVAILABLE;
+
+    return dom.title();
   }
 
   @Override
@@ -146,7 +145,7 @@ public class Ebay extends AbstractWebsite {
       }
     }
 
-    return Consts.Words.NOT_AVAILABLE;
+    return super.getSeller();
   }
 
   @Override

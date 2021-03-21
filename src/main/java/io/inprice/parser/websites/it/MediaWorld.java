@@ -83,11 +83,6 @@ public class MediaWorld extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Media World";
-  }
-
-  @Override
   public String getShipment() {
     Element val = dom.selectFirst("p.product-info-shipping");
     if (val != null && StringUtils.isNotBlank(val.text())) {
@@ -98,8 +93,7 @@ public class MediaWorld extends AbstractWebsite {
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return getKeyValueSpecList(dom.select("li.content__Tech__row"), "div.Tech-row__inner__key",
-        "div.Tech-row__inner__value");
+    return getKeyValueSpecList(dom.select("li.content__Tech__row"), "div.Tech-row__inner__key", "div.Tech-row__inner__value");
   }
 
 }

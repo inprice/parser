@@ -103,7 +103,7 @@ public class Wehkamp extends AbstractWebsite {
         return seller.getString("name");
       }
     }
-    return "Wehkamp";
+    return super.getSeller();
   }
 
   @Override

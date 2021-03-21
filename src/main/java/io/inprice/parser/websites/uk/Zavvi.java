@@ -92,11 +92,6 @@ public class Zavvi extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Zavvi";
-  }
-
-  @Override
   public String getShipment() {
     Element val = dom.selectFirst("div.productDeliveryAndReturns_message");
     if (val != null && StringUtils.isNotBlank(val.text())) {

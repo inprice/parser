@@ -153,7 +153,7 @@ public class Target extends AbstractWebsite {
       if (!seller.isEmpty())
         return seller;
     }
-    return "Target";
+    return super.getSeller();
   }
 
   @Override

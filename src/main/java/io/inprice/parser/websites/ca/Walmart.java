@@ -177,7 +177,7 @@ public class Walmart extends AbstractWebsite {
   		JSONObject sellerInfo = json.getJSONObject("sellerInfo");
   		return sellerInfo.getString("en");
   	}
-    return "Walmart";
+  	return super.getSeller();
   }
 
   @Override

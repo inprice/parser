@@ -110,7 +110,7 @@ public class Fnac extends AbstractWebsite {
         return seller.getString("name");
       }
     }
-    return "FNAC.COM";
+    return super.getSeller();
   }
 
   @Override

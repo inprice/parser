@@ -96,11 +96,6 @@ public class Electroking extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Electroking";
-  }
-
-  @Override
   public String getShipment() {
   	if (shipping != null) {
   		String value = shipping.getString("value");

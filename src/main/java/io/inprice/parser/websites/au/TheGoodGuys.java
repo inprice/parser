@@ -77,11 +77,6 @@ public class TheGoodGuys extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "TheGoodGuys";
-  }
-
-  @Override
   public String getShipment() {
     return "Check delivery cost";
   }

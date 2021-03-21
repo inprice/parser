@@ -38,8 +38,6 @@ public class CDiscount extends AbstractWebsite {
 
 		WebRequest req = new WebRequest(new URL("https://www.cdiscount.com/GetAlgoProducts/0"), HttpMethod.POST);
 		req.setAdditionalHeader(HttpHeader.ACCEPT, "application/json, text/javascript, */*; q=0.01");
-    req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
-    req.setAdditionalHeader(HttpHeader.ACCEPT_ENCODING, "gzip, deflate, br");
     req.setAdditionalHeader(HttpHeader.CONTENT_TYPE, "application/x-www-form-urlencoded; charset=UTF-8");
 		req.setAdditionalHeader(HttpHeader.REFERER, referer);
     
@@ -105,11 +103,6 @@ public class CDiscount extends AbstractWebsite {
   @Override
   public String getBrand() {
     return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
-  public String getSeller() {
-    return "CDiscount";
   }
 
   @Override
