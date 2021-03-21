@@ -24,11 +24,14 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class Trendyol extends AbstractWebsite {
 
 	private Document dom;
+	private String brand;
 	
 	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
 		dom = Jsoup.parse(html);
+		
+		brand = findAPart(html, "\"brand\":{\"@type\":\"Thing\",\"name\":\"", "\"");
 	}
 
   @Override
@@ -74,17 +77,21 @@ public class Trendyol extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element val = dom.selectFirst("div.pr-in-cn div.pr-in-br a");
+  	if (StringUtils.isNotBlank(brand)) return brand;
+
+  	Element val = dom.selectFirst("div.pr-in-cn div.pr-in-br a");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
+    
+    if (StringUtils.isNotBlank(brand)) return brand;
 
     return getSeller();
   }
 
   @Override
   public String getSeller() {
-    Element val = dom.selectFirst("span.pr-in-dt-spn");
+  	Element val = dom.selectFirst("span.pr-in-dt-spn");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -96,6 +103,7 @@ public class Trendyol extends AbstractWebsite {
         return sellerChunks[sellerChunks.length - 1];
       }
     }
+    
 
     return super.getSeller();
   }

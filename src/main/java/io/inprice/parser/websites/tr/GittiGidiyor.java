@@ -118,10 +118,16 @@ public class GittiGidiyor extends AbstractWebsite {
 
   @Override
   public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specs = getKeyValueSpecList(dom.select("#specs-container ul li"), "span", "strong");
+    List<LinkSpec> specs = getKeyValueSpecList(dom.select("table#sp-productTabFeatures tr"), "td:nth-child(1)", "td:nth-child(2)");
+
     if (specs == null || specs.size() == 0) {
-      specs = getKeyValueSpecList(dom.select("div.item-container"), "div.item-column:nth-child(1)", "div.item-column:nth-child(2)");
+      specs = getKeyValueSpecList(dom.select("#specs-container ul li"), "span", "strong");
     }
+
+    if (specs == null || specs.size() == 0) {
+    	specs = getKeyValueSpecList(dom.select("div.item-container"), "div.item-column:nth-child(1)", "div.item-column:nth-child(2)");
+    }
+    
     return specs;
   }
 

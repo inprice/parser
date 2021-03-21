@@ -1,14 +1,13 @@
-package io.inprice.parser.websites.uk;
+package io.inprice.parser.websites.au;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
@@ -17,13 +16,13 @@ import io.inprice.parser.helpers.StringHelpers;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Parser for NewLook UK
+ * Parser for HarveyNorman Australia
  *
  * Contains standard data, all is extracted by css selectors
  *
  * @author mdpinar
  */
-public class NewLook extends AbstractWebsite {
+public class HarverNorman extends AbstractWebsite {
 
 	private Document dom;
 
@@ -34,7 +33,6 @@ public class NewLook extends AbstractWebsite {
 	protected void setHtml(String html) {
 		super.setHtml(html);
 		dom = Jsoup.parse(html);
-		
 
     Elements dataEL = dom.select("script[type='application/ld+json']");
     if (dataEL != null && dataEL.size() > 0) {
@@ -45,7 +43,10 @@ public class NewLook extends AbstractWebsite {
           if (type.equals("Product")) {
           	json = data;
             if (json.has("offers")) {
-            	offers = json.getJSONObject("offers");
+            	JSONArray offs = json.getJSONArray("offers");
+            	if (offs != null && offs.length() > 0) {
+            		offers = offs.getJSONObject(0);
+            	}
             }
           }
         }
@@ -80,8 +81,10 @@ public class NewLook extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (offers != null && offers.has("price")) {
-      return offers.getBigDecimal("price");
+    if (isAvailable()) {
+      if (offers != null && offers.has("price")) {
+        return offers.getBigDecimal("price");
+      }
     }
     return BigDecimal.ZERO;
   }
@@ -95,17 +98,22 @@ public class NewLook extends AbstractWebsite {
   }
 
   @Override
-  public String getShipment() {
-  	Element val = dom.selectFirst("div#deliveryMessageWrapper_uniqueId");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
+  public String getSeller() {
+    if (offers != null && offers.has("seller")) {
+      JSONObject seller = offers.getJSONObject("seller");
+      return seller.getString("name");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return super.getSeller();
+  }
+
+  @Override
+  public String getShipment() {
+    return "Learn how delivery works";
   }
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(dom.select(".product-details--description.cms p"));
+  	return getKeyValueSpecList(dom.select("table#product-attribute-specs-table tr"), "th", "td");
   }
 
 }

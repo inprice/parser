@@ -1,6 +1,7 @@
 package io.inprice.parser.websites.uk;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -8,6 +9,7 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -92,7 +94,23 @@ public class Currys extends AbstractWebsite {
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(dom.select("div.product-highlight li"));
+  	List<LinkSpec> specList = null;
+
+  	Elements specs = dom.select("div.product-highlight li");
+  	if (specs != null && specs.size() > 0) {
+  		specList = new ArrayList<>(specs.size());
+  		for (int i = 0; i < specs.size(); i++) {
+				Element spec = specs.get(i);
+				if (spec.text().contains(":")) {
+					String[] pair = spec.text().split(":");
+					specList.add(new LinkSpec(pair[0], pair[1]));
+				} else {
+					specList.add(new LinkSpec("", spec.text()));
+				}
+			}
+  	}
+  	
+  	return specList;
   }
 
 }

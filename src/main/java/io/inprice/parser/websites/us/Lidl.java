@@ -31,9 +31,9 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public class LidlUS extends AbstractWebsite {
+public class Lidl extends AbstractWebsite {
 
-	private static final Logger log = LoggerFactory.getLogger(LidlUS.class);
+	private static final Logger log = LoggerFactory.getLogger(Lidl.class);
 	
   private final String prodUrl = "https://mobileapi.lidl.com/v1/products/";
 

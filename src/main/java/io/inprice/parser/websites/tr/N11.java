@@ -41,7 +41,7 @@ public class N11 extends AbstractWebsite {
         if (data.has("@type")) {
           String type = data.getString("@type");
           if (type.equals("Product") && data.has("offers")) {
-            offers = data.getJSONObject("offers");
+          	offers = data;
             break;
           }
         }

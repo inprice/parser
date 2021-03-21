@@ -51,7 +51,6 @@ import io.inprice.common.models.Platform;
 import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.config.Props;
 import io.inprice.parser.helpers.Consts;
-import kong.unirest.HttpResponse;
 
 /**
  * 
@@ -358,15 +357,6 @@ public abstract class AbstractWebsite implements Website {
 
 	protected LinkStatus getLinkStatus() {
 		return link.getStatus();
-	}
-
-	protected void setLinkStatus(HttpResponse<String> response) {
-		String problem = "Empty response!";
-		if (response != null) {
-			problem = response.getStatusText();
-			link.setHttpStatus(response.getStatus());
-		}
-		setLinkStatus(LinkStatus.NETWORK_ERROR, problem);
 	}
 	
 	protected void setLinkStatus(LinkStatus status, String problem) {

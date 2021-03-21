@@ -36,126 +36,90 @@ public class Asos extends AbstractWebsite {
 
 	private static final Logger log = LoggerFactory.getLogger(Asos.class);
 
-	private final String prodUrl = "https://www.asos.com/api/product/catalogue/v3/stockprice?store=ROW&productIds=";
-
+	//WARN: country selection may cause problems! it should have been more elegant but how!
+	private static final String BROWSE_COUNTRY = "browseCountry=JP";
+	
 	private Document dom;
-
-  private BigDecimal price = BigDecimal.ZERO;
-  private boolean isAvailable;
-  private String sku;
-  private String name;
-  private String brandName;
-  private String shipment;
   private JSONObject offer;
+
+  private String priceUrl;
+  private BigDecimal price = BigDecimal.ZERO;
 	
 	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
-    String prodData = findAPart(html, "window.asos.pdp.config.product =", "};", 1);
+    String prodData = findAPart(html, "config.product = ", "};", 1);
     if (StringUtils.isNotBlank(prodData)) {
       offer = new JSONObject(prodData);
     }
-
-    if (offer != null) {
-      sku = "" + offer.getInt("id");
-      isAvailable = offer.getBoolean("isInStock");
-      name = offer.getString("name");
-      brandName = offer.getString("brandName");
-      JSONObject shipping = offer.getJSONObject("shippingRestrictions");
-      if (shipping != null && shipping.has("shippingRestrictionsLabel")) {
-        shipment = shipping.getString("shippingRestrictionsLabel");
-      }
-    } else {
-      sku = getSku();
-    }
+    priceUrl = "https://www.asos.com" + findAPart(html, "config.stockPriceApiUrl = '", "';");
 	}
-
+	
+	@Override
+	protected void beforeRequest(WebRequest req) {
+		req.setAdditionalHeader(HttpHeader.COOKIE, BROWSE_COUNTRY);
+	}
+	
 	@Override
 	protected void afterRequest(WebClient webClient) {
-    if (StringUtils.isNotBlank(sku)) {
-  		try {
-    		WebRequest req = new WebRequest(new URL(prodUrl+sku), HttpMethod.GET);
-    		req.setAdditionalHeader(HttpHeader.ACCEPT, "application/json");
-    		req.setAdditionalHeader(HttpHeader.CONTENT_TYPE, "application/json");
-  
-    		boolean hasDataProblem = true;
+		try {
+  		WebRequest req = new WebRequest(new URL(priceUrl), HttpMethod.GET);
+  		req.setAdditionalHeader(HttpHeader.ACCEPT, "*/*");
+  		req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
+  		req.setAdditionalHeader(HttpHeader.COOKIE, BROWSE_COUNTRY);
 
-    		WebResponse res = webClient.loadWebResponse(req);
-        if (res.getStatusCode() < 400) {
-          JSONArray items = new JSONArray(res.getContentAsString());
-          if (items.length() > 0) {
-            JSONObject parent = items.getJSONObject(0);
-
-            if (parent.has("productPrice")) {
-              JSONObject pprice = parent.getJSONObject("productPrice");
-              price = pprice.getJSONObject("current").getBigDecimal("value");
-            }
-
-            if (!isAvailable && parent.has("variants")) {
-              JSONArray variants = parent.getJSONArray("variants");
-              if (variants.length() > 0) {
-              	hasDataProblem = false;
-                for (int i = 0; i < variants.length(); i++) {
-                  JSONObject var = variants.getJSONObject(i);
-                  if (var.getBoolean("isInStock")) {
-                    isAvailable = true;
-                    break;
-                  }
-                }
-              }
-            }
-          }
-        	
-        } else {
-        	setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), res.getStatusCode());
-        }
-      
-        if (hasDataProblem) {
-        	setLinkStatus(LinkStatus.NETWORK_ERROR, "DATA PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""));
-        }
-        
-  		} catch (IOException e) {
-  			setLinkStatus(LinkStatus.NETWORK_ERROR, e.getMessage(), 400);
-  			log.error("Failed to fetch current", e);
-  		}
-    } else {
-    	setLinkStatus(LinkStatus.NETWORK_ERROR, "ID PROBLEM (sku)!" + (getRetry() < 3 ? " RETRYING..." : ""));
-    }
+  		WebResponse res = webClient.loadWebResponse(req);
+      if (res.getStatusCode() < 400) {
+      	JSONArray prices = new JSONArray(res.getContentAsString());
+      	if (prices != null && prices.length() > 0) {
+        	for (int i = 0; i < prices.length(); i++) {
+  					JSONObject prod = prices.getJSONObject(i);
+  					if (prod != null && prod.has("productId")) {
+  						if (offer.getInt("id") ==  prod.getInt("productId")) {
+  							JSONObject pprice = prod.getJSONObject("productPrice");
+  							if (pprice != null && pprice.has("current")) {
+  								JSONObject current = pprice.getJSONObject("current");
+  								if (current != null && current.has("value")) {
+  									price = current.getBigDecimal("value");
+  								}
+  							}
+  							break;
+  						}
+  					}
+  				}
+      	}
+      } else {
+      	setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), res.getStatusCode());
+      }
+		} catch (IOException e) {
+			setLinkStatus(LinkStatus.NETWORK_ERROR, e.getMessage(), 400);
+			log.error("Failed to fetch specs", e);
+		}
 	}
 
   @Override
   public boolean isAvailable() {
-    return isAvailable;
+  	if (offer != null && offer.has("isInStock")) {
+  		return offer.getBoolean("isInStock");
+  	}
+    return false;
   }
 
   @Override
   public String getSku() {
-    if (StringUtils.isNotBlank(sku)) return sku;
-
-    Element val = dom.selectFirst("span[itemprop='sku']");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-
-    String[] urlChunks = getUrl().split("/");
-    if (urlChunks.length > 1) {
-      String prdId = urlChunks[urlChunks.length - 1];
-      return prdId.substring(0, prdId.indexOf("?"));
-    }
-
+  	if (offer != null && offer.has("id")) {
+  		return ""+offer.getInt("id");
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    if (StringUtils.isNotBlank(name)) return name;
-
-    Element name = dom.selectFirst("div.product-hero h1");
-    if (name != null) {
-      return name.text();
-    }
+  	if (offer != null && offer.has("name")) {
+  		return offer.getString("name");
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
@@ -166,28 +130,14 @@ public class Asos extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    if (StringUtils.isNotBlank(brandName)) return brandName;
-
-    Element val = dom.selectFirst("span[itemprop='brand'] span[itemprop='name']");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
+  	if (offer != null && offer.has("brandName")) {
+  		return offer.getString("brandName");
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
-  public String getSeller() {
-    Element val = dom.selectFirst("span[itemprop='seller'] span[itemprop='name']");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-    return super.getSeller();
-  }
-
-  @Override
   public String getShipment() {
-    if (StringUtils.isNotBlank(shipment)) return shipment;
-
     Element val = dom.selectFirst("#shipping-restrictions .shipping-restrictions");
     if (val != null && StringUtils.isNotBlank(val.attr("style"))) {
       String style = val.attr("style");

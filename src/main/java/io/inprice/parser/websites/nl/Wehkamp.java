@@ -79,10 +79,8 @@ public class Wehkamp extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (isAvailable()) {
-      if (offers != null && offers.has("price")) {
-        return offers.getBigDecimal("price");
-      }
+    if (offers != null && offers.has("price")) {
+      return offers.getBigDecimal("price");
     }
     return BigDecimal.ZERO;
   }
