@@ -28,8 +28,8 @@ public class VidaXL extends AbstractWebsite {
 
 	private Document dom;
 
-	protected JSONObject json;
-  protected JSONObject offers;
+	private JSONObject json;
+	private JSONObject offers;
 	
 	@Override
 	protected void setHtml(String html) {
@@ -62,7 +62,6 @@ public class VidaXL extends AbstractWebsite {
     }
     return false;
   }
-
 
   @Override
   public String getSku() {

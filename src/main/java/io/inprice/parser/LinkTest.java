@@ -5,12 +5,12 @@ import static io.inprice.parser.helpers.Global.HTMLUNIT_POOL;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
 import io.inprice.parser.websites.Website;
-import io.inprice.parser.websites.xx.VidaXL;
+import io.inprice.parser.websites.nl.Wehkamp;
 
 public class LinkTest {
 
-	private static Website website = new VidaXL();
-	private static String url = "https://www.vidaxl.it/e/8718475894377/vidaxl-lampada-da-soffitto-bianca-trasparente-cristalli-acrilici-5-e14";
+	private static Website website = new Wehkamp();
+	private static String url = "https://www.wehkamp.nl/salora-acp550-4k-udh-actioncamera-16171117/?ref={%22slug%22%3A%22foto-video-videocameras%22}";
 	
 	public static void main(String[] args) {
 		HTMLUNIT_POOL.setup();

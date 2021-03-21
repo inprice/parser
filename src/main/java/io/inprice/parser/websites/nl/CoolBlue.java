@@ -6,11 +6,14 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.helpers.StringHelpers;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -32,11 +35,20 @@ public class CoolBlue extends AbstractWebsite {
 		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
-    Element dataEL = dom.selectFirst("script[type='application/ld+json']");
+    Elements dataEL = dom.select("script[type='application/ld+json']");
     if (dataEL != null) {
-    	json = new JSONObject(dataEL.dataNodes().get(0).getWholeData().replace("\r\n", " "));
-      if (json.has("offers")) {
-        offers = json.getJSONObject("offers");
+      for (DataNode dNode : dataEL.dataNodes()) {
+        JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
+        if (data.has("@type")) {
+          String type = data.getString("@type");
+          if (type.equals("Product")) {
+          	json = data;
+          	if (json.has("offers")) {
+          		offers = json.getJSONObject("offers");
+          	}
+            break;
+          }
+        }
       }
     }
 	}
@@ -95,8 +107,7 @@ public class CoolBlue extends AbstractWebsite {
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return getKeyValueSpecList(dom.select("div.product-specs__list-item.js-product-specs--list-item"),
-        ".product-specs__item-title", ".product-specs__item-spec");
+    return getKeyValueSpecList(dom.select("section#product-specifications dl"), "dt", "dd");
   }
 
 }

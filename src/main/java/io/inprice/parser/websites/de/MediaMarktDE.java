@@ -13,7 +13,7 @@ import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Parser for MediaMarkt and Saturn Deutschland
+ * Parser for MediaMarkt and Saturn Deutschland (protected by cloudflare!!!)
  *
  * All the data is placed in PRELOAD_STATE variable
  *

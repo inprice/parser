@@ -30,7 +30,7 @@ public class Wehkamp extends AbstractWebsite {
 	private JSONObject json;
   private JSONObject offers;
   private JSONArray properties;
-	
+
 	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);

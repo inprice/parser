@@ -29,8 +29,8 @@ public class Fnac extends AbstractWebsite {
 
 	private Document dom;
 
-	protected JSONObject json;
-  protected JSONObject offers;
+	private JSONObject json;
+	private JSONObject offers;
 	
 	@Override
 	protected void setHtml(String html) {

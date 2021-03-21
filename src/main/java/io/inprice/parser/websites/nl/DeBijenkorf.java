@@ -16,7 +16,7 @@ import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Parser for DeBijenkorf the Netherlands
+ * Parser for DeBijenkorf the Netherlands (protected by cloudflare!!!)
  *
  * Contains standard data, all is extracted by css selectors
  *
@@ -28,7 +28,12 @@ public class DeBijenkorf extends AbstractWebsite {
 
 	private JSONObject json;
   private JSONObject prod;
-	
+  
+  @Override
+	protected Renderer getRenderer() {
+		return Renderer.CHROME;
+	}
+
 	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
