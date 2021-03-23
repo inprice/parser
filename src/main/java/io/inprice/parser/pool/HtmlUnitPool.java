@@ -22,9 +22,14 @@ public class HtmlUnitPool extends ResourcePool<WebClient> {
 	@Override
 	public WebClient createNewOne() {
 		//WebClient webClient = new WebClient(BrowserVersion.FIREFOX, Props.PROXY_HOST(), Props.PROXY_PORT());
-		WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
+		WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
     webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+    //webClient.getOptions().setTimeout(SysProps.HTTP_CONNECTION_TIMEOUT() * 1000);
+    //webClient.setJavaScriptTimeout(SysProps.HTTP_CONNECTION_TIMEOUT() * 1000);
+    
+    //WARN: buna dikkat!!!
+    //webClient.getOptions().setDownloadImages(false);
 
     //proxy settings
     /*

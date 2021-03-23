@@ -2,6 +2,7 @@ package io.inprice.parser.websites.us;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +10,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.gargoylesoftware.htmlunit.HttpHeader;
 import com.gargoylesoftware.htmlunit.HttpMethod;
@@ -18,7 +17,6 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 
-import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
@@ -33,42 +31,30 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Lidl extends AbstractWebsite {
 
-	private static final Logger log = LoggerFactory.getLogger(Lidl.class);
-	
   private final String prodUrl = "https://mobileapi.lidl.com/v1/products/";
 
   private String sku;
   private JSONObject json;
 
 	@Override
-	protected void afterRequest(WebClient webClient) {
-    final int index = getUrl().indexOf("/products/");
+	protected WebResponse makeRequest(WebClient webClient) throws MalformedURLException, IOException {
     final String[] urlChunks = getUrl().split("/");
+    sku = urlChunks[urlChunks.length - 1];
 
-    if (index > 0 && urlChunks.length > 1) {
-      sku = urlChunks[urlChunks.length - 1];
-      if (StringUtils.isNotBlank(sku)) {
-    		try {
-      		WebRequest req = new WebRequest(new URL(prodUrl+sku), HttpMethod.GET);
-      		req.setAdditionalHeader(HttpHeader.ACCEPT, "application/json");
-      		req.setAdditionalHeader(HttpHeader.CONTENT_TYPE, "application/json");
-    
-      		WebResponse res = webClient.loadWebResponse(req);
-          if (res.getStatusCode() < 400) {
-            json = new JSONObject(res.getContentAsString());
-          } else {
-          	setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), res.getStatusCode());
-          }
-    		} catch (IOException e) {
-    			setLinkStatus(LinkStatus.NETWORK_ERROR, e.getMessage(), 400);
-    			log.error("Failed to fetch current", e);
-    		}
-      } else {
-      	setLinkStatus(LinkStatus.NETWORK_ERROR, "ID PROBLEM (sku)!" + (getRetry() < 3 ? " RETRYING..." : ""));
-      }
-    } else {
-    	setLinkStatus(LinkStatus.NETWORK_ERROR, "DATA PROBLEM (url)!" + (getRetry() < 3 ? " RETRYING..." : ""));
-    }
+		WebRequest req = new WebRequest(new URL(prodUrl+sku+"?storeId=US01053"), HttpMethod.GET);
+		req.setAdditionalHeader(HttpHeader.ACCEPT, "*/*");
+		req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
+		req.setAdditionalHeader("referrer", getUrl());
+		req.setAdditionalHeader("credentials", "omit");
+		req.setAdditionalHeader("mode", "cors");
+		
+		return webClient.loadWebResponse(req);
+	}
+	
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
+		json = new JSONObject(html);
 	}
 
   @Override

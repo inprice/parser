@@ -1,6 +1,7 @@
 package io.inprice.parser.websites.us;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +25,7 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class Etsy extends AbstractWebsite {
 
 	private Document dom;
-	
+
 	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
@@ -67,18 +68,17 @@ public class Etsy extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = dom.selectFirst("span.override-listing-price");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return new BigDecimal(cleanDigits(val.text()));
-    }
-
-    val = dom.selectFirst("meta[property='etsymarketplace:price_value']");
-    if (val == null || StringUtils.isBlank(val.attr("content"))) {
-      val = dom.selectFirst("meta[property='product:price:amount']");
-    }
+  	Element val = dom.selectFirst("meta[property='product:price:amount']");
+    if (val == null) val = dom.selectFirst("meta[property='etsymarketplace:price_value']");
 
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
+    }
+
+  	val = dom.selectFirst("span.override-listing-price");
+    
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return new BigDecimal(cleanDigits(val.text()));
     }
 
     return BigDecimal.ZERO;
@@ -86,7 +86,7 @@ public class Etsy extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element val = dom.selectFirst("a[aria-label='Contact the shop']");
+  	Element val = dom.selectFirst("a[aria-label='Contact the shop']");
     if (val != null && StringUtils.isNotBlank(val.attr("data-to_user_display_name"))) {
       return val.attr("data-to_user_display_name");
     }
@@ -95,44 +95,33 @@ public class Etsy extends AbstractWebsite {
 
   @Override
   public String getSeller() {
-    Element val = dom.selectFirst("a[aria-label='Contact the shop']");
-    if (val != null && StringUtils.isNotBlank(val.attr("data-to_username"))) {
-      return val.attr("data-to_username");
+    Element val = dom.selectFirst("a[href$='shopname']");
+    if (val != null) {
+      return val.text();
     }
-    return super.getSeller();
+    return getBrand();
   }
 
   @Override
   public String getShipment() {
-    StringBuilder sb = new StringBuilder();
-    Element val = dom.selectFirst("div.js-estimated-delivery div");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      sb.append(val.text().trim());
-      sb.append(". ");
+    Elements vals = dom.select("div[data-delivery-data] .wt-text-caption, div[data-delivery-data] .wt-text-body-03");
+    if (vals != null) {
+    	LinkedHashSet<String> set = new LinkedHashSet<>(vals.size());
+    	for (int i = 0; i < vals.size(); i++) {
+    		Element val = vals.get(i);
+    		if (StringUtils.isNotBlank(val.text())) set.add(val.text().trim());
+			}
+    	return String.join(". ", set);
     }
-
-    val = dom.selectFirst("div.js-ships-from");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      sb.append(val.text().trim());
-      sb.append(". ");
-    }
-
-    val = dom.selectFirst("div.shipping-cost");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      sb.append(val.text().trim());
-      sb.append(". ");
-    }
-
-    if (sb.length() == 0) {
-      sb.append(Consts.Words.NOT_AVAILABLE);
-    }
-
-    return sb.toString();
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(dom.select("div.listing-page-overview-component p"));
+  	List<LinkSpec> specList = getValueOnlySpecList(dom.select("div#product-details-content-toggle div.wt-ml-xs-2"));
+  	if (specList == null || specList.size() == 0) specList = getValueOnlySpecList(dom.select("div.listing-page-overview-component p"));
+  	
+  	return specList;
   }
 
 }

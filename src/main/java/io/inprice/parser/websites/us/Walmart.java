@@ -1,6 +1,7 @@
 package io.inprice.parser.websites.us;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -109,7 +110,25 @@ public class Walmart extends AbstractWebsite {
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(dom.select("div#product-about li"));
+  	List<LinkSpec> specList = null;
+  	
+  	List<LinkSpec> specs = getValueOnlySpecList(dom.select("div#product-about li"));
+  	if (specs == null || specs.size() == 0) specs = getValueOnlySpecList(dom.select(".about-product-description li"));
+  	
+  	if (specs != null && specs.size() > 0) {
+  		specList = new ArrayList<>(specs.size());
+  		for (int i = 0; i < specs.size(); i++) {
+				LinkSpec spec = specs.get(i);
+				if (spec.getValue().contains(":")) {
+					String[] pair = spec.getValue().split(":");
+					spec.setKey(pair[0]);
+					spec.setValue(pair[1]);
+				}
+				specList.add(spec);
+			}
+  	}
+  	
+  	return specList;
   }
 
 }

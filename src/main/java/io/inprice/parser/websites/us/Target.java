@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,196 +39,143 @@ public class Target extends AbstractWebsite {
 
 	private static final Logger log = LoggerFactory.getLogger(Target.class);
 
-	private final String prodUrl = "https://groceries.asda.com/api/items/view?itemid=";
-	
-	private WebClient webClient;
-	
-  private JSONObject preLoad;
-  private JSONObject product;
-  private JSONObject priceData;
+  private String apiKey;
+  private String tcin;
+  private String storeId;
+
+  private JSONObject item;
+  private JSONObject desc;
+  private JSONObject price;
   
   @Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
 
-    String preData = findAPart(html, "__PRELOADED_STATE__= ", "</script>");
-    if (preData != null) {
-      preLoad = new JSONObject(preData);
-      if (preLoad.has("product")) {
-        JSONObject prod = preLoad.getJSONObject("product");
-        if (prod.has("productDetails")) {
-          JSONObject details = prod.getJSONObject("productDetails");
-          if (details.has("item")) {
-            product = details.getJSONObject("item");
-          }
-        }
-      }
-    }
+		apiKey = findAPart(html, "\"apiKey\":\"", "\"");
+		tcin = findAPart(html, "\"sku\":\"", "\"");
+    storeId = findAPart(html, "\"pricing_store_id\":\"", "\"");
   }
 
+	
 	@Override
 	protected void afterRequest(WebClient webClient) {
-		this.webClient = webClient;
+		try {
+	    StringBuilder prodUrl = new StringBuilder("https://redsky.target.com/redsky_aggregations/v1/web/pdp_client_v1?key=");
+	    prodUrl.append(apiKey);
+	    prodUrl.append("&tcin=");
+	    prodUrl.append(tcin);
+	    prodUrl.append("&store_id=none&scheduled_delivery_store_id=none&pricing_store_id=");
+	    prodUrl.append(storeId);
+			
+  		WebRequest req = new WebRequest(new URL(prodUrl.toString()), HttpMethod.GET);
+  		req.setAdditionalHeader(HttpHeader.ACCEPT, "application/json");
+  		req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
+  		req.setAdditionalHeader(HttpHeader.CACHE_CONTROL, "max-age=0");
+  		req.setAdditionalHeader("referrer", getUrl());
+  		req.setAdditionalHeader("credentials", "omit");
+  		req.setAdditionalHeader("mode", "cors");
+
+  		WebResponse res = webClient.loadWebResponse(req);
+      if (res.getStatusCode() < 400) {
+      	JSONObject all = new JSONObject(res.getContentAsString());
+      	if (all != null && all.has("data")) {
+      		JSONObject data = all.getJSONObject("data");
+      		if (data != null && data.has("product")) {
+      			JSONObject product = data.getJSONObject("product");
+      			if (product != null) {
+      				if (product.has("item")) {
+      					item = product.getJSONObject("item");
+        				if (item.has("product_description")) desc = item.getJSONObject("product_description");
+      				}
+      				if (product.has("price")) price = product.getJSONObject("price");
+      			}
+      		}
+      	}
+      } else {
+      	setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), res.getStatusCode());
+      }
+		} catch (IOException e) {
+			setLinkStatus(LinkStatus.NETWORK_ERROR, e.getMessage(), 400);
+			log.error("Failed to fetch specs", e);
+		}
 	}
 
   @Override
   public boolean isAvailable() {
-    if (product != null) {
-      JSONObject available = null;
-      if (product.has("available_to_promise_network")) {
-        available = product.getJSONObject("available_to_promise_network");
-      } else if (product.has("children")) {
-        JSONObject children = product.getJSONObject("children");
-        if (!children.isEmpty()) {
-          Iterator<String> keys = children.keys();
-          if (keys.hasNext()) {
-            JSONObject firstChild = children.getJSONObject(keys.next());
-            available = firstChild.getJSONObject("available_to_promise_network");
-          }
+    if (item != null) {
+    	if (item.has("cart_add_on_threshold")) {
+  			return item.getInt("cart_add_on_threshold") > 0;
+  		}
+    	if (item.has("eligibility_rules")) {
+        JSONObject eligible = item.getJSONObject("eligibility_rules");
+        if (eligible != null && eligible.has("hold")) {
+          JSONObject hold = eligible.getJSONObject("hold");
+          return hold.getBoolean("is_active");
         }
-      }
-      if (available != null) {
-        return available.has("availability_status") && "IN_STOCK".equals(available.getString("availability_status"));
-      }
+    	}
     }
     return false;
   }
 
   @Override
   public String getSku() {
-    if (product != null && product.has("productId")) {
-      return product.getString("productId");
-    }
-    return Consts.Words.NOT_AVAILABLE;
+    return tcin;
   }
 
   @Override
   public String getName() {
-    if (product != null && product.has("title")) {
-      return product.getString("title");
+    if (desc != null && desc.has("title")) {
+    	return desc.getString("title");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    if (product != null && product.has("price")) {
-      JSONObject priceEL = product.getJSONObject("price");
-      if (priceEL.has("price")) {
-        String price = priceEL.getString("price");
-        if (StringUtils.isNotBlank(price))
-          return new BigDecimal(cleanDigits(price));
-      }
+    if (price != null && price.has("current_retail")) {
+    	return price.getBigDecimal("current_retail");
     }
-
-    setPriceData();
-    if (priceData != null) {
-      if (priceData.has("current_retail")) {
-        return priceData.getBigDecimal("current_retail");
-      }
-      if (priceData.has("current_retail_max")) {
-        return priceData.getBigDecimal("current_retail_max");
-      }
-      if (priceData.has("current_retail_min")) {
-        return priceData.getBigDecimal("current_retail_min");
-      }
-    }
-
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getBrand() {
-    if (product != null && product.has("manufacturerBrand")) {
-      return product.getString("manufacturerBrand");
+    if (item != null && item.has("primary_brand")) {
+    	JSONObject brand = item.getJSONObject("primary_brand");
+    	if (brand != null && brand.has("name")) {
+    		return brand.getString("name");
+    	}
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
-  public String getSeller() {
-    if (product != null && product.has("productVendorName")) {
-      String seller = product.getString("productVendorName");
-      if (!seller.isEmpty())
-        return seller;
-    }
-    return super.getSeller();
-  }
-
-  @Override
   public String getShipment() {
-    return "Free order pickup";
+    return "See shipping conditions";
   }
 
   @Override
   public List<LinkSpec> getSpecList() {
     List<LinkSpec> specList = null;
 
-    if (product != null && product.has("itemDetails")) {
-      JSONObject details = product.getJSONObject("itemDetails");
-      if (details.has("bulletDescription")) {
-        JSONArray bullets = details.getJSONArray("bulletDescription");
-        if (!bullets.isEmpty()) {
-          specList = new ArrayList<>();
-          for (int i = 0; i < bullets.length(); i++) {
-            String spec = bullets.getString(i);
-            String[] specChunks = spec.split("</B>");
-            String key = "";
-            String value;
-            if (specChunks.length > 1) {
-              key = specChunks[0];
-              value = specChunks[1];
-            } else {
-              value = specChunks[0];
-            }
-            specList.add(new LinkSpec(key.replaceAll(":|<B>", ""), value));
-          }
-        }
-      }
+    if (desc != null && desc.has("bullet_descriptions")) {
+    	JSONArray rows = desc.getJSONArray("bullet_descriptions");
+    	if (rows != null && rows.length() > 0) {
+    		specList = new ArrayList<>(rows.length());
+    		for (int i = 0; i < rows.length(); i++) {
+					String row = rows.getString(i);
+					String clean = Jsoup.parse(row).text();
+					if (clean.indexOf(":") > 0) {
+						String[] pair = clean.split(":");
+						specList.add(new LinkSpec(pair[0], pair[1]));
+					} else {
+						specList.add(new LinkSpec("", clean));
+					}
+				}
+    	}
     }
+
     return specList;
   }
-
-	private void setPriceData() {
-    if (preLoad != null && preLoad.has("config")) {
-      JSONObject config = preLoad.getJSONObject("config");
-      if (config.has("firefly")) {
-        String apiKey = config.getJSONObject("firefly").getString("apiKey");
-        if (StringUtils.isNotBlank(apiKey)) {
-      		try {
-      	    StringBuilder newUrl = new StringBuilder();
-      	    newUrl.append(prodUrl);
-      	    newUrl.append(getSku());
-      	    newUrl.append("?pricing_store_id=1531");
-      	    newUrl.append("&key=");
-      	    newUrl.append(apiKey);
-
-        		WebRequest req = new WebRequest(new URL(newUrl.toString()), HttpMethod.GET);
-        		req.setAdditionalHeader(HttpHeader.ACCEPT, "application/json");
-        		req.setAdditionalHeader(HttpHeader.CONTENT_TYPE, "application/json");
-      
-        		WebResponse res = webClient.loadWebResponse(req);
-            if (res.getStatusCode() < 400) {
-              JSONObject priceEL = new JSONObject(res.getContentAsString());
-              if (!priceEL.isEmpty()) {
-                priceData = priceEL.getJSONObject("price");
-              }
-            } else {
-            	setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), res.getStatusCode());
-            }
-      		} catch (IOException e) {
-      			setLinkStatus(LinkStatus.NETWORK_ERROR, e.getMessage(), 400);
-      			log.error("Failed to fetch current", e);
-      		}
-        } else {
-        	setLinkStatus(LinkStatus.NETWORK_ERROR, "DATA PROBLEM (api_key)!" + (getRetry() < 3 ? " RETRYING..." : ""));
-        }
-      } else {
-      	setLinkStatus(LinkStatus.NETWORK_ERROR, "DATA PROBLEM (firefly)!" + (getRetry() < 3 ? " RETRYING..." : ""));
-      }
-    } else {
-    	setLinkStatus(LinkStatus.NETWORK_ERROR, "DATA PROBLEM (preload)!" + (getRetry() < 3 ? " RETRYING..." : ""));
-    }
-	}
 
 }

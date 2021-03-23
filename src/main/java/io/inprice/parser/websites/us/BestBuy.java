@@ -47,7 +47,6 @@ public class BestBuy extends AbstractWebsite {
 	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
-		System.out.println(html);
 		dom = Jsoup.parse(html);
 	}
 

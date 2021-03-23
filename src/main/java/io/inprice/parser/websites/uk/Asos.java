@@ -20,9 +20,11 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 
+import io.inprice.common.info.Pair;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.helpers.SomeCountries;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -36,11 +38,10 @@ public class Asos extends AbstractWebsite {
 
 	private static final Logger log = LoggerFactory.getLogger(Asos.class);
 
-	//WARN: country selection may cause problems! it should have been more elegant but how!
-	private static final String BROWSE_COUNTRY = "browseCountry=JP";
-	
 	private Document dom;
   private JSONObject offer;
+
+  private Pair<String, String> country;
 
   private String priceUrl;
   private BigDecimal price = BigDecimal.ZERO;
@@ -59,7 +60,8 @@ public class Asos extends AbstractWebsite {
 	
 	@Override
 	protected void beforeRequest(WebRequest req) {
-		req.setAdditionalHeader(HttpHeader.COOKIE, BROWSE_COUNTRY);
+		country = SomeCountries.findOne();
+		req.setAdditionalHeader(HttpHeader.COOKIE, "browseCountry="+country.getKey());
 	}
 	
 	@Override
@@ -68,7 +70,7 @@ public class Asos extends AbstractWebsite {
   		WebRequest req = new WebRequest(new URL(priceUrl), HttpMethod.GET);
   		req.setAdditionalHeader(HttpHeader.ACCEPT, "*/*");
   		req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
-  		req.setAdditionalHeader(HttpHeader.COOKIE, BROWSE_COUNTRY);
+  		req.setAdditionalHeader(HttpHeader.COOKIE, "browseCountry="+country.getKey());
 
   		WebResponse res = webClient.loadWebResponse(req);
       if (res.getStatusCode() < 400) {

@@ -5,18 +5,12 @@ import static io.inprice.parser.helpers.Global.HTMLUNIT_POOL;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
 import io.inprice.parser.websites.Website;
-import io.inprice.parser.websites.uk.Argos;
-import io.inprice.parser.websites.uk.Asda;
-import io.inprice.parser.websites.uk.Asos;
-import io.inprice.parser.websites.uk.Currys;
-import io.inprice.parser.websites.uk.Debenhams;
-import io.inprice.parser.websites.uk.NewLook;
-import io.inprice.parser.websites.uk.Zavvi;
+import io.inprice.parser.websites.us.Walmart;
 
 public class LinkTest {
 
-	private static Website website = new Zavvi();
-	private static String url = "https://www.zavvi.com/toys-lego/lego-jurassic-world-pteranodon-dinosaur-breakout-toy-75940/12553338.html";
+	private static Website website = new Walmart();
+	private static String url = "https://www.walmart.com/ip/Marsh-Allen-Hibachi-Charcoal-Grill-Black/21016070";
 	
 	public static void main(String[] args) {
 		HTMLUNIT_POOL.setup();

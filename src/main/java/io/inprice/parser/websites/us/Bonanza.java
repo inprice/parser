@@ -2,6 +2,7 @@ package io.inprice.parser.websites.us;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,60 +12,34 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
-import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Bonanza USA
  *
- * The data is in two parts: 
- *  - in html body 
- *  - price is handled via a rest call
- *
+ * Contains standard data, all is extracted by css selectors
  *
  * @author mdpinar
  */
 public class Bonanza extends AbstractWebsite {
 
 	private Document dom;
-
-	private boolean isAvailable;
-  private String sku = Consts.Words.NOT_AVAILABLE;
-  private String brand = Consts.Words.NOT_AVAILABLE;
-  private List<LinkSpec> specList;
 	
 	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
 		dom = Jsoup.parse(html);
-
-    Elements specs = dom.select("table.extended_info_table tr.extended_info_row");
-    if (specs != null && specs.size() > 0) {
-      specList = new ArrayList<>();
-      for (Element spec : specs) {
-        String key = spec.selectFirst("td.extended_info_label").text().replaceAll(":", "");
-        String value = spec.selectFirst("p.extended_info_value_content").text();
-        specList.add(new LinkSpec(key, value));
-
-        if (key.equals("Item number")) sku = value;
-        if (key.equals("Brand")) brand = value;
-
-        if (key.equals("Quantity Available")) {
-          isAvailable = NumberUtils.toInteger(cleanDigits(value), 0) > 0;
-        }
-      }
-    }
 	}
 
   @Override
   public boolean isAvailable() {
-    Element val = dom.selectFirst("meta[property='og:availability']");
+    Element val = dom.selectFirst("meta[property='product:availability']");
+    if (val == null) val = dom.selectFirst("meta[property='og:availability']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return "instock".equals(val.attr("content"));
+      return val.attr("content").contains("in_stock") || val.attr("content").contains("instock");
     }
-
-    return isAvailable;
+    return false;
   }
 
   @Override
@@ -73,21 +48,15 @@ public class Bonanza extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
-    return sku;
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element val = dom.selectFirst("meta[property='og:title']");
+  	Element val = dom.selectFirst("meta[property='og:title']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
-
-    val = dom.selectFirst("span[itemprop='name']");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-
     return Consts.Words.NOT_AVAILABLE;
   }
 
@@ -97,52 +66,56 @@ public class Bonanza extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }
-
-    val = dom.selectFirst("div.item_price");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return new BigDecimal(cleanDigits(val.text()));
-    }
-
     return BigDecimal.ZERO;
   }
-
+  
   @Override
   public String getBrand() {
-    Element val = dom.selectFirst("meta[property='product:brand']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content");
-    }
-    return brand;
+  	Element val = dom.selectFirst("meta[property='product:brand']");
+  	if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+  		return val.attr("content");
+  	}
+  	return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getSeller() {
-    Element val = dom.selectFirst("meta[property='wanelo:store:name']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content");
-    }
-
-    val = dom.selectFirst("div.booth_link a");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
+    Element val = dom.selectFirst(".booth_title_and_feedback .booth_link a");
+    if (val != null) {
       return val.text();
     }
-
-    return super.getSeller();
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getShipment() {
-    Element shipment = dom.selectFirst("div.free_shipping");
-    if (shipment != null) {
-      return "Free shipping";
+    Elements vals = dom.select(".additional_detail .details_text");
+    if (vals != null) {
+    	LinkedHashSet<String> set = new LinkedHashSet<>(vals.size());
+    	for (int i = 0; i < vals.size(); i++) {
+    		Element val = vals.get(i);
+    		if (StringUtils.isNotBlank(val.text())) set.add(val.text().replace("Details", "").trim());
+			}
+    	return String.join(". ", set);
     }
-
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return specList;
+  	List<LinkSpec> specList = null;
+
+    Elements specs = dom.select("table.extended_info_table tr.extended_info_row");
+    if (specs != null && specs.size() > 0) {
+      specList = new ArrayList<>();
+      for (Element spec : specs) {
+        String key = spec.selectFirst("th.extended_info_label").text().replaceAll(":", "");
+        String value = spec.selectFirst("p.extended_info_value_content").text();
+        specList.add(new LinkSpec(key, value));
+      }
+    }
+
+  	return specList;
   }
 
 }

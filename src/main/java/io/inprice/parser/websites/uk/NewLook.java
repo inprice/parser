@@ -35,7 +35,6 @@ public class NewLook extends AbstractWebsite {
 		super.setHtml(html);
 		dom = Jsoup.parse(html);
 		
-
     Elements dataEL = dom.select("script[type='application/ld+json']");
     if (dataEL != null && dataEL.size() > 0) {
     	for (DataNode dNode : dataEL.dataNodes()) {
