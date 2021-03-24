@@ -1,14 +1,20 @@
 package io.inprice.parser.websites.es;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.DataNode;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
+import io.inprice.parser.helpers.StringHelpers;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -20,90 +26,106 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Electroking extends AbstractWebsite {
 
-  @Override
-  public boolean isAvailable() {
-    Element val = doc.selectFirst("span[data-stock]");
-    if (val != null && StringUtils.isNotBlank(val.attr("data-stock"))) {
-      try {
-        int amount = new Integer(cleanDigits(val.attr("data-stock")));
-        return (amount > 0);
-      } catch (Exception e) {
-        //
+	private Document dom;
+
+	private JSONObject prod;
+	private JSONObject offer;
+	private JSONObject shipping;
+	
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
+		dom = Jsoup.parse(html);
+
+    Elements dataEL = dom.select("script[type='application/ld+json']");
+    if (dataEL != null) {
+      for (DataNode dNode : dataEL.dataNodes()) {
+        JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
+        if (data.has("@type") && data.getString("@type").equals("Product")) {
+          prod = data;
+          offer = data.getJSONObject("offers");
+          
+          String shipRawJson = findAPart(html, "\"shipping\":", "},", 1, 0);
+          shipping = new JSONObject(shipRawJson);
+          break;
+        }
       }
     }
+	}
+
+  @Override
+  public boolean isAvailable() {
+  	if (offer != null && offer.has("availability")) {
+  		String availability = offer.getString("availability");
+  		return availability.contains("InStock");
+  	}
     return false;
   }
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("span[itemprop='sku']");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
+  	if (offer != null && offer.has("sku")) {
+  		return offer.getString("sku");
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("meta[property='og:title']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content");
-    }
-
-    val = doc.selectFirst("p.product_name strong");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
+  	if (prod != null && prod.has("name")) {
+  		return prod.getString("name");
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.selectFirst("meta[property='product:price:amount']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return new BigDecimal(cleanDigits(val.attr("content")));
-    }
+  	if (offer != null && offer.has("price")) {
+  		return new BigDecimal(cleanDigits(offer.getString("price")));
+  	}
     return BigDecimal.ZERO;
   }
 
   @Override
-  public String getSeller() {
-    return "Electroking";
-  }
-
-  @Override
-  public String getShipment() {
-    return "Envío por Agencia de Transporte. Ver detalles";
-  }
-
-  @Override
   public String getBrand() {
-    Element val = doc.selectFirst("div.product-manufacturer a");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-
-    val = doc.selectFirst("img.manufacturer-logo");
-    if (val != null && StringUtils.isNotBlank(val.attr("alt"))) {
-      return val.attr("alt");
-    }
-
+  	if (prod != null && prod.has("brand")) {
+  		JSONObject brand = prod.getJSONObject("brand");
+  		return brand.getString("name");
+  	}
     return getSeller();
   }
 
   @Override
+  public String getShipment() {
+  	if (shipping != null) {
+  		String value = shipping.getString("value");
+  		if (value.equals("Gratis")) {
+  			return "Transporte gratis";
+  		} else {
+  			return "Coste de transporte: " + shipping.getBigDecimal("amount").setScale(2, RoundingMode.HALF_UP);
+  		}
+  	}
+    return "Envío por Agencia de Transporte. Ver detalles";
+  }
+
+  @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(doc.select("div.product-description li"));
-  }
+  	List<LinkSpec> specList = null;
 
-  @Override
-  public String getSiteName() {
-  	return "electroking";
-  }
+  	Elements keys = dom.select("dt.name");
+  	if (keys != null && keys.size() > 0) {
+  		Elements vals = dom.select("dd.value");
+  		if (vals != null && vals.size() == keys.size()) {
+  			specList = new ArrayList<>(keys.size());
+  			for (int i = 0; i < keys.size(); i++) {
+  				Element key = keys.get(i);
+					Element val = vals.get(i);
+					specList.add(new LinkSpec(key.text(), val.text()));
+				}
+  		}
+  	}
 
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.ES;
-	}
+  	return specList;
+  }
 
 }

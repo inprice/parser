@@ -7,11 +7,15 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.DataNode;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
+import io.inprice.parser.helpers.StringHelpers;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -23,27 +27,39 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Laredoute extends AbstractWebsite {
 
+	private Document dom;
+
+	private JSONObject json;
   private JSONObject offers;
+	
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
+		dom = Jsoup.parse(html);
 
-  @Override
-  protected JSONObject getJsonData() {
-    Element dataEL = doc.selectFirst("script[type='application/ld+json']");
+    Elements dataEL = dom.select("script[type='application/ld+json']");
     if (dataEL != null) {
-      JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
-      if (data.has("offers")) {
-        offers = data.getJSONObject("offers");
-
-        try {
-          JSONArray jarray = offers.getJSONArray("offers");
-          offers = jarray.getJSONObject(0);
-        } catch (Exception e) {
-          //
+      for (DataNode dNode : dataEL.dataNodes()) {
+        JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
+        if (data.has("@type")) {
+          String type = data.getString("@type");
+          if (type.equals("Product")) {
+          	json = data;
+          	if (json.has("offers")) {
+              try {
+              	offers = json.getJSONObject("offers");
+              	if (offers == null) {
+                  JSONArray arr = offers.getJSONArray("offers");
+                  offers = arr.getJSONObject(0);
+              	}
+              } catch (Exception e) { }
+          	}
+            break;
+          }
         }
       }
-      return data;
     }
-    return super.getJsonData();
-  }
+	}
 
   @Override
   public boolean isAvailable() {
@@ -56,9 +72,8 @@ public class Laredoute extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = doc.getElementById("vendorsList");
-    if (val != null && StringUtils.isNotBlank(val.attr("data-prodid"))) {
-      return val.attr("data-prodid");
+    if (json != null && json.has("sku")) {
+      return json.getString("sku");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -73,38 +88,10 @@ public class Laredoute extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (isAvailable()) {
-      final String price = findAPart(doc.html(), "\"SalePriceAfterWithCharges\":", ",");
-
-      if (price != null) {
-        return new BigDecimal(cleanDigits(price));
-      }
-
-      if (offers != null && offers.has("price")) {
-        return offers.getBigDecimal("price");
-      }
+    if (offers != null && offers.has("price")) {
+      return offers.getBigDecimal("price");
     }
     return BigDecimal.ZERO;
-  }
-
-  @Override
-  public String getSeller() {
-    if (offers != null && offers.has("seller")) {
-      JSONObject seller = offers.getJSONObject("seller");
-      if (seller.has("name")) {
-        return seller.getString("name");
-      }
-    }
-    return "Laredoute";
-  }
-
-  @Override
-  public String getShipment() {
-    Element val = doc.selectFirst("li.delivery-info-item.delivery-info.delivery-info-content");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -119,9 +106,29 @@ public class Laredoute extends AbstractWebsite {
   }
 
   @Override
+  public String getSeller() {
+    if (offers != null && offers.has("seller")) {
+      JSONObject seller = offers.getJSONObject("seller");
+      if (seller.has("name")) {
+        return seller.getString("name");
+      }
+    }
+    return super.getSeller();
+  }
+
+  @Override
+  public String getShipment() {
+    Element val = dom.selectFirst("li.delivery-info-item.delivery-info.delivery-info-content");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
   public List<LinkSpec> getSpecList() {
     List<LinkSpec> specList = null;
-    Element specs = doc.getElementsByTag("dscpdp").first();
+    Element specs = dom.getElementsByTag("dscpdp").first();
     if (specs != null) {
       String[] specChunks;
       if (specs.text().indexOf("•") > 0)
@@ -138,15 +145,5 @@ public class Laredoute extends AbstractWebsite {
     }
     return specList;
   }
-
-  @Override
-  public String getSiteName() {
-  	return "laredoute";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.FR;
-	}
 
 }

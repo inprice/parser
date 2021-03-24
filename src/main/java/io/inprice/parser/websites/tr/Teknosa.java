@@ -7,12 +7,13 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -24,25 +25,29 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Teknosa extends AbstractWebsite {
 
-  private JSONObject offers;
+	private Document dom;
 
-  @Override
-  public JSONObject getJsonData() {
-    Element dataEL = doc.getElementById("schemaJSON");
+	private JSONObject json;
+  private JSONObject offers;
+	
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
+		dom = Jsoup.parse(html);
+
+		Element dataEL = dom.getElementById("schemaJSON");
     if (dataEL != null) {
       // user reviews may cause encoding problems and can be huge amount of data
       // and we do not need user opinions
       // thus, they are trimmed with the help of regex
-      String html = dataEL.html();
-      html = html.replaceAll("(?s)\\s*\"review\":.*\\],", "");
-      JSONObject data = new JSONObject(html);
-      if (data.has("offers")) {
-        offers = data.getJSONObject("offers");
+      String rawJson = dataEL.html();
+      rawJson = rawJson.replaceAll("(?s)\\s*\"review\":.*\\],", "");
+      json = new JSONObject(rawJson);
+      if (json.has("offers")) {
+        offers = json.getJSONObject("offers");
       }
-      return data;
     }
-    return super.getJsonData();
-  }
+	}
 
   @Override
   public boolean isAvailable() {
@@ -68,7 +73,7 @@ public class Teknosa extends AbstractWebsite {
       }
     }
 
-    Element sku = doc.selectFirst("span.item-number-value");
+    Element sku = dom.selectFirst("span.item-number-value");
     if (sku != null) {
       return sku.text();
     }
@@ -82,7 +87,7 @@ public class Teknosa extends AbstractWebsite {
       return json.getString("name");
     }
 
-    Element name = doc.selectFirst("div#ProductTitle span.title");
+    Element name = dom.selectFirst("div#ProductTitle span.title");
     if (name != null) {
       return name.text();
     }
@@ -101,7 +106,7 @@ public class Teknosa extends AbstractWebsite {
         }
       }
       
-      Element price = doc.selectFirst("span.VersionOfferPrice img");
+      Element price = dom.selectFirst("span.VersionOfferPrice img");
       if (price != null) {
         return new BigDecimal(cleanDigits(price.attr("alt")));
       }
@@ -111,15 +116,10 @@ public class Teknosa extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Teknosa";
-  }
-
-  @Override
   public String getShipment() {
-    Element val = doc.selectFirst("div.pw-dangerous-html.dbh-content");
+    Element val = dom.selectFirst("div.pw-dangerous-html.dbh-content");
     if (val == null || StringUtils.isBlank(val.text())) {
-      val = doc.getElementById("hd3");
+      val = dom.getElementById("hd3");
     }
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
@@ -143,7 +143,7 @@ public class Teknosa extends AbstractWebsite {
       }
     }
 
-    Element brand = doc.selectFirst("div.brand-name a");
+    Element brand = dom.selectFirst("div.brand-name a");
     if (brand != null) {
       return brand.text();
     }
@@ -155,7 +155,7 @@ public class Teknosa extends AbstractWebsite {
   public List<LinkSpec> getSpecList() {
     List<LinkSpec> specList = null;
 
-    Elements specKeys = doc.select("div.product-classifications tr");
+    Elements specKeys = dom.select("div.product-classifications tr");
     if (specKeys != null && specKeys.size() > 0) {
       specList = new ArrayList<>();
       for (Element key : specKeys) {
@@ -164,7 +164,7 @@ public class Teknosa extends AbstractWebsite {
       }
     }
 
-    Elements specValues = doc.select("div.product-classifications tr");
+    Elements specValues = dom.select("div.product-classifications tr");
     if (specValues != null && specValues.size() > 0) {
       boolean isEmpty = false;
       if (specList == null) {
@@ -184,15 +184,5 @@ public class Teknosa extends AbstractWebsite {
 
     return specList;
   }
-
-  @Override
-  public String getSiteName() {
-  	return "teknosa";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.TR_DE;
-	}
 
 }

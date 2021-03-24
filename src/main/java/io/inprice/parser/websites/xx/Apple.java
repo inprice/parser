@@ -1,181 +1,137 @@
 package io.inprice.parser.websites.xx;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.nodes.Element;
+import org.jsoup.Jsoup;
 
-import io.inprice.common.meta.LinkStatus;
-import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
-import kong.unirest.HttpResponse;
 
 /**
  * Parser for Apple Global
  *
- * Contains standard data, all is extracted by css selectors
+ * Contains standard json (plus remote json) data
  *
  * @author mdpinar
  */
-public abstract class Apple extends AbstractWebsite {
+public class Apple extends AbstractWebsite {
 
-  private static final String REFERRER = "https://www.apple.com/au/shop/buy-ipad/ipad-pro";
+	private JSONObject json;
+	private boolean isAvailable;
+	private String shippingPrice;
+	
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
 
-  private JSONObject offers;
-  private JSONObject product;
-  private boolean available;
+  	String rawJson = findAPart(html, "var configData = ", "};", 1);
+  	if (StringUtils.isNotBlank(rawJson)) {
 
-  private String testCountry;
-
-  public Apple() {
-    super();
-  }
-
-  public Apple(String testCountry) {
-    this.testCountry = testCountry;
-  }
-
-  @Override
-  public JSONObject getJsonData() {
-  	boolean hasDataProblem = true;
-
-    Element dataEL = doc.selectFirst("script[type='application/ld+json']");
-    if (dataEL != null) {
-      JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
-      if (data.has("offers")) {
-        JSONArray offersArray = data.getJSONArray("offers");
-        if (!offersArray.isEmpty()) {
-          offers = offersArray.getJSONObject(0);
-          if (offers != null && offers.has("sku")) {
-            final int index = getUrl().indexOf("/shop/");
-
-            if (index > 0) {
-              final String sku = offers.getString("sku");
-              final String rootDomain = getUrl().substring(0, index);
-
-              HttpResponse<String> response = httpClient.get(rootDomain + "/shop/delivery-message?parts.0=" + sku, REFERRER);
-              if (response != null && response.getStatus() > 0 && response.getStatus() < 400) {
-                if (response.getBody() != null && !response.getBody().trim().isEmpty()) {
-                  JSONObject shipment = new JSONObject(response.getBody());
-                  if (!shipment.isEmpty()) {
-                    if (shipment.getJSONObject("body").getJSONObject("content").getJSONObject("deliveryMessage").has(sku)) {
-                      product = shipment.getJSONObject("body").getJSONObject("content").getJSONObject("deliveryMessage").getJSONObject(sku);
-                      available = product.getBoolean("isBuyable");
-                      hasDataProblem = false;
-                      return data;
-                    }
-                  }
-                }
-              } else {
-              	hasDataProblem = false;
-              	setLinkStatus(response);
-              }
-            }
-          }
-        }
-      }
+  		rawJson = rawJson.replaceFirst("productCategoriesData", "\"productCategoriesData\"");
+  		rawJson = rawJson.replaceFirst("initData", "\"initData\"");
+  		rawJson = rawJson.replaceFirst("purchaseInfo", "\"purchaseInfo\"");
+    	
+    	JSONObject wholeJson =  new JSONObject(rawJson);
+    	if (! wholeJson.isEmpty()) {
+    		if (wholeJson.has("initData")) {
+    			JSONObject initData = wholeJson.getJSONObject("initData");
+      		if (initData.has("content")) {
+      			JSONObject content = initData.getJSONObject("content");
+      			if (content.has("summary")) {
+      				json = content.getJSONObject	("summary");
+      			}
+      		}
+    		}
+    		if (wholeJson.has("purchaseInfo")) {
+    			JSONObject purchaseInfo = wholeJson.getJSONObject("purchaseInfo");
+    			isAvailable = (purchaseInfo.has("isBuyable") && purchaseInfo.getBoolean("isBuyable"));
+    			if (purchaseInfo.has("shippingPrice")) shippingPrice = Jsoup.parse(purchaseInfo.getString("shippingPrice")).text();
+    		}
+    	}
     }
-    
-    if (hasDataProblem) {
-    	setLinkStatus(LinkStatus.INVALID_DATA, "Invalid data structure!");
-  	}
-
-    return super.getJsonData();
-  }
+		
+	}
 
   @Override
   public boolean isAvailable() {
-    if (offers != null && offers.has("availability")) {
-      return offers.getString("availability").contains("InStock");
-    }
-
-    Element availability = doc.getElementById("configuration-form");
-    if (availability != null) {
-      String data = availability.attr("data-eVar20");
-      return data.contains("In Stock");
-    }
-    return available;
+    return isAvailable;
   }
 
   @Override
   public String getSku() {
-    if (offers != null && offers.has("sku")) {
-      return offers.getString("sku");
+    if (json != null && json.has("part")) {
+      return json.getString("part");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    if (json != null && json.has("name")) {
-      return json.getString("name");
+    if (json != null && json.has("productName")) {
+  		return json.getString("productName");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    if (isAvailable()) {
-      if (offers != null && offers.has("price")) {
-        return offers.getBigDecimal("price");
-      }
+    if (json != null && json.has("prices")) {
+    	JSONObject prices = json.getJSONObject("prices");
+    	if (prices != null) {
+    		if (prices.has("total")) {
+    			JSONObject total = prices.getJSONObject("total");
+    			if (total.has("total")) {
+    				return new BigDecimal(cleanDigits(total.getString("total")));
+    			}
+    		}
+    		if (prices.has("seoTotal")) {
+    			return new BigDecimal(cleanDigits(prices.getString("seoTotal")));
+    		}
+    	}
     }
     return BigDecimal.ZERO;
   }
 
   @Override
-  public String getSeller() {
+  public String getBrand() {
     return "Apple";
   }
 
   @Override
   public String getShipment() {
-    if (product != null) {
-      if (product.has("promoMessage")) {
-        return product.getString("promoMessage");
-      }
-      JSONArray options = product.getJSONArray("deliveryOptions");
-      if (options.length() > 0) {
-        JSONObject delivery = options.getJSONObject(0);
-        StringBuilder sb = new StringBuilder();
-        if (delivery.has("displayName"))
-          sb.append(delivery.getString("displayName")).append(": ");
-        if (delivery.has("shippingCost"))
-          sb.append(delivery.getString("shippingCost"));
-        return sb.toString();
-      }
-    }
-    return "In-store pickup";
-  }
-
-  @Override
-  public String getBrand() {
-    if (json != null && json.has("brand")) {
-      JSONObject brand = json.getJSONObject("brand");
-      if (brand.has("name")) {
-        return brand.getString("name");
-      }
-    }
-    return "Apple";
+  	if (json != null && json.has("freeShipping")) {
+  		if (StringUtils.isNotBlank(json.getString("freeShipping"))) {
+  			return json.getString("freeShipping");
+  		}
+  	}
+  	if (StringUtils.isNotBlank(shippingPrice)) return shippingPrice;
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(doc.select("div.as-productinfosection-mainpanel div.para-list"));
-  }
+  	if (json != null && json.has("options")) {
+  		List<LinkSpec> specs = new ArrayList<>();
 
-  @Override
-  protected Link getTestLink() {
-    return new Link(String.format("https://www.apple.com/%s/shop/", this.testCountry));
+  		JSONArray options = json.getJSONArray("options");
+  		if (options != null && options.length() > 0) {
+  			for (int i = 0; i < options.length(); i++) {
+  				JSONObject option = options.getJSONObject(i);
+  				if (option.has("isNone") && option.getBoolean("isNone") == false) {
+  					specs.add(new LinkSpec("", option.getString("metricsLabel")));
+  				}
+				}
+  		}
+
+      return specs;
+  	}
+  	return null;
   }
-  
-  @Override
-	public String getSiteName() {
-		return "apple";
-	}
 
 }

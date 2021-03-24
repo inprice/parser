@@ -6,11 +6,12 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -21,22 +22,18 @@ import io.inprice.parser.websites.AbstractWebsite;
  * @author mdpinar
  */
 public class Auchan extends AbstractWebsite {
+	
+	private Document dom;
+	private JSONObject json;
+	
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
+		dom = Jsoup.parse(html);
 
-  /**
-   * Returns json object which holds all the necessity data
-   *
-   * @return json - product data
-   */
-  @Override
-  public JSONObject getJsonData() {
-    final String prodData = findAPart(doc.html(), "var product = ", "};", 1);
-
-    if (prodData != null) {
-      return new JSONObject(prodData);
-    }
-
-    return super.getJsonData();
-  }
+		String prodData = findAPart(html, "var product = ", "};", 1);
+    if (prodData != null) json = new JSONObject(prodData);
+	}
 
   @Override
   public boolean isAvailable() {
@@ -74,27 +71,6 @@ public class Auchan extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    if (json != null && json.has("vendor")) {
-      JSONObject vendor = json.getJSONObject("vendor");
-      if (vendor.has("merchantName")) {
-        return vendor.getString("merchantName");
-      }
-    }
-    return "Auchan";
-  }
-
-  @Override
-  public String getShipment() {
-    Element shipping = doc.selectFirst("li.product-deliveryInformations--deliveryItem");
-    if (shipping != null) {
-      return shipping.text();
-    }
-
-    return "In-store pickup";
-  }
-
-  @Override
   public String getBrand() {
     if (json != null && json.has("brandName")) {
       if (!"null".equals(json.get("brandName").toString())) {
@@ -102,7 +78,7 @@ public class Auchan extends AbstractWebsite {
       }
     }
 
-    Element brand = doc.selectFirst("meta[itemprop='brand']");
+    Element brand = dom.selectFirst("meta[itemprop='brand']");
     if (brand != null) {
       return brand.attr("content");
     }
@@ -111,8 +87,30 @@ public class Auchan extends AbstractWebsite {
   }
 
   @Override
+  public String getSeller() {
+    if (json != null && json.has("vendor")) {
+      JSONObject vendor = json.getJSONObject("vendor");
+      if (vendor.has("merchantName")) {
+        return vendor.getString("merchantName");
+      }
+    }
+    return super.getSeller();
+  }
+
+  @Override
+  public String getShipment() {
+    Element shipping = dom.selectFirst("li.product-deliveryInformations--deliveryItem");
+    if (shipping != null) {
+      return shipping.text();
+    }
+
+    return "In-store pickup";
+  }
+
+  @Override
   public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+    List<LinkSpec> specList = getKeyValueSpecList(dom.select("ul.product-aside--list"), "span.product-aside--listSubtitle", "span.product-aside--listValue");
+    if (specList != null && specList.size() > 0) return specList;
 
     if (json != null && json.has("extendedDescription")) {
       String desc = json.get("extendedDescription").toString();
@@ -127,15 +125,5 @@ public class Auchan extends AbstractWebsite {
 
     return specList;
   }
-
-  @Override
-  public String getSiteName() {
-  	return "auchan";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.FR;
-	}
 
 }

@@ -1,15 +1,17 @@
 package io.inprice.parser.websites.it;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -21,59 +23,65 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Euronics extends AbstractWebsite {
 
-  private Element base;
+	private Document dom;
+	private Element prod;
+	
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
 
-  @Override
-  protected JSONObject getJsonData() {
-    base = doc.getElementsByTag("trackingProduct").first();
-    return super.getJsonData();
-  }
+		dom = Jsoup.parse(html);
+    prod = dom.getElementsByTag("trackingProduct").first();
+	}
 
   @Override
   public boolean isAvailable() {
-    Element val = doc.selectFirst("span.productDetails__availability.not-available");
+    Element val = dom.selectFirst("span.productDetails__availability.not-available");
     return (val == null || StringUtils.isBlank(val.text()));
   }
 
   @Override
   public String getSku() {
-    if (base != null) {
-      return base.attr("productId");
+    if (prod != null) {
+      return prod.attr("productId");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    if (base != null) {
-      return base.attr("productName");
+    if (prod != null) {
+      return prod.attr("productName");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    if (base != null) {
-      return new BigDecimal(cleanDigits(base.attr("price")));
+    if (prod != null) {
+      return new BigDecimal(cleanDigits(prod.attr("price")));
     }
     return BigDecimal.ZERO;
   }
 
   @Override
-  public String getSeller() {
-    return "Euronics";
+  public String getBrand() {
+    if (prod != null) {
+      return prod.attr("brand");
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getShipment() {
-    Element val = doc.selectFirst("span.productDetails__label.productDetails__label--left");
+    Element val = dom.selectFirst("span.productDetails__label.productDetails__label--left");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       StringBuilder sb = new StringBuilder();
 
       sb.append(val.text());
       sb.append(" ");
 
-      val = doc.selectFirst("span.productDetails__label.productDetails__label--right");
+      val = dom.selectFirst("span.productDetails__label.productDetails__label--right");
       if (val != null && StringUtils.isNotBlank(val.text())) {
         sb.append(val.text());
       }
@@ -84,26 +92,35 @@ public class Euronics extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    if (base != null) {
-      return base.attr("brand");
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(doc.select("ul.productDetails__specifications li"));
-  }
+  	List<LinkSpec> specList = null;
 
-  @Override
-  public String getSiteName() {
-  	return "euronics";
-  }
+  	Elements specs = dom.select("div.product__specificationsContent .content__abstractText");
+  	if (specs != null && specs.size() > 0) {
+  		specList = new ArrayList<>(specs.size());
+  		for (int i = 0; i < specs.size(); i++) {
+				Element spec = specs.get(i);
 
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.IT;
-	}
+  			String key = spec.selectFirst(".product__specificationItem").text();
+
+  			String val = "";
+  			Element valEL = spec.selectFirst(".product__specificationItemDetail");
+  			if (valEL.hasClass("i-check")) {
+  				val = "Yes";
+  			} if (valEL.hasClass("i-accordion_close")) {
+  				val = "No";
+  			} else {
+  				val = valEL.text();
+  			}
+  			specList.add(new LinkSpec(key, val));
+  		}
+  	}
+
+  	if (specList == null || specList.size() == 0) {
+  		specList = getValueOnlySpecList(dom.select("ul.productDetails__specifications li"));
+  	}
+  	
+  	return specList;
+  }
 
 }

@@ -7,12 +7,13 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -24,34 +25,32 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Wehkamp extends AbstractWebsite {
 
-  /*
-   * holds price info set in getJsonData()
-   */
+	private Document dom;
+
+	private JSONObject json;
   private JSONObject offers;
   private JSONArray properties;
 
-  @Override
-  public JSONObject getJsonData() {
-    final String props = findAPart(doc.html(), "\"properties\":", "]", 1);
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
+		dom = Jsoup.parse(html);
 
-    if (props != null) {
-      properties = new JSONArray(props);
-    }
+		String props = findAPart(html, "\"properties\":", "]", 1);
+    if (props != null) properties = new JSONArray(props);
 
-    Elements dataEL = doc.select("script[type='application/ld+json']");
+    Elements dataEL = dom.select("script[type='application/ld+json']");
     if (dataEL != null && dataEL.size() > 0) {
       for (int i = 0; i < dataEL.size(); i++) {
         if (dataEL.get(i).dataNodes().get(0).getWholeData().indexOf("brand") > 0) {
-          JSONObject data = new JSONObject(dataEL.get(i).dataNodes().get(0).getWholeData().replace("\r\n", " "));
-          if (data.has("offers")) {
-            offers = data.getJSONObject("offers");
+        	json = new JSONObject(dataEL.get(i).dataNodes().get(0).getWholeData().replace("\r\n", " "));
+          if (json.has("offers")) {
+            offers = json.getJSONObject("offers");
           }
-          return data;
         }
       }
     }
-    return super.getJsonData();
-  }
+	}
 
   @Override
   public boolean isAvailable() {
@@ -80,23 +79,10 @@ public class Wehkamp extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (isAvailable()) {
-      if (offers != null && offers.has("price")) {
-        return offers.getBigDecimal("price");
-      }
+    if (offers != null && offers.has("price")) {
+      return offers.getBigDecimal("price");
     }
     return BigDecimal.ZERO;
-  }
-
-  @Override
-  public String getSeller() {
-    if (offers != null && offers.has("seller")) {
-      JSONObject seller = offers.getJSONObject("seller");
-      if (seller.has("name")) {
-        return seller.getString("name");
-      }
-    }
-    return "Wehkamp";
   }
 
   @Override
@@ -108,8 +94,19 @@ public class Wehkamp extends AbstractWebsite {
   }
 
   @Override
+  public String getSeller() {
+    if (offers != null && offers.has("seller")) {
+      JSONObject seller = offers.getJSONObject("seller");
+      if (seller.has("name")) {
+        return seller.getString("name");
+      }
+    }
+    return super.getSeller();
+  }
+
+  @Override
   public String getShipment() {
-    Element val = doc.selectFirst("span.margin-vertical-xsmall.font-weight-light");
+    Element val = dom.selectFirst("span.margin-vertical-xsmall.font-weight-light");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -130,15 +127,5 @@ public class Wehkamp extends AbstractWebsite {
 
     return specList;
   }
-
-  @Override
-  public String getSiteName() {
-  	return "wehkamp";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.NL;
-	}
 
 }

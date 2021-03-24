@@ -1,14 +1,16 @@
 package io.inprice.parser.websites.au;
 
-import io.inprice.common.models.LinkSpec;
-import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
-import io.inprice.parser.websites.AbstractWebsite;
-import org.json.JSONObject;
-import org.jsoup.nodes.Element;
-
 import java.math.BigDecimal;
 import java.util.List;
+
+import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import io.inprice.common.models.LinkSpec;
+import io.inprice.common.utils.StringUtils;
+import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for BigW Australia
@@ -19,38 +21,27 @@ import java.util.List;
  */
 public class BigW extends AbstractWebsite {
 
-  private String brand = Consts.Words.NOT_AVAILABLE;
-  private List<LinkSpec> specList;
+	private Document dom;
+	private JSONObject json;
+	
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
+		dom = Jsoup.parse(html);
 
-  @Override
-  protected JSONObject getJsonData() {
-    specList = getKeyValueSpecList(doc.select("div.tab-Specification li"), "div.meta", "div.subMeta");
-    for (LinkSpec spec : specList) {
-      if (spec.getKey().contains("Brand")) {
-        brand = spec.getValue();
-        break;
-      }
-    }
-
-    final String prodData = findAPart(doc.html(), "'products': [", "}]", 1);
-    if (prodData != null) {
-      return new JSONObject(fixQuotes(prodData));
-    }
-
-    return super.getJsonData();
-  }
+		String prodData = findAPart(html, "'products': [", "}]", 1);
+    if (prodData != null) json = new JSONObject(StringUtils.fixQuotes(prodData));
+	}
 
   @Override
   public boolean isAvailable() {
-    Element increaeBtn = doc.getElementById("increase_quantity_JS");
-    return (increaeBtn != null);
+    return (dom.getElementById("increase_quantity_JS") != null);
   }
 
   @Override
   public String getSku() {
-    Element code = doc.selectFirst("div[data-productcode]");
-    if (code != null) {
-      return code.attr("data-productcode");
+    if (json != null && json.has("id")) {
+      return json.getString("id");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -72,8 +63,11 @@ public class BigW extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Big W";
+  public String getBrand() {
+    if (json != null && json.has("brand")) {
+    	return json.getString("brand");
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -82,23 +76,15 @@ public class BigW extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    return brand;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    return specList;
-  }
-  
-  @Override
-	public String getSiteName() {
-		return "bigw";
-	}
+  	List<LinkSpec> specList = getKeyValueSpecList(dom.select("div.tab-Specification li"), "div.meta", "div.subMeta");
+  	List<LinkSpec> featureList = getValueOnlySpecList(dom.select("div.contentList li"), "div.meta");
 
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.AU;
-	}
+  	if (specList != null && featureList == null) return specList;
+  	if (featureList != null && specList == null) return featureList;
+
+  	featureList.addAll(specList);
+  	return featureList;
+  }
 
 }

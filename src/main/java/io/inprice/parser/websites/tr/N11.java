@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -13,7 +15,6 @@ import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -25,31 +26,34 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class N11 extends AbstractWebsite {
 
+	private Document dom;
   private JSONObject offers;
+	
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
+		dom = Jsoup.parse(html);
 
-  @Override
-  protected JSONObject getJsonData() {
-    Elements dataEL = doc.select("script[type='application/ld+json']");
+    Elements dataEL = dom.select("script[type='application/ld+json']");
     if (dataEL != null) {
       for (DataNode dNode : dataEL.dataNodes()) {
         JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
         if (data.has("@type")) {
           String type = data.getString("@type");
           if (type.equals("Product") && data.has("offers")) {
-            offers = data.getJSONObject("offers");
+          	offers = data;
             break;
           }
         }
       }
     }
-    return super.getJsonData();
-  }
+	}
 
   @Override
   public boolean isAvailable() {
     String value = null;
 
-    Element val = doc.getElementById("skuStock");
+    Element val = dom.getElementById("skuStock");
     if (val != null) {
       if (StringUtils.isNotBlank(val.text())) {
         value = val.text();
@@ -57,22 +61,22 @@ public class N11 extends AbstractWebsite {
         value = val.val();
       }
     } else {
-      val = doc.getElementById("stockCount");
+      val = dom.getElementById("stockCount");
       if (val != null) {
         value = val.val();
       }
     }
     
     if (StringUtils.isBlank(value)) {
-      val = doc.selectFirst("input[class='stockCount']");
+      val = dom.selectFirst("input[class='stockCount']");
       if (val != null && StringUtils.isNotBlank(val.val())) {
         value = val.val();
       } else {
-        val = doc.selectFirst(".stockWarning");
+        val = dom.selectFirst(".stockWarning");
         if (val != null && StringUtils.isNotBlank(val.val())) {
           value = val.val();
         } else {
-          val = doc.selectFirst(".newPrice ins");
+          val = dom.selectFirst(".newPrice ins");
           if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
             value = val.attr("content");
           }
@@ -97,7 +101,7 @@ public class N11 extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("input[class='productId']");
+    Element val = dom.selectFirst("input[class='productId']");
     if (val != null && StringUtils.isNotBlank(val.val())) {
       return val.val();
     }
@@ -106,9 +110,9 @@ public class N11 extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("h1.proName");
+    Element val = dom.selectFirst("h1.proName");
     if (val == null || StringUtils.isBlank(val.text())) {
-      val = doc.selectFirst("h1.pro-title_main");
+      val = dom.selectFirst("h1.pro-title_main");
     }
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
@@ -124,12 +128,12 @@ public class N11 extends AbstractWebsite {
     if (offers != null && offers.has("lowPrice")) {
       value = offers.getString("lowPrice");
     } else {
-      Element val = doc.getElementById("skuPrice");
+      Element val = dom.getElementById("skuPrice");
       if (val != null && StringUtils.isNotBlank(val.val())) {
         value = val.val();
       } else {
-        val = doc.selectFirst(".newPrice ins");
-        if (val == null || StringUtils.isBlank(val.attr("content"))) val = doc.selectFirst("ins.price-now");
+        val = dom.selectFirst(".newPrice ins");
+        if (val == null || StringUtils.isBlank(val.attr("content"))) val = dom.selectFirst("ins.price-now");
         if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
           value = val.attr("content");
         }
@@ -144,46 +148,9 @@ public class N11 extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    String value = null;
-
-    Element val = doc.selectFirst("div.sallerTop h3 a");
-    if (val != null && StringUtils.isNotBlank(val.attr("title"))) {
-      value = val.attr("title");
-    } else {
-      val = doc.selectFirst(".shop-name");
-      if (val != null && StringUtils.isNotBlank(val.text())) {
-        value = val.text();
-      }
-    }
-
-    if (StringUtils.isBlank(value)) {
-      val = doc.selectFirst("a.main-seller-name");
-      if (val != null && StringUtils.isNotBlank(val.attr("title"))) {
-        value = val.attr("title");
-      }
-    }
-
-    return value;
-  }
-
-  @Override
-  public String getShipment() {
-    Element val = doc.selectFirst(".shipment-detail-container .cargoType");
-    if (val == null || StringUtils.isBlank(val.text())) {
-      val = doc.selectFirst(".delivery-info_shipment span");
-    }
-
-    if (val != null) {
-      return val.text().replaceAll(":", "");
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public String getBrand() {
-    Element val = doc.selectFirst("span.label:contains(Marka)");
-    if (val == null) val = doc.selectFirst("span.label:contains(Yazar)");
+    Element val = dom.selectFirst("span.label:contains(Marka)");
+    if (val == null) val = dom.selectFirst("span.label:contains(Yazar)");
 
     if (val != null) {
       Element sbling = val.nextElementSibling();
@@ -200,28 +167,55 @@ public class N11 extends AbstractWebsite {
   }
 
   @Override
+  public String getSeller() {
+    String value = null;
+
+    Element val = dom.selectFirst("div.sallerTop h3 a");
+    if (val != null && StringUtils.isNotBlank(val.attr("title"))) {
+      value = val.attr("title");
+    } else {
+      val = dom.selectFirst(".shop-name");
+      if (val != null && StringUtils.isNotBlank(val.text())) {
+        value = val.text();
+      }
+    }
+
+    if (StringUtils.isBlank(value)) {
+      val = dom.selectFirst("a.main-seller-name");
+      if (val != null && StringUtils.isNotBlank(val.attr("title"))) {
+        value = val.attr("title");
+      }
+    }
+
+    return value;
+  }
+
+  @Override
+  public String getShipment() {
+    Element val = dom.selectFirst(".shipment-detail-container .cargoType");
+    if (val == null || StringUtils.isBlank(val.text())) {
+      val = dom.selectFirst(".delivery-info_shipment span");
+    }
+
+    if (val != null) {
+      return val.text().replaceAll(":", "");
+    }
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
   public List<LinkSpec> getSpecList() {
-    Elements specs = doc.select("div.feaItem");
+    Elements specs = dom.select("div.feaItem");
     String keySelector = ".label";
     String valSelector = ".data";
 
     if (specs == null || specs.isEmpty()) {
-      specs = doc.select("li.unf-prop-list-item");
+      specs = dom.select("li.unf-prop-list-item");
       keySelector = "p.unf-prop-list-title";
       valSelector = "p.unf-prop-list-prop";
     }
 
     return getKeyValueSpecList(specs, keySelector, valSelector);
   }
-
-  @Override
-  public String getSiteName() {
-  	return "n11";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.TR_DE;
-	}
 
 }

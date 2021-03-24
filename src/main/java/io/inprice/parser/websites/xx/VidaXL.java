@@ -1,4 +1,4 @@
-package io.inprice.parser.websites.nl;
+package io.inprice.parser.websites.xx;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -18,13 +18,13 @@ import io.inprice.parser.helpers.StringHelpers;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Parser for Bol the Netherlands
+ * Parser for vidaXL Italy
  *
  * Contains standard data, all is extracted by css selectors
  *
  * @author mdpinar
  */
-public class Bol extends AbstractWebsite {
+public class VidaXL extends AbstractWebsite {
 
 	private Document dom;
 
@@ -65,8 +65,11 @@ public class Bol extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    if (json != null && json.has("productID")) {
-      return json.getString("productID");
+    if (json != null) {
+      if (json.has("sku"))
+        return json.getString("sku");
+      if (json.has("prid"))
+        return "" + json.getInt("prid");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -81,65 +84,64 @@ public class Bol extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (offers != null && offers.has("price")) {
-      return new BigDecimal(cleanDigits(offers.getString("price")));
+    if (offers != null) {
+    	if (offers.has("price")) {
+    		return offers.getBigDecimal("price");
+    	}
+    	if (offers.has("priceSpecification")) {
+    		JSONObject pspec = offers.getJSONObject("priceSpecification");
+    		if (pspec != null && pspec.has("price")) {
+    			return pspec.getBigDecimal("price");
+    		}
+    	}
     }
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getBrand() {
-    if (json != null && json.has("brand")) {
-      JSONObject brand = json.getJSONObject("brand");
-      if (brand.has("name")) {
-        return brand.getString("name");
-      }
+    Element val = dom.selectFirst("meta[itemprop='brand']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getSeller() {
-    if (offers != null && offers.has("seller")) {
-      JSONObject seller = offers.getJSONObject("seller");
-      if (seller.has("name")) {
-        return seller.getString("name");
-      }
+    if (json != null && json.has("name")) {
+      return json.getString("name");
     }
     return super.getSeller();
   }
 
   @Override
   public String getShipment() {
-    Element val = dom.selectFirst("ul.buy-block__usps.check-list--succes.check-list--usps li");
+    Element val = dom.selectFirst("ul.product-details li:nth-child(2)");
     if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
+      return val.text().replace("checkmark", "");
     }
-    return "Bekijk alle bezorgopties";
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  	List<LinkSpec> specList = null;
 
-    Elements specs = dom.select("dl.specs__list");
-    if (specs != null && specs.size() > 0) {
-      specList = new ArrayList<>();
-      for (Element spec : specs) {
-
-        Elements titles = spec.select("dt.specs__title");
-        Elements values = spec.select("dd.specs__value");
-
-        if (titles.size() > 0 && titles.size() == values.size()) {
-          for (int i = 0; i < titles.size(); i++) {
-            Element key = titles.get(i);
-            Element value = values.get(i);
-            specList.add(new LinkSpec(key.text(), value.text()));
-          }
-        }
-      }
-    }
-
+  	Elements specsEL = dom.select("div.product-specifications__text li");
+  	if (specsEL != null && specsEL.size() > 0) {
+  		specList = new ArrayList<>(specsEL.size());
+  		for (int i = 0; i < specsEL.size(); i++) {
+				Element specEL = specsEL.get(i);
+				String[] pair = specEL.text().split(":");
+				if (pair.length == 1) {
+					specList.add(new LinkSpec("", pair[0]));
+				} else {
+					specList.add(new LinkSpec(pair[0], pair[1]));
+				}
+			}
+  	}
+  	
     return specList;
   }
 

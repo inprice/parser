@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -21,37 +21,40 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class MediaWorld extends AbstractWebsite {
 
-  private Element product;
+	private Document dom;
+	private Element prod;
+	
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
 
-  @Override
-  protected JSONObject getJsonData() {
-    product = doc.selectFirst("div.product-detail-main-container");
-    return super.getJsonData();
-  }
-
+		dom = Jsoup.parse(html);
+		prod = dom.selectFirst("div.product-detail-main-container");
+	}
+	
   @Override
   public boolean isAvailable() {
-    if (product != null) {
-      return (StringUtils.isNotBlank(product.attr("data-gtm-avail2")) && product.attr("data-gtm-avail2").contains("disponibile"));
+    if (prod != null) {
+      return (StringUtils.isNotBlank(prod.attr("data-gtm-avail2")) && prod.attr("data-gtm-avail2").contains("disponibile"));
     }
     return false;
   }
 
   @Override
   public String getSku() {
-    if (product != null) {
-      return product.attr("data-pcode");
+    if (prod != null) {
+      return prod.attr("data-pcode");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    if (product != null) {
-      Element val = product.selectFirst("h1[itemprop='name']");
+    if (prod != null) {
+      Element val = prod.selectFirst("h1[itemprop='name']");
       if (val != null && StringUtils.isNotBlank(val.text())) {
         StringBuilder sb = new StringBuilder(val.text());
-        Element descEL = product.selectFirst("h4.product-short-description");
+        Element descEL = prod.selectFirst("h4.product-short-description");
         if (descEL != null && StringUtils.isNotBlank(descEL.text())) {
           sb.append(" (");
           sb.append(descEL.text().split("\\|")[0].trim());
@@ -65,20 +68,23 @@ public class MediaWorld extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (product != null) {
-      return new BigDecimal(cleanDigits(product.attr("data-gtm-price")));
+    if (prod != null) {
+      return new BigDecimal(cleanDigits(prod.attr("data-gtm-price")));
     }
     return BigDecimal.ZERO;
   }
 
   @Override
-  public String getSeller() {
-    return "Media World";
+  public String getBrand() {
+    if (prod != null) {
+      return prod.attr("data-gtm-brand");
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getShipment() {
-    Element val = doc.selectFirst("p.product-info-shipping");
+    Element val = dom.selectFirst("p.product-info-shipping");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -86,27 +92,8 @@ public class MediaWorld extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    if (product != null) {
-      return product.attr("data-gtm-brand");
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    return getKeyValueSpecList(doc.select("li.content__Tech__row"), "div.Tech-row__inner__key",
-        "div.Tech-row__inner__value");
+    return getKeyValueSpecList(dom.select("li.content__Tech__row"), "div.Tech-row__inner__key", "div.Tech-row__inner__value");
   }
-
-  @Override
-  public String getSiteName() {
-  	return "mediaworld";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.IT;
-	}
 
 }

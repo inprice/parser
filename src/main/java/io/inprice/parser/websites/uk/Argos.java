@@ -4,11 +4,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -20,15 +21,29 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Argos extends AbstractWebsite {
 
+	private Document dom;
+	private boolean isAvailable;
+	private String brand;
+
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
+		dom = Jsoup.parse(html);
+
+    String found = findAPart(html, "\"globallyOutOfStock\":", ",");
+    isAvailable = ("false".equalsIgnoreCase(found));
+
+    brand = findAPart(html, "\"brand\":\"", "\",");
+	}
+
   @Override
   public boolean isAvailable() {
-    final String availability = findAPart(doc.html(), "\"globallyOutOfStock\":", ",");
-    return "false".equalsIgnoreCase(availability);
+    return isAvailable;
   }
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("[itemProp='sku']");
+    Element val = dom.selectFirst("[itemProp='sku']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
@@ -37,12 +52,12 @@ public class Argos extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("span.product-title");
+    Element val = dom.selectFirst("span.product-title");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
 
-    val = doc.selectFirst("[data-test='product-title']");
+    val = dom.selectFirst("[data-test='product-title']");
     if (val != null && StringUtils.isNotBlank(val.html())) {
       return val.html();
     }
@@ -52,8 +67,8 @@ public class Argos extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.selectFirst(".product-price-primary");
-    if (val == null || StringUtils.isBlank(val.attr("content"))) val = doc.selectFirst("[itemProp='price']");
+    Element val = dom.selectFirst(".product-price-primary");
+    if (val == null || StringUtils.isBlank(val.attr("content"))) val = dom.selectFirst("[itemProp='price']");
 
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
@@ -62,15 +77,24 @@ public class Argos extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "Argos";
+  public String getBrand() {
+  	if (brand != null) {
+  		return brand;
+  	}
+  	
+    Element val = dom.selectFirst("[itemprop='brand']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getShipment() {
     final String staticPart = "In-store pickup";
 
-    Element val = doc.selectFirst("a.ac-propbar__slot > span.sr-only");
+    Element val = dom.selectFirst("a.ac-propbar__slot > span.sr-only");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return staticPart + " OR " + val.text();
     }
@@ -79,33 +103,8 @@ public class Argos extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    Element val = doc.selectFirst("[itemprop='brand']");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-
-    final String brandName = findAPart(doc.html(), "\"brand\":\"", "\",");
-    if (brandName != null) {
-      return brandName;
-    }
-
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(doc.select(".product-description-content-text li"));
+    return getValueOnlySpecList(dom.select(".product-description-content-text li"));
   }
-
-  @Override
-  public String getSiteName() {
-  	return "argos";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.UK;
-	}
 
 }

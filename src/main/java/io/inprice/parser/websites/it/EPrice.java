@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -22,9 +23,21 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class EPrice extends AbstractWebsite {
 
+	private Document dom;
+	private String seller;
+	
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
+		
+		dom = Jsoup.parse(html);
+		seller = findAPart(html, "seller_name: \"", "\",");
+		if (StringUtils.isBlank(seller)) seller = "ePrice";
+	}
+
   @Override
   public boolean isAvailable() {
-    Element val = doc.selectFirst("meta[itemprop='availability']");
+    Element val = dom.selectFirst("meta[itemprop='availability']");
     if (val != null) {
       return val.attr("content").contains("InStock");
     }
@@ -33,7 +46,7 @@ public class EPrice extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("meta[itemprop='sku']");
+    Element val = dom.selectFirst("meta[itemprop='sku']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
@@ -42,7 +55,7 @@ public class EPrice extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("h1[itemprop='name']");
+    Element val = dom.selectFirst("h1[itemprop='name']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -51,20 +64,25 @@ public class EPrice extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.selectFirst("span[itemprop='price']");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return new BigDecimal(cleanDigits(val.text()));
+    Element val = dom.selectFirst("meta[itemprop='price']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
     return BigDecimal.ZERO;
   }
 
   @Override
+  public String getBrand() {
+    String val = dom.title();
+  	if (val.indexOf("-") > 0) {
+  		return val.split("-")[0];
+  	}
+    return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
   public String getSeller() {
-    Element val = doc.selectFirst("p.infoSeller a strong");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-    return "ePrice";
+    return seller;
   }
 
   @Override
@@ -73,34 +91,24 @@ public class EPrice extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    Element val = doc.selectFirst("meta[itemprop='brand']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content");
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = getKeyValueSpecList(doc.select("#anchorCar li"), "span", "a");
-    if (specList == null) {
-      Elements specs = doc.select("#anchorTech li");
-      if (specs != null && specs.size() > 0) {
-        specList = new ArrayList<>();
-        for (Element spec : specs) {
-          Elements pair = spec.select("span");
-          if (pair.size() == 1) {
-            specList.add(new LinkSpec("", pair.get(0).text()));
-          } else if (pair.size() > 1) {
-            specList.add(new LinkSpec(pair.get(0).text(), pair.get(1).text()));
-          }
+		List<LinkSpec> specList = null;
+
+    Elements specs = dom.select("#anchorCar li");
+    if (specs != null && specs.size() > 0) {
+      specList = new ArrayList<>();
+      for (Element spec : specs) {
+        String liHtml = spec.html();
+        if (liHtml.contains("<span>")) {
+        	liHtml = liHtml.replace("<span>", "").replace("</span>", "ç");
         }
+        String[] pair = liHtml.split("ç");
+        specList.add(new LinkSpec(pair[0], pair[1]));
       }
     }
 
     if (specList == null) {
-      Elements specs = doc.select("#anchorDesc p");
+      specs = dom.select("#anchorDesc p");
       if (specs != null && specs.size() > 0) {
         specList = new ArrayList<>();
         for (Element spec : specs) {
@@ -111,18 +119,12 @@ public class EPrice extends AbstractWebsite {
         }
       }
     }
+    
+    if (specList == null) {
+    	specList = getKeyValueSpecList(dom.select("#anchorCar li"), "span", "a");
+    }
 
     return specList;
   }
-
-  @Override
-  public String getSiteName() {
-  	return "eprice";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.IT;
-	}
 
 }

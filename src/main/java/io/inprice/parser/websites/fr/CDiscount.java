@@ -1,17 +1,23 @@
 package io.inprice.parser.websites.fr;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.jsoup.Jsoup;
+
+import com.gargoylesoftware.htmlunit.HttpHeader;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.WebResponse;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -23,79 +29,80 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class CDiscount extends AbstractWebsite {
 
-  /*
-   * holds price info set in getJsonData()
-   */
-  private JSONObject offers;
+	private String sku;
+	private JSONObject json;
 
-  @Override
-  public JSONObject getJsonData() {
-    Elements scripts = doc.select("script[type='application/ld+json']");
-    if (scripts != null && StringUtils.isNotBlank(scripts.html())) {
-      Element dataEL = null;
-      for (Element script : scripts) {
-        if (script.html().contains("itemCondition")) {
-          dataEL = script;
-          break;
-        }
-      }
-      if (dataEL != null) {
-        JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
-        if (data.has("offers")) {
-          if (data.has("offers")) {
-            offers = data.getJSONObject("offers");
-          }
-        }
-        return data;
-      }
-    }
-    return super.getJsonData();
-  }
+	protected WebResponse makeRequest(WebClient webClient) throws MalformedURLException, IOException {
+		String referer = getUrl();
+		sku = referer.substring(referer.lastIndexOf("-")+1, referer.length()-5);
+
+		WebRequest req = new WebRequest(new URL("https://www.cdiscount.com/GetAlgoProducts/0"), HttpMethod.POST);
+		req.setAdditionalHeader(HttpHeader.ACCEPT, "application/json, text/javascript, */*; q=0.01");
+    req.setAdditionalHeader(HttpHeader.CONTENT_TYPE, "application/x-www-form-urlencoded; charset=UTF-8");
+		req.setAdditionalHeader(HttpHeader.REFERER, referer);
+    
+		req.setRequestBody(
+				"ControlId=7583423&ProductId="+sku+"&SkuList=&Category=&SellerId=&Algorithm=SimilarProducts&FirstProductIndex=0&SitemapNodeId=13148&Name=&PaginationMode=0" +
+				"&PreloadedSkuList=&Hash=&ViewedKey=&ForcedVersion=&Context=&PageType=Product&CarrouselType=&DepartementId=12103050401&TrackingPixel=&EbWidgetId=&EbContexte=" +
+				"&IsAboveWaterLine=false&DepartmentId=12103050401&SwordVersion=&BrandName=&ProductName=&SearchId=&Prefix=&ErrorOnPostDataInit=false&ErrorsListOnPostDataInit=&CommonId="
+			);
+		return webClient.loadWebResponse(req);
+	}
+	
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
+
+		JSONObject root = new JSONObject(html.replaceAll("\\p{C}", "")); //can have non-printable chars, lets clean them up!
+		if (root != null && root.has("products")) {
+			JSONArray prods = root.getJSONArray("products");
+			if (prods != null && prods.length() > 0) {
+				for (int i = 0; i < prods.length(); i++) {
+					JSONObject prod = prods.getJSONObject(i);
+					if (prod != null && prod.has("sku") && prod.getString("sku").equalsIgnoreCase(sku)) {
+						json = prod;
+						break;
+					}
+				}
+			}
+		}
+	}
 
   @Override
   public boolean isAvailable() {
-    if (offers != null && offers.has("availability")) {
-      return offers.getString("availability").contains("InStock");
-    }
+  	if (json != null && json.has("stock")) {
+  		return json.getInt("stock") > 0;
+  	}
     return false;
   }
 
   @Override
   public String getSku() {
-    if (json != null && json.has("sku")) {
-      return json.getString("sku");
-    }
-    return Consts.Words.NOT_AVAILABLE;
+    return sku;
   }
 
   @Override
   public String getName() {
-    if (json != null && json.has("name")) {
-      return json.getString("name");
-    }
+  	if (json != null && json.has("name")) {
+  		return json.getString("name");
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    if (isAvailable()) {
-      if (offers != null && offers.has("price")) {
-        return offers.getBigDecimal("price");
-      }
-    }
-    return BigDecimal.ZERO;
+  	if (json != null && json.has("prx")) {
+  		JSONObject prx = json.getJSONObject("prx");
+  		if (prx != null && prx.has("val")) {
+  			return new BigDecimal(cleanDigits(Jsoup.parse(prx.getString("val").replace("&euro;", ",")).text()));
+  		}
+  	}
+  	return BigDecimal.ZERO;
   }
 
   @Override
-  public String getSeller() {
-    Element seller = doc.selectFirst("a.fpSellerName");
-    if (seller == null)
-      seller = doc.selectFirst("span.logoCDS");
-
-    if (seller != null) {
-      return seller.text();
-    }
-    return "CDiscount";
+  public String getBrand() {
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -104,61 +111,8 @@ public class CDiscount extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    if (json != null && json.has("brand")) {
-      JSONObject merchant = json.getJSONObject("brand");
-      if (merchant.has("name")) {
-        return merchant.getString("name");
-      }
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
-
-    Elements specs = doc.select("div#fpBulletPointReadMore li");
-    if (specs != null && specs.size() > 0) {
-      specList = new ArrayList<>();
-      for (Element spec : specs) {
-        String[] specChunks = spec.text().split(":");
-        LinkSpec ls = new LinkSpec(specChunks[0], "");
-        if (specChunks.length > 1) {
-          ls.setValue(specChunks[1]);
-        }
-        specList.add(ls);
-      }
-    }
-
-    if (specList == null) {
-      specs = doc.select("table.fpDescTb tr");
-      if (specs != null && specs.size() > 0) {
-        specList = new ArrayList<>();
-        for (Element spec : specs) {
-          Elements pairs = spec.select("td");
-          if (pairs.size() > 0) {
-            LinkSpec ls = new LinkSpec(pairs.get(0).text(), "");
-            if (pairs.size() > 1) {
-              ls.setValue(pairs.get(1).text());
-            }
-            specList.add(ls);
-          }
-        }
-      }
-    }
-
-    return specList;
+    return null;
   }
-
-  @Override
-  public String getSiteName() {
-  	return "cdiscount";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.FR;
-	}
 
 }

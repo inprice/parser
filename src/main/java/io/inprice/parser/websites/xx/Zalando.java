@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -19,131 +19,116 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public abstract class Zalando extends AbstractWebsite {
+public class Zalando extends AbstractWebsite {
 
+	private JSONObject info;
+	private JSONObject price;
+	private JSONArray details;
+	
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
+
+		String rawJson = findAPart(html, "![CDATA[{\"layout\"", "}]]", 1, 8);
+		if (StringUtils.isNotBlank(rawJson)) {
+			JSONObject json = new JSONObject(rawJson);
+			if (json != null && json.has("model")) {
+				JSONObject model = json.getJSONObject("model");
+				if (model != null) {
+					if (model.has("articleInfo")) {
+						info = model.getJSONObject("articleInfo");
+					}
+					if (model.has("displayPrice")) {
+						price = model.getJSONObject("displayPrice");
+					}
+					if (model.has("productDetailsCluster")) {
+						details = model.getJSONArray("productDetailsCluster");
+					}
+				}
+			}
+		}
+	}
+	
   @Override
   public boolean isAvailable() {
-    boolean isAvailable = doc.html().indexOf("\"available\":true") > 0;
-    if (isAvailable) return true;
-
-    Element addToCartButton = doc.getElementById("z-pdp-topSection-addToCartButton");
-    return (addToCartButton != null);
+  	if (info != null && info.has("available")) {
+  		return info.getBoolean("available");
+  	}
+    return false;
   }
 
   @Override
   public String getSku() {
-    Element val = doc.selectFirst("meta[property='og:url']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      String url = val.attr("content");
-      String[] urlChunks = url.split("-");
-      if (urlChunks.length > 1) {
-        String pure = urlChunks[urlChunks.length - 2] + "-" + urlChunks[urlChunks.length - 1].replaceAll(".html", "");
-        return pure.toUpperCase();
-      }
-    }
+  	if (info != null && info.has("id")) {
+  		return info.getString("id");
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element val = doc.selectFirst("h1[title]");
-    if (val != null && StringUtils.isNotBlank(val.attr("title"))) {
-      return val.attr("title");
-    }
-
-    val = doc.selectFirst("meta[name='twitter:title']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content");
-    }
+  	if (info != null && info.has("name")) {
+  		return info.getString("name");
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element val = doc.selectFirst("meta[name='twitter:data1']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return new BigDecimal(cleanDigits(val.attr("content")));
-    }
+  	if (price != null && price.has("price")) {
+  		JSONObject _price = price.getJSONObject("price");
+  		if (_price == null) _price = price.getJSONObject("originalPrice");
+  		if (_price != null && _price.has("value")) {
+  			return _price.getBigDecimal("value");
+  		}
+  	}
     return BigDecimal.ZERO;
   }
 
   @Override
-  public String getSeller() {
-    return "Zalando";
-  }
-
-  @Override
-  public String getShipment() {
-    final String html = doc.html();
-
-    StringBuilder delivery = new StringBuilder();
-
-    String standard1 = findAPart(html, "\"zalando.prodpres.delivery.available.title\":\"", "\",\"");
-    String standard2 = findAPart(html, "\"zalando.prodpres.delivery.standard.free\":\"", "\",\"");
-    String standard3 = findAPart(html, "\"zalando.prodpres.delivery.available.time\":\"", "\",\"");
-
-    if (standard1 != null) {
-      delivery.append(standard1);
-      delivery.append(" ");
-    }
-    if (standard2 != null) {
-      delivery.append(standard2);
-      delivery.append(" ");
-    }
-    if (standard3 != null) {
-      delivery.append(standard3);
-      delivery.append(" ");
-    }
-
-    String express1 = findAPart(html, "\"zalando.prodpres.delivery.express.title\":\"", "\",\"");
-    String express2 = findAPart(html, "\"zalando.prodpres.delivery.express.cost\":\"", "\",\"");
-    String express3 = findAPart(html, "\"zalando.prodpres.delivery.express.time\":\"", "\",\"");
-
-    if (express1 != null) {
-      delivery.append(express1);
-      delivery.append(" ");
-    }
-    if (express2 != null) {
-      delivery.append(express2);
-      delivery.append(" ");
-    }
-    if (express3 != null)
-      delivery.append(express3);
-
-    return delivery.toString(); // "Standard shipment";
-  }
-
-  @Override
   public String getBrand() {
-    Element brand = doc.selectFirst("a[title] h2");
-    if (brand != null) {
-      return brand.text();
-    }
+  	if (info != null && info.has("brand")) {
+  		JSONObject brand = info.getJSONObject("brand");
+  		if (brand != null && brand.has("name")) {
+  			return brand.getString("name");
+  		}
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
-    Elements specs = doc.select("div#z-pdp-detailsSection p.h-text.h-color-black.body.h-m-bottom-xs span");
-    if (specs != null && specs.size() > 0) {
-      specList = new ArrayList<>();
-      int i = 0;
-      while (i < specs.size()) {
-        String key = specs.get(i++).text().replaceAll(":", "");
-        String value = "";
-        if (i < specs.size())
-          value = specs.get(i++).text();
-        if (StringUtils.isNotBlank(key) && StringUtils.isNotBlank(value))
-          specList.add(new LinkSpec(key, value));
-      }
-    }
-    return specList;
+  public String getShipment() {
+    return "Standard";
   }
 
   @Override
-  public String getSiteName() {
-  	return "zalando";
+  public List<LinkSpec> getSpecList() {
+  	List<LinkSpec> specList = null;
+
+  	if (details != null && details.length() > 0) {
+  		specList = new ArrayList<>();
+  		for (int i = 0; i < details.length(); i++) {
+				JSONObject attr = details.getJSONObject(i);
+				if (attr != null && attr.has("data")) {
+					JSONArray data = attr.getJSONArray("data");
+					if (data != null && data.length() > 0) {
+						for (int j = 0; j < data.length(); j++) {
+							JSONObject keyVal = data.getJSONObject(j);
+							if (keyVal != null && keyVal.has("name") && keyVal.has("values")) {
+								String key = keyVal.getString("name");
+								String val = keyVal.getString("values");
+								
+								if (StringUtils.isNotBlank(key) && key.indexOf("_") > 0) continue;
+								if (StringUtils.isNotBlank(key) || StringUtils.isNotBlank(val))
+				          specList.add(new LinkSpec(key, val));
+							}
+						}
+					}
+				}
+			}
+  	}
+
+    return specList;
   }
   
 }

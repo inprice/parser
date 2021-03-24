@@ -1,15 +1,18 @@
 package io.inprice.parser.websites.uk;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -22,27 +25,27 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Currys extends AbstractWebsite {
 
-  /*
-   * the main data provider derived from json placed in html
-   */
-  private JSONObject product;
+	private Document dom;
+  private JSONObject json;
+	
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
+		dom = Jsoup.parse(html);
 
-  @Override
-  public JSONObject getJsonData() {
-    Element dataEL = doc.getElementById("app.digitalData");
+    Element dataEL = dom.getElementById("app.digitalData");
     if (dataEL != null) {
       JSONObject data = new JSONObject(dataEL.dataNodes().get(0).getWholeData());
       if (data.has("product") && !data.getJSONArray("product").isEmpty()) {
-        product = data.getJSONArray("product").getJSONObject(0);
+        json = data.getJSONArray("product").getJSONObject(0);
       }
     }
-    return super.getJsonData();
-  }
+	}
 
   @Override
   public boolean isAvailable() {
-    if (product != null && product.has("stockStatus")) {
-      String status = product.getString("stockStatus");
+    if (json != null && json.has("stockStatus")) {
+      String status = json.getString("stockStatus");
       return "In stock".equalsIgnoreCase(status);
     }
     return false;
@@ -50,36 +53,39 @@ public class Currys extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    if (product != null && product.has("productSKU")) {
-      return product.getString("productSKU");
+    if (json != null && json.has("productSKU")) {
+      return json.getString("productSKU");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    if (product != null && product.has("productName")) {
-      return product.getString("productName");
+    if (json != null && json.has("productName")) {
+      return json.getString("productName");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    if (product != null && product.has("currentPrice")) {
-      return product.getBigDecimal("currentPrice");
+    if (json != null && json.has("currentPrice")) {
+      return json.getBigDecimal("currentPrice");
     }
     return BigDecimal.ZERO;
   }
 
   @Override
-  public String getSeller() {
-    return "Currys";
+  public String getBrand() {
+    if (json != null && json.has("manufacturer")) {
+      return json.getString("manufacturer");
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getShipment() {
-    Element val = doc.getElementById("delivery");
+    Element val = dom.getElementById("delivery");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text().replaceAll("More info", "");
     }
@@ -87,26 +93,24 @@ public class Currys extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    if (product != null && product.has("manufacturer")) {
-      return product.getString("manufacturer");
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(doc.select("div.product-highlight li"));
-  }
+  	List<LinkSpec> specList = null;
 
-  @Override
-  public String getSiteName() {
-  	return "currys";
+  	Elements specs = dom.select("div.product-highlight li");
+  	if (specs != null && specs.size() > 0) {
+  		specList = new ArrayList<>(specs.size());
+  		for (int i = 0; i < specs.size(); i++) {
+				Element spec = specs.get(i);
+				if (spec.text().contains(":")) {
+					String[] pair = spec.text().split(":");
+					specList.add(new LinkSpec(pair[0], pair[1]));
+				} else {
+					specList.add(new LinkSpec("", spec.text()));
+				}
+			}
+  	}
+  	
+  	return specList;
   }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.UK;
-	}
 
 }

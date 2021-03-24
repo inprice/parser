@@ -1592,12 +1592,12 @@ public class UserAgents {
 		    "Opera/9.64 (Windows NT 6.0; U; pl) Presto/2.1.1", "Opera/9.63 (X11; Linux x86_64; U; ru) Presto/2.1.1",
 		    "Opera/9.63 (X11; Linux x86_64; U; cs) Presto/2.1.1" });
 	}
-
+	
 	public static String getRandomUserAgent() {
 		String browser = null;
 		double rand = Math.random() * 100;
 		double count = 0.0;
-
+		
 		for (Map.Entry<String, Double> freq : freqMap.entrySet()) {
 			count += freq.getValue();
 			if (rand <= count) {
@@ -1605,11 +1605,16 @@ public class UserAgents {
 				break;
 			}
 		}
-
+		
 		if (browser == null) {
 			browser = "Chrome";
 		}
+		
+		String userAgents[] = uaMap.get(browser);
+		return userAgents[(int) Math.floor(Math.random() * userAgents.length)];
+	}
 
+	public static String getRandomUserAgent(String browser) {
 		String userAgents[] = uaMap.get(browser);
 		return userAgents[(int) Math.floor(Math.random() * userAgents.length)];
 	}

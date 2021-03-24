@@ -1,19 +1,31 @@
 package io.inprice.parser.websites.uk;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.gargoylesoftware.htmlunit.HttpHeader;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.WebResponse;
+
+import io.inprice.common.info.Pair;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
+import io.inprice.parser.helpers.SomeCountries;
 import io.inprice.parser.websites.AbstractWebsite;
-import kong.unirest.HttpResponse;
 
 /**
  * Parser for Asos UK
@@ -24,109 +36,92 @@ import kong.unirest.HttpResponse;
  */
 public class Asos extends AbstractWebsite {
 
-  private BigDecimal price = BigDecimal.ZERO;
-  private boolean isAvailable;
-  private String sku;
-  private String name;
-  private String brandName;
-  private String shipment;
+	private static final Logger log = LoggerFactory.getLogger(Asos.class);
+
+	private Document dom;
   private JSONObject offer;
 
-  @Override
-  protected JSONObject getJsonData() {
-    final String prodData = findAPart(doc.html(), "window.asos.pdp.config.product =", "};", 1);
+  private Pair<String, String> country;
+
+  private String priceUrl;
+  private BigDecimal price = BigDecimal.ZERO;
+	
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
+		dom = Jsoup.parse(html);
+
+    String prodData = findAPart(html, "config.product = ", "};", 1);
     if (StringUtils.isNotBlank(prodData)) {
       offer = new JSONObject(prodData);
     }
+    priceUrl = "https://www.asos.com" + findAPart(html, "config.stockPriceApiUrl = '", "';");
+	}
+	
+	@Override
+	protected void beforeRequest(WebRequest req) {
+		country = SomeCountries.findOne();
+		req.setAdditionalHeader(HttpHeader.COOKIE, "browseCountry="+country.getKey());
+	}
+	
+	@Override
+	protected void afterRequest(WebClient webClient) {
+		try {
+  		WebRequest req = new WebRequest(new URL(priceUrl), HttpMethod.GET);
+  		req.setAdditionalHeader(HttpHeader.ACCEPT, "*/*");
+  		req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
+  		req.setAdditionalHeader(HttpHeader.COOKIE, "browseCountry="+country.getKey());
 
-    if (offer != null) {
-      sku = "" + offer.getInt("id");
-      isAvailable = offer.getBoolean("isInStock");
-      name = offer.getString("name");
-      brandName = offer.getString("brandName");
-      JSONObject shipping = offer.getJSONObject("shippingRestrictions");
-      if (shipping != null && shipping.has("shippingRestrictionsLabel")) {
-        shipment = shipping.getString("shippingRestrictionsLabel");
+  		WebResponse res = webClient.loadWebResponse(req);
+      if (res.getStatusCode() < 400) {
+      	JSONArray prices = new JSONArray(res.getContentAsString());
+      	if (prices != null && prices.length() > 0) {
+        	for (int i = 0; i < prices.length(); i++) {
+  					JSONObject prod = prices.getJSONObject(i);
+  					if (prod != null && prod.has("productId")) {
+  						if (offer.getInt("id") ==  prod.getInt("productId")) {
+  							JSONObject pprice = prod.getJSONObject("productPrice");
+  							if (pprice != null && pprice.has("current")) {
+  								JSONObject current = pprice.getJSONObject("current");
+  								if (current != null && current.has("value")) {
+  									price = current.getBigDecimal("value");
+  								}
+  							}
+  							break;
+  						}
+  					}
+  				}
+      	}
+      } else {
+      	setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), res.getStatusCode());
       }
-    } else {
-      sku = getSku();
-    }
-
-    HttpResponse<String> 
-      response = 
-        httpClient
-        .get("https://www.asos.com/api/product/catalogue/v3/stockprice?store=ROW&productIds=" + sku);
-    if (response != null && response.getStatus() > 0 && response.getStatus() < 400) {
-    	
-    	boolean hasDataProblem = true;
-
-      if (response.getBody() != null && StringUtils.isNotBlank(response.getBody())) {
-        JSONArray items = new JSONArray(response.getBody());
-        if (items.length() > 0) {
-          JSONObject parent = items.getJSONObject(0);
-
-          if (parent.has("productPrice")) {
-            JSONObject pprice = parent.getJSONObject("productPrice");
-            price = pprice.getJSONObject("current").getBigDecimal("value");
-          }
-
-          if (!isAvailable && parent.has("variants")) {
-            JSONArray variants = parent.getJSONArray("variants");
-            if (variants.length() > 0) {
-            	hasDataProblem = false;
-              for (int i = 0; i < variants.length(); i++) {
-                JSONObject var = variants.getJSONObject(i);
-                if (var.getBoolean("isInStock")) {
-                  isAvailable = true;
-                  break;
-                }
-              }
-            }
-          }
-        }
-      }
-      
-      if (hasDataProblem) {
-      	setLinkStatus(LinkStatus.INVALID_DATA, "Invalid data structure!");
-      }
-    } else {
-      setLinkStatus(response);
-    }
-
-    return super.getJsonData();
-  }
+		} catch (IOException e) {
+			setLinkStatus(LinkStatus.NETWORK_ERROR, e.getMessage(), 400);
+			log.error("Failed to fetch specs", e);
+		}
+	}
 
   @Override
   public boolean isAvailable() {
-    return isAvailable;
+  	if (offer != null && offer.has("isInStock")) {
+  		return offer.getBoolean("isInStock");
+  	}
+    return false;
   }
 
   @Override
   public String getSku() {
-    if (StringUtils.isNotBlank(sku)) return sku;
-
-    Element val = doc.selectFirst("span[itemprop='sku']");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-
-    String[] urlChunks = getUrl().split("/");
-    if (urlChunks.length > 1) {
-      String prdId = urlChunks[urlChunks.length - 1];
-      return prdId.substring(0, prdId.indexOf("?"));
-    }
-
+  	if (offer != null && offer.has("id")) {
+  		return ""+offer.getInt("id");
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    if (StringUtils.isNotBlank(name)) return name;
-
-    Element name = doc.selectFirst("div.product-hero h1");
-    if (name != null) {
-      return name.text();
-    }
+  	if (offer != null && offer.has("name")) {
+  		return offer.getString("name");
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
@@ -136,26 +131,23 @@ public class Asos extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    Element val = doc.selectFirst("span[itemprop='seller'] span[itemprop='name']");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
+  public String getBrand() {
+  	if (offer != null && offer.has("brandName")) {
+  		return offer.getString("brandName");
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getShipment() {
-    if (StringUtils.isNotBlank(shipment)) return shipment;
-
-    Element val = doc.selectFirst("#shipping-restrictions .shipping-restrictions");
+    Element val = dom.selectFirst("#shipping-restrictions .shipping-restrictions");
     if (val != null && StringUtils.isNotBlank(val.attr("style"))) {
       String style = val.attr("style");
       if (style != null)
         return "Please refer to Delivery and returns info section";
     }
 
-    val = doc.getElementById("shippingRestrictionsLink");
+    val = dom.getElementById("shippingRestrictionsLink");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     } else {
@@ -164,29 +156,8 @@ public class Asos extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    if (StringUtils.isNotBlank(brandName)) return brandName;
-
-    Element val = doc.selectFirst("span[itemprop='brand'] span[itemprop='name']");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(doc.select("div.product-description li"));
+    return getValueOnlySpecList(dom.select("div.product-description li"));
   }
-
-  @Override
-  public String getSiteName() {
-  	return "asos";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.UK;
-	}
 
 }

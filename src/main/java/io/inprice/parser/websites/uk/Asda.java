@@ -1,17 +1,25 @@
 package io.inprice.parser.websites.uk;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.gargoylesoftware.htmlunit.HttpHeader;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.WebResponse;
+
+import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.Country;
 import io.inprice.parser.websites.AbstractWebsite;
-import kong.unirest.HttpResponse;
 
 /**
  * Parser for Asda UK
@@ -22,72 +30,87 @@ import kong.unirest.HttpResponse;
  */
 public class Asda extends AbstractWebsite {
 
-  private JSONObject product;
+	private static final Logger log = LoggerFactory.getLogger(Asda.class);
 
-  /**
-   * Returns json object which holds all the essential data
-   *
-   * @return json - product data
-   */
-  @Override
-  public JSONObject getJsonData() {
+	private final String prodUrl = "https://groceries.asda.com/api/items/view?itemid=";
+	
+  private JSONObject json;
+
+	@Override
+	protected void afterRequest(WebClient webClient) {
     String[] urlChunks = getUrl().split("/");
 
     if (urlChunks.length > 1) {
       String productId = urlChunks[urlChunks.length - 1];
       if (productId.matches("\\d+")) {
-        HttpResponse<String> response = httpClient.get("https://groceries.asda.com/api/items/view?itemid=" + productId);
-        if (response.getStatus() == 200 && StringUtils.isNotBlank(response.getBody())) {
-          JSONObject prod = new JSONObject(response.getBody());
-          if (prod.has("items")) {
-            JSONArray items = prod.getJSONArray("items");
-            if (items.length() > 0) {
-              product = items.getJSONObject(0);
+    		try {
+      		WebRequest req = new WebRequest(new URL(prodUrl+productId), HttpMethod.GET);
+      		req.setAdditionalHeader(HttpHeader.ACCEPT, "application/json");
+      		req.setAdditionalHeader(HttpHeader.CONTENT_TYPE, "application/json");
+    
+      		WebResponse res = webClient.loadWebResponse(req);
+          if (res.getStatusCode() < 400) {
+            JSONObject prod = new JSONObject(res.getContentAsString());
+            if (prod.has("items")) {
+              JSONArray items = prod.getJSONArray("items");
+              if (items.length() > 0) {
+                json = items.getJSONObject(0);
+              }
             }
+          } else {
+          	setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), res.getStatusCode());
           }
-        }
+    		} catch (IOException e) {
+    			setLinkStatus(LinkStatus.NETWORK_ERROR, e.getMessage(), 400);
+    			log.error("Failed to fetch current", e);
+    		}
+      } else {
+      	setLinkStatus(LinkStatus.NETWORK_ERROR, "ID MATCHING PROBLEM (prod_id)!" + (getRetry() < 3 ? " RETRYING..." : ""));
       }
+    } else {
+    	setLinkStatus(LinkStatus.NETWORK_ERROR, "DATA PROBLEM (prod_id)!" + (getRetry() < 3 ? " RETRYING..." : ""));
     }
-
-    return null;
-  }
+	}
 
   @Override
   public boolean isAvailable() {
-    if (product != null && product.has("availability")) {
-      return "A".equals(product.getString("availability"));
+    if (json != null && json.has("availability")) {
+      return "A".equals(json.getString("availability"));
     }
     return false;
   }
 
   @Override
   public String getSku() {
-    if (product != null && product.has("id")) {
-      return product.getString("id");
+    if (json != null && json.has("id")) {
+      return json.getString("id");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    if (product != null && product.has("name")) {
-      return product.getString("name");
+    if (json != null && json.has("name")) {
+      return json.getString("name");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    if (product != null && product.has("price")) {
-      return new BigDecimal(cleanDigits(product.getString("price")));
+    if (json != null && json.has("price")) {
+      return new BigDecimal(cleanDigits(json.getString("price")));
     }
 
     return BigDecimal.ZERO;
   }
 
   @Override
-  public String getSeller() {
-    return "Asda";
+  public String getBrand() {
+    if (json != null && json.has("brandName")) {
+      return json.getString("brandName");
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -96,26 +119,8 @@ public class Asda extends AbstractWebsite {
   }
 
   @Override
-  public String getBrand() {
-    if (product != null && product.has("brandName")) {
-      return product.getString("brandName");
-    }
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
   public List<LinkSpec> getSpecList() {
     return null;
   }
-
-  @Override
-  public String getSiteName() {
-  	return "asda";
-  }
-
-  @Override
-	public Country getCountry() {
-		return Consts.Countries.UK;
-	}
 
 }
