@@ -176,7 +176,6 @@ public abstract class AbstractWebsite implements Website {
   
   			webDriver.close();
   		} catch (TimeoutException e) {
-  			//TODO: burasi cok iyi olmadi?!?! sayfada spesific bir element aranip yoksa timeout oldu diye isaretlenmeli!!!
   			WebElement html = webDriver.findElement(By.tagName("html"));
   			if (html.isDisplayed()) {
   				setHtml(html.getText());

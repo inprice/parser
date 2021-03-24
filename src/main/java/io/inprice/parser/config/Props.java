@@ -25,7 +25,7 @@ public class Props {
   }
 
   public static int ACTIVE_LINKS_CONSUMER_TPOOL_CAPACITY() {
-    return NumberUtils.toInteger(System.getenv().getOrDefault("ACTIVE_LINKS_CONSUMER_TPOOL_CAPACITY", "3"));
+    return NumberUtils.toInteger(System.getenv().getOrDefault("ACTIVE_LINKS_CONSUMER_TPOOL_CAPACITY", "1"));
   }
 
 }
