@@ -45,6 +45,7 @@ import com.gargoylesoftware.htmlunit.WebResponse;
 import io.inprice.common.config.SysProps;
 import io.inprice.common.helpers.SqlHelper;
 import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.meta.LinkStatusGroup;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.models.Platform;
@@ -217,7 +218,7 @@ public abstract class AbstractWebsite implements Website {
 
 	private void read() {
 		//setHtml method may set a different group. thus, we need to check if it is so
-		if (!LinkStatus.ACTIVE_GROUP.equals(link.getStatus().getGroup())) {
+		if (!LinkStatusGroup.ACTIVE.equals(link.getStatus().getGroup())) {
 			return;
 		}
 
@@ -235,31 +236,24 @@ public abstract class AbstractWebsite implements Website {
 		link.setName(fixLength(name, Consts.Limits.NAME));
 		link.setPrice(price.setScale(2, RoundingMode.HALF_UP));
 
-		// if it is not a product import
-		if (link.getImportDetailId() == null) {
-  		link.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
-  		link.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
-  		link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
+		link.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
+		link.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
+		link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
 
-  		// spec list editing
-  		List<LinkSpec> specList = getSpecList();
-  		if (specList != null && specList.size() > 0) {
-  			List<LinkSpec> newList = new ArrayList<>(specList.size());
-  			for (LinkSpec ls : specList) {
-  				newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY), fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
-  			}
-  			link.setSpecList(newList);
-  		}
+		// spec list editing
+		List<LinkSpec> specList = getSpecList();
+		if (specList != null && specList.size() > 0) {
+			List<LinkSpec> newList = new ArrayList<>(specList.size());
+			for (LinkSpec ls : specList) {
+				newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY), fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
+			}
+			link.setSpecList(newList);
 		}
 
 		if (isAvailable()) {
 			link.setStatus(LinkStatus.AVAILABLE);
-		} else {
-			if (link.getImportDetailId() == null || StringUtils.isBlank(link.getName())) {
-				setLinkStatus(LinkStatus.NOT_AVAILABLE, "INSUFFICIENT STOCK");
-			} else {
-				link.setStatus(LinkStatus.AVAILABLE);
-			}
+		} else if(LinkStatus.AVAILABLE.equals(link.getStatus())) {
+			setLinkStatus(LinkStatus.NOT_AVAILABLE, "INSUFFICIENT STOCK");
 		}
 
 	}
