@@ -6,6 +6,7 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
 import com.gargoylesoftware.htmlunit.WebClient;
 
+import io.inprice.common.config.SysProps;
 import io.inprice.parser.config.Props;
 
 /**
@@ -18,7 +19,7 @@ import io.inprice.parser.config.Props;
 public class HtmlUnitPool extends ResourcePool<WebClient> {
 
 	public HtmlUnitPool() {
-		super("HtmlUnit", Props.ACTIVE_LINKS_CONSUMER_TPOOL_CAPACITY());
+		super("HtmlUnit", SysProps.TPOOL_LINK_CONSUMER_CAPACITY());
 	}
 
 	@Override

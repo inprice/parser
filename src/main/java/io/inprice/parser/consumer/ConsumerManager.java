@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import io.inprice.common.config.SysProps;
 import io.inprice.common.models.Link;
-import io.inprice.parser.config.Props;
 import io.inprice.parser.helpers.RedisClient;
 
 public class ConsumerManager {
@@ -23,10 +22,10 @@ public class ConsumerManager {
   public static void start() {
     log.info("Consumer manager is starting...");
 
-    tPool = Executors.newFixedThreadPool(Props.ACTIVE_LINKS_CONSUMER_TPOOL_CAPACITY());
+    tPool = Executors.newFixedThreadPool(SysProps.TPOOL_LINK_CONSUMER_CAPACITY());
     
     topic = RedisClient.createTopic(SysProps.REDIS_ACTIVE_LINKS_TOPIC());
-    topic.addListener(Link.class, (channel, link) -> tPool.submit(new ActiveLinksConsumer(link)));
+    topic.addListener(Link.class, (channel, link) -> tPool.submit(new ConsumerActiveLinks(link)));
 
     log.info("Consumer manager is started.");
   }

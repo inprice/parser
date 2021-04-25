@@ -24,8 +24,4 @@ public class Props {
     return System.getenv().get("PROXY_PASSWORD");
   }
 
-  public static int ACTIVE_LINKS_CONSUMER_TPOOL_CAPACITY() {
-    return NumberUtils.toInteger(System.getenv().getOrDefault("ACTIVE_LINKS_CONSUMER_TPOOL_CAPACITY", "1"));
-  }
-
 }
