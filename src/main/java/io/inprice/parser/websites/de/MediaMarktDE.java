@@ -37,7 +37,6 @@ public class MediaMarktDE extends AbstractWebsite {
 	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
-		System.out.println(html);
 
 		String preload = findAPart(html, "__PRELOADED_STATE__ = ", ";</script>", 0, 0);
 		if (preload != null) {

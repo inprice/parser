@@ -23,6 +23,7 @@ public class LinkTest {
 		link.setId(1l);
 		link.setRetry(1);
 		link.setPlatform(platform);
+		link.setPlatformId(platform.getId());
 		
 		website.check(link);
 		printout(link);

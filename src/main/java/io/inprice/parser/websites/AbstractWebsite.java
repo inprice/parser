@@ -21,6 +21,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.EnglishReasonPhraseCatalog;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
@@ -45,6 +48,7 @@ import com.gargoylesoftware.htmlunit.WebResponse;
 import io.inprice.common.config.SysProps;
 import io.inprice.common.helpers.SqlHelper;
 import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.meta.LinkStatusGroup;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.models.Platform;
@@ -65,7 +69,8 @@ public abstract class AbstractWebsite implements Website {
 	 */
 	protected static enum Renderer {
 		HTMLUNIT, //internal and default one
-		CHROME;  //external and optional
+		CHROME,  //external and optional
+		JSOUP;  //for test
 	}
 
 	private Link link;
@@ -90,111 +95,141 @@ public abstract class AbstractWebsite implements Website {
 
 		String problem = null;
 		int httpStatus = 200;
+		
+		switch (getRenderer()) {
 
-		if (Renderer.HTMLUNIT.equals(getRenderer())) {
-			WebClient webClient = null;
-			try {
-				webClient = HTMLUNIT_POOL.acquire();
-				WebResponse res = makeRequest(webClient);
+			case HTMLUNIT: {
+  			WebClient webClient = null;
+  			try {
+  				webClient = HTMLUNIT_POOL.acquire();
+  				WebResponse res = makeRequest(webClient);
 
-				if (res.getStatusCode() < 400) {
-					httpStatus = res.getStatusCode();
-	  			setHtml(res.getContentAsString());
-	  			afterRequest(webClient);
-				} else {
-					problem = res.getStatusMessage();
-					httpStatus = res.getStatusCode();
-				}
-
-	    } catch (SocketTimeoutException set) {
-				problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
-				httpStatus = 408;
-				log.error("Timed out: {}", set.getMessage());
-			} catch (IOException e) {
-				e.printStackTrace();
-				problem = e.getMessage();
-				httpStatus = 502;
-			} finally {
-				if (webClient != null) HTMLUNIT_POOL.release(webClient);
-			}
-		}
-
-		if (Renderer.CHROME.equals(getRenderer())) {
-  		RemoteWebDriver webDriver = null;
-  		try {
-    		ChromeOptions options = new ChromeOptions();
-      	options.addArguments(
-      		"--disable-gpu",
-      		"--disable-dev-shm-usage",
-      		"--no-sandbox",
-      		"--ignore-certificate-errors",
-    			"--disable-blink-features=AutomationControlled"
-  			);
-        LoggingPreferences logPrefs = new LoggingPreferences();
-        logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
-        options.setCapability("goog:loggingPrefs", logPrefs);
-      	
-        webDriver = new RemoteWebDriver(new URL(Props.WEBDRIVER_URL()), options);
-      	webDriver.manage().timeouts().pageLoadTimeout(SysProps.HTTP_CONNECTION_TIMEOUT(), TimeUnit.SECONDS);
-    		webDriver.get(getUrl());
-    		
-  			LogEntries logs = webDriver.manage().logs().get(LogType.PERFORMANCE);
-  			for (Iterator<LogEntry> it = logs.iterator(); it.hasNext();) {
-          LogEntry entry = it.next();
-          try {
-            JSONObject json = new JSONObject(entry.getMessage());
-            JSONObject message = json.getJSONObject("message");
-            String method = message.getString("method");
-            if (method != null && "Network.responseReceived".equals(method)) {
-              JSONObject params = message.getJSONObject("params");
-              JSONObject response = params.getJSONObject("response");
-              String messageUrl = response.getString("url");
-              if (getUrl().equals(messageUrl)) {
-              	httpStatus = response.getInt("status");
-                break;
-              }
-            }
-          } catch (JSONException e) {
-            e.printStackTrace();
-          }
-        }  			
-    		
-  			if (httpStatus >= 400) {
-  				problem = EnglishReasonPhraseCatalog.INSTANCE.getReason(httpStatus, Locale.ENGLISH);
-  			} else {
-  				String pageSource = null;
-  				if (isJsRendered()) {
-  	  			String javascript = "return arguments[0].innerHTML";
-  	  			pageSource = (String)((JavascriptExecutor)webDriver).executeScript(javascript, webDriver.findElement(By.tagName("html")));
+  				if (res.getStatusCode() < 400) {
+  					httpStatus = res.getStatusCode();
+  	  			setHtml(res.getContentAsString());
+  	  			afterRequest(webClient);
   				} else {
-  					pageSource = webDriver.getPageSource();
+  					problem = res.getStatusMessage();
+  					httpStatus = res.getStatusCode();
   				}
-  				setHtml(pageSource);
-  			}
-  			//some websites like canadiantire needs extra http call for some data such as price and stock availability.
-  			//renderExtra(webDriver);
-  
-  			webDriver.close();
-  		} catch (TimeoutException e) {
-  			WebElement html = webDriver.findElement(By.tagName("html"));
-  			if (html.isDisplayed()) {
-  				setHtml(html.getText());
-  			} else {
+
+  	    } catch (SocketTimeoutException set) {
   				problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
-    			httpStatus = 408;
-    			log.error("Timed out: {}", e.getMessage());
+  				httpStatus = 408;
+  				log.error("Timed out: {}", set.getMessage());
+  			} catch (IOException e) {
+  				log.error("Unexpected error!", e);
+  				problem = e.getMessage();
+  				httpStatus = 502;
+  			} finally {
+  				if (webClient != null) HTMLUNIT_POOL.release(webClient);
   			}
-  		} catch (WebDriverException e) {
-  			problem = "ACCESS ERROR!";
-  			httpStatus = 407;
-  			log.error("Reaching error: {}", e.getMessage());
-  		} catch (MalformedURLException e) {
-  			e.printStackTrace();
-  			problem = "MALFORMED URL!";
-  			httpStatus = 500;
-			} finally {
-  			if (webDriver != null) webDriver.quit();
+  			break;
   		}
+
+			case CHROME: {
+	  		RemoteWebDriver webDriver = null;
+	  		try {
+	    		ChromeOptions options = new ChromeOptions();
+	      	options.addArguments(
+	      		"--disable-gpu",
+	      		"--disable-dev-shm-usage",
+	      		"--no-sandbox",
+	      		"--ignore-certificate-errors",
+	    			"--disable-blink-features=AutomationControlled"
+	  			);
+	        LoggingPreferences logPrefs = new LoggingPreferences();
+	        logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
+	        options.setCapability("goog:loggingPrefs", logPrefs);
+	      	
+	        webDriver = new RemoteWebDriver(new URL(Props.WEBDRIVER_URL()), options);
+	      	webDriver.manage().timeouts().pageLoadTimeout(SysProps.HTTP_CONNECTION_TIMEOUT(), TimeUnit.SECONDS);
+	    		webDriver.get(getUrl());
+	    		
+	  			LogEntries logs = webDriver.manage().logs().get(LogType.PERFORMANCE);
+	  			for (Iterator<LogEntry> it = logs.iterator(); it.hasNext();) {
+	          LogEntry entry = it.next();
+	          try {
+	            JSONObject json = new JSONObject(entry.getMessage());
+	            JSONObject message = json.getJSONObject("message");
+	            String method = message.getString("method");
+	            if (method != null && "Network.responseReceived".equals(method)) {
+	              JSONObject params = message.getJSONObject("params");
+	              JSONObject response = params.getJSONObject("response");
+	              String messageUrl = response.getString("url");
+	              if (getUrl().equals(messageUrl)) {
+	              	httpStatus = response.getInt("status");
+	                break;
+	              }
+	            }
+	          } catch (JSONException e) {
+	            e.printStackTrace();
+	          }
+	        }  			
+	    		
+	  			if (httpStatus >= 400) {
+	  				problem = EnglishReasonPhraseCatalog.INSTANCE.getReason(httpStatus, Locale.ENGLISH);
+	  			} else {
+	  				String pageSource = null;
+	  				if (isJsRendered()) {
+	  	  			String javascript = "return arguments[0].innerHTML";
+	  	  			pageSource = (String)((JavascriptExecutor)webDriver).executeScript(javascript, webDriver.findElement(By.tagName("html")));
+	  				} else {
+	  					pageSource = webDriver.getPageSource();
+	  				}
+	  				setHtml(pageSource);
+	  			}
+	  			//some websites like canadiantire needs extra http call for some data such as price and stock availability.
+	  			//renderExtra(webDriver);
+	  
+	  			webDriver.close();
+	  		} catch (TimeoutException e) {
+	  			WebElement html = webDriver.findElement(By.tagName("html"));
+	  			if (html.isDisplayed()) {
+	  				setHtml(html.getText());
+	  			} else {
+	  				problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
+	    			httpStatus = 408;
+	    			log.error("Timed out: {}", e.getMessage());
+	  			}
+	  		} catch (WebDriverException e) {
+	  			problem = "ACCESS ERROR!";
+	  			httpStatus = 407;
+	  			log.error("Reaching error: {}", e.getMessage());
+	  		} catch (MalformedURLException e) {
+	  			e.printStackTrace();
+	  			problem = "MALFORMED URL!";
+	  			httpStatus = 500;
+				} finally {
+	  			if (webDriver != null) webDriver.quit();
+	  		}
+  			break;
+  		}
+
+			case JSOUP: {
+				Connection.Response response = null;
+		    try {
+		      response = Jsoup.connect(getUrl()).userAgent("Mozilla").ignoreHttpErrors(true).execute();
+		      if (response.statusCode() < 400) {
+  		      response.charset("UTF-8");
+  		      Document doc = response.parse();
+  		      setHtml(doc.html());
+		      } else {
+	  				problem = response.statusMessage();
+	  				httpStatus = response.statusCode();
+		      }
+		    } catch (IOException e) {
+		    	if (response != null && response.statusCode() >= 400) {
+	  				problem = response.statusMessage();
+	  				httpStatus = response.statusCode();
+		    	} else {
+    				problem = e.getMessage();
+    				httpStatus = 502;
+		    	}
+		    }
+				break;
+			}
+
 		}
 
 		String logPart = String.format("Platform: %s, Status: %d, Time: %dms", link.getPlatform().getDomain(), httpStatus, (System.currentTimeMillis() - started) / 10);
@@ -217,7 +252,8 @@ public abstract class AbstractWebsite implements Website {
 
 	private void read() {
 		//setHtml method may set a different group. thus, we need to check if it is so
-		if (!LinkStatus.ACTIVE_GROUP.equals(link.getStatus().getGroup())) {
+		//check if its old and new status are different and new status is not active!
+		if (!oldStatus.equals(link.getStatus()) && !oldStatus.equals(LinkStatus.TOBE_CLASSIFIED) && !LinkStatusGroup.ACTIVE.equals(link.getStatus().getGroup())) {
 			return;
 		}
 
@@ -235,33 +271,25 @@ public abstract class AbstractWebsite implements Website {
 		link.setName(fixLength(name, Consts.Limits.NAME));
 		link.setPrice(price.setScale(2, RoundingMode.HALF_UP));
 
-		// if it is not a product import
-		if (link.getImportDetailId() == null) {
-  		link.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
-  		link.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
-  		link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
+		link.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
+		link.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
+		link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
 
-  		// spec list editing
-  		List<LinkSpec> specList = getSpecList();
-  		if (specList != null && specList.size() > 0) {
-  			List<LinkSpec> newList = new ArrayList<>(specList.size());
-  			for (LinkSpec ls : specList) {
-  				newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY), fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
-  			}
-  			link.setSpecList(newList);
-  		}
+		// spec list editing
+		List<LinkSpec> specList = getSpecList();
+		if (specList != null && specList.size() > 0) {
+			List<LinkSpec> newList = new ArrayList<>(specList.size());
+			for (LinkSpec ls : specList) {
+				newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY), fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
+			}
+			link.setSpecList(newList);
 		}
 
 		if (isAvailable()) {
 			link.setStatus(LinkStatus.AVAILABLE);
 		} else {
-			if (link.getImportDetailId() == null || StringUtils.isBlank(link.getName())) {
-				setLinkStatus(LinkStatus.NOT_AVAILABLE, "INSUFFICIENT STOCK");
-			} else {
-				link.setStatus(LinkStatus.AVAILABLE);
-			}
+			setLinkStatus(LinkStatus.NOT_AVAILABLE, "INSUFFICIENT STOCK");
 		}
-
 	}
 	
 	protected WebResponse makeRequest(WebClient webClient) throws MalformedURLException, IOException {

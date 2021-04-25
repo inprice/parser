@@ -11,15 +11,15 @@ import io.inprice.common.utils.StringUtils;
 import io.inprice.parser.helpers.RedisClient;
 import io.inprice.parser.websites.Website;
 
-public class ActiveLinksConsumer implements Runnable {
+public class ConsumerActiveLinks implements Runnable {
 
-  private static final Logger log = LoggerFactory.getLogger(ActiveLinksConsumer.class);
+  private static final Logger log = LoggerFactory.getLogger(ConsumerActiveLinks.class);
 
   private static final String PACKAGE_PATH = "io.inprice.parser.websites.";
 
   private Link link;
 
-  public ActiveLinksConsumer(Link link) {
+  public ConsumerActiveLinks(Link link) {
     this.link = link;
   }
 

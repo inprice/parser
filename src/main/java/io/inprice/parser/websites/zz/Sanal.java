@@ -22,6 +22,11 @@ public class Sanal extends AbstractWebsite {
 	private Document dom;
 	
 	@Override
+	protected Renderer getRenderer() {
+		return Renderer.JSOUP;
+	}
+	
+	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
 		dom = Jsoup.parse(html);

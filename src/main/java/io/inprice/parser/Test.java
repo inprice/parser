@@ -1,19 +1,8 @@
 package io.inprice.parser;
 
 import java.io.IOException;
-import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import io.inprice.common.models.LinkSpec;
 
 public class Test {
 
@@ -51,22 +40,6 @@ public class Test {
 		}
 
 		return null;
-	}
-
-	private static List<LinkSpec> getKeyValueSpecList(Elements specs, String keySelector, String valueSelector) {
-		List<LinkSpec> specList = null;
-		if (specs != null && specs.size() > 0) {
-			specList = new ArrayList<>();
-			for (Element spec : specs) {
-				Element key = spec.selectFirst(keySelector);
-				Element value = spec.selectFirst(valueSelector);
-				if (key != null || value != null) {
-					specList.add(
-					    new LinkSpec((key != null ? key.text().replaceAll(":", "") : ""), (value != null ? value.text() : "")));
-				}
-			}
-		}
-		return specList;
 	}
 
 }
