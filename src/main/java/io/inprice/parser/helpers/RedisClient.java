@@ -22,7 +22,7 @@ public class RedisClient {
   static {
     baseClient = new BaseRedisClient();
     baseClient.open(() -> {
-      statusChangeTopic = createTopic(SysProps.REDIS_STATUS_CHANGE_TOPIC());
+      statusChangeTopic = createTopic(SysProps.REDIS_STATUS_CHANGE_TOPIC);
     });
   }
 

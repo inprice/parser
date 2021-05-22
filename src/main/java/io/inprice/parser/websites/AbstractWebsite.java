@@ -142,8 +142,8 @@ public abstract class AbstractWebsite implements Website {
 	        logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
 	        options.setCapability("goog:loggingPrefs", logPrefs);
 	      	
-	        webDriver = new RemoteWebDriver(new URL(Props.WEBDRIVER_URL()), options);
-	      	webDriver.manage().timeouts().pageLoadTimeout(SysProps.HTTP_CONNECTION_TIMEOUT(), TimeUnit.SECONDS);
+	        webDriver = new RemoteWebDriver(new URL(Props.WEBDRIVER_URL), options);
+	      	webDriver.manage().timeouts().pageLoadTimeout(SysProps.HTTP_CONNECTION_TIMEOUT, TimeUnit.SECONDS);
 	    		webDriver.get(getUrl());
 	    		
 	  			LogEntries logs = webDriver.manage().logs().get(LogType.PERFORMANCE);

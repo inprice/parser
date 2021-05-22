@@ -22,9 +22,9 @@ public class ConsumerManager {
   public static void start() {
     log.info("Consumer manager is starting...");
 
-    tPool = Executors.newFixedThreadPool(SysProps.TPOOL_LINK_CONSUMER_CAPACITY());
+    tPool = Executors.newFixedThreadPool(SysProps.TPOOL_LINK_CONSUMER_CAPACITY);
     
-    topic = RedisClient.createTopic(SysProps.REDIS_ACTIVE_LINKS_TOPIC());
+    topic = RedisClient.createTopic(SysProps.REDIS_ACTIVE_LINKS_TOPIC);
     topic.addListener(Link.class, (channel, link) -> tPool.submit(new ConsumerActiveLinks(link)));
 
     log.info("Consumer manager is started.");
@@ -34,7 +34,7 @@ public class ConsumerManager {
     try {
       topic.removeAllListeners();
       tPool.shutdown();
-      tPool.awaitTermination(SysProps.WAITING_TIME_FOR_TERMINATION(), TimeUnit.SECONDS);
+      tPool.awaitTermination(SysProps.WAITING_TIME_FOR_TERMINATION, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
       log.error("Thread pool termination is interrupted.", e);
     }

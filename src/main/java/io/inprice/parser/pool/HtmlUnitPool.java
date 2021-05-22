@@ -19,21 +19,21 @@ import io.inprice.parser.config.Props;
 public class HtmlUnitPool extends ResourcePool<WebClient> {
 
 	public HtmlUnitPool() {
-		super("HtmlUnit", SysProps.TPOOL_LINK_CONSUMER_CAPACITY());
+		super("HtmlUnit", SysProps.TPOOL_LINK_CONSUMER_CAPACITY);
 	}
 
 	@Override
 	public WebClient createNewOne() {
-		WebClient webClient = new WebClient(BrowserVersion.FIREFOX, Props.PROXY_HOST(), Props.PROXY_PORT());
+		WebClient webClient = new WebClient(BrowserVersion.FIREFOX, Props.PROXY_HOST, Props.PROXY_PORT);
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
     webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
     
     //WARN: buna dikkat!!!
     //webClient.getOptions().setDownloadImages(false);
 
-    if (StringUtils.isNotBlank(Props.PROXY_HOST())) {
+    if (StringUtils.isNotBlank(Props.PROXY_HOST)) {
       DefaultCredentialsProvider scp = new DefaultCredentialsProvider();
-      scp.addCredentials(Props.PROXY_USERNAME(), Props.PROXY_PASSWORD(), Props.PROXY_HOST(), Props.PROXY_PORT(), null);
+      scp.addCredentials(Props.PROXY_USERNAME, Props.PROXY_PASSWORD, Props.PROXY_HOST, Props.PROXY_PORT, null);
       webClient.setCredentialsProvider(scp);
     }
 
