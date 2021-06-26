@@ -61,7 +61,7 @@ public class Asos extends AbstractWebsite {
 	@Override
 	protected void beforeRequest(WebRequest req) {
 		country = SomeCountries.findOne();
-		req.setAdditionalHeader(HttpHeader.COOKIE, "browseCountry="+country.getKey());
+		req.setAdditionalHeader(HttpHeader.COOKIE, "browseCountry="+country.getLeft());
 	}
 	
 	@Override
@@ -70,7 +70,7 @@ public class Asos extends AbstractWebsite {
   		WebRequest req = new WebRequest(new URL(priceUrl), HttpMethod.GET);
   		req.setAdditionalHeader(HttpHeader.ACCEPT, "*/*");
   		req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
-  		req.setAdditionalHeader(HttpHeader.COOKIE, "browseCountry="+country.getKey());
+  		req.setAdditionalHeader(HttpHeader.COOKIE, "browseCountry="+country.getLeft());
 
   		WebResponse res = webClient.loadWebResponse(req);
       if (res.getStatusCode() < 400) {
