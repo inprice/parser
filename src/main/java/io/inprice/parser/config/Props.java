@@ -9,7 +9,7 @@ public class Props {
   public static final Integer PROXY_PORT;
   public static final String PROXY_USERNAME;
   public static final String PROXY_PASSWORD;
-  
+
   static {
 		WEBDRIVER_URL = System.getenv().getOrDefault("WEBDRIVER_URL", "http://127.0.0.1:9515");
   	PROXY_HOST = System.getenv().get("PROXY_HOST");
