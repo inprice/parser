@@ -3,7 +3,7 @@ package io.inprice.parser.websites.uk;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -156,8 +156,8 @@ public class Asos extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(dom.select("div.product-description li"));
+  public Set<LinkSpec> getSpecs() {
+    return getValueOnlySpecs(dom.select("div.product-description li"));
   }
 
 }

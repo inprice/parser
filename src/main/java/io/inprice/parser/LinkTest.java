@@ -1,34 +1,62 @@
 package io.inprice.parser;
 
-import static io.inprice.parser.helpers.Global.HTMLUNIT_POOL;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 
 import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
+import io.inprice.parser.config.Props;
 import io.inprice.parser.websites.Website;
-import io.inprice.parser.websites.us.Walmart;
+import io.inprice.parser.websites.au.BigW;
 
 public class LinkTest {
-
-	private static Website website = new Walmart();
-	private static String url = "https://www.walmart.com/ip/Marsh-Allen-Hibachi-Charcoal-Grill-Black/21016070";
 	
+	/**
+	 * Turkey
+	 * trendyol, teknosa, amazon, MediaMarkt
+	 * N11, Gittitgidiyor, hepsiburada
+	 */
+	
+	/**
+	 * Australia
+	 * appliancesonline, bigw
+	 * 
+	 */
+
+	private static Website website = new BigW();
+	private static String[] urls = {
+			"https://www.bigw.com.au/product/tradie-men-s-work-boots-wheat/p/1193138-wheat/",
+			"https://www.bigw.com.au/product/craftsmart-low-temperature-mini-glue-gun/p/110978/",
+			"https://www.bigw.com.au/product/repco-little-monsta-30cm-kids-bmx-coaster-bike/p/474961/",
+			"https://www.bigw.com.au/product/bluey-balance-bike/p/94058/",
+			"https://www.bigw.com.au/product/digimon-x-digivice-white-blue/p/164006/",
+		};
+
 	public static void main(String[] args) {
-		HTMLUNIT_POOL.setup();
+		//Global.initWebDriver();
+//		setProxy();
 
 		Platform platform = new Platform();
 		platform.setName("Test Site");
 		platform.setDomain("Solo Test");
 
-		Link link = new Link(url);
-		link.setId(1l);
-		link.setRetry(1);
-		link.setPlatform(platform);
-		link.setPlatformId(platform.getId());
+		for (String url: urls) {
+  		Link link = new Link(url);
+  		link.setId(1l);
+  		link.setRetry(1);
+  		link.setPlatform(platform);
+  		link.setPlatformId(platform.getId());
+  		
+  		website.check(link);
+  		printout(link);
+		}
+/*
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) { }
 		
-		website.check(link);
-		printout(link);
-		
-		HTMLUNIT_POOL.shutdown();
+		Global.closeWebDriver();
+		*/
 	}
 	
 	private static void printout(Link link) {
@@ -49,6 +77,21 @@ public class LinkTest {
 			System.out.println("Spec List");
 			link.getSpecList().forEach(s -> System.out.println(" - Key: " + s.getKey() + ", Value: " + s.getValue()));
 		}
+	}
+	
+	private static void setProxy() {
+    System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
+    System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
+
+    Authenticator.setDefault(new Authenticator() {
+    	@Override
+      protected PasswordAuthentication getPasswordAuthentication() {
+        if (getRequestorType().equals(RequestorType.PROXY)) {
+          return new PasswordAuthentication(Props.PROXY_USERNAME, Props.PROXY_PASSWORD.toCharArray());
+        }
+        return super.getPasswordAuthentication();
+      }
+    });
 	}
 	
 }

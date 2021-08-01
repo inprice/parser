@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.us;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -109,26 +109,25 @@ public class Walmart extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-  	List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
   	
-  	List<LinkSpec> specs = getValueOnlySpecList(dom.select("div#product-about li"));
-  	if (specs == null || specs.size() == 0) specs = getValueOnlySpecList(dom.select(".about-product-description li"));
+  	Set<LinkSpec> foundSpecs = getValueOnlySpecs(dom.select("div#product-about li"));
+  	if (foundSpecs == null || foundSpecs.size() == 0) foundSpecs = getValueOnlySpecs(dom.select(".about-product-description li"));
   	
-  	if (specs != null && specs.size() > 0) {
-  		specList = new ArrayList<>(specs.size());
-  		for (int i = 0; i < specs.size(); i++) {
-				LinkSpec spec = specs.get(i);
+  	if (foundSpecs != null && foundSpecs.size() > 0) {
+  		specs = new HashSet<>(foundSpecs.size());
+  		for (LinkSpec spec: foundSpecs) {
 				if (spec.getValue().contains(":")) {
 					String[] pair = spec.getValue().split(":");
 					spec.setKey(pair[0]);
 					spec.setValue(pair[1]);
 				}
-				specList.add(spec);
+				specs.add(spec);
 			}
   	}
   	
-  	return specList;
+  	return specs;
   }
 
 }

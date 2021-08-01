@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.it;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -91,40 +91,40 @@ public class EPrice extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-		List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
-    Elements specs = dom.select("#anchorCar li");
-    if (specs != null && specs.size() > 0) {
-      specList = new ArrayList<>();
-      for (Element spec : specs) {
+    Elements specsEl = dom.select("#anchorCar li");
+    if (specsEl != null && specsEl.size() > 0) {
+      specs = new HashSet<>();
+      for (Element spec : specsEl) {
         String liHtml = spec.html();
         if (liHtml.contains("<span>")) {
         	liHtml = liHtml.replace("<span>", "").replace("</span>", "ç");
         }
         String[] pair = liHtml.split("ç");
-        specList.add(new LinkSpec(pair[0], pair[1]));
+        specs.add(new LinkSpec(pair[0], pair[1]));
       }
     }
 
-    if (specList == null) {
-      specs = dom.select("#anchorDesc p");
-      if (specs != null && specs.size() > 0) {
-        specList = new ArrayList<>();
-        for (Element spec : specs) {
+    if (specs == null) {
+      specsEl = dom.select("#anchorDesc p");
+      if (specsEl != null && specsEl.size() > 0) {
+        specs = new HashSet<>();
+        for (Element spec : specsEl) {
           String[] specChunks = spec.text().split("\\.");
           for (String sp : specChunks) {
-            specList.add(new LinkSpec("", sp));
+            specs.add(new LinkSpec("", sp));
           }
         }
       }
     }
     
-    if (specList == null) {
-    	specList = getKeyValueSpecList(dom.select("#anchorCar li"), "span", "a");
+    if (specs == null) {
+    	specs = getKeyValueSpecs(dom.select("#anchorCar li"), "span", "a");
     }
 
-    return specList;
+    return specs;
   }
 
 }

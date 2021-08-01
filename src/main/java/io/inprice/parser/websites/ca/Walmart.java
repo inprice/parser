@@ -3,8 +3,8 @@ package io.inprice.parser.websites.ca;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -196,22 +196,22 @@ public class Walmart extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
     if (features != null) {
-      String[] specs = features.split("•");
-      if (specs.length > 0) {
-        specList = new ArrayList<>();
-        for (String spec : specs) {
+      String[] specsArr = features.split("•");
+      if (specsArr.length > 0) {
+        specs = new HashSet<>();
+        for (String spec : specsArr) {
           if (StringUtils.isNotBlank(spec)) {
             final String clean = spec.replaceAll(".u2028|.u003C", "").replaceAll("br>", "");
-            specList.add(new LinkSpec("", clean));
+            specs.add(new LinkSpec("", clean));
           }
         }
       }
     }
-    return specList;
+    return specs;
   }
 
   protected void detectProblem() {

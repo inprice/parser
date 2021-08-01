@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.xx;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -145,12 +145,12 @@ public class Bonprix extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
     Elements specKeys = dom.select("div.product-attributes strong");
     if (specKeys != null && specKeys.size() > 0) {
-      specList = new ArrayList<>();
+      specs = new HashSet<>();
       Elements specValues = dom.select("div.product-attributes span");
       for (int i = 0; i < specKeys.size(); i++) {
         Element key = specKeys.get(i);
@@ -158,9 +158,9 @@ public class Bonprix extends AbstractWebsite {
         if (i < specValues.size() - 1) {
           val = specValues.get(i);
         }
-        specList.add(new LinkSpec(key.text().replaceAll(":", ""), (val != null ? val.text() : "")));
+        specs.add(new LinkSpec(key.text().replaceAll(":", ""), (val != null ? val.text() : "")));
       }
-      return specList;
+      return specs;
     }
 
     specKeys = dom.select("div.productFeaturesContainer span.productFeatureName");
@@ -168,9 +168,9 @@ public class Bonprix extends AbstractWebsite {
       specKeys = dom.select("div.product-attributes strong");
 
     if (specKeys != null && specKeys.size() > 0) {
-      specList = new ArrayList<>();
+      specs = new HashSet<>();
       for (Element key : specKeys) {
-        specList.add(new LinkSpec(key.text().replaceAll(":", ""), ""));
+        specs.add(new LinkSpec(key.text().replaceAll(":", ""), ""));
       }
     }
 
@@ -178,36 +178,36 @@ public class Bonprix extends AbstractWebsite {
 
     if (specValues != null && specValues.size() > 0) {
       boolean isEmpty = false;
-      if (specList == null) {
+      if (specs == null) {
         isEmpty = true;
-        specList = new ArrayList<>();
+        specs = new HashSet<>();
       }
       for (int i = 0; i < specValues.size(); i++) {
         Element value = specValues.get(i);
         if (isEmpty) {
-          specList.add(new LinkSpec("", value.text()));
-        } else {
-          specList.get(i).setValue(value.text());
+          specs.add(new LinkSpec("", value.text()));
+        //} else {
+        //  specs.get(i).setValue(value.text());
         }
       }
 
-      return specList;
+      return specs;
     }
 
     specValues = dom.select("div.productDescription");
 
     if (specValues != null) {
-      specList = new ArrayList<>();
+      specs = new HashSet<>();
       String desc = specValues.text();
       String[] descChunks = desc.split("\\.");
       if (descChunks.length > 0) {
         for (String dsc : descChunks) {
-          specList.add(new LinkSpec("", dsc));
+          specs.add(new LinkSpec("", dsc));
         }
       }
     }
 
-    return specList;
+    return specs;
   }
 
 }

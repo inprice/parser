@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.ca;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -114,26 +114,26 @@ public class BestBuy extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-  	List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
   	if (product != null && product.has("specs")) {
-  		JSONObject specs = product.getJSONObject("specs");
-  		if (specs != null && specs.keySet().size() > 0) {
-  			specList = new ArrayList<>(specs.keySet().size());
+  		JSONObject specsObj = product.getJSONObject("specs");
+  		if (specsObj != null && specsObj.keySet().size() > 0) {
+  			specs = new HashSet<>(specsObj.keySet().size());
 
-  			for (String cat: specs.keySet()) {
-  				JSONArray specCatRows = specs.getJSONArray(cat);
+  			for (String cat: specsObj.keySet()) {
+  				JSONArray specCatRows = specsObj.getJSONArray(cat);
   				for (int i = 0; i < specCatRows.length(); i++) {
   					JSONObject spec = specCatRows.getJSONObject(i);
-  					specList.add(new LinkSpec(cat + ": " + spec.getString("name"), spec.getString("value")));
+  					specs.add(new LinkSpec(cat + ": " + spec.getString("name"), spec.getString("value")));
 					}
 				}
   			
   		}
   	}
 
-    return specList;
+    return specs;
   }
 
 }

@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.au;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -112,8 +112,8 @@ public class HarverNorman extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-  	return getKeyValueSpecList(dom.select("table#product-attribute-specs-table tr"), "th", "td");
+  public Set<LinkSpec> getSpecs() {
+  	return getKeyValueSpecs(dom.select("table#product-attribute-specs-table tr"), "th", "td");
   }
 
 }

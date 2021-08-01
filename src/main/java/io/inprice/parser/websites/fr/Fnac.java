@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.fr;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -128,24 +128,24 @@ public class Fnac extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-  	List<LinkSpec> specList = getKeyValueSpecList(dom.select("div.characteristicsStrate__list dl"), "dt", "dd");
-  	if (specList != null && specList.size() > 0) return specList;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = getKeyValueSpecs(dom.select("div.characteristicsStrate__list dl"), "dt", "dd");
+  	if (specs != null && specs.size() > 0) return specs;
 
-    Elements specs = dom.select("table.f-productDetails-table tr");
+    Elements specsEl = dom.select("table.f-productDetails-table tr");
     if (specs != null) {
-      specList = new ArrayList<>();
-      for (Element spec : specs) {
+      specs = new HashSet<>();
+      for (Element spec : specsEl) {
         Elements pairs = spec.select("td.f-productDetails-cell");
         if (pairs.size() == 1) {
-          specList.add(new LinkSpec("", pairs.get(0).text()));
+          specs.add(new LinkSpec("", pairs.get(0).text()));
         } else if (pairs.size() > 1) {
-          specList.add(new LinkSpec(pairs.get(0).text(), pairs.get(1).text()));
+          specs.add(new LinkSpec(pairs.get(0).text(), pairs.get(1).text()));
         }
       }
     }
 
-    return specList;
+    return specs;
   }
 
 }

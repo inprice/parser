@@ -4,9 +4,20 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class Test {
+import io.inprice.parser.helpers.Global;
 
+public class Test {
+	
 	public static void main(String[] args) {
+		Global.initWebDriver();
+		for (int i = 0; i < 5; i++) {
+			Global.getWebDriver().get("https://urun.n11.com/okul-cantalari/polo-single-lacivert-kirmizi-baski-1900-denye-sirt-cantasi-30025-P500278585");
+			System.out.println(i);
+		}
+		Global.closeWebDriver();
+	}
+
+	public static void main1(String[] args) {
 		String html = "";
 		try {
 			html = new String(Files.readAllBytes(Paths.get("/home/mdpinar/tmp/TestSite-1.html")));
@@ -14,21 +25,11 @@ public class Test {
 			e.printStackTrace();
 		}
 
-		String rawJson = null;
-		if (html.indexOf("}]},") > -1) {
-			rawJson = findAPart(html, "\\\"product\\\":{\\\"product\\\":", "}]},", 3, 0);
-		} else {
-			rawJson = findAPart(html, "\\\"product\\\":{\\\"product\\\":", "}}\",", 2, 0);
-		}
-		rawJson = rawJson.replace("\\\"", "\"");
-		rawJson = rawJson.replace(":\"{\"", ":{\"");
-		rawJson = rawJson.replace("]}}\",", "]}},");
-		rawJson = rawJson.replace("\\u003c", "<");
-		rawJson = rawJson.replace("\\u003e", ">");
-		rawJson = rawJson.replace("\\\"", "\"");
-  	
-  	System.out.println(rawJson);
-		
+		String ind = "dataLayer.push(";
+		String rawJson = findAPart(html, ind, "});", 1, ind.length());
+
+		System.out.println(rawJson);
+
 	}
 
 	private static String findAPart(String html, String starting, String ending, int plus, int startPointOffset) {

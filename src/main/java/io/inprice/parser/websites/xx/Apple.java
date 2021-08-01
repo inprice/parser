@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.xx;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -115,9 +115,9 @@ public class Apple extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public Set<LinkSpec> getSpecs() {
   	if (json != null && json.has("options")) {
-  		List<LinkSpec> specs = new ArrayList<>();
+  		Set<LinkSpec> specs = new HashSet<>();
 
   		JSONArray options = json.getJSONArray("options");
   		if (options != null && options.length() > 0) {

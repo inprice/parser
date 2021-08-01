@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.de;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -106,9 +106,9 @@ public class NotebooksBilliger extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public Set<LinkSpec> getSpecs() {
   	return 
-    		getKeyValueSpecList(
+    		getKeyValueSpecs(
   				dom.select("table.properties_table tr"), 
   				"td.produktDetails_eigenschaft2",
   				"td.produktDetails_eigenschaft3"

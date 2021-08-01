@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.xx;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -127,8 +127,8 @@ public class MediaMarkt extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
     String parentClass = "specification";
     Elements isParentExist = dom.select("dl." + parentClass);
@@ -137,40 +137,40 @@ public class MediaMarkt extends AbstractWebsite {
 
     Elements specKeys = dom.select(String.format("dl.%s dt", parentClass));
     if (specKeys != null && specKeys.size() > 0) {
-      specList = new ArrayList<>();
+      specs = new HashSet<>();
       for (Element key : specKeys) {
-        specList.add(new LinkSpec(key.text().replaceAll(":", ""), ""));
+        specs.add(new LinkSpec(key.text().replaceAll(":", ""), ""));
       }
     }
 
     Elements specValues = dom.select(String.format("dl.%s dd", parentClass));
     if (specValues != null && specValues.size() > 0) {
       boolean isEmpty = false;
-      if (specList == null) {
+      if (specs == null) {
         isEmpty = true;
-        specList = new ArrayList<>();
+        specs = new HashSet<>();
       }
-      for (int i = 0; i < specList.size(); i++) {
+      for (int i = 0; i < specs.size(); i++) {
         Element value = specValues.get(i);
         if (isEmpty) {
-          specList.add(new LinkSpec("", value.text()));
-        } else {
-          specList.get(i).setValue(value.text());
+          specs.add(new LinkSpec("", value.text()));
+        //} else {
+        //  specs.get(i).setValue(value.text());
         }
       }
     }
 
-    if (specList == null) {
+    if (specs == null) {
       specValues = dom.select("p.autoWrapParagraph p");
       if (specValues != null && specValues.size() > 0) {
-        specList = new ArrayList<>();
+        specs = new HashSet<>();
         for (Element spec : specValues) {
-          specList.add(new LinkSpec("", spec.text()));
+          specs.add(new LinkSpec("", spec.text()));
         }
       }
     }
 
-    return specList;
+    return specs;
   }
 
 }

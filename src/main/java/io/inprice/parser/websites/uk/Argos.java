@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.uk;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -103,8 +103,8 @@ public class Argos extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(dom.select(".product-description-content-text li"));
+  public Set<LinkSpec> getSpecs() {
+    return getValueOnlySpecs(dom.select(".product-description-content-text li"));
   }
 
 }

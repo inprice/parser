@@ -1,20 +1,17 @@
 package io.inprice.parser.websites.tr;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
-import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.helpers.StringHelpers;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -27,121 +24,60 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class N11 extends AbstractWebsite {
 
 	private Document dom;
-  private JSONObject offers;
-	
+  private JSONObject prod;
+
+  /**
+   * Protected by akamai!
+   */
+  @Override
+	protected Renderer getRenderer() {
+		return Renderer.HEADLESS;
+	}
+
 	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
-    Elements dataEL = dom.select("script[type='application/ld+json']");
-    if (dataEL != null) {
-      for (DataNode dNode : dataEL.dataNodes()) {
-        JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
-        if (data.has("@type")) {
-          String type = data.getString("@type");
-          if (type.equals("Product") && data.has("offers")) {
-          	offers = data;
-            break;
-          }
-        }
-      }
+		String ind = "dataLayer.push(";
+		String rawJson = findAPart(html, ind, "});", 1, ind.length());
+
+    if (StringUtils.isNotBlank(rawJson)) {
+      prod = new JSONObject(rawJson);
     }
 	}
 
   @Override
   public boolean isAvailable() {
-    String value = null;
-
-    Element val = dom.getElementById("skuStock");
-    if (val != null) {
-      if (StringUtils.isNotBlank(val.text())) {
-        value = val.text();
-      } else if (StringUtils.isNotBlank(val.val())) {
-        value = val.val();
-      }
-    } else {
-      val = dom.getElementById("stockCount");
-      if (val != null) {
-        value = val.val();
-      }
-    }
-    
-    if (StringUtils.isBlank(value)) {
-      val = dom.selectFirst("input[class='stockCount']");
-      if (val != null && StringUtils.isNotBlank(val.val())) {
-        value = val.val();
-      } else {
-        val = dom.selectFirst(".stockWarning");
-        if (val != null && StringUtils.isNotBlank(val.val())) {
-          value = val.val();
-        } else {
-          val = dom.selectFirst(".newPrice ins");
-          if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-            value = val.attr("content");
-          }
-        }
-      }
-    }
-
-    if (value != null && StringUtils.isNotBlank(value)) {
-      try {
-        int realAmount = new Integer(cleanDigits(value));
-        return (realAmount > 0);
-      } catch (Exception ignored) { }
-    }
-
-    if (offers != null && offers.has("offerCount")) {
-      Integer xval = NumberUtils.toInteger(offers.getString("offerCount"));
-      return xval != null && xval > 0;
-    }
-
+    if (prod != null && prod.has("pIsInStock")) return prod.getString("pIsInStock").equals("1");
     return false;
   }
 
   @Override
   public String getSku() {
-    Element val = dom.selectFirst("input[class='productId']");
-    if (val != null && StringUtils.isNotBlank(val.val())) {
-      return val.val();
-    }
+    if (prod != null && prod.has("pId")) return prod.getString("pId");
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element val = dom.selectFirst("h1.proName");
-    if (val == null || StringUtils.isBlank(val.text())) {
-      val = dom.selectFirst("h1.pro-title_main");
-    }
-
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
+    if (prod != null && prod.has("title")) return prod.getString("title");
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    String value = null;
+  	String val = null;
 
-    if (offers != null && offers.has("lowPrice")) {
-      value = offers.getString("lowPrice");
-    } else {
-      Element val = dom.getElementById("skuPrice");
-      if (val != null && StringUtils.isNotBlank(val.val())) {
-        value = val.val();
-      } else {
-        val = dom.selectFirst(".newPrice ins");
-        if (val == null || StringUtils.isBlank(val.attr("content"))) val = dom.selectFirst("ins.price-now");
-        if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-          value = val.attr("content");
-        }
-      }
+    if (prod != null) {
+    	if (prod.has("pDiscountedPrice"))
+    		val = prod.getString("pDiscountedPrice");
+    	else if (prod.has("pOriginalPrice"))
+    		val = prod.getString("pOriginalPrice");
     }
 
-    if (value != null && StringUtils.isNotBlank(value)) {
-      return new BigDecimal(cleanDigits(value));
+    if (StringUtils.isNotBlank(val)) {
+      return new BigDecimal(cleanDigits(val));
     }
 
     return BigDecimal.ZERO;
@@ -149,45 +85,26 @@ public class N11 extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element val = dom.selectFirst("span.label:contains(Marka)");
-    if (val == null) val = dom.selectFirst("span.label:contains(Yazar)");
+  	String val = null;
 
-    if (val != null) {
-      Element sbling = val.nextElementSibling();
-      if (sbling != null && StringUtils.isNotBlank(sbling.text())) {
-        return sbling.text();
-      }
+  	if (prod != null) {
+    	if (prod.has("pBrand"))
+    		val = prod.getString("pBrand");
+    	else
+    		val = prod.getString("sellerNickname");
+  	}
+
+    if (StringUtils.isNotBlank(val)) {
+    	return val;
     }
-
-    String[] titleChunks = getName().split("\\s");
-    if (titleChunks.length > 0)
-      return titleChunks[0];
-
+  	
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getSeller() {
-    String value = null;
-
-    Element val = dom.selectFirst("div.sallerTop h3 a");
-    if (val != null && StringUtils.isNotBlank(val.attr("title"))) {
-      value = val.attr("title");
-    } else {
-      val = dom.selectFirst(".shop-name");
-      if (val != null && StringUtils.isNotBlank(val.text())) {
-        value = val.text();
-      }
-    }
-
-    if (StringUtils.isBlank(value)) {
-      val = dom.selectFirst("a.main-seller-name");
-      if (val != null && StringUtils.isNotBlank(val.attr("title"))) {
-        value = val.attr("title");
-      }
-    }
-
-    return value;
+    if (prod != null && prod.has("sellerNickname")) return prod.getString("sellerNickname");
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -195,6 +112,9 @@ public class N11 extends AbstractWebsite {
     Element val = dom.selectFirst(".shipment-detail-container .cargoType");
     if (val == null || StringUtils.isBlank(val.text())) {
       val = dom.selectFirst(".delivery-info_shipment span");
+      if (val == null || StringUtils.isBlank(val.text())) {
+      	val = dom.selectFirst(".delInfo b");
+      }
     }
 
     if (val != null) {
@@ -204,7 +124,7 @@ public class N11 extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public Set<LinkSpec> getSpecs() {
     Elements specs = dom.select("div.feaItem");
     String keySelector = ".label";
     String valSelector = ".data";
@@ -215,7 +135,7 @@ public class N11 extends AbstractWebsite {
       valSelector = "p.unf-prop-list-prop";
     }
 
-    return getKeyValueSpecList(specs, keySelector, valSelector);
+    return getKeyValueSpecs(specs, keySelector, valSelector);
   }
 
 }

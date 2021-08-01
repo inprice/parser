@@ -3,8 +3,8 @@ package io.inprice.parser.websites.us;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -155,27 +155,27 @@ public class Target extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
     if (desc != null && desc.has("bullet_descriptions")) {
     	JSONArray rows = desc.getJSONArray("bullet_descriptions");
     	if (rows != null && rows.length() > 0) {
-    		specList = new ArrayList<>(rows.length());
+    		specs = new HashSet<>(rows.length());
     		for (int i = 0; i < rows.length(); i++) {
 					String row = rows.getString(i);
 					String clean = Jsoup.parse(row).text();
 					if (clean.indexOf(":") > 0) {
 						String[] pair = clean.split(":");
-						specList.add(new LinkSpec(pair[0], pair[1]));
+						specs.add(new LinkSpec(pair[0], pair[1]));
 					} else {
-						specList.add(new LinkSpec("", clean));
+						specs.add(new LinkSpec("", clean));
 					}
 				}
     	}
     }
 
-    return specList;
+    return specs;
   }
 
 }

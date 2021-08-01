@@ -3,7 +3,7 @@ package io.inprice.parser.websites.uk;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.util.List;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -119,7 +119,7 @@ public class Asda extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public Set<LinkSpec> getSpecs() {
     return null;
   }
 

@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.au;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -82,8 +82,8 @@ public class TheGoodGuys extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-  	return getKeyValueSpecList(dom.select("table.speci_area tr"), "th", "td");
+  public Set<LinkSpec> getSpecs() {
+  	return getKeyValueSpecs(dom.select("table.speci_area tr"), "th", "td");
   }
 
 }

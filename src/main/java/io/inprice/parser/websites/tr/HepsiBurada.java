@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.tr;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -25,7 +25,11 @@ public class HepsiBurada extends AbstractWebsite {
 
 	private boolean isAvailable;
 	private boolean isFreeShipping;
-	
+
+	protected Renderer getRenderer() {
+		return Renderer.HEADLESS;
+	}
+
 	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
@@ -102,8 +106,8 @@ public class HepsiBurada extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    return getKeyValueSpecList(dom.select(".data-list.tech-spec tr"), "th", "td");
+  public Set<LinkSpec> getSpecs() {
+    return getKeyValueSpecs(dom.select(".data-list.tech-spec tr"), "th", "td");
   }
 
 }

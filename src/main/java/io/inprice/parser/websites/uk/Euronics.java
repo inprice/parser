@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.uk;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -80,8 +80,8 @@ public class Euronics extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-  	return getKeyValueSpecList(dom.select("table.classifications tr"), "td:nth-child(1)", "td:nth-child(2)");
+  public Set<LinkSpec> getSpecs() {
+  	return getKeyValueSpecs(dom.select("table.classifications tr"), "td:nth-child(1)", "td:nth-child(2)");
   }
 
 }

@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.de;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -27,11 +27,11 @@ public class MediaMarktDE extends AbstractWebsite {
 	private String name = Consts.Words.NOT_AVAILABLE;
 	private BigDecimal price = BigDecimal.ZERO;
 	private String brand = Consts.Words.NOT_AVAILABLE;
-	private List<LinkSpec> specList;
+	private Set<LinkSpec> specs;
   
   @Override
   protected Renderer getRenderer() {
-  	return Renderer.CHROME;
+  	return Renderer.HEADLESS;
   }
 	
 	@Override
@@ -90,10 +90,10 @@ public class MediaMarktDE extends AbstractWebsite {
 					if (detailsJson.has("mainFeatures")) {
 						JSONArray features = detailsJson.getJSONArray("mainFeatures");
 						if (features != null && features.length() > 0) {
-							specList = new ArrayList<>(features.length());
+							specs = new HashSet<>(features.length());
 							for (int i = 0; i < features.length(); i++) {
 								JSONObject feature = features.getJSONObject(i);
-								specList.add(new LinkSpec(feature.getString("name"), feature.getString("value")));
+								specs.add(new LinkSpec(feature.getString("name"), feature.getString("value")));
 							}
 						}
 					}
@@ -133,8 +133,8 @@ public class MediaMarktDE extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    return specList;
+  public Set<LinkSpec> getSpecs() {
+    return specs;
   }
 
 }

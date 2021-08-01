@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.fr;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -108,22 +108,22 @@ public class Auchan extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = getKeyValueSpecList(dom.select("ul.product-aside--list"), "span.product-aside--listSubtitle", "span.product-aside--listValue");
-    if (specList != null && specList.size() > 0) return specList;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = getKeyValueSpecs(dom.select("ul.product-aside--list"), "span.product-aside--listSubtitle", "span.product-aside--listValue");
+    if (specs != null && specs.size() > 0) return specs;
 
     if (json != null && json.has("extendedDescription")) {
       String desc = json.get("extendedDescription").toString();
       if (StringUtils.isNotBlank(desc)) {
-        specList = new ArrayList<>();
+        specs = new HashSet<>();
         String[] descChunks = desc.split("<br/>");
         for (String dsc : descChunks) {
-          specList.add(new LinkSpec("", dsc));
+          specs.add(new LinkSpec("", dsc));
         }
       }
     }
 
-    return specList;
+    return specs;
   }
 
 }

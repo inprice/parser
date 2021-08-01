@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.xx;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -125,24 +125,24 @@ public class VidaXL extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-  	List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
   	Elements specsEL = dom.select("div.product-specifications__text li");
   	if (specsEL != null && specsEL.size() > 0) {
-  		specList = new ArrayList<>(specsEL.size());
+  		specs = new HashSet<>(specsEL.size());
   		for (int i = 0; i < specsEL.size(); i++) {
 				Element specEL = specsEL.get(i);
 				String[] pair = specEL.text().split(":");
 				if (pair.length == 1) {
-					specList.add(new LinkSpec("", pair[0]));
+					specs.add(new LinkSpec("", pair[0]));
 				} else {
-					specList.add(new LinkSpec(pair[0], pair[1]));
+					specs.add(new LinkSpec(pair[0], pair[1]));
 				}
 			}
   	}
   	
-    return specList;
+    return specs;
   }
 
 }

@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.au;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -113,13 +113,13 @@ public class Kogan extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-  	List<LinkSpec> specList = getKeyValueSpecList(dom.select("section#specs-accordion dl"), "dt", "dd");
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = getKeyValueSpecs(dom.select("section#specs-accordion dl"), "dt", "dd");
   	
-  	if (specList == null || specList.size() == 0) {
+  	if (specs == null || specs.size() == 0) {
   		Elements descPs = dom.select("section[itemprop='description'] p");
   		if (descPs != null && descPs.size() > 0) {
-  			specList = new ArrayList<>();
+  			specs = new HashSet<>();
   			for (int i = 0; i < descPs.size(); i++) {
 					String key = "";
   				String value = descPs.get(i).text();
@@ -132,24 +132,24 @@ public class Kogan extends AbstractWebsite {
   	  					String[] pair = val.split(":");
   	  					key = pair[0];
   	  					val = pair[1];
-  	  					specList.add(new LinkSpec(key, val));
+  	  					specs.add(new LinkSpec(key, val));
   	  				} else {
-  	  					specList.add(new LinkSpec("", val));
+  	  					specs.add(new LinkSpec("", val));
   	  				}
   					}
   				} else if (value.indexOf(":") > 0) {
   					String[] pair = value.split(":");
   					key = pair[0];
   					value = pair[1];
-  					specList.add(new LinkSpec(key, value));
+  					specs.add(new LinkSpec(key, value));
   				} else {
-  					specList.add(new LinkSpec("", value));
+  					specs.add(new LinkSpec("", value));
   				}
 				}
   		}
   	}
   	
-  	return specList;
+  	return specs;
   }
 
 }

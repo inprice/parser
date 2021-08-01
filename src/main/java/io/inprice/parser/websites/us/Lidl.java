@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -109,8 +109,8 @@ public class Lidl extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
     if (json != null && json.has("longDescription")) {
       String desc = json.getString("longDescription");
@@ -118,17 +118,17 @@ public class Lidl extends AbstractWebsite {
         String features = desc.replaceAll("<ul>|</ul>|<li>", "");
         String[] featureChunks = features.split("</li>");
         if (featureChunks.length > 0) {
-          specList = new ArrayList<>();
+          specs = new HashSet<>();
           for (String val : featureChunks) {
             if (StringUtils.isNotBlank(val) && !val.startsWith("<p>") && !val.startsWith("<div>"))
-              specList.add(new LinkSpec("", val));
+              specs.add(new LinkSpec("", val));
           }
         }
       }
 
     }
 
-    return specList;
+    return specs;
   }
 
 }

@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.it;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -92,14 +92,14 @@ public class Euronics extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-  	List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
-  	Elements specs = dom.select("div.product__specificationsContent .content__abstractText");
-  	if (specs != null && specs.size() > 0) {
-  		specList = new ArrayList<>(specs.size());
-  		for (int i = 0; i < specs.size(); i++) {
-				Element spec = specs.get(i);
+  	Elements specsEl = dom.select("div.product__specificationsContent .content__abstractText");
+  	if (specsEl != null && specsEl.size() > 0) {
+  		specs = new HashSet<>(specsEl.size());
+  		for (int i = 0; i < specsEl.size(); i++) {
+				Element spec = specsEl.get(i);
 
   			String key = spec.selectFirst(".product__specificationItem").text();
 
@@ -112,15 +112,15 @@ public class Euronics extends AbstractWebsite {
   			} else {
   				val = valEL.text();
   			}
-  			specList.add(new LinkSpec(key, val));
+  			specs.add(new LinkSpec(key, val));
   		}
   	}
 
-  	if (specList == null || specList.size() == 0) {
-  		specList = getValueOnlySpecList(dom.select("ul.productDetails__specifications li"));
+  	if (specs == null || specs.size() == 0) {
+  		specs = getValueOnlySpecs(dom.select("ul.productDetails__specifications li"));
   	}
   	
-  	return specList;
+  	return specs;
   }
 
 }

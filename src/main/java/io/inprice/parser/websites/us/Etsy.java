@@ -2,7 +2,7 @@ package io.inprice.parser.websites.us;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -117,11 +117,11 @@ public class Etsy extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-  	List<LinkSpec> specList = getValueOnlySpecList(dom.select("div#product-details-content-toggle div.wt-ml-xs-2"));
-  	if (specList == null || specList.size() == 0) specList = getValueOnlySpecList(dom.select("div.listing-page-overview-component p"));
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = getValueOnlySpecs(dom.select("div#product-details-content-toggle div.wt-ml-xs-2"));
+  	if (specs == null || specs.size() == 0) specs = getValueOnlySpecs(dom.select("div.listing-page-overview-component p"));
   	
-  	return specList;
+  	return specs;
   }
 
 }

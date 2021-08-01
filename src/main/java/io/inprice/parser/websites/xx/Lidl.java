@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.xx;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -98,27 +98,27 @@ public class Lidl extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
-    Elements specs = dom.select("div.product-detail-hero li");
-    if (specs != null && specs.size() > 0) {
-      specList = new ArrayList<>();
-      for (Element spec : specs) {
+    Elements specsEl = dom.select("div.product-detail-hero li");
+    if (specsEl != null && specsEl.size() > 0) {
+      specs = new HashSet<>();
+      for (Element spec : specsEl) {
         String value = spec.text();
-        specList.add(new LinkSpec("", value));
+        specs.add(new LinkSpec("", value));
       }
 
-      return specList;
+      return specs;
     }
 
-    specs = dom.select("div.attributebox__keyfacts li");
-    if (specs == null || specs.size() == 0)
-      specs = dom.select("div#detail-tab-0 li");
+    specsEl = dom.select("div.attributebox__keyfacts li");
+    if (specsEl == null || specsEl.size() == 0)
+      specsEl = dom.select("div#detail-tab-0 li");
 
-    if (specs != null && specs.size() > 0) {
-      specList = new ArrayList<>();
-      for (Element spec : specs) {
+    if (specsEl != null && specsEl.size() > 0) {
+      specs = new HashSet<>();
+      for (Element spec : specsEl) {
         String strSpec = spec.text();
         String key = "";
         String value = strSpec;
@@ -130,16 +130,15 @@ public class Lidl extends AbstractWebsite {
             value = specChunks[1];
           }
         }
-        specList.add(new LinkSpec(key, value));
+        specs.add(new LinkSpec(key, value));
       }
     }
 
-    if (specs == null || specs.size() == 0) specList = getValueOnlySpecList(dom.select("div#detailtabProductDescriptionTab li"));
-    if (specs == null || specs.size() == 0) specList = getValueOnlySpecList(dom.select("article.textbody li"));
+    if (specsEl == null || specsEl.size() == 0) specs = getValueOnlySpecs(dom.select("div#detailtabProductDescriptionTab li"));
+    if (specsEl == null || specsEl.size() == 0) specs = getValueOnlySpecs(dom.select("article.textbody li"));
     
-    if (specList != null && specList.size() > 0) {
-    	for (int i = 0; i < specList.size(); i++) {
-				LinkSpec spec = specList.get(i);
+    if (specs != null && specs.size() > 0) {
+    	for (LinkSpec spec: specs) {
 				if (StringUtils.isBlank(spec.getKey()) && spec.getValue().indexOf(":") > 0) {
 					String[] pair = spec.getValue().split(":");
 					spec.setKey(pair[0]);
@@ -148,7 +147,7 @@ public class Lidl extends AbstractWebsite {
 			}
     }
     
-    return specList;
+    return specs;
   }
 
 }

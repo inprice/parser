@@ -3,9 +3,9 @@ package io.inprice.parser.websites.au;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,8 +35,13 @@ public class AppliancesOnline extends AbstractWebsite {
 	private static final Logger log = LoggerFactory.getLogger(AppliancesOnline.class);
 	
 	private JSONObject json;
-	private JSONObject specs;
-	
+	private JSONObject specsObj;
+	/*
+	@Override
+	protected Renderer getRenderer() {
+		return Renderer.HEADLESS;
+	}
+	*/
 	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
@@ -54,7 +59,7 @@ public class AppliancesOnline extends AbstractWebsite {
 
   		WebResponse res = webClient.loadWebResponse(req);
       if (res.getStatusCode() < 400) {
-      	specs = new JSONObject(res.getContentAsString());
+      	specsObj = new JSONObject(res.getContentAsString());
       } else {
       	setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), res.getStatusCode());
       }
@@ -120,14 +125,14 @@ public class AppliancesOnline extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
-    if (specs != null && specs.has("groupedAttributes")) {
-      JSONObject groupedAttributes = specs.getJSONObject("groupedAttributes");
+    if (specsObj != null && specsObj.has("groupedAttributes")) {
+      JSONObject groupedAttributes = specsObj.getJSONObject("groupedAttributes");
       if (!groupedAttributes.isEmpty()) {
 
-        specList = new ArrayList<>();
+        specs = new HashSet<>();
         Iterator<String> keys = groupedAttributes.keys();
 
         while (keys.hasNext()) {
@@ -152,7 +157,7 @@ public class AppliancesOnline extends AbstractWebsite {
                     value = "No";
                 }
 
-                specList.add(new LinkSpec(name, value.replaceAll("&#9679; ", "& ")));
+                specs.add(new LinkSpec(name, value.replaceAll("&#9679; ", "& ")));
               }
             }
           }
@@ -160,7 +165,7 @@ public class AppliancesOnline extends AbstractWebsite {
       }
     }
 
-    return specList;
+    return specs;
   }
   
 }

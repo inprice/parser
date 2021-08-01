@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -162,8 +162,8 @@ public class CanadianTire extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    return getValueOnlySpecList(dom.select("div.pdp-details-features__items li"));
+  public Set<LinkSpec> getSpecs() {
+    return getValueOnlySpecs(dom.select("div.pdp-details-features__items li"));
   }
 
 }

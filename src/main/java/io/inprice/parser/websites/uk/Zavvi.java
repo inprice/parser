@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.uk;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -101,12 +101,13 @@ public class Zavvi extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
-    Elements specs = dom.select("div.productDescription_contentWrapper");
-    if (specs != null && specs.size() > 0) {
-      specList = new ArrayList<>();
-      for (Element spec : specs) {
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
+
+  	Elements specsEl = dom.select("div.productDescription_contentWrapper");
+    if (specsEl != null && specsEl.size() > 0) {
+      specs = new HashSet<>();
+      for (Element spec : specsEl) {
         Element key = spec.selectFirst("div.productDescription_contentPropertyName span");
         Element value = spec.selectFirst("div.productDescription_contentPropertyValue");
 
@@ -119,10 +120,10 @@ public class Zavvi extends AbstractWebsite {
         if (value != null)
           strValue = value.text();
 
-        specList.add(new LinkSpec(strKey, strValue));
+        specs.add(new LinkSpec(strKey, strValue));
       }
     }
-    return specList;
+    return specs;
   }
 
 }

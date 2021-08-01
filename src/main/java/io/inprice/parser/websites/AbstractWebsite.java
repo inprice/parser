@@ -1,51 +1,37 @@
 package io.inprice.parser.websites;
 
-import static io.inprice.parser.helpers.Global.HTMLUNIT_POOL;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.impl.EnglishReasonPhraseCatalog;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.logging.LogEntries;
-import org.openqa.selenium.logging.LogEntry;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
 import com.gargoylesoftware.htmlunit.HttpHeader;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 
-import io.inprice.common.config.SysProps;
 import io.inprice.common.helpers.SqlHelper;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.meta.LinkStatusGroup;
@@ -55,6 +41,7 @@ import io.inprice.common.models.Platform;
 import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.config.Props;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.helpers.Global;
 
 /**
  * 
@@ -69,7 +56,7 @@ public abstract class AbstractWebsite implements Website {
 	 */
 	protected static enum Renderer {
 		HTMLUNIT, //internal and default one
-		CHROME,  //external and optional
+		HEADLESS,  //external and optional
 		JSOUP;  //for test
 	}
 
@@ -99,9 +86,21 @@ public abstract class AbstractWebsite implements Website {
 		switch (getRenderer()) {
 
 			case HTMLUNIT: {
-  			WebClient webClient = null;
+				WebClient webClient = new WebClient(BrowserVersion.FIREFOX, Props.PROXY_HOST, Props.PROXY_PORT);
+  			webClient.getOptions().setThrowExceptionOnScriptError(false);
+  	    webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+  	    webClient.getOptions().setRedirectEnabled(true);
+
+  	    //WARN: attention pls!!!
+  	    //webClient.getOptions().setDownloadImages(false);
+
+  	    if (StringUtils.isNotBlank(Props.PROXY_HOST)) {
+  	      DefaultCredentialsProvider scp = new DefaultCredentialsProvider();
+  	      scp.addCredentials(Props.PROXY_USERNAME, Props.PROXY_PASSWORD);
+  	      webClient.setCredentialsProvider(scp);
+  	    }
+
   			try {
-  				webClient = HTMLUNIT_POOL.acquire();
   				WebResponse res = makeRequest(webClient);
 
   				if (res.getStatusCode() < 400) {
@@ -122,94 +121,27 @@ public abstract class AbstractWebsite implements Website {
   				problem = e.getMessage();
   				httpStatus = 502;
   			} finally {
-  				if (webClient != null) HTMLUNIT_POOL.release(webClient);
+  				if (webClient != null) webClient.close();
   			}
   			break;
   		}
 
-			case CHROME: {
-	  		RemoteWebDriver webDriver = null;
-	  		try {
-	    		ChromeOptions options = new ChromeOptions();
-	      	options.addArguments(
-	      		"--disable-gpu",
-	      		"--disable-dev-shm-usage",
-	      		"--no-sandbox",
-	      		"--ignore-certificate-errors",
-	    			"--disable-blink-features=AutomationControlled"
-	  			);
-	        LoggingPreferences logPrefs = new LoggingPreferences();
-	        logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
-	        options.setCapability("goog:loggingPrefs", logPrefs);
-	      	
-	        webDriver = new RemoteWebDriver(new URL(Props.WEBDRIVER_URL), options);
-	      	webDriver.manage().timeouts().pageLoadTimeout(SysProps.HTTP_CONNECTION_TIMEOUT, TimeUnit.SECONDS);
-	    		webDriver.get(getUrl());
-	    		
-	  			LogEntries logs = webDriver.manage().logs().get(LogType.PERFORMANCE);
-	  			for (Iterator<LogEntry> it = logs.iterator(); it.hasNext();) {
-	          LogEntry entry = it.next();
-	          try {
-	            JSONObject json = new JSONObject(entry.getMessage());
-	            JSONObject message = json.getJSONObject("message");
-	            String method = message.getString("method");
-	            if (method != null && "Network.responseReceived".equals(method)) {
-	              JSONObject params = message.getJSONObject("params");
-	              JSONObject response = params.getJSONObject("response");
-	              String messageUrl = response.getString("url");
-	              if (getUrl().equals(messageUrl)) {
-	              	httpStatus = response.getInt("status");
-	                break;
-	              }
-	            }
-	          } catch (JSONException e) {
-	            e.printStackTrace();
-	          }
-	        }  			
-	    		
-	  			if (httpStatus >= 400) {
-	  				problem = EnglishReasonPhraseCatalog.INSTANCE.getReason(httpStatus, Locale.ENGLISH);
-	  			} else {
-	  				String pageSource = null;
-	  				if (isJsRendered()) {
-	  	  			String javascript = "return arguments[0].innerHTML";
-	  	  			pageSource = (String)((JavascriptExecutor)webDriver).executeScript(javascript, webDriver.findElement(By.tagName("html")));
-	  				} else {
-	  					pageSource = webDriver.getPageSource();
-	  				}
-	  				setHtml(pageSource);
-	  			}
-	  			//some websites like canadiantire needs extra http call for some data such as price and stock availability.
-	  			//renderExtra(webDriver);
-	  
-	  			webDriver.close();
-	  		} catch (TimeoutException e) {
-	  			WebElement html = webDriver.findElement(By.tagName("html"));
-	  			if (html.isDisplayed()) {
-	  				setHtml(html.getText());
-	  			} else {
-	  				problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
-	    			httpStatus = 408;
-	    			log.error("Timed out: {}", e.getMessage());
-	  			}
-	  		} catch (WebDriverException e) {
-	  			problem = "ACCESS ERROR!";
-	  			httpStatus = 407;
-	  			log.error("Reaching error: {}", e.getMessage());
-	  		} catch (MalformedURLException e) {
-	  			e.printStackTrace();
-	  			problem = "MALFORMED URL!";
-	  			httpStatus = 500;
-				} finally {
-	  			if (webDriver != null) webDriver.quit();
-	  		}
+			case HEADLESS: {
+				WebDriver webDriver = Global.getWebDriver();
+    		webDriver.get(getUrl());
+				setHtml(webDriver.getPageSource());
   			break;
   		}
 
 			case JSOUP: {
+				Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(Props.PROXY_HOST, Props.PROXY_PORT));
 				Connection.Response response = null;
 		    try {
-		      response = Jsoup.connect(getUrl()).userAgent("Mozilla").ignoreHttpErrors(true).execute();
+		    	response = Jsoup.connect(getUrl())
+	    			.proxy(proxy)
+	    			.userAgent("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:90.0) Gecko/20100101 Firefox/90.0")
+	    			.ignoreHttpErrors(true)
+            .execute();
 		      if (response.statusCode() < 400) {
   		      response.charset("UTF-8");
   		      Document doc = response.parse();
@@ -276,10 +208,10 @@ public abstract class AbstractWebsite implements Website {
 		link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
 
 		// spec list editing
-		List<LinkSpec> specList = getSpecList();
-		if (specList != null && specList.size() > 0) {
-			List<LinkSpec> newList = new ArrayList<>(specList.size());
-			for (LinkSpec ls : specList) {
+		Set<LinkSpec> specs = getSpecs();
+		if (specs != null && specs.size() > 0) {
+			List<LinkSpec> newList = new ArrayList<>(specs.size());
+			for (LinkSpec ls : specs) {
 				newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY), fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
 			}
 			link.setSpecList(newList);
@@ -320,14 +252,14 @@ public abstract class AbstractWebsite implements Website {
 		return link.getPlatform();
 	}
 
-	protected List<LinkSpec> getValueOnlySpecList(Elements specs) {
-		return getValueOnlySpecList(specs, null);
+	protected Set<LinkSpec> getValueOnlySpecs(Elements specs) {
+		return getValueOnlySpecs(specs, null);
 	}
 
-	protected List<LinkSpec> getValueOnlySpecList(Elements specs, String sep) {
-		List<LinkSpec> specList = null;
+	protected Set<LinkSpec> getValueOnlySpecs(Elements specs, String sep) {
+		Set<LinkSpec> specList = null;
 		if (specs != null && specs.size() > 0) {
-			specList = new ArrayList<>();
+			specList = new HashSet<>();
 			for (Element spec : specs) {
 				LinkSpec ls = new LinkSpec("", spec.text());
 				if (StringUtils.isNotBlank(spec.text())) {
@@ -343,20 +275,21 @@ public abstract class AbstractWebsite implements Website {
 		return specList;
 	}
 
-	protected List<LinkSpec> getKeyValueSpecList(Elements specs, String keySelector, String valueSelector) {
-		List<LinkSpec> specList = null;
-		if (specs != null && specs.size() > 0) {
-			specList = new ArrayList<>();
-			for (Element spec : specs) {
+	protected Set<LinkSpec> getKeyValueSpecs(Elements specsEl, String keySelector, String valueSelector) {
+		Set<LinkSpec> specs = null;
+		if (specsEl != null && specsEl.size() > 0) {
+			specs = new HashSet<>();
+			for (Element spec : specsEl) {
 				Element key = spec.selectFirst(keySelector);
 				Element value = spec.selectFirst(valueSelector);
 				if (key != null || value != null) {
-					specList.add(
-					    new LinkSpec((key != null ? key.text().replaceAll(":", "") : ""), (value != null ? value.text() : "")));
+					specs.add(
+				    new LinkSpec((key != null ? key.text().replaceAll(":", "") : ""), (value != null ? value.text() : ""))
+			    );
 				}
 			}
 		}
-		return specList;
+		return specs;
 	}
 
 	protected String cleanDigits(String numString) {

@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.nl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -114,18 +114,18 @@ public class Wehkamp extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
     if (properties != null && properties.length() > 0) {
-      specList = new ArrayList<>();
+      specs = new HashSet<>();
       for (int i = 0; i < properties.length(); i++) {
         JSONObject prop = properties.getJSONObject(i);
-        specList.add(new LinkSpec(prop.getString("label"), prop.getString("value")));
+        specs.add(new LinkSpec(prop.getString("label"), prop.getString("value")));
       }
     }
 
-    return specList;
+    return specs;
   }
 
 }

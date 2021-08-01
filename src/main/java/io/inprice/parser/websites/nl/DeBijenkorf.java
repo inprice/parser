@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.nl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -31,7 +31,7 @@ public class DeBijenkorf extends AbstractWebsite {
   
   @Override
 	protected Renderer getRenderer() {
-		return Renderer.CHROME;
+		return Renderer.HEADLESS;
 	}
 
 	@Override
@@ -107,13 +107,13 @@ public class DeBijenkorf extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
     if (json != null && json.has("groupedAttributes")) {
       JSONArray groupedAttributes = json.getJSONArray("groupedAttributes");
       if (!groupedAttributes.isEmpty()) {
-        specList = new ArrayList<>();
+        specs = new HashSet<>();
         for (int i = 0; i < groupedAttributes.length(); i++) {
           JSONObject gattr = groupedAttributes.getJSONObject(i);
           if (!gattr.isEmpty() && gattr.has("attributes")) {
@@ -121,7 +121,7 @@ public class DeBijenkorf extends AbstractWebsite {
             for (int j = 0; j < attributes.length(); j++) {
               JSONObject attr = attributes.getJSONObject(j);
               if (attr.has("label") && attr.has("value")) {
-                specList.add(new LinkSpec(attr.getString("label"), attr.getString("value")));
+                specs.add(new LinkSpec(attr.getString("label"), attr.getString("value")));
               }
             }
           }
@@ -129,7 +129,7 @@ public class DeBijenkorf extends AbstractWebsite {
       }
     }
 
-    return specList;
+    return specs;
   }
 
 }

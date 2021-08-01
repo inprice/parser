@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.nl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -119,13 +119,13 @@ public class Bol extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
-    Elements specs = dom.select("dl.specs__list");
-    if (specs != null && specs.size() > 0) {
-      specList = new ArrayList<>();
-      for (Element spec : specs) {
+    Elements specsEl = dom.select("dl.specs__list");
+    if (specsEl != null && specsEl.size() > 0) {
+      specs = new HashSet<>();
+      for (Element spec : specsEl) {
 
         Elements titles = spec.select("dt.specs__title");
         Elements values = spec.select("dd.specs__value");
@@ -134,13 +134,13 @@ public class Bol extends AbstractWebsite {
           for (int i = 0; i < titles.size(); i++) {
             Element key = titles.get(i);
             Element value = values.get(i);
-            specList.add(new LinkSpec(key.text(), value.text()));
+            specs.add(new LinkSpec(key.text(), value.text()));
           }
         }
       }
     }
 
-    return specList;
+    return specs;
   }
 
 }

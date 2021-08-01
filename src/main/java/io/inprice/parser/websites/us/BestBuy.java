@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.us;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -106,8 +106,8 @@ public class BestBuy extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    return getKeyValueSpecList(dom.select(".specs-table ul"), "li .row-title", "li .row-value");
+  public Set<LinkSpec> getSpecs() {
+    return getKeyValueSpecs(dom.select(".specs-table ul"), "li .row-title", "li .row-value");
   }
 
 }

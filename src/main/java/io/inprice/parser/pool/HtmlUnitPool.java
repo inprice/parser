@@ -1,6 +1,7 @@
 package io.inprice.parser.pool;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.auth.AuthScope;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
@@ -25,15 +26,15 @@ public class HtmlUnitPool extends ResourcePool<WebClient> {
 	@Override
 	public WebClient createNewOne() {
 		WebClient webClient = new WebClient(BrowserVersion.FIREFOX, Props.PROXY_HOST, Props.PROXY_PORT);
-		webClient.getOptions().setThrowExceptionOnScriptError(false);
+    webClient.getOptions().setThrowExceptionOnScriptError(false);
     webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-    
-    //WARN: buna dikkat!!!
+
+    //WARN: attention pls!!!
     //webClient.getOptions().setDownloadImages(false);
 
     if (StringUtils.isNotBlank(Props.PROXY_HOST)) {
       DefaultCredentialsProvider scp = new DefaultCredentialsProvider();
-      scp.addCredentials(Props.PROXY_USERNAME, Props.PROXY_PASSWORD, Props.PROXY_HOST, Props.PROXY_PORT, null);
+      scp.addCredentials(Props.PROXY_USERNAME, Props.PROXY_PASSWORD, Props.PROXY_HOST, Props.PROXY_PORT, AuthScope.ANY_REALM);
       webClient.setCredentialsProvider(scp);
     }
 

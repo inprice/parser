@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.xx;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -102,11 +102,11 @@ public class Zalando extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-  	List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
   	if (details != null && details.length() > 0) {
-  		specList = new ArrayList<>();
+  		specs = new HashSet<>();
   		for (int i = 0; i < details.length(); i++) {
 				JSONObject attr = details.getJSONObject(i);
 				if (attr != null && attr.has("data")) {
@@ -120,7 +120,7 @@ public class Zalando extends AbstractWebsite {
 								
 								if (StringUtils.isNotBlank(key) && key.indexOf("_") > 0) continue;
 								if (StringUtils.isNotBlank(key) || StringUtils.isNotBlank(val))
-				          specList.add(new LinkSpec(key, val));
+				          specs.add(new LinkSpec(key, val));
 							}
 						}
 					}
@@ -128,7 +128,7 @@ public class Zalando extends AbstractWebsite {
 			}
   	}
 
-    return specList;
+    return specs;
   }
   
 }

@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.es;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -107,8 +107,8 @@ public class Euronics extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-  	return getKeyValueSpecList(dom.select("div#more_product_info li"), "span:nth-child(1)", "span:nth-child(2)");
+  public Set<LinkSpec> getSpecs() {
+  	return getKeyValueSpecs(dom.select("div#more_product_info li"), "span:nth-child(1)", "span:nth-child(2)");
   }
 
 }

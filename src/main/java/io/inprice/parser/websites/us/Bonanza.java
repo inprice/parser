@@ -1,9 +1,9 @@
 package io.inprice.parser.websites.us;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -102,20 +102,20 @@ public class Bonanza extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-  	List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
-    Elements specs = dom.select("table.extended_info_table tr.extended_info_row");
-    if (specs != null && specs.size() > 0) {
-      specList = new ArrayList<>();
-      for (Element spec : specs) {
+    Elements specsEl = dom.select("table.extended_info_table tr.extended_info_row");
+    if (specsEl != null && specsEl.size() > 0) {
+      specs = new HashSet<>();
+      for (Element spec : specsEl) {
         String key = spec.selectFirst("th.extended_info_label").text().replaceAll(":", "");
         String value = spec.selectFirst("p.extended_info_value_content").text();
-        specList.add(new LinkSpec(key, value));
+        specs.add(new LinkSpec(key, value));
       }
     }
 
-  	return specList;
+  	return specs;
   }
 
 }

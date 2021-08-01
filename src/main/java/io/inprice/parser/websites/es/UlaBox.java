@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.es;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import org.json.JSONObject;
 
@@ -88,7 +88,7 @@ public class UlaBox extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
+  public Set<LinkSpec> getSpecs() {
     return null;
   }
 

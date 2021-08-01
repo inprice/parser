@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.nl;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -106,8 +106,8 @@ public class CoolBlue extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    return getKeyValueSpecList(dom.select("section#product-specifications dl"), "dt", "dd");
+  public Set<LinkSpec> getSpecs() {
+    return getKeyValueSpecs(dom.select("section#product-specifications dl"), "dt", "dd");
   }
 
 }

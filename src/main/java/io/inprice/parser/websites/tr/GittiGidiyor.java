@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.tr;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -22,7 +22,14 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class GittiGidiyor extends AbstractWebsite {
 
 	private Document dom;
-	
+
+	/**
+	 * Site is protected by akamai!
+	 */
+	protected Renderer getRenderer() {
+		return Renderer.HEADLESS;
+	}
+
 	@Override
 	protected void setHtml(String html) {
 		super.setHtml(html);
@@ -117,15 +124,15 @@ public class GittiGidiyor extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specs = getKeyValueSpecList(dom.select("table#sp-productTabFeatures tr"), "td:nth-child(1)", "td:nth-child(2)");
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = getKeyValueSpecs(dom.select("table#sp-productTabFeatures tr"), "td:nth-child(1)", "td:nth-child(2)");
 
     if (specs == null || specs.size() == 0) {
-      specs = getKeyValueSpecList(dom.select("#specs-container ul li"), "span", "strong");
+      specs = getKeyValueSpecs(dom.select("#specs-container ul li"), "span", "strong");
     }
 
     if (specs == null || specs.size() == 0) {
-    	specs = getKeyValueSpecList(dom.select("div.item-container"), "div.item-column:nth-child(1)", "div.item-column:nth-child(2)");
+    	specs = getKeyValueSpecs(dom.select("div.item-container"), "div.item-column:nth-child(1)", "div.item-column:nth-child(2)");
     }
     
     return specs;

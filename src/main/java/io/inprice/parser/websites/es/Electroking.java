@@ -2,8 +2,8 @@ package io.inprice.parser.websites.es;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -109,23 +109,23 @@ public class Electroking extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-  	List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
   	Elements keys = dom.select("dt.name");
   	if (keys != null && keys.size() > 0) {
   		Elements vals = dom.select("dd.value");
   		if (vals != null && vals.size() == keys.size()) {
-  			specList = new ArrayList<>(keys.size());
+  			specs = new HashSet<>(keys.size());
   			for (int i = 0; i < keys.size(); i++) {
   				Element key = keys.get(i);
 					Element val = vals.get(i);
-					specList.add(new LinkSpec(key.text(), val.text()));
+					specs.add(new LinkSpec(key.text(), val.text()));
 				}
   		}
   	}
 
-  	return specList;
+  	return specs;
   }
 
 }

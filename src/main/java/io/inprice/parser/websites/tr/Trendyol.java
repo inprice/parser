@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.tr;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -123,20 +123,20 @@ public class Trendyol extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
-    Elements specs = dom.select("div.pr-in-dt-cn ul span li");
-    if (specs != null && specs.size() > 0) {
-      specList = new ArrayList<>();
-      for (Element spec : specs) {
+    Elements specsEl = dom.select("div.pr-in-dt-cn ul span li");
+    if (specsEl != null && specsEl.size() > 0) {
+      specs = new HashSet<>();
+      for (Element spec : specsEl) {
         String[] specChunks = spec.text().split("\\.");
         for (String sp : specChunks) {
-          specList.add(new LinkSpec("", sp));
+          specs.add(new LinkSpec("", sp));
         }
       }
     }
-    return specList;
+    return specs;
   }
 
 }

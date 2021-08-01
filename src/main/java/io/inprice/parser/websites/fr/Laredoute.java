@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.fr;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -126,24 +126,24 @@ public class Laredoute extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = null;
-    Element specs = dom.getElementsByTag("dscpdp").first();
-    if (specs != null) {
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
+    Element specsEl = dom.getElementsByTag("dscpdp").first();
+    if (specsEl != null) {
       String[] specChunks;
-      if (specs.text().indexOf("•") > 0)
-        specChunks = specs.text().split("•");
+      if (specsEl.text().indexOf("•") > 0)
+        specChunks = specsEl.text().split("•");
       else
-        specChunks = specs.text().split("\\.");
+        specChunks = specsEl.text().split("\\.");
 
       if (specChunks.length > 0) {
-        specList = new ArrayList<>(specChunks.length);
+        specs = new HashSet<>(specChunks.length);
         for (String spec : specChunks) {
-          specList.add(new LinkSpec("", spec));
+          specs.add(new LinkSpec("", spec));
         }
       }
     }
-    return specList;
+    return specs;
   }
 
 }

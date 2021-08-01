@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.uk;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -93,24 +93,24 @@ public class Currys extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-  	List<LinkSpec> specList = null;
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = null;
 
-  	Elements specs = dom.select("div.product-highlight li");
-  	if (specs != null && specs.size() > 0) {
-  		specList = new ArrayList<>(specs.size());
-  		for (int i = 0; i < specs.size(); i++) {
-				Element spec = specs.get(i);
+  	Elements specsEl = dom.select("div.product-highlight li");
+  	if (specsEl != null && specsEl.size() > 0) {
+  		specs = new HashSet<>(specsEl.size());
+  		for (int i = 0; i < specsEl.size(); i++) {
+				Element spec = specsEl.get(i);
 				if (spec.text().contains(":")) {
 					String[] pair = spec.text().split(":");
-					specList.add(new LinkSpec(pair[0], pair[1]));
+					specs.add(new LinkSpec(pair[0], pair[1]));
 				} else {
-					specList.add(new LinkSpec("", spec.text()));
+					specs.add(new LinkSpec("", spec.text()));
 				}
 			}
   	}
   	
-  	return specList;
+  	return specs;
   }
 
 }

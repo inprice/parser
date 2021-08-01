@@ -1,7 +1,7 @@
 package io.inprice.parser.websites.it;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -92,8 +92,8 @@ public class MediaWorld extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    return getKeyValueSpecList(dom.select("li.content__Tech__row"), "div.Tech-row__inner__key", "div.Tech-row__inner__value");
+  public Set<LinkSpec> getSpecs() {
+    return getKeyValueSpecs(dom.select("li.content__Tech__row"), "div.Tech-row__inner__key", "div.Tech-row__inner__value");
   }
 
 }

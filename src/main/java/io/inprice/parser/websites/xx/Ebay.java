@@ -1,8 +1,8 @@
 package io.inprice.parser.websites.xx;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -27,7 +27,7 @@ public class Ebay extends AbstractWebsite {
 	private Document dom;
 	
   private String brand;
-  private List<LinkSpec> specList;
+  private Set<LinkSpec> specs;
 
 	@Override
 	protected void setHtml(String html) {
@@ -187,8 +187,8 @@ public class Ebay extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    return specList;
+  public Set<LinkSpec> getSpecs() {
+    return specs;
   }
 
   private final String BRAND_WORDS = "(Brand|Marca|Marke|Marque).";
@@ -196,10 +196,10 @@ public class Ebay extends AbstractWebsite {
   private void buildSpecList() {
   	brand = Consts.Words.NOT_AVAILABLE;
 
-    Elements specs = dom.select("div.itemAttr table[role='presentation']:not(#itmSellerDesc) tr");
-    if (specs != null && specs.size() > 0) {
-      specList = new ArrayList<>();
-      for (Element row : specs) {
+    Elements specsEl = dom.select("div.itemAttr table[role='presentation']:not(#itmSellerDesc) tr");
+    if (specsEl != null && specsEl.size() > 0) {
+      specs = new HashSet<>();
+      for (Element row : specsEl) {
         Elements tds = row.select("td");
         if (tds != null && tds.size() > 0) {
           String key = "";
@@ -209,7 +209,7 @@ public class Ebay extends AbstractWebsite {
               key = tds.get(i).text().replace(":", "");
             } else {
               value = tds.get(i).text();
-              specList.add(new LinkSpec(key, value));
+              specs.add(new LinkSpec(key, value));
               if (key.matches(BRAND_WORDS)) {
                 brand = value;
               }
@@ -220,19 +220,19 @@ public class Ebay extends AbstractWebsite {
         }
       }
     } else {
-      specs = dom.select("#ProductDetails li div");
-      if (specs != null && specs.size() > 0) {
-        specList = new ArrayList<>();
-        for (int i = 0; i < specs.size(); i++) {
-          String key = specs.get(i).text();
+      specsEl = dom.select("#ProductDetails li div");
+      if (specsEl != null && specsEl.size() > 0) {
+        specs = new HashSet<>();
+        for (int i = 0; i < specsEl.size(); i++) {
+          String key = specsEl.get(i).text();
           String value = "";
-          if (i < specs.size() - 1) {
-            value = specs.get(++i).text();
+          if (i < specsEl.size() - 1) {
+            value = specsEl.get(++i).text();
           }
           if (key.matches(BRAND_WORDS)) {
             brand = value;
           }
-          specList.add(new LinkSpec(key, value));
+          specs.add(new LinkSpec(key, value));
         }
       }
     }

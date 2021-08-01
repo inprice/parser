@@ -2,7 +2,7 @@ package io.inprice.parser.websites.xx;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -230,12 +230,12 @@ public class Amazon extends AbstractWebsite {
   }
 
   @Override
-  public List<LinkSpec> getSpecList() {
-    List<LinkSpec> specList = getValueOnlySpecList(dom.select("#feature-bullets li:not(.aok-hidden)"));
-    if (specList == null) {
-      specList = getValueOnlySpecList(dom.select("div.content ul li"));
+  public Set<LinkSpec> getSpecs() {
+  	Set<LinkSpec> specs = getValueOnlySpecs(dom.select("#feature-bullets li:not(.aok-hidden)"));
+    if (specs == null) {
+      specs = getValueOnlySpecs(dom.select("div.content ul li"));
     }
-    return specList;
+    return specs;
   }
 
 }
