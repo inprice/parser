@@ -95,7 +95,10 @@ public class BigW extends AbstractWebsite {
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	Set<LinkSpec> specs = getKeyValueSpecs(dom.select("div.tab-Specification li"), "div.meta", "div.subMeta");
+  	Set<LinkSpec> specs = getKeyValueSpecs(dom.select("div.ProductSpecification"), "dd", "dt");
+  	if (specs != null) return specs;
+  	
+  	specs = getKeyValueSpecs(dom.select("div.tab-Specification li"), "div.meta", "div.subMeta");
   	Set<LinkSpec> features = getValueOnlySpecs(dom.select("div.contentList li"), "div.meta");
 
   	if (specs != null && features == null) return specs;

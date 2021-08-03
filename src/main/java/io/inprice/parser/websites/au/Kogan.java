@@ -68,12 +68,12 @@ public class Kogan extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = dom.selectFirst("meta[property='product:price:amount']");
+  	Element val = dom.selectFirst("h5[itemProp='price']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }
-    
-    val = dom.selectFirst("h5[itemProp='price']");
+
+    val = dom.selectFirst("meta[property='product:price:amount']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }
@@ -117,7 +117,7 @@ public class Kogan extends AbstractWebsite {
   	Set<LinkSpec> specs = getKeyValueSpecs(dom.select("section#specs-accordion dl"), "dt", "dd");
   	
   	if (specs == null || specs.size() == 0) {
-  		Elements descPs = dom.select("section[itemprop='description'] p");
+  		Elements descPs = dom.select("section[itemprop='description'] ul li");
   		if (descPs != null && descPs.size() > 0) {
   			specs = new HashSet<>();
   			for (int i = 0; i < descPs.size(); i++) {

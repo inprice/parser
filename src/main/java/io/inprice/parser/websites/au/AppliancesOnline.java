@@ -1,81 +1,65 @@
 package io.inprice.parser.websites.au;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.lang3.CharSetUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
-import com.gargoylesoftware.htmlunit.HttpHeader;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.WebResponse;
-
-import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.LinkSpec;
+import io.inprice.common.utils.DateUtils;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for AppliancesOnline Australia
  *
- * Contains standard data, all is extracted by css selectors
+ * There is no way to fetch product data over html body.
+ * So, we need to make another two request; one for product info and other one is for specifications!
  *
  * @author mdpinar
  */
 public class AppliancesOnline extends AbstractWebsite {
 
-	private static final Logger log = LoggerFactory.getLogger(AppliancesOnline.class);
-	
 	private JSONObject json;
 	private JSONObject specsObj;
-	/*
-	@Override
-	protected Renderer getRenderer() {
-		return Renderer.HEADLESS;
-	}
-	*/
-	@Override
-	protected void setHtml(String html) {
-		super.setHtml(html);
-		this.json = new JSONObject(html);
-	}
-
-	@Override
-	protected void afterRequest(WebClient webClient) {
-		String specsUrl = "https://www.appliancesonline.com.au/api/v2/product/specifications/id/" + json.getInt("productId");
-
-		try {
-  		WebRequest req = new WebRequest(new URL(specsUrl), HttpMethod.GET);
-  		req.setAdditionalHeader(HttpHeader.ACCEPT, "application/json");
-  		req.setAdditionalHeader(HttpHeader.CONTENT_TYPE, "application/json");
-
-  		WebResponse res = webClient.loadWebResponse(req);
-      if (res.getStatusCode() < 400) {
-      	specsObj = new JSONObject(res.getContentAsString());
-      } else {
-      	setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), res.getStatusCode());
-      }
-		} catch (IOException e) {
-			setLinkStatus(LinkStatus.NETWORK_ERROR, e.getMessage(), 400);
-			log.error("Failed to fetch specs", e);
-		}
-	}
 
   @Override
   protected String getAlternativeUrl() {
     final String indicator = "product/";
     String productName = getUrl().substring(getUrl().indexOf(indicator) + indicator.length());
-    return "https://www.appliancesonline.com.au/api/v2/product/slug/" + productName;
+    return "https://www.appliancesonline.com.au/api/v2/product/slug/" + productName + "?date=" + DateUtils.formatAOLDate();
   }
 
+	@Override
+	protected void setHtml(String html) {
+		super.setHtml(html);
+		Document dom = Jsoup.parse(html);
+		Element jsonEl = dom.getElementById("json");
+		this.json = new JSONObject(CharSetUtils.squeeze(jsonEl.text().replaceAll("\n", " ")));
+	}
+
+  /**
+   * We need an extra call to collect specifications!
+   */
+  @Override
+  protected String getExtraUrl() {
+  	return "https://www.appliancesonline.com.au/api/v2/product/specifications/id/" + getSku();
+  }
+
+  @Override
+	protected void setExtraHtml(String html) {
+		Document dom = Jsoup.parse(html);
+		Element jsonEl = dom.getElementById("json");
+		specsObj = new JSONObject(CharSetUtils.squeeze(jsonEl.text().replaceAll("\n", " ")));
+	}
+  
   @Override
   public boolean isAvailable() {
     if (json != null && json.has("available")) {

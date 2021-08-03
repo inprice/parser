@@ -22,7 +22,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public class HarverNorman extends AbstractWebsite {
+public class HarveyNorman extends AbstractWebsite {
 
 	private Document dom;
 

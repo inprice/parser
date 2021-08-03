@@ -5,10 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
-import java.net.Proxy;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,17 +13,15 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
 import com.gargoylesoftware.htmlunit.HttpHeader;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
@@ -39,9 +34,7 @@ import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.models.Platform;
 import io.inprice.common.utils.NumberUtils;
-import io.inprice.parser.config.Props;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.helpers.Global;
 
 /**
  * 
@@ -82,7 +75,7 @@ public abstract class AbstractWebsite implements Website {
 
 		String problem = null;
 		int httpStatus = 200;
-		
+/*
 		switch (getRenderer()) {
 
 			case HTMLUNIT: {
@@ -127,9 +120,9 @@ public abstract class AbstractWebsite implements Website {
   		}
 
 			case HEADLESS: {
-				WebDriver webDriver = Global.getWebDriver();
+    		WebDriver webDriver = Global.getWebDriver();
     		webDriver.get(getUrl());
-				setHtml(webDriver.getPageSource());
+    		setHtml(webDriver.getPageSource());
   			break;
   		}
 
@@ -163,21 +156,30 @@ public abstract class AbstractWebsite implements Website {
 			}
 
 		}
+*/
+		
+  	ProfilesIni profileIni = new ProfilesIni();
+		FirefoxProfile profile = profileIni.getProfile("default");
 
-		String logPart = String.format("Platform: %s, Status: %d, Time: %dms", link.getPlatform().getDomain(), httpStatus, (System.currentTimeMillis() - started) / 10);
+		FirefoxOptions capabilities = new FirefoxOptions();
+		capabilities.setCapability(FirefoxDriver.PROFILE, profile);
+		capabilities.setAcceptInsecureCerts(false);
 
-		if (problem != null) {
-			problem = io.inprice.common.utils.StringUtils.clearErrorMessage(problem);
-			if (problem.toLowerCase().contains("time out") || problem.toLowerCase().contains("timed out")) {
-				setLinkStatus(LinkStatus.TIMED_OUT, problem, (httpStatus != 200 ? httpStatus : 408));
-			} else {
-				setLinkStatus((httpStatus == 404 ? LinkStatus.NOT_FOUND : LinkStatus.NETWORK_ERROR), problem, (httpStatus != 200 ? httpStatus : 206));
-			}
-			log.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, problem, getUrl());
-		} else {
-			link.setHttpStatus(httpStatus);
-			log.info("-SUCCESSFUL- {}", logPart);
+		FirefoxDriver webDriver = new FirefoxDriver(capabilities);
+
+		String url = getAlternativeUrl();
+		if (StringUtils.isBlank(url)) url = getUrl();
+
+		webDriver.get(url);
+    setHtml(webDriver.getPageSource());
+    
+		url = getExtraUrl();
+		if (StringUtils.isNotBlank(url)) {
+			webDriver.get(url);
+	    setExtraHtml(webDriver.getPageSource());
 		}
+    
+    webDriver.close();
 
 		return (problem == null);
 	}
@@ -363,7 +365,7 @@ public abstract class AbstractWebsite implements Website {
 			log.error("Failed to journal the problem!", e);
 		}		
 	}
-	
+
 	protected void setHtml(String html) {
 		this.html = html;
 	}
@@ -389,4 +391,7 @@ public abstract class AbstractWebsite implements Website {
 	
 	protected String getAlternativeUrl() { return null; }
 
+	protected String getExtraUrl() { return null; }
+	protected void setExtraHtml(String html) { };
+	
 }

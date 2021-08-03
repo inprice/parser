@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import io.inprice.parser.helpers.Global;
 
 public class Test {
-	
+/*
 	public static void main(String[] args) {
 		Global.initWebDriver();
 		for (int i = 0; i < 5; i++) {
@@ -16,7 +16,7 @@ public class Test {
 		}
 		Global.closeWebDriver();
 	}
-
+*/
 	public static void main1(String[] args) {
 		String html = "";
 		try {
