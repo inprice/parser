@@ -30,7 +30,6 @@ public class Currys extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
-		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
     Element dataEL = dom.getElementById("app.digitalData");

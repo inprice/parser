@@ -30,7 +30,6 @@ public class Lidl extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
-		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
 		String prodData = findAPart(html, "var dynamic_tm_data = ", "};", 1);

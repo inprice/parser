@@ -1,12 +1,10 @@
 package io.inprice.parser.websites;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,17 +13,16 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxDriver.Capability;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.firefox.internal.ProfilesIni;
+import org.openqa.selenium.firefox.ProfilesIni;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.gargoylesoftware.htmlunit.HttpHeader;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.WebResponse;
 
 import io.inprice.common.helpers.SqlHelper;
 import io.inprice.common.meta.LinkStatus;
@@ -35,6 +32,7 @@ import io.inprice.common.models.LinkSpec;
 import io.inprice.common.models.Platform;
 import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 
 /**
  * 
@@ -43,21 +41,10 @@ import io.inprice.parser.helpers.Consts;
 public abstract class AbstractWebsite implements Website {
 
 	private static final Logger log = LoggerFactory.getLogger(AbstractWebsite.class);
-	
-	/**
-	 * There are two kind of html handler; a) External chrome browser, b) Internal HtmlUnit (default one)
-	 */
-	protected static enum Renderer {
-		HTMLUNIT, //internal and default one
-		HEADLESS,  //external and optional
-		JSOUP;  //for test
-	}
 
 	private Link link;
 	private LinkStatus oldStatus;
 	
-	private String html;
-
 	@Override
 	public void check(Link link) {
 		this.link = link;
@@ -65,123 +52,68 @@ public abstract class AbstractWebsite implements Website {
 
 		if (openPage()) read();
 	}
-	
-	protected Renderer getRenderer() {
-		return Renderer.HTMLUNIT;
-	}
 
 	private boolean openPage() {
 		long started = System.currentTimeMillis();
-
-		String problem = null;
-		int httpStatus = 200;
-/*
-		switch (getRenderer()) {
-
-			case HTMLUNIT: {
-				WebClient webClient = new WebClient(BrowserVersion.FIREFOX, Props.PROXY_HOST, Props.PROXY_PORT);
-  			webClient.getOptions().setThrowExceptionOnScriptError(false);
-  	    webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-  	    webClient.getOptions().setRedirectEnabled(true);
-
-  	    //WARN: attention pls!!!
-  	    //webClient.getOptions().setDownloadImages(false);
-
-  	    if (StringUtils.isNotBlank(Props.PROXY_HOST)) {
-  	      DefaultCredentialsProvider scp = new DefaultCredentialsProvider();
-  	      scp.addCredentials(Props.PROXY_USERNAME, Props.PROXY_PASSWORD);
-  	      webClient.setCredentialsProvider(scp);
-  	    }
-
-  			try {
-  				WebResponse res = makeRequest(webClient);
-
-  				if (res.getStatusCode() < 400) {
-  					httpStatus = res.getStatusCode();
-  	  			setHtml(res.getContentAsString());
-  	  			afterRequest(webClient);
-  				} else {
-  					problem = res.getStatusMessage();
-  					httpStatus = res.getStatusCode();
-  				}
-
-  	    } catch (SocketTimeoutException set) {
-  				problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
-  				httpStatus = 408;
-  				log.error("Timed out: {}", set.getMessage());
-  			} catch (IOException e) {
-  				log.error("Unexpected error!", e);
-  				problem = e.getMessage();
-  				httpStatus = 502;
-  			} finally {
-  				if (webClient != null) webClient.close();
-  			}
-  			break;
-  		}
-
-			case HEADLESS: {
-    		WebDriver webDriver = Global.getWebDriver();
-    		webDriver.get(getUrl());
-    		setHtml(webDriver.getPageSource());
-  			break;
-  		}
-
-			case JSOUP: {
-				Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(Props.PROXY_HOST, Props.PROXY_PORT));
-				Connection.Response response = null;
-		    try {
-		    	response = Jsoup.connect(getUrl())
-	    			.proxy(proxy)
-	    			.userAgent("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:90.0) Gecko/20100101 Firefox/90.0")
-	    			.ignoreHttpErrors(true)
-            .execute();
-		      if (response.statusCode() < 400) {
-  		      response.charset("UTF-8");
-  		      Document doc = response.parse();
-  		      setHtml(doc.html());
-		      } else {
-	  				problem = response.statusMessage();
-	  				httpStatus = response.statusCode();
-		      }
-		    } catch (IOException e) {
-		    	if (response != null && response.statusCode() >= 400) {
-	  				problem = response.statusMessage();
-	  				httpStatus = response.statusCode();
-		    	} else {
-    				problem = e.getMessage();
-    				httpStatus = 502;
-		    	}
-		    }
-				break;
-			}
-
-		}
-*/
 		
+		HttpStatus status = new HttpStatus(200, null);
+
   	ProfilesIni profileIni = new ProfilesIni();
 		FirefoxProfile profile = profileIni.getProfile("default");
 
 		FirefoxOptions capabilities = new FirefoxOptions();
-		capabilities.setCapability(FirefoxDriver.PROFILE, profile);
+		capabilities.setCapability(Capability.PROFILE, profile);
 		capabilities.setAcceptInsecureCerts(false);
 
 		FirefoxDriver webDriver = new FirefoxDriver(capabilities);
+		try {
+  		String url = getAlternativeUrl();
+  		if (StringUtils.isBlank(url)) url = getUrl();
 
-		String url = getAlternativeUrl();
-		if (StringUtils.isBlank(url)) url = getUrl();
+  		webDriver.get(url);
+  		
+  		//some sites loads all the data after sometime, so we need to wait some extra seconds!
+  		if (waitBy() != null) {
+    		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(25));
+    		wait.until(ExpectedConditions.visibilityOfElementLocated(waitBy()));
+  		}
 
-		webDriver.get(url);
-    setHtml(webDriver.getPageSource());
-    
-		url = getExtraUrl();
-		if (StringUtils.isNotBlank(url)) {
-			webDriver.get(url);
-	    setExtraHtml(webDriver.getPageSource());
+      status = setHtml(webDriver.getPageSource());
+
+		} catch (Exception e) {
+			status.setMessage(e.getMessage());
+		} finally {
+			webDriver.close();
 		}
-    
-    webDriver.close();
 
-		return (problem == null);
+		String logPart = String.format("Platform: %s, Status: %d, Time: %dms", link.getPlatform().getDomain(), status.getCode(), (System.currentTimeMillis() - started) / 10);
+
+		if (status.getMessage() != null) {
+			status.setMessage(io.inprice.common.utils.StringUtils.clearErrorMessage(status.getMessage()));
+			if (status.getMessage().toLowerCase().contains("time out") || status.getMessage().toLowerCase().contains("timed out")) {
+				setLinkStatus(LinkStatus.TIMED_OUT, status.getMessage(), (status.getCode() != 200 ? status.getCode() : 408));
+			} else {
+				LinkStatus linkStatus = LinkStatus.NETWORK_ERROR;
+				switch (status.getCode()) {
+  				case 403:
+  					linkStatus = LinkStatus.NOT_ALLOWED;
+  					break;
+					case 404:
+						linkStatus = LinkStatus.NOT_FOUND;
+						break;
+					case 503:
+						linkStatus = LinkStatus.SITE_DOWN;
+						break;
+				}
+				setLinkStatus(linkStatus, status.getMessage(), status.getCode());
+			}
+			log.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, status.getMessage(), getUrl());
+		} else {
+			link.setHttpStatus(status.getCode());
+			log.info("-SUCCESSFUL- {}", logPart);
+		}
+
+		return (status.getMessage() == null);
 	}
 
 	private void read() {
@@ -196,7 +128,6 @@ public abstract class AbstractWebsite implements Website {
 		BigDecimal price = getPrice();
 
 		if (price == null || name == null || price.compareTo(BigDecimal.ONE) < 0 || Consts.Words.NOT_AVAILABLE.equals(name)) {
-			analyseTheProblem();
 			return;
 		}
 
@@ -225,26 +156,20 @@ public abstract class AbstractWebsite implements Website {
 			setLinkStatus(LinkStatus.NOT_AVAILABLE, "INSUFFICIENT STOCK");
 		}
 	}
-	
-	protected WebResponse makeRequest(WebClient webClient) throws MalformedURLException, IOException {
-		String url = getAlternativeUrl();
-		if (StringUtils.isBlank(url)) url = getUrl();
 
-		WebRequest req = new WebRequest(new URL(url));
-		req.setAdditionalHeader(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-		req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
-		req.setAdditionalHeader(HttpHeader.ACCEPT_ENCODING, "gzip, deflate, br");
-		req.setAdditionalHeader(HttpHeader.CONNECTION, "keep-alive");
-		req.setAdditionalHeader(HttpHeader.CACHE_CONTROL, "max-age=0");
-		
-  	beforeRequest(req);
-		return webClient.loadWebResponse(req);
-	}
-
+	/**
+	 * Comes from db
+	 */
 	@Override
 	public String getUrl() {
 		return link.getUrl();
 	}
+
+	/**
+	 * Used for replacing the origin url above
+	 * @return
+	 */
+	protected String getAlternativeUrl() { return null; }
 	
 	protected int getRetry() {
 		return link.getRetry();
@@ -346,7 +271,7 @@ public abstract class AbstractWebsite implements Website {
 			return SqlHelper.clear(newForm);
 	}
 
-	private void analyseTheProblem() {
+	protected void saveHtml(String html) {
 		detectProblem();
 		
 		StringBuilder sb = new StringBuilder();
@@ -360,18 +285,14 @@ public abstract class AbstractWebsite implements Website {
 		log.warn(" - Status: {}, Pre.Status: {}, File: {}", link.getStatus().name(), oldStatus.name(), sb.toString());
 		
 		try (PrintWriter out = new PrintWriter(sb.toString())) {
-	    out.println(this.html);
+	    out.println(html);
 		} catch (FileNotFoundException e) {
 			log.error("Failed to journal the problem!", e);
 		}		
 	}
 
-	protected void setHtml(String html) {
-		this.html = html;
-	}
-	
-	protected String getHtml() {
-		return this.html;
+	protected HttpStatus setHtml(String html) {
+		return new HttpStatus(200, null);
 	}
 	
 	protected void detectProblem() {
@@ -382,16 +303,9 @@ public abstract class AbstractWebsite implements Website {
 		}
 		link.setHttpStatus(404);
 	}
-	
-	protected void beforeRequest(WebRequest req) { }
-	protected void afterRequest(WebClient webClient) { }
 
-	protected boolean isJsRendered() { return false; }
-	protected boolean willHtmlBePulled() { return true; }
-	
-	protected String getAlternativeUrl() { return null; }
-
-	protected String getExtraUrl() { return null; }
-	protected void setExtraHtml(String html) { };
+	protected By waitBy() {
+		return null;
+	}
 	
 }

@@ -36,7 +36,6 @@ public class DeBijenkorf extends AbstractWebsite {
 
 	@Override
 	protected void setHtml(String html) {
-		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
     String prodData = findAPart(html, "Data.product =", "};", 1);

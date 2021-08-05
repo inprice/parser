@@ -48,7 +48,6 @@ public class Asos extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
-		super.setHtml(html);
 		dom = Jsoup.parse(html);
 
     String prodData = findAPart(html, "config.product = ", "};", 1);

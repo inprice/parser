@@ -53,7 +53,6 @@ public class Lidl extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
-		super.setHtml(html);
 		json = new JSONObject(html);
 	}
 

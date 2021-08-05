@@ -28,7 +28,6 @@ public class Trendyol extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
-		super.setHtml(html);
 		dom = Jsoup.parse(html);
 		
 		brand = findAPart(html, "\"brand\":{\"@type\":\"Thing\",\"name\":\"", "\"");

@@ -10,6 +10,7 @@ import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -24,9 +25,14 @@ public class TheGoodGuys extends AbstractWebsite {
 	private Document dom;
 	
 	@Override
-	protected void setHtml(String html) {
-		super.setHtml(html);
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
+
+		Element titleEl = dom.selectFirst("title");
+		if (titleEl.text().toLowerCase().contains("not found") == false) {
+			return HttpStatus.NOT_FOUND;
+		}
+		return HttpStatus.OK;
 	}
 
   @Override

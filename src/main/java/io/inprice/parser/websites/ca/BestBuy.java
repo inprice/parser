@@ -7,9 +7,14 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -25,16 +30,23 @@ public class BestBuy extends AbstractWebsite {
   private JSONObject product;
 	
 	@Override
-	protected void setHtml(String html) {
-		super.setHtml(html);
+	protected HttpStatus setHtml(String html) {
+		Document dom = Jsoup.parse(html);
 
-    String rawJson = findAPart(html, "\"product\":", ",\"productSellers\":{");
-    if (StringUtils.isNotBlank(rawJson)) {
-      json = new JSONObject(rawJson);
-      if (json != null && json.has("product")) {
-      	product = json.getJSONObject("product");
+		String title = dom.selectFirst("title").text().toLowerCase();
+		if (title.contains("site down") == true) {
+			return new HttpStatus(503, "Site is down!");
+		} else if (title.contains("not found") == false) {
+      String rawJson = findAPart(html, "}},\"product\":", ",\"productSellers\":");
+      if (StringUtils.isNotBlank(rawJson)) {
+        json = new JSONObject(rawJson);
+        if (json != null && json.has("product")) {
+        	product = json.getJSONObject("product");
+        	return HttpStatus.OK;
+        }
       }
-    }
+		} 
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override
@@ -118,18 +130,30 @@ public class BestBuy extends AbstractWebsite {
   	Set<LinkSpec> specs = null;
 
   	if (product != null && product.has("specs")) {
-  		JSONObject specsObj = product.getJSONObject("specs");
-  		if (specsObj != null && specsObj.keySet().size() > 0) {
-  			specs = new HashSet<>(specsObj.keySet().size());
-
-  			for (String cat: specsObj.keySet()) {
-  				JSONArray specCatRows = specsObj.getJSONArray(cat);
-  				for (int i = 0; i < specCatRows.length(); i++) {
-  					JSONObject spec = specCatRows.getJSONObject(i);
-  					specs.add(new LinkSpec(cat + ": " + spec.getString("name"), spec.getString("value")));
-					}
-				}
-  			
+  		if (product.has("specs")) {
+    		JSONObject specsObj = product.getJSONObject("specs");
+    		if (specsObj != null && specsObj.keySet().size() > 0) {
+    			specs = new HashSet<>(specsObj.keySet().size());
+  
+    			for (String cat: specsObj.keySet()) {
+    				JSONArray specCatRows = specsObj.getJSONArray(cat);
+    				for (int i = 0; i < specCatRows.length(); i++) {
+    					JSONObject spec = specCatRows.getJSONObject(i);
+    					specs.add(new LinkSpec(cat + ": " + spec.getString("name"), spec.getString("value")));
+  					}
+  				}
+    			
+    		}
+  		}
+  		if (product.has("longDescription")) {
+  			Document specDom = Jsoup.parse(product.getString("longDescription"));
+  			Elements features = specDom.getElementsByTag("p");
+  			if (features.size() > 0) {
+  				if (specs == null) specs = new HashSet<>(features.size());
+  				for (Element spec: features) {
+  					specs.add(new LinkSpec("", spec.text().replaceAll(" - ", "")));
+  				};
+  			}
   		}
   	}
 

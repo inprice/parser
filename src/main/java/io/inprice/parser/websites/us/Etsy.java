@@ -28,7 +28,6 @@ public class Etsy extends AbstractWebsite {
 
 	@Override
 	protected void setHtml(String html) {
-		super.setHtml(html);
 		dom = Jsoup.parse(html);
 	}
 

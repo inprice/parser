@@ -22,7 +22,6 @@ public class UlaBox extends AbstractWebsite {
 	
 	@Override
 	protected void setHtml(String html) {
-		super.setHtml(html);
 		
 		String rawJson = null;
 		if (html.indexOf("}]},") > -1) {

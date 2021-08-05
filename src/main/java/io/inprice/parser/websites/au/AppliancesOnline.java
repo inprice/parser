@@ -1,155 +1,118 @@
 package io.inprice.parser.websites.au;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.commons.lang3.CharSetUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
 
 import io.inprice.common.models.LinkSpec;
-import io.inprice.common.utils.DateUtils;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.helpers.StringHelpers;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for AppliancesOnline Australia
  *
  * There is no way to fetch product data over html body.
- * So, we need to make another two request; one for product info and other one is for specifications!
+ * So, we need to make two requests; one for product info and other one is for specifications!
  *
  * @author mdpinar
  */
 public class AppliancesOnline extends AbstractWebsite {
 
-	private JSONObject json;
-	private JSONObject specsObj;
+	private Document dom;
 
-  @Override
-  protected String getAlternativeUrl() {
-    final String indicator = "product/";
-    String productName = getUrl().substring(getUrl().indexOf(indicator) + indicator.length());
-    return "https://www.appliancesonline.com.au/api/v2/product/slug/" + productName + "?date=" + DateUtils.formatAOLDate();
-  }
+	private JSONObject json;
+  private JSONObject offers;
 
 	@Override
-	protected void setHtml(String html) {
-		super.setHtml(html);
-		Document dom = Jsoup.parse(html);
-		Element jsonEl = dom.getElementById("json");
-		this.json = new JSONObject(CharSetUtils.squeeze(jsonEl.text().replaceAll("\n", " ")));
+	protected By waitBy() {
+		return By.className("aol-product-price");
+	}
+	
+	@Override
+	protected HttpStatus setHtml(String html) {
+		dom = Jsoup.parse(html);
+
+		String title = dom.title();
+		if (title.toLowerCase().contains("page not found") == false) {
+      Elements dataEL = dom.select("script[type='application/ld+json']");
+      if (dataEL != null && dataEL.size() > 0) {
+      	for (DataNode dNode : dataEL.dataNodes()) {
+          JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
+          if (data.has("@type")) {
+            String type = data.getString("@type");
+            if (type.equals("Product")) {
+            	json = data;
+              if (json.has("offers")) {
+            		offers = json.getJSONObject("offers");
+            		return HttpStatus.OK;
+              }
+            }
+          }
+        }
+      }
+			return HttpStatus.OK;
+		}
+		return HttpStatus.NOT_FOUND;
 	}
 
-  /**
-   * We need an extra call to collect specifications!
-   */
-  @Override
-  protected String getExtraUrl() {
-  	return "https://www.appliancesonline.com.au/api/v2/product/specifications/id/" + getSku();
-  }
-
-  @Override
-	protected void setExtraHtml(String html) {
-		Document dom = Jsoup.parse(html);
-		Element jsonEl = dom.getElementById("json");
-		specsObj = new JSONObject(CharSetUtils.squeeze(jsonEl.text().replaceAll("\n", " ")));
-	}
-  
   @Override
   public boolean isAvailable() {
-    if (json != null && json.has("available")) {
-      return json.getBoolean("available");
+    if (offers != null && offers.has("availability")) {
+      String availability = offers.getString("availability");
+      return availability.contains("InStock") || availability.contains("PreOrder");
     }
     return false;
   }
 
   @Override
   public String getSku() {
-    if (json != null && json.has("productId")) {
-      return "" + json.getInt("productId");
-    }
-    return Consts.Words.NOT_AVAILABLE;
+  	String[] chunks = getUrl().split("-");
+    return chunks[chunks.length-1];
   }
 
   @Override
   public String getName() {
-    if (json != null && json.has("title")) {
-      return json.getString("title");
+    Element val = dom.selectFirst(".heading-is-product-title");
+    if (val != null) {
+    	return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    if (json != null && json.has("price")) {
-      return json.getBigDecimal("price");
+    Element val = dom.selectFirst(".aol-product-price");
+    if (val != null) {
+      return new BigDecimal(cleanDigits(val.text()));
     }
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getBrand() {
-    if (json != null && json.has("manufacturer")) {
-      JSONObject manufacturer = json.getJSONObject("manufacturer");
-      if (manufacturer.has("name")) {
-        return manufacturer.getString("name");
-      }
+    if (json != null && json.has("brand")) {
+      return json.getJSONObject("brand").getString("name");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getShipment() {
-    return "Check delivery cost";
+    return "Check delivery and installation info";
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	Set<LinkSpec> specs = null;
-
-    if (specsObj != null && specsObj.has("groupedAttributes")) {
-      JSONObject groupedAttributes = specsObj.getJSONObject("groupedAttributes");
-      if (!groupedAttributes.isEmpty()) {
-
-        specs = new HashSet<>();
-        Iterator<String> keys = groupedAttributes.keys();
-
-        while (keys.hasNext()) {
-          String key = keys.next();
-          JSONObject attrs = groupedAttributes.getJSONObject(key);
-          if (attrs.has("attributes")) {
-
-            JSONArray array = attrs.getJSONArray("attributes");
-
-            if (array.length() > 0) {
-              for (int i = 0; i < array.length(); i++) {
-                JSONObject attr = array.getJSONObject(i);
-
-                String name = attr.getString("displayName");
-                String value = attr.getString("value");
-                String type = attr.getString("inputType");
-
-                if ("boolean".equals(type)) {
-                  if ("1".equals(value))
-                    value = "Yes";
-                  else
-                    value = "No";
-                }
-
-                specs.add(new LinkSpec(name, value.replaceAll("&#9679; ", "& ")));
-              }
-            }
-          }
-        }
-      }
-    }
-
-    return specs;
+  	return getKeyValueSpecs(dom.select(".specification-item .attribute-row"), ".attribute-name", ".attribute-value");
   }
-  
+
 }
