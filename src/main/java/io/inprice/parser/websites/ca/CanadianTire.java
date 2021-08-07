@@ -40,6 +40,9 @@ public class CanadianTire extends AbstractWebsite {
 		return HttpStatus.NOT_FOUND;
 	}
 
+	/**
+	 * waitBy() method has no effect on this website, so an extra call needed!
+	 */
 	@Override
 	protected String getExtraUrl() {
     StringBuilder offerUrl = new StringBuilder("view-source:https://api-triangle.canadiantire.ca/esb/PriceAvailability?SKU=");

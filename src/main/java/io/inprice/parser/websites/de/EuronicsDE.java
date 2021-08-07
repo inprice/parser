@@ -21,13 +21,13 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public class Euronics extends AbstractWebsite {
+public class EuronicsDE extends AbstractWebsite {
 
 	private Document dom;
 
 	@Override
 	protected By waitBy() {
-		return By.className("price--content");
+		return By.id("product-price");
 	}
 	
 	@Override
@@ -44,9 +44,9 @@ public class Euronics extends AbstractWebsite {
   @Override
   public boolean isAvailable() {
     Element val = dom.selectFirst("link[itemprop='availability']");
-    if (val != null) {
-    	String href = val.attr("href");
-    	return href.contains("InStock");
+    if (val != null && val.hasAttr("href")) {
+      String href = val.attr("href").toLowerCase();
+      return href.contains("instock") || href.contains("preorder");
     }
     return false;
   }
@@ -97,7 +97,13 @@ public class Euronics extends AbstractWebsite {
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	return getKeyValueSpecs(dom.select(".feature-table .table-row"), ".table-attribut", ".table-attribut-value");
+  	Set<LinkSpec> specs = getKeyValueSpecs(dom.select(".feature-table .table-row"), ".table-attribut", ".table-attribut-value");
+  	Set<LinkSpec> highlights = getValueOnlySpecs(dom.select(".product-highlights li span"));
+
+  	if (specs == null) return highlights;
+  	if (highlights != null) specs.addAll(highlights);
+
+  	return specs;
   }
 
 }

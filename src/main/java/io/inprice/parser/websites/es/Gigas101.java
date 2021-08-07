@@ -1,7 +1,6 @@
 package io.inprice.parser.websites.es;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +11,7 @@ import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -26,15 +26,22 @@ public class Gigas101 extends AbstractWebsite {
 	private Document dom;
 	
 	@Override
-	protected void setHtml(String html) {
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
+
+		Element titleEl = dom.selectFirst("title");
+		if (titleEl.text().contains("404") == false) {
+			return HttpStatus.OK;
+		}
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override
   public boolean isAvailable() {
     Element val = dom.selectFirst("meta[property='product:availability']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content").trim().contains("instock");
+    if (val != null && val.hasAttr("content")) {
+      String href = val.attr("content").toLowerCase();
+      return href.contains("instock") || href.contains("preorder");
     }
     return false;
   }
@@ -91,20 +98,8 @@ public class Gigas101 extends AbstractWebsite {
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	Set<LinkSpec> specs = null;
-
-  	Elements keys = dom.select("div.desc_ci");
-  	if (keys != null && keys.size() > 0) {
-  		Elements vals = dom.select("div.desc_cd");
-  		if (vals != null && vals.size() == keys.size()) {
-  			specs = new HashSet<>(keys.size());
-  			for (int i = 0; i < keys.size(); i++) {
-  				Element key = keys.get(i);
-					Element val = vals.get(i);
-					specs.add(new LinkSpec(key.text(), val.text()));
-				}
-  		}
-  	}
+  	Set<LinkSpec> specs = getFlatKeyValueSpecs(dom.select("#desc_prop div.desc_ci"), dom.select("#desc_prop div.desc_cd"));
+  	if (specs == null) specs = getKeyValueSpecs(dom.select("table.tabla_caracteristicas tr"), "td:nth-child(1)", "td:nth-child(2)");
 
   	return specs;
   }

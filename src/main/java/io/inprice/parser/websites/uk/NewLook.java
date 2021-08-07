@@ -54,8 +54,8 @@ public class NewLook extends AbstractWebsite {
   @Override
   public boolean isAvailable() {
     if (offers != null && offers.has("availability")) {
-      String availability = offers.getString("availability");
-      return availability.contains("InStock") || availability.contains("PreOrder");
+      String availability = offers.getString("availability").toLowerCase();
+      return availability.contains("instock") || availability.contains("preorder");
     }
     return false;
   }

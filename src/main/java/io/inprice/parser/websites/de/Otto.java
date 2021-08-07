@@ -10,6 +10,7 @@ import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -22,16 +23,18 @@ public class Otto extends AbstractWebsite {
 	private Document dom;
 
 	@Override
-	protected void setHtml(String html) {
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
+		return HttpStatus.OK;
 	}
 
   @Override
   public boolean isAvailable() {
   	Element val = dom.selectFirst("link[itemprop='availability']");
-    if (val != null) {
-      String href = val.attr("href");
-      return href.contains("InStock");
+    if (val != null && val.hasAttr("href")) {
+      String href = val.attr("href").toLowerCase();
+      return href.contains("instock") || href.contains("preorder");
+    	
     }
     return false;
   }

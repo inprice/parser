@@ -59,7 +59,6 @@ public class AppliancesOnline extends AbstractWebsite {
           }
         }
       }
-			return HttpStatus.OK;
 		}
 		return HttpStatus.NOT_FOUND;
 	}
@@ -67,8 +66,8 @@ public class AppliancesOnline extends AbstractWebsite {
   @Override
   public boolean isAvailable() {
     if (offers != null && offers.has("availability")) {
-      String availability = offers.getString("availability");
-      return availability.contains("InStock") || availability.contains("PreOrder");
+      String availability = offers.getString("availability").toLowerCase();
+      return availability.contains("instock") || availability.contains("preorder");
     }
     return false;
   }

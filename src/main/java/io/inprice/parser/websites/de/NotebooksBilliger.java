@@ -3,7 +3,6 @@ package io.inprice.parser.websites.de;
 import java.math.BigDecimal;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
@@ -14,6 +13,7 @@ import org.jsoup.select.Elements;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -29,7 +29,7 @@ public class NotebooksBilliger extends AbstractWebsite {
 	private JSONObject prod;
 	
 	@Override
-	protected void setHtml(String html) {
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
     Elements dataEL = dom.select("script[type='application/ld+json']");
@@ -38,20 +38,21 @@ public class NotebooksBilliger extends AbstractWebsite {
         JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
         if (data.has("@type") && data.getString("@type").equals("Product")) {
           prod = data;
-          break;
+          return HttpStatus.OK;
         }
       }
     }
+    return HttpStatus.NOT_FOUND;
 	}
 
   @Override
   public boolean isAvailable() {
   	if (prod != null && prod.has("offers")) {
-  		JSONObject offer = prod.getJSONObject("offers");
-  		if (!offer.isEmpty()) {
-  			String availability = offer.getString("availability");
-  			return (StringUtils.isNotBlank(availability) && availability.contains("InStock"));
-  		}
+  		JSONObject offers = prod.getJSONObject("offers");
+      if (offers != null && offers.has("availability")) {
+        String availability = offers.getString("availability").toLowerCase();
+        return availability.contains("instock") || availability.contains("preorder");
+      }
   	}
     return false;
   }
@@ -106,12 +107,7 @@ public class NotebooksBilliger extends AbstractWebsite {
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	return 
-    		getKeyValueSpecs(
-  				dom.select("table.properties_table tr"), 
-  				"td.produktDetails_eigenschaft2",
-  				"td.produktDetails_eigenschaft3"
-				);
+  	return getKeyValueSpecs(dom.select("table.properties_table tr"), "td.produktDetails_eigenschaft2", "td.produktDetails_eigenschaft3");
   }
 
 }

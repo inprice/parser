@@ -30,6 +30,7 @@ public class HepsiBurada extends AbstractWebsite {
 		return Renderer.HEADLESS;
 	}
 
+	bu olmamış, düzeltilsin bilader
 	@Override
 	protected void setHtml(String html) {
 		dom = Jsoup.parse(html);

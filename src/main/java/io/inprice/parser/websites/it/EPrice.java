@@ -37,8 +37,9 @@ public class EPrice extends AbstractWebsite {
   @Override
   public boolean isAvailable() {
     Element val = dom.selectFirst("meta[itemprop='availability']");
-    if (val != null) {
-      return val.attr("content").contains("InStock");
+    if (val != null && val.hasAttr("content")) {
+      String href = val.attr("content").toLowerCase();
+      return href.contains("instock") || href.contains("preorder");
     }
     return false;
   }

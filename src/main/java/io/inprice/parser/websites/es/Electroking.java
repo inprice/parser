@@ -15,6 +15,7 @@ import org.jsoup.select.Elements;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -33,36 +34,43 @@ public class Electroking extends AbstractWebsite {
 	private JSONObject shipping;
 	
 	@Override
-	protected void setHtml(String html) {
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
-    Elements dataEL = dom.select("script[type='application/ld+json']");
-    if (dataEL != null) {
-      for (DataNode dNode : dataEL.dataNodes()) {
-        JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
-        if (data.has("@type") && data.getString("@type").equals("Product")) {
-          prod = data;
-          offer = data.getJSONObject("offers");
-          
-          String shipRawJson = findAPart(html, "\"shipping\":", "},", 1, 0);
-          shipping = new JSONObject(shipRawJson);
-          break;
+		String title = dom.title();
+		if (title.toLowerCase().contains("error 404") == false) {
+      Elements dataEL = dom.select("script[type='application/ld+json']");
+      if (dataEL != null) {
+        for (DataNode dNode : dataEL.dataNodes()) {
+          JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
+          if (data.has("@type") && data.getString("@type").equals("Product")) {
+            prod = data;
+            offer = data.getJSONObject("offers");
+            
+            String shipRawJson = findAPart(html, "\"shipping\":", "},", 1, 0);
+            shipping = new JSONObject(shipRawJson);
+        		return HttpStatus.OK;
+          }
         }
       }
-    }
+		}
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override
   public boolean isAvailable() {
   	if (offer != null && offer.has("availability")) {
-  		String availability = offer.getString("availability");
-  		return availability.contains("InStock");
+      String availability = offer.getString("availability").toLowerCase();
+      return availability.contains("instock") || availability.contains("preorder");
   	}
     return false;
   }
 
   @Override
   public String getSku() {
+  	if (prod != null && prod.has("sku")) {
+  		return prod.getString("sku");
+  	}
   	if (offer != null && offer.has("sku")) {
   		return offer.getString("sku");
   	}

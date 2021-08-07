@@ -3,11 +3,8 @@ package io.inprice.parser;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
 import io.inprice.parser.websites.Website;
-import io.inprice.parser.websites.au.AppliancesOnline;
-import io.inprice.parser.websites.au.Kogan;
-import io.inprice.parser.websites.ca.BestBuy;
-import io.inprice.parser.websites.ca.CanadianTire;
-import io.inprice.parser.websites.it.Euronics;
+import io.inprice.parser.websites.es.Gigas101;
+import io.inprice.parser.websites.es.UlaBox;
 
 public class LinkTest {
 	
@@ -19,18 +16,29 @@ public class LinkTest {
 	
 	/**
 	 * Canada
-	 * bestbuy, canadiantire
+	 * bestbuy, canadiantire, 
+	 * walmart(over singly queue)
 	 * 
 	 */
-	
+
 	/**
 	 * Germany
-	 * euronics
+	 * euronics, mediamarkt, notebooksbillinger, otto
+	 * 
+	 */
+
+	/**
+	 * Spain
+	 * electroking, euronics, 101gigas, ulabox
 	 * 
 	 */
 
 	private static String[] urls = {
-		"https://www.appliancesonline.com.au/andoo/product/universe-bed-co-stardream-double-mattress-nsdpsmib001"
+		"https://www.ulabox.com/en/product/ambientador-air-wick-freshmatic-nenuco-recambio/17990?ula_src=front_category_show&ula_mdm=product_list",
+		"https://www.ulabox.com/en/lanostrapasta/product/pan-seco-crujiente-mini-lingua-di-suocera-mario-fongo-100g/91820?ula_src=front_index&ula_mdm=product_list",
+		"https://www.ulabox.com/en/product/cristalinas-ambientador-aroma-de-mora-mikado-40ml/79295?ula_src=front_category_show&ula_mdm=product_list",
+		"https://www.ulabox.com/en/product/pina-en-rodajas-en-su-jugo-del-monte/53641?ula_src=front_category_show&ula_mdm=product_list",
+		"https://www.ulabox.com/en/vinos-el-petit-celler/product/vino-tinto-abadal-matis-2017/94601?ula_src=front_index&ula_mdm=product_list"
 	};
 
 	public static void main(String[] args) throws InterruptedException {
@@ -39,26 +47,22 @@ public class LinkTest {
 		platform.setDomain("Solo Test");
 
 		for (String url: urls) {
-			/*
 			new Thread(new Runnable() {
 
 				@Override
 				public void run() {
-				*/
 		  		Link link = new Link(url);
 		  		link.setId(1l);
 		  		link.setRetry(1);
 		  		link.setPlatform(platform);
 		  		link.setPlatformId(platform.getId());
 
-		  		Website website = new AppliancesOnline();
+		  		Website website = new UlaBox();
 		  		website.check(link);
 		  		printout(link);
 				}
-				/*
 			}).start();
 		}
-				 */
 	}
 	
 	private static void printout(Link link) {

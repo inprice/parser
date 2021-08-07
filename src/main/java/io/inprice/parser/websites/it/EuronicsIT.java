@@ -21,7 +21,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public class Euronics extends AbstractWebsite {
+public class EuronicsIT extends AbstractWebsite {
 
 	private Document dom;
 	private Element prod;

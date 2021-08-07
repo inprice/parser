@@ -3,10 +3,14 @@ package io.inprice.parser.websites.es;
 import java.math.BigDecimal;
 import java.util.Set;
 
-import org.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -18,77 +22,83 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class UlaBox extends AbstractWebsite {
 
-	private JSONObject json;
+	private Document dom;
 	
 	@Override
-	protected void setHtml(String html) {
-		
-		String rawJson = null;
-		if (html.indexOf("}]},") > -1) {
-			rawJson = findAPart(html, "\\\"product\\\":{\\\"product\\\":", "}]},", 3, 0);
-		} else {
-			rawJson = findAPart(html, "\\\"product\\\":{\\\"product\\\":", "}}\",", 2, 0);
+	protected HttpStatus setHtml(String html) {
+		dom = Jsoup.parse(html);
+
+		Element notFoundImg = dom.selectFirst("img[alt$='Page not found']");
+		if (notFoundImg == null) {
+			return HttpStatus.OK;
 		}
-		rawJson = rawJson.replace("\\\"", "\"");
-		rawJson = rawJson.replace(":\"{\"", ":{\"");
-		rawJson = rawJson.replace("]}}\",", "]}},");
-		rawJson = rawJson.replace("\\u003c", "<");
-		rawJson = rawJson.replace("\\u003e", ">");
-		rawJson = rawJson.replace("\\\"", "\"");
-		
-		json = new JSONObject(rawJson);
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override
   public boolean isAvailable() {
-		if (json != null && json.has("unitQuantity")) {
-			return json.getInt("unitQuantity") > 0;
-		}
+    Element val = dom.selectFirst("link[itemProp='availability']");
+    if (val != null && val.hasAttr("href")) {
+      String href = val.attr("href").toLowerCase();
+      return href.contains("instock") || href.contains("preorder");
+    }
     return false;
   }
 
   @Override
   public String getSku() {
-		if (json != null && json.has("id")) {
-			return ""+json.getLong("id");
-		}
+    Element val = dom.selectFirst("meta[property='og:url']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+    	String[] chunks = val.attr("content").split("/");
+      return chunks[chunks.length-1];
+    }
+
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-  	if (json != null && json.has("name")) {
-      return json.getString("name");
+    Element val = dom.selectFirst("h1[itemprop='name']");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
+
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-  	if (json != null && json.has("price")) {
-  		JSONObject price = json.getJSONObject("price");
-  		return price.getBigDecimal("value");
+  	Element val = dom.selectFirst("meta[itemProp='price']");
+    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
+      return new BigDecimal(cleanDigits(val.attr("content")));
     }
+
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getBrand() {
-  	if (json != null && json.has("brand")) {
-			JSONObject brand = json.getJSONObject("brand");
-			return brand.getString("name");
-		}
+    Element val = dom.selectFirst("a[itemProp='brand']");
+    if (val != null && StringUtils.isNotBlank(val.attr("title"))) {
+      return val.attr("title");
+    }
+
     return Consts.Words.NOT_AVAILABLE;
+  }
+
+  @Override
+  public String getSeller() {
+    return "Ulabox";
   }
 
   @Override
   public String getShipment() {
-    return Consts.Words.NOT_AVAILABLE;
+    return "Check shipping conditions";
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-    return null;
+  	return null;
   }
 
 }

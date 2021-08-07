@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
@@ -67,18 +68,22 @@ public abstract class AbstractWebsite implements Website {
 
 		FirefoxDriver webDriver = new FirefoxDriver(capabilities);
 		try {
-  		String url = getAlternativeUrl();
-  		if (StringUtils.isBlank(url)) url = getUrl();
-
-  		webDriver.get(url);
+  		webDriver.get(getUrl());
   		
   		//some sites loads all the data after sometime, so we need to wait some extra seconds!
   		if (waitBy() != null) {
-    		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(25));
-    		wait.until(ExpectedConditions.visibilityOfElementLocated(waitBy()));
+    		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(15));
+    		wait.until(ExpectedConditions.presenceOfElementLocated(waitBy()));
   		}
 
       status = setHtml(webDriver.getPageSource());
+      if (status.getMessage() == null) {
+      	String url = getExtraUrl();
+    		if (StringUtils.isNotBlank(url)) {
+    			webDriver.get(url);
+    			status = setExtraHtml(webDriver.getPageSource());
+    		}
+      }
 
 		} catch (Exception e) {
 			status.setMessage(e.getMessage());
@@ -128,6 +133,8 @@ public abstract class AbstractWebsite implements Website {
 		BigDecimal price = getPrice();
 
 		if (price == null || name == null || price.compareTo(BigDecimal.ONE) < 0 || Consts.Words.NOT_AVAILABLE.equals(name)) {
+			link.setStatus(LinkStatus.NO_DATA);
+			link.setProblem("HAS NO PRICE OR NAME");
 			return;
 		}
 
@@ -166,11 +173,11 @@ public abstract class AbstractWebsite implements Website {
 	}
 
 	/**
-	 * Used for replacing the origin url above
+	 * Used for making an extra call to the website
 	 * @return
 	 */
-	protected String getAlternativeUrl() { return null; }
-	
+	protected String getExtraUrl() { return null; }
+
 	protected int getRetry() {
 		return link.getRetry();
 	}
@@ -209,6 +216,24 @@ public abstract class AbstractWebsite implements Website {
 			for (Element spec : specsEl) {
 				Element key = spec.selectFirst(keySelector);
 				Element value = spec.selectFirst(valueSelector);
+				if (key != null || value != null) {
+					specs.add(
+				    new LinkSpec((key != null ? key.text().replaceAll(":", "") : ""), (value != null ? value.text() : ""))
+			    );
+				}
+			}
+		}
+		return specs;
+	}
+
+	protected Set<LinkSpec> getFlatKeyValueSpecs(Elements keysSelector, Elements valsSelector) {
+		Set<LinkSpec> specs = null;
+		if (keysSelector != null && keysSelector.size() > 0) {
+			specs = new HashSet<>();
+			
+			for (int i = 0; i < keysSelector.size(); i++) {
+				Element key = keysSelector.get(i);
+				Element value = (i < valsSelector.size() ? valsSelector.get(i) : null);
 				if (key != null || value != null) {
 					specs.add(
 				    new LinkSpec((key != null ? key.text().replaceAll(":", "") : ""), (value != null ? value.text() : ""))
@@ -264,7 +289,7 @@ public abstract class AbstractWebsite implements Website {
 	private String fixLength(String val, int limit) {
 		if (val == null) return null;
 
-		String newForm = io.inprice.common.utils.StringUtils.clearEmojies(val);
+		String newForm = StringEscapeUtils.unescapeHtml4(io.inprice.common.utils.StringUtils.clearEmojies(val));
 		if (StringUtils.isNotBlank(newForm) && newForm.length() > limit)
 			return SqlHelper.clear(newForm.substring(0, limit));
 		else
@@ -294,7 +319,11 @@ public abstract class AbstractWebsite implements Website {
 	protected HttpStatus setHtml(String html) {
 		return new HttpStatus(200, null);
 	}
-	
+
+	protected HttpStatus setExtraHtml(String html) {
+		return new HttpStatus(200, null);
+	}
+
 	protected void detectProblem() {
 		if (LinkStatus.AVAILABLE.equals(oldStatus)) {
 			setLinkStatus(LinkStatus.NOT_AVAILABLE, "AVAILABILITY PROBLEM");

@@ -51,10 +51,11 @@ public class Bonprix extends AbstractWebsite {
     Element val = dom.selectFirst("meta[property='og:availability']");
     if (val == null) val = dom.selectFirst("meta[content='https://schema.org/InStock']");
 
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content").toLowerCase().contains("instock");
+    if (val != null && val.hasAttr("content")) {
+      String href = val.attr("content").toLowerCase();
+      return href.contains("instock") || href.contains("preorder");
     }
-
+    
     val = dom.selectFirst("div.product-availability-box_wrapper div");
     if (val == null) dom.selectFirst("div#product-detail-availibility-container noscript");
 
