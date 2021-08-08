@@ -15,13 +15,13 @@ import org.jsoup.select.Elements;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Fnac France
  *
- * Contains standard data, all is extracted from html body and via json data in
- * getJsonData()
+ * Default status of this parser is BLOCKED because doesn't allow to scrape!
  *
  * @author mdpinar
  */
@@ -31,27 +31,33 @@ public class Fnac extends AbstractWebsite {
 
 	private JSONObject json;
 	private JSONObject offers;
-	
-	@Override
-	protected void setHtml(String html) {
-		dom = Jsoup.parse(html);
 
+	@Override
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
+
+	@Override
+	protected HttpStatus setHtml(String html) {
+		dom = Jsoup.parse(html);
+		
     Elements dataEL = dom.select("script[type='application/ld+json']");
-    if (dataEL != null) {
-      for (DataNode dNode : dataEL.dataNodes()) {
+    if (dataEL != null && dataEL.size() > 0) {
+    	for (DataNode dNode : dataEL.dataNodes()) {
         JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
         if (data.has("@type")) {
           String type = data.getString("@type");
           if (type.equals("Product")) {
           	json = data;
-          	if (json.has("offers")) {
+            if (json.has("offers")) {
           		offers = json.getJSONObject("offers");
-          	}
-            break;
+          		return HttpStatus.OK;
+            }
           }
         }
       }
     }
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override

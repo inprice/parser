@@ -11,6 +11,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -24,12 +25,21 @@ public class Teknosa extends AbstractWebsite {
 
 	private Document dom;
 	private Element addToCartBtn;
+	
+	@Override
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
 
 	@Override
-	protected void setHtml(String html) {
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
 		addToCartBtn = dom.getElementById("addToCartButton");
+		if (addToCartBtn != null && addToCartBtn.hasAttr("disabled") == false) {
+			return HttpStatus.OK;
+		}
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override

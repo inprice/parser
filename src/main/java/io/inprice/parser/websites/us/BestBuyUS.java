@@ -20,7 +20,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public class BestBuy extends AbstractWebsite {
+public class BestBuyUS extends AbstractWebsite {
 
 	private Document dom;
 	private String referer;

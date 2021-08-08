@@ -14,6 +14,7 @@ import org.jsoup.select.Elements;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -31,7 +32,12 @@ public class CoolBlue extends AbstractWebsite {
   private JSONObject offers;
 	
 	@Override
-	protected void setHtml(String html) {
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
+	
+	@Override
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
     Elements dataEL = dom.select("script[type='application/ld+json']");
@@ -44,12 +50,13 @@ public class CoolBlue extends AbstractWebsite {
           	json = data;
           	if (json.has("offers")) {
           		offers = json.getJSONObject("offers");
+          		return HttpStatus.OK;
           	}
-            break;
           }
         }
       }
     }
+    return HttpStatus.NOT_FOUND;
 	}
 
   @Override

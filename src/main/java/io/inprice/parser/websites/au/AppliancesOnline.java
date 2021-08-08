@@ -41,25 +41,22 @@ public class AppliancesOnline extends AbstractWebsite {
 	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
-		String title = dom.title();
-		if (title.toLowerCase().contains("page not found") == false) {
-      Elements dataEL = dom.select("script[type='application/ld+json']");
-      if (dataEL != null && dataEL.size() > 0) {
-      	for (DataNode dNode : dataEL.dataNodes()) {
-          JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
-          if (data.has("@type")) {
-            String type = data.getString("@type");
-            if (type.equals("Product")) {
-            	json = data;
-              if (json.has("offers")) {
-            		offers = json.getJSONObject("offers");
-            		return HttpStatus.OK;
-              }
+    Elements dataEL = dom.select("script[type='application/ld+json']");
+    if (dataEL != null && dataEL.size() > 0) {
+    	for (DataNode dNode : dataEL.dataNodes()) {
+        JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
+        if (data.has("@type")) {
+          String type = data.getString("@type");
+          if (type.equals("Product")) {
+          	json = data;
+            if (json.has("offers")) {
+          		offers = json.getJSONObject("offers");
+          		return HttpStatus.OK;
             }
           }
         }
       }
-		}
+    }
 		return HttpStatus.NOT_FOUND;
 	}
 

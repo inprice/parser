@@ -19,12 +19,6 @@ import io.inprice.parser.websites.de.MediaMarktDE;
 public class EuronicsES extends MediaMarktDE {
 
   @Override
-  protected boolean isPageFound() {
-  	Element notFoundDiv = dom.selectFirst(".pagError");
-		return (notFoundDiv == null);
-  }
-
-  @Override
   public String getShipment() {
   	String shipping = "";
 

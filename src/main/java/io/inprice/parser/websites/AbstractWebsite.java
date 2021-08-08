@@ -1,9 +1,12 @@
 package io.inprice.parser.websites;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,6 +15,9 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
@@ -24,6 +30,12 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.HttpHeader;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.WebResponse;
 
 import io.inprice.common.helpers.SqlHelper;
 import io.inprice.common.meta.LinkStatus;
@@ -42,6 +54,15 @@ import io.inprice.parser.info.HttpStatus;
 public abstract class AbstractWebsite implements Website {
 
 	private static final Logger log = LoggerFactory.getLogger(AbstractWebsite.class);
+	
+	/**
+	 * There are two kind of html handler; a) External chrome browser, b) Internal HtmlUnit (default one)
+	 */
+	protected static enum Renderer {
+		HTMLUNIT,
+		BROWSER,
+		JSOUP;  //for only tests
+	}
 
 	private Link link;
 	private LinkStatus oldStatus;
@@ -54,43 +75,114 @@ public abstract class AbstractWebsite implements Website {
 		if (openPage()) read();
 	}
 
+	protected Renderer getRenderer() {
+		return Renderer.BROWSER;
+	}
+
 	private boolean openPage() {
 		long started = System.currentTimeMillis();
 		
 		HttpStatus status = new HttpStatus(200, null);
-
-  	ProfilesIni profileIni = new ProfilesIni();
-		FirefoxProfile profile = profileIni.getProfile("default");
-
-		FirefoxOptions capabilities = new FirefoxOptions();
-		capabilities.setCapability(Capability.PROFILE, profile);
-		capabilities.setAcceptInsecureCerts(false);
-
-		FirefoxDriver webDriver = new FirefoxDriver(capabilities);
-		try {
-  		webDriver.get(getUrl());
-  		
-  		//some sites loads all the data after sometime, so we need to wait some extra seconds!
-  		if (waitBy() != null) {
-    		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(15));
-    		wait.until(ExpectedConditions.presenceOfElementLocated(waitBy()));
-  		}
-
-      status = setHtml(webDriver.getPageSource());
-      if (status.getMessage() == null) {
-      	String url = getExtraUrl();
-    		if (StringUtils.isNotBlank(url)) {
-    			webDriver.get(url);
-    			status = setExtraHtml(webDriver.getPageSource());
+		
+		switch (getRenderer()) {
+			case BROWSER: {
+      	ProfilesIni profileIni = new ProfilesIni();
+      	FirefoxProfile profile = profileIni.getProfile("default");
+    
+    		FirefoxOptions capabilities = new FirefoxOptions();
+    		capabilities.setCapability(Capability.PROFILE, profile);
+    		capabilities.setAcceptInsecureCerts(false);
+    
+    		FirefoxDriver webDriver = new FirefoxDriver(capabilities);
+    		try {
+      		webDriver.get(getUrl());
+      		
+      		//some sites loads all the data after sometime, so we need to wait some extra seconds!
+      		if (waitBy() != null) {
+        		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(15));
+        		wait.until(ExpectedConditions.visibilityOfElementLocated(waitBy()));
+      		}
+    
+          status = setHtml(webDriver.getPageSource());
+          if (status.getMessage() == null) {
+          	String url = getExtraUrl();
+        		if (StringUtils.isNotBlank(url)) {
+        			webDriver.get(url);
+        			status = setExtraHtml(webDriver.getPageSource());
+        		}
+          }
+    
+    		} catch (Exception e) {
+    			status.setMessage(e.getMessage());
+    		} finally {
+    			webDriver.close();
     		}
-      }
+    		break;
+			}
+			
+			case HTMLUNIT: {
+    		WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+    		try {
+    			WebRequest req = new WebRequest(new URL(getUrl()));
+    			req.setAdditionalHeader(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+    			req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
+    			req.setAdditionalHeader(HttpHeader.ACCEPT_ENCODING, "gzip, deflate, br");
+    			req.setAdditionalHeader(HttpHeader.CONNECTION, "keep-alive");
+    			req.setAdditionalHeader(HttpHeader.CACHE_CONTROL, "max-age=0");
+    
+    	  	WebResponse res = webClient.loadWebResponse(req);
+    
+    			if (res.getStatusCode() < 400) {
+    				status.setCode(res.getStatusCode());
+      			setHtml(res.getContentAsString());
+    				afterRequest(webClient);
+    			} else {
+    				status.setCode(res.getStatusCode());
+    				status.setMessage(res.getStatusMessage());
+    			}
+    
+        } catch (SocketTimeoutException set) {
+    			status.setCode(408);
+    			status.setMessage("TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : ""));
+    			log.error("Timed out: {}", set.getMessage());
+    		} catch (IOException e) {
+    			log.error("Unexpected error!", e);
+    			status.setCode(502);
+    			status.setMessage(e.getMessage());
+    		} finally {
+    			webClient.close();
+    		}
+    		break;
+			}
 
-		} catch (Exception e) {
-			status.setMessage(e.getMessage());
-		} finally {
-			webDriver.close();
+			case JSOUP: {
+				Connection.Response res = null;
+		    try {
+		      res = Jsoup.connect(getUrl()).userAgent("Mozilla").ignoreHttpErrors(true).execute();
+		      if (res.statusCode() < 400) {
+  		      res.charset("UTF-8");
+  		      Document doc = res.parse();
+  		      setHtml(doc.html());
+		      } else {
+    				status.setCode(res.statusCode());
+    				status.setMessage(res.statusMessage());
+		      }
+		    } catch (IOException e) {
+		    	if (res != null && res.statusCode() >= 400) {
+    				status.setCode(res.statusCode());
+    				status.setMessage(res.statusMessage());
+		    	} else {
+	    			status.setCode(502);
+	    			status.setMessage(e.getMessage());
+		    	}
+		    }
+				break;
+			}
+		
 		}
-
+		
 		String logPart = String.format("Platform: %s, Status: %d, Time: %dms", link.getPlatform().getDomain(), status.getCode(), (System.currentTimeMillis() - started) / 10);
 
 		if (status.getMessage() != null) {
@@ -115,7 +207,7 @@ public abstract class AbstractWebsite implements Website {
 			log.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, status.getMessage(), getUrl());
 		} else {
 			link.setHttpStatus(status.getCode());
-			log.info("-SUCCESSFUL- {}", logPart);
+			log.info("-SUCCESSFUL- {}, URL: {}", logPart, getUrl());
 		}
 
 		return (status.getMessage() == null);
@@ -336,5 +428,7 @@ public abstract class AbstractWebsite implements Website {
 	protected By waitBy() {
 		return null;
 	}
+	
+	protected void afterRequest(WebClient webClient) { }
 	
 }

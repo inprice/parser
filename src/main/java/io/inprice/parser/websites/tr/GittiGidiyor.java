@@ -10,11 +10,13 @@ import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for GittiGidiyor Turkiye
  *
+ * Site is protected by akamai!
  * Contains standard data, all is extracted by css selectors
  *
  * @author mdpinar
@@ -23,30 +25,27 @@ public class GittiGidiyor extends AbstractWebsite {
 
 	private Document dom;
 
-	/**
-	 * Site is protected by akamai!
-	 */
-	protected Renderer getRenderer() {
-		return Renderer.HEADLESS;
-	}
-
 	@Override
-	protected void setHtml(String html) {
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
+
+		Element notFoundDiv = dom.selectFirst(".gg-404-container");
+		if (notFoundDiv == null) {
+			notFoundDiv = dom.getElementById("sp-passive-product-message");
+			if (notFoundDiv == null) {
+				return HttpStatus.OK;
+			}
+		}
+		return HttpStatus.NOT_FOUND;
+		
 	}
 
   @Override
   public boolean isAvailable() {
-    Element val = dom.getElementById("VariantProductRemaingCount");
-    if (val == null || StringUtils.isBlank(val.text())) val = dom.selectFirst(".remainingCount");
-
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      try {
-        int realAmount = new Integer(cleanDigits(val.text()));
-        return (realAmount > 0);
-      } catch (Exception e) {
-        //
-      }
+    Element val = dom.selectFirst("meta[property='og:availability']");
+    if (val != null) {
+    	String content = val.attr("content").toLowerCase();
+    	return (content.contains("instock") || content.contains("preorder"));
     }
     return false;
   }
@@ -54,8 +53,8 @@ public class GittiGidiyor extends AbstractWebsite {
   @Override
   public String getSku() {
     Element val = dom.getElementById("productId");
-    if (val != null && StringUtils.isNotBlank(val.val())) {
-      return val.val();
+    if (val != null && val.hasAttr("value")) {
+      return val.attr("value");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -74,7 +73,12 @@ public class GittiGidiyor extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = dom.selectFirst("span.lastPrice");
+  	Element val = dom.getElementById("sp-price");
+  	if (val != null && StringUtils.isNotBlank(val.val())) {
+  		return new BigDecimal(cleanDigits(val.val()));
+  	}
+  	
+  	val = dom.selectFirst("span.lastPrice");
     if (val == null || StringUtils.isBlank(val.text())) val = dom.getElementById("sp-price-lowPrice");
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
@@ -91,7 +95,13 @@ public class GittiGidiyor extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element val = dom.selectFirst("ul.product-items li a");
+  	Element val = dom.getElementById("spp-brand");
+  	if (val != null && val.hasAttr("href")) {
+  		String[] chunks = val.attr("href").split("/");
+  		return chunks[chunks.length-1];
+  	}
+  	
+    val = dom.selectFirst("ul.product-items li a");
     if (val == null || StringUtils.isBlank(val.text())) val = dom.selectFirst(".mr10.gt-product-brand-0 a");
 
     if (val != null && StringUtils.isNotBlank(val.text())) {

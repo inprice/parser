@@ -12,6 +12,7 @@ import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -24,18 +25,26 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class Trendyol extends AbstractWebsite {
 
 	private Document dom;
-	private String brand;
+
+	@Override
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
 	
 	@Override
-	protected void setHtml(String html) {
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
-		
-		brand = findAPart(html, "\"brand\":{\"@type\":\"Thing\",\"name\":\"", "\"");
+
+		Element notFoundDiv = dom.getElementById("tydortyuzdortpage");
+		if (notFoundDiv == null) {
+			return HttpStatus.OK;
+		}
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override
   public boolean isAvailable() {
-    Element val = dom.selectFirst("button.add-to-bs");
+    Element val = dom.selectFirst(".add-to-bs, .add-to-basket");
     return (val != null);
   }
 
@@ -76,22 +85,21 @@ public class Trendyol extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-  	if (StringUtils.isNotBlank(brand)) return brand;
-
-  	Element val = dom.selectFirst("div.pr-in-cn div.pr-in-br a");
+  	Element val = dom.selectFirst(".pr-new-br a");
+  	if (val == null) val = dom.selectFirst("div.pr-in-cn div.pr-in-br a");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
     
-    if (StringUtils.isNotBlank(brand)) return brand;
-
     return getSeller();
   }
 
   @Override
   public String getSeller() {
-  	Element val = dom.selectFirst("span.pr-in-dt-spn");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
+  	Element val = dom.selectFirst("a.merchant-text");
+  	if (val == null) val = dom.selectFirst("span.pr-in-dt-spn");
+
+  	if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
 
@@ -129,12 +137,28 @@ public class Trendyol extends AbstractWebsite {
     if (specsEl != null && specsEl.size() > 0) {
       specs = new HashSet<>();
       for (Element spec : specsEl) {
-        String[] specChunks = spec.text().split("\\.");
-        for (String sp : specChunks) {
+        String[] chunks = spec.text().split("\\.");
+        for (String sp : chunks) {
           specs.add(new LinkSpec("", sp));
         }
       }
     }
+
+    if (specsEl == null || specsEl.size() == 0) {
+    	specsEl = dom.select("li.detail-desc-item");
+      if (specsEl != null && specsEl.size() > 0) {
+        specs = new HashSet<>();
+        for (Element spec : specsEl) {
+          String[] chunks = spec.text().split("\\:");
+          if (chunks.length > 1) {
+            specs.add(new LinkSpec(chunks[0], chunks[1]));
+          } else {
+          	specs.add(new LinkSpec("", chunks[0]));
+          }
+        }
+      }
+    }
+
     return specs;
   }
 

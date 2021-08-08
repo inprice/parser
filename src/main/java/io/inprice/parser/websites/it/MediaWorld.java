@@ -10,6 +10,7 @@ import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -25,11 +26,20 @@ public class MediaWorld extends AbstractWebsite {
 	private Element prod;
 	
 	@Override
-	protected void setHtml(String html) {
-		super.setHtml(html);
-
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
+	
+	@Override
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
-		prod = dom.selectFirst("div.product-detail-main-container");
+
+		String title = dom.title();
+		if (title.toLowerCase().contains("error 404") == false) {
+  		prod = dom.selectFirst("div.product-detail-main-container");
+  		return HttpStatus.OK;
+    }
+		return HttpStatus.NOT_FOUND;
 	}
 	
   @Override

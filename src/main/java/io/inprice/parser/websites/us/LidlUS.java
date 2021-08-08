@@ -29,7 +29,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public class Lidl extends AbstractWebsite {
+public class LidlUS extends AbstractWebsite {
 
   private final String prodUrl = "https://mobileapi.lidl.com/v1/products/";
 

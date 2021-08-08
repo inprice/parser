@@ -7,7 +7,6 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
@@ -31,34 +30,26 @@ public class MediaMarktDE extends AbstractWebsite {
 	private JSONObject json;
   private JSONObject offers;
 
-  protected boolean isPageFound() {
-  	Element notFoundImg = dom.selectFirst("[data-test='error-page-image-not-found']");
-		return (notFoundImg == null);
-  }
-
 	@Override
 	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
-		if (isPageFound()) {
-      Elements dataEL = dom.select("script[type='application/ld+json']");
-      if (dataEL != null && dataEL.size() > 0) {
-      	for (DataNode dNode : dataEL.dataNodes()) {
-          JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
-          if (data.has("@type")) {
-            String type = data.getString("@type");
-            if (type.equals("Product")) {
-            	json = data;
-              if (json.has("offers")) {
-            		offers = json.getJSONObject("offers");
-            		return HttpStatus.OK;
-              }
+    Elements dataEL = dom.select("script[type='application/ld+json']");
+    if (dataEL != null && dataEL.size() > 0) {
+    	for (DataNode dNode : dataEL.dataNodes()) {
+        JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
+        if (data.has("@type")) {
+          String type = data.getString("@type");
+          if (type.equals("Product")) {
+          	json = data;
+            if (json.has("offers")) {
+          		offers = json.getJSONObject("offers");
+          		return HttpStatus.OK;
             }
           }
         }
       }
-			return HttpStatus.OK;
-		}
+    }
 		return HttpStatus.NOT_FOUND;
 	}
 

@@ -3,15 +3,18 @@ package io.inprice.parser.websites.tr;
 import java.math.BigDecimal;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.helpers.StringHelpers;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -24,117 +27,111 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class N11 extends AbstractWebsite {
 
 	private Document dom;
-  private JSONObject prod;
 
-  /**
-   * Protected by akamai!
-   */
+	private JSONObject json;
+  private JSONObject offers;
+  
   @Override
 	protected Renderer getRenderer() {
-		return Renderer.HEADLESS;
+		return Renderer.HTMLUNIT;
 	}
 
 	@Override
-	protected void setHtml(String html) {
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
-
-		String ind = "dataLayer.push(";
-		String rawJson = findAPart(html, ind, "});", 1, ind.length());
-
-    if (StringUtils.isNotBlank(rawJson)) {
-      prod = new JSONObject(rawJson);
+		
+    Elements dataEL = dom.select("script[type='application/ld+json']");
+    if (dataEL != null && dataEL.size() > 0) {
+    	for (DataNode dNode : dataEL.dataNodes()) {
+        JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
+        if (data.has("@type")) {
+          String type = data.getString("@type");
+          if (type.equals("Product")) {
+          	json = data;
+            if (json.has("offers")) {
+          		offers = json.getJSONObject("offers");
+          		return HttpStatus.OK;
+            }
+          }
+        }
+      }
     }
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override
   public boolean isAvailable() {
-    if (prod != null && prod.has("pIsInStock")) return prod.getString("pIsInStock").equals("1");
+    if (offers != null && offers.has("offerCount")) {
+    	String offerCount = offers.getString("offerCount");
+    	return (NumberUtils.toInt(offerCount) > 0);
+    }
     return false;
   }
 
   @Override
   public String getSku() {
-    if (prod != null && prod.has("pId")) return prod.getString("pId");
+  	Element val = dom.selectFirst("input[name='skuId']");
+    if (val != null && val.hasAttr("value")) {
+      return val.attr("value");
+    }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    if (prod != null && prod.has("title")) return prod.getString("title");
+    if (json != null && json.has("name")) {
+      return json.getString("name");
+    }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-  	String val = null;
-
-    if (prod != null) {
-    	if (prod.has("pDiscountedPrice"))
-    		val = prod.getString("pDiscountedPrice");
-    	else if (prod.has("pOriginalPrice"))
-    		val = prod.getString("pOriginalPrice");
+    if (offers != null) {
+    	if (offers.has("lowPrice")) {
+    		return offers.getBigDecimal("lowPrice");
+    	} else if (offers.has("price")) {
+    		return offers.getBigDecimal("price");
+    	}
     }
-
-    if (StringUtils.isNotBlank(val)) {
-      return new BigDecimal(cleanDigits(val));
-    }
-
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getBrand() {
-  	String val = null;
-
-  	if (prod != null) {
-    	if (prod.has("pBrand"))
-    		val = prod.getString("pBrand");
-    	else
-    		val = prod.getString("sellerNickname");
-  	}
-
-    if (StringUtils.isNotBlank(val)) {
-    	return val;
+    if (json != null && json.has("brand")) {
+      return json.getString("brand");
     }
-  	
-    return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
-  public String getSeller() {
-    if (prod != null && prod.has("sellerNickname")) return prod.getString("sellerNickname");
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getShipment() {
-    Element val = dom.selectFirst(".shipment-detail-container .cargoType");
-    if (val == null || StringUtils.isBlank(val.text())) {
-      val = dom.selectFirst(".delivery-info_shipment span");
-      if (val == null || StringUtils.isBlank(val.text())) {
-      	val = dom.selectFirst(".delInfo b");
-      }
-    }
-
+  	Element val = dom.selectFirst(".cargo-price");
     if (val != null) {
-      return val.text().replaceAll(":", "");
+      return val.text();
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return "Detayları gör";
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-    Elements specs = dom.select("div.feaItem");
-    String keySelector = ".label";
-    String valSelector = ".data";
+  	Set<LinkSpec> specs = getKeyValueSpecs(dom.select("div.ProductSpecification"), "dd", "dt");
+  	if (specs != null) return specs;
+  	
+  	specs = getKeyValueSpecs(dom.select("div.tab-Specification li"), "div.meta", "div.subMeta");
+  	Set<LinkSpec> features = getValueOnlySpecs(dom.select("div.contentList li"), "div.meta");
 
-    if (specs == null || specs.isEmpty()) {
-      specs = dom.select("li.unf-prop-list-item");
-      keySelector = "p.unf-prop-list-title";
-      valSelector = "p.unf-prop-list-prop";
-    }
+  	if (specs != null && features == null) return specs;
+  	if (features != null && specs == null) return features;
 
-    return getKeyValueSpecs(specs, keySelector, valSelector);
+  	if (specs == null) {
+  		specs = getValueOnlySpecs(dom.select("div.product-details li"));
+  		if (features == null) return specs;
+  	}
+
+  	features.addAll(specs);
+  	return features;
   }
 
 }

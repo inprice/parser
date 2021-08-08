@@ -12,12 +12,18 @@ import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for EPrice Italy
  *
- * Contains standard data, all is extracted by css selectors
+ * Default status of this parser is BLOCKED because doesn't allow to scrape!
+ * 
+ * Maybe it can be scrapped with a different call
+ * 
+ * for this url --> https://www.eprice.it/coltelli-da-cucina-Beper/d-51659976
+ * this         --> https://spep.eprice.it/Sperest.svc//checkMethod?method=GetPromoForSku&parameters=({"IdListino":2,"sku":"51659976","IdVertical":"0","EscludiMarketPlace":false})
  *
  * @author mdpinar
  */
@@ -27,11 +33,17 @@ public class EPrice extends AbstractWebsite {
 	private String seller;
 	
 	@Override
-	protected void setHtml(String html) {
-		
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
+
+	@Override
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 		seller = findAPart(html, "seller_name: \"", "\",");
 		if (StringUtils.isBlank(seller)) seller = "ePrice";
+		
+		return HttpStatus.OK;
 	}
 
   @Override

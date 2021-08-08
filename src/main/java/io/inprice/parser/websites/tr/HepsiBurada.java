@@ -10,6 +10,7 @@ import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -23,36 +24,37 @@ public class HepsiBurada extends AbstractWebsite {
 
 	private Document dom;
 
-	private boolean isAvailable;
-	private boolean isFreeShipping;
-
 	protected Renderer getRenderer() {
-		return Renderer.HEADLESS;
+		return Renderer.HTMLUNIT;
 	}
 
-	bu olmamış, düzeltilsin bilader
 	@Override
-	protected void setHtml(String html) {
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
-    String found = findAPart(html, "\"isInStock\":", ",");
-    isAvailable = ("true".equalsIgnoreCase(found));
-    
-    found = findAPart(html, "\"freeShipping\":", ",");
-    isFreeShipping = ("true".equalsIgnoreCase(found));
+		Element titleEl = dom.selectFirst("title");
+		if (titleEl.text().toLowerCase().startsWith("404 sayfa") == false) {
+			return HttpStatus.OK;
+		}
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override
   public boolean isAvailable() {
-    return isAvailable;
+    Element val = dom.selectFirst("link[itemprop='availability']");
+    if (val != null && val.hasAttr("href")) {
+    	String href = val.attr("href").toLowerCase();
+      return (href.contains("instock") || href.contains("preorder"));
+    }
+    return false;
   }
 
   @Override
   public String getSku() {
-    Element val = dom.selectFirst("#addToCartForm input[name='sku']");
-    if (val != null && StringUtils.isNotBlank(val.val())) {
-      return val.val();
-    }
+  	String[] chunks = getUrl().split("-");
+  	if (chunks.length > 0) {
+  		return chunks[chunks.length-1];
+  	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
@@ -98,11 +100,7 @@ public class HepsiBurada extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    Element val = dom.selectFirst("label.campaign-text span");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
-    }
-    return "Ücretsiz Kargo: " + (isFreeShipping ? "Evet" : "Hayır");
+    return "Kargo seçenekleri için bakınız";
   }
 
   @Override

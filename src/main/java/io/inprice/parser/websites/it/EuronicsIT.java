@@ -12,6 +12,7 @@ import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -27,11 +28,20 @@ public class EuronicsIT extends AbstractWebsite {
 	private Element prod;
 	
 	@Override
-	protected void setHtml(String html) {
-		super.setHtml(html);
-
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
+	
+	@Override
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
-    prod = dom.getElementsByTag("trackingProduct").first();
+
+		Element notFoundImg = dom.selectFirst("img[alt='pagina non trovata']");
+		if (notFoundImg == null) {
+	    prod = dom.getElementsByTag("trackingProduct").first();
+			return HttpStatus.OK;
+		}
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override

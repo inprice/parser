@@ -21,7 +21,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public class Walmart extends AbstractWebsite {
+public class WalmartUS extends AbstractWebsite {
 
 	private Document dom;
 	private boolean isAvailable;

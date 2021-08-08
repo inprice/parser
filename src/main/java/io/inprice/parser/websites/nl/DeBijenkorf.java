@@ -13,6 +13,7 @@ import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -29,13 +30,8 @@ public class DeBijenkorf extends AbstractWebsite {
 	private JSONObject json;
   private JSONObject prod;
   
-  @Override
-	protected Renderer getRenderer() {
-		return Renderer.HEADLESS;
-	}
-
 	@Override
-	protected void setHtml(String html) {
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
     String prodData = findAPart(html, "Data.product =", "};", 1);
@@ -46,9 +42,11 @@ public class DeBijenkorf extends AbstractWebsite {
       	json = data.getJSONObject("product");
         if (json.has("currentVariantProduct")) {
           prod = json.getJSONObject("currentVariantProduct");
+          return HttpStatus.OK;
         }
       }
     }
+    return HttpStatus.NOT_FOUND;
 	}
 
   @Override

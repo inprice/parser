@@ -24,7 +24,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  *
  * @author mdpinar
  */
-public class BestBuy extends AbstractWebsite {
+public class BestBuyCA extends AbstractWebsite {
 
 	private JSONObject json;
   private JSONObject product;

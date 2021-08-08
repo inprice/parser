@@ -5,17 +5,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -31,9 +32,14 @@ public class Laredoute extends AbstractWebsite {
 
 	private JSONObject json;
   private JSONObject offers;
-	
+  
+  @Override
+	protected By waitBy() {
+		return By.className("pdp-title");
+	}
+
 	@Override
-	protected void setHtml(String html) {
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
     Elements dataEL = dom.select("script[type='application/ld+json']");
@@ -45,19 +51,14 @@ public class Laredoute extends AbstractWebsite {
           if (type.equals("Product")) {
           	json = data;
           	if (json.has("offers")) {
-              try {
-              	offers = json.getJSONObject("offers");
-              	if (offers == null) {
-                  JSONArray arr = offers.getJSONArray("offers");
-                  offers = arr.getJSONObject(0);
-              	}
-              } catch (Exception e) { }
+            	offers = json.getJSONObject("offers");
+              return HttpStatus.OK;
           	}
-            break;
           }
         }
       }
     }
+    return HttpStatus.NOT_FOUND;
 	}
 
   @Override
