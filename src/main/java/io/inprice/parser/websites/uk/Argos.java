@@ -10,6 +10,7 @@ import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -22,17 +23,27 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class Argos extends AbstractWebsite {
 
 	private Document dom;
+
 	private boolean isAvailable;
 	private String brand;
 
 	@Override
-	protected void setHtml(String html) {
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	} 
+
+	@Override
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
-    String found = findAPart(html, "\"globallyOutOfStock\":", ",");
-    isAvailable = ("false".equalsIgnoreCase(found));
-
-    brand = findAPart(html, "\"brand\":\"", "\",");
+		Element titleEl = dom.selectFirst("title");
+		if (titleEl.text().toLowerCase().contains("went wrong") == false) {
+	    String found = findAPart(html, "\"globallyOutOfStock\":", ",");
+	    isAvailable = ("false".equalsIgnoreCase(found));
+	    brand = findAPart(html, "\"brand\":\"", "\",");
+			return HttpStatus.OK;
+		}
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override
@@ -77,10 +88,8 @@ public class Argos extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-  	if (brand != null) {
-  		return brand;
-  	}
-  	
+  	if (StringUtils.isNotBlank(brand)) return brand;
+
     Element val = dom.selectFirst("[itemprop='brand']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();

@@ -3,7 +3,7 @@ package io.inprice.parser;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
 import io.inprice.parser.websites.Website;
-import io.inprice.parser.websites.tr.Trendyol;
+import io.inprice.parser.websites.uk.AsdaDirect;
 
 public class LinkTest {
 	
@@ -18,13 +18,12 @@ public class LinkTest {
 	// Italy     --> euronics, mediaworld
 	// Netherland--> bol, coolblue, debijenkorf, wehkamp
 	// Turkey    --> gittigidiyor, hepsiburada, n11, teknosa, trendyol
+	// U.Kingdom --> argos, asdadirect, asdagrocery
 
 	private static String[] urls = {
-		"https://www.trendyol.com/aqua-di-polo-1987/kadin-kol-saati-apsv1-a9371-km222-p-32043783?boutiqueId=575927&merchantId=2471",
-		"https://www.trendyol.com/spectrum/unisex-siyah-miknatisli-dokunmatik-kol-saati-xt250131-p-50728396?boutiqueId=575537&merchantId=345375",
-		"https://www.trendyol.com/istliv/kadin-erkek-su-gecirmez-dokunmatik-kol-saati-p-77791901?boutiqueId=575717&merchantId=195779",
-		"https://www.trendyol.com/aqua-di-polo-1987/unisex-kol-saati-apl12c350d01-p-4022508?boutiqueId=575927&merchantId=2471",
-		"https://www.trendyol.com/duke-nickle/erkek-kol-saati-veh28019a-p-32183801?boutiqueId=575815&merchantId=106615"
+		"https://www.asda-photo.co.uk/category/350-custom-mugs?product=802-11oz-gloss-personalised-photo-mug&theme=uk-drinkware.themepack%3Aceramic_193x98mm_borderedcollagecustomcolour.mug&design_code=standard.customcolourbordered.collage",
+		//"https://groceries.asda.com/product/prosecco/asda-extra-special-organic-prosecco-brut/1000278922512",
+		//"https://global.direct.asda.com/george/kids/girls-underwear-socks-tights/black-lace-trim-socks-5-pack/GEM865864,default,pd.html?cgid=D25M2G1C9"
 	};
 
 	public static void main(String[] args) throws InterruptedException {
@@ -43,7 +42,7 @@ public class LinkTest {
 		  		link.setPlatform(platform);
 		  		link.setPlatformId(platform.getId());
 
-		  		Website website = new Trendyol();
+		  		Website website = new AsdaDirect();
 		  		website.check(link);
 		  		printout(link);
 				}

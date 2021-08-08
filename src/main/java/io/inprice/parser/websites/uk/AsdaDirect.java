@@ -1,6 +1,7 @@
-package io.inprice.parser.websites.au;
+package io.inprice.parser.websites.uk;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.json.JSONObject;
@@ -9,7 +10,6 @@ import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -18,22 +18,24 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Parser for AppliancesOnline Australia
+ * Parser for Asda Direct UK
+ *
+ * Contains standard data, all is extracted by css selectors
  *
  * @author mdpinar
  */
-public class AppliancesOnline extends AbstractWebsite {
+public class AsdaDirect extends AbstractWebsite {
 
 	private Document dom;
 
 	private JSONObject json;
   private JSONObject offers;
 
-	@Override
-	protected By waitBy() {
-		return By.className("aol-product-price");
+  @Override
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
 	}
-	
+  
 	@Override
 	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
@@ -68,24 +70,31 @@ public class AppliancesOnline extends AbstractWebsite {
 
   @Override
   public String getSku() {
-  	String[] chunks = getUrl().split("-");
-    return chunks[chunks.length-1];
+    if (json != null && json.has("sku")) {
+      return json.getString("sku");
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element val = dom.selectFirst(".heading-is-product-title");
-    if (val != null) {
-    	return val.text();
+    if (json != null && json.has("name")) {
+      return json.getString("name");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element val = dom.selectFirst(".aol-product-price");
-    if (val != null) {
-      return new BigDecimal(cleanDigits(val.text()));
+    if (offers != null) {
+    	String price = null;
+    	if (offers.has("highPrice")) price = offers.getString("highPrice");
+    	if (offers.has("price")) price = offers.getString("price");
+    	if (offers.has("lowPrice")) price = offers.getString("lowPrice");
+      
+    	if (price != null) {
+    		return new BigDecimal(cleanDigits(price));
+    	}
     }
     return BigDecimal.ZERO;
   }
@@ -100,12 +109,23 @@ public class AppliancesOnline extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    return "Check delivery and installation info";
+    return "Check delivery info";
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	return getKeyValueSpecs(dom.select(".specification-item .attribute-row"), ".attribute-name", ".attribute-value");
+  	Set<LinkSpec> specs = getValueOnlySpecs(dom.select(".product-description li"));
+  	if (specs != null) return specs;
+  	
+		Element desc = dom.selectFirst("meta[name='description']");
+		if (desc != null) {
+			specs = new HashSet<>();
+			String[] chunks = desc.attr("content").split("\n");
+			for (int i = 0; i < chunks.length; i++) {
+				specs.add(new LinkSpec("", chunks[i].replaceAll("•", "")));
+			}
+		}
+  	return specs;
   }
 
 }
