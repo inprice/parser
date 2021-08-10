@@ -1,30 +1,18 @@
 package io.inprice.parser.websites.uk;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openqa.selenium.By;
 
-import com.gargoylesoftware.htmlunit.HttpHeader;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.WebResponse;
-
-import io.inprice.common.info.Pair;
-import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.helpers.SomeCountries;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -36,103 +24,64 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class Asos extends AbstractWebsite {
 
-	private static final Logger log = LoggerFactory.getLogger(Asos.class);
-
 	private Document dom;
-  private JSONObject offer;
-
-  private Pair<String, String> country;
-
-  private String priceUrl;
-  private BigDecimal price = BigDecimal.ZERO;
+  private JSONObject json;
 	
+  @Override
+  protected By waitBy() {
+  	return By.className("current-price");
+  }
+  
 	@Override
-	protected void setHtml(String html) {
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
     String prodData = findAPart(html, "config.product = ", "};", 1);
     if (StringUtils.isNotBlank(prodData)) {
-      offer = new JSONObject(prodData);
+    	json = new JSONObject(prodData);
+    	return HttpStatus.OK;
     }
-    priceUrl = "https://www.asos.com" + findAPart(html, "config.stockPriceApiUrl = '", "';");
-	}
-	
-	@Override
-	protected void beforeRequest(WebRequest req) {
-		country = SomeCountries.findOne();
-		req.setAdditionalHeader(HttpHeader.COOKIE, "browseCountry="+country.getLeft());
-	}
-	
-	@Override
-	protected void afterRequest(WebClient webClient) {
-		try {
-  		WebRequest req = new WebRequest(new URL(priceUrl), HttpMethod.GET);
-  		req.setAdditionalHeader(HttpHeader.ACCEPT, "*/*");
-  		req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
-  		req.setAdditionalHeader(HttpHeader.COOKIE, "browseCountry="+country.getLeft());
-
-  		WebResponse res = webClient.loadWebResponse(req);
-      if (res.getStatusCode() < 400) {
-      	JSONArray prices = new JSONArray(res.getContentAsString());
-      	if (prices != null && prices.length() > 0) {
-        	for (int i = 0; i < prices.length(); i++) {
-  					JSONObject prod = prices.getJSONObject(i);
-  					if (prod != null && prod.has("productId")) {
-  						if (offer.getInt("id") ==  prod.getInt("productId")) {
-  							JSONObject pprice = prod.getJSONObject("productPrice");
-  							if (pprice != null && pprice.has("current")) {
-  								JSONObject current = pprice.getJSONObject("current");
-  								if (current != null && current.has("value")) {
-  									price = current.getBigDecimal("value");
-  								}
-  							}
-  							break;
-  						}
-  					}
-  				}
-      	}
-      } else {
-      	setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), res.getStatusCode());
-      }
-		} catch (IOException e) {
-			setLinkStatus(LinkStatus.NETWORK_ERROR, e.getMessage(), 400);
-			log.error("Failed to fetch specs", e);
-		}
+    return HttpStatus.NOT_FOUND;
 	}
 
   @Override
   public boolean isAvailable() {
-  	if (offer != null && offer.has("isInStock")) {
-  		return offer.getBoolean("isInStock");
+  	if (json != null && json.has("isInStock")) {
+  		return json.getBoolean("isInStock");
   	}
     return false;
   }
 
   @Override
   public String getSku() {
-  	if (offer != null && offer.has("id")) {
-  		return ""+offer.getInt("id");
+  	if (json != null && json.has("id")) {
+  		return ""+json.getInt("id");
   	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-  	if (offer != null && offer.has("name")) {
-  		return offer.getString("name");
+  	if (json != null && json.has("name")) {
+  		return json.getString("name");
   	}
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    return price;
+		Element val = dom.selectFirst(".current-price");
+
+		if (val != null) {
+  		return new BigDecimal(cleanDigits(val.text()));
+  	}
+    return BigDecimal.ZERO;
   }
 
   @Override
   public String getBrand() {
-  	if (offer != null && offer.has("brandName")) {
-  		return offer.getString("brandName");
+  	if (json != null && json.has("brandName")) {
+  		return json.getString("brandName");
   	}
     return Consts.Words.NOT_AVAILABLE;
   }

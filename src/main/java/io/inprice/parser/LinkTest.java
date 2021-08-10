@@ -3,7 +3,7 @@ package io.inprice.parser;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
 import io.inprice.parser.websites.Website;
-import io.inprice.parser.websites.uk.AsdaDirect;
+import io.inprice.parser.websites.uk.EuronicsUK;
 
 public class LinkTest {
 	
@@ -18,12 +18,14 @@ public class LinkTest {
 	// Italy     --> euronics, mediaworld
 	// Netherland--> bol, coolblue, debijenkorf, wehkamp
 	// Turkey    --> gittigidiyor, hepsiburada, n11, teknosa, trendyol
-	// U.Kingdom --> argos, asdadirect, asdagrocery
+	// U.Kingdom --> argos, asdadirect, asdagrocery, asos, currys, debenhams, euronics,
 
 	private static String[] urls = {
-		"https://www.asda-photo.co.uk/category/350-custom-mugs?product=802-11oz-gloss-personalised-photo-mug&theme=uk-drinkware.themepack%3Aceramic_193x98mm_borderedcollagecustomcolour.mug&design_code=standard.customcolourbordered.collage",
-		//"https://groceries.asda.com/product/prosecco/asda-extra-special-organic-prosecco-brut/1000278922512",
-		//"https://global.direct.asda.com/george/kids/girls-underwear-socks-tights/black-lace-trim-socks-5-pack/GEM865864,default,pd.html?cgid=D25M2G1C9"
+		"https://www.euronics.co.uk/catalogue/small-appliances/small-cooking-appliances/multi-cookers/ninja-ag551uk-foodi-max-health-grill-and-air-fryer-blackstainless-steel/p/307AG551UK",
+		"https://www.euronics.co.uk/catalogue/tv-and-entertainment/43-to-54-inch-televisions/43-to-54-inch-oled-televisions/43-to-54-inch-oled-4k-uhd-televisions/lg-oled48cx5lc-48-4k-oled-smart-tv/p/101OLED48CX5LC",
+		"https://www.euronics.co.uk/catalogue/refrigeration/american-style-fridge-freezers/samsung-rs67a8811s9-american-style-fridge-freezer-matt-stainless/p/245RS67A8811S9",
+		"https://www.euronics.co.uk/catalogue/small-appliances/small-cooking-appliances/multi-cookers/ninja-op100uk-foodi-mini-6-in-1-multi-cooker-black/p/307OP100UK",
+		"https://www.euronics.co.uk/catalogue/laundry/washing-machines/integrated-washing-machines/bosch-wiw28301gb-integrated-8kg-1400-spin-washing-machine-with-varioperfect-white/p/296WIW28301GB"
 	};
 
 	public static void main(String[] args) throws InterruptedException {
@@ -42,7 +44,7 @@ public class LinkTest {
 		  		link.setPlatform(platform);
 		  		link.setPlatformId(platform.getId());
 
-		  		Website website = new AsdaDirect();
+		  		Website website = new EuronicsUK();
 		  		website.check(link);
 		  		printout(link);
 				}

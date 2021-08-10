@@ -78,7 +78,6 @@ public class BigW extends AbstractWebsite {
     if (offers != null && offers.has("price")) {
       return offers.getBigDecimal("price");
     }
-
     return BigDecimal.ZERO;
   }
 
