@@ -1,6 +1,7 @@
 package io.inprice.parser.websites.uk;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +15,7 @@ import org.jsoup.select.Elements;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -29,9 +31,14 @@ public class NewLook extends AbstractWebsite {
 
 	private JSONObject json;
   private JSONObject offers;
-	
+
+  @Override
+  protected Renderer getRenderer() {
+  	return Renderer.HTMLUNIT;
+  }
+
 	@Override
-	protected void setHtml(String html) {
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 		
     Elements dataEL = dom.select("script[type='application/ld+json']");
@@ -44,11 +51,13 @@ public class NewLook extends AbstractWebsite {
           	json = data;
             if (json.has("offers")) {
             	offers = json.getJSONObject("offers");
+            	return HttpStatus.OK;
             }
           }
         }
       }
     }
+    return HttpStatus.NOT_FOUND;
 	}
 
   @Override
@@ -103,7 +112,21 @@ public class NewLook extends AbstractWebsite {
 
   @Override
   public Set<LinkSpec> getSpecs() {
-    return getValueOnlySpecs(dom.select(".product-details--description.cms p"));
+  	Set<LinkSpec> specs = null;
+
+  	Element val = dom.selectFirst(".product-details--description.cms p");
+  	if (val != null) {
+  		String[] chunks = val.text().split("- ");
+  		if (chunks.length > 1) {
+  			specs = new HashSet<>(chunks.length-1);
+  			for (int i = 1; i < chunks.length; i++) {
+					String spec = chunks[i];
+					specs.add(new LinkSpec("", spec));
+				}
+  		}
+  	}
+
+  	return specs;
   }
 
 }
