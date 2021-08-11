@@ -7,12 +7,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-
-import com.gargoylesoftware.htmlunit.HttpHeader;
-import com.gargoylesoftware.htmlunit.WebRequest;
+import org.openqa.selenium.By;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -23,30 +22,26 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class BestBuyUS extends AbstractWebsite {
 
 	private Document dom;
-	private String referer;
 
 	@Override
-	protected String getAlternativeUrl() {
-		String url = getUrl();
-		boolean hasIntl = url.indexOf("intl=nosplash") > 0;
-		
-		if (hasIntl) {
-			referer = url.replaceAll(".intl=nosplash", "");
-		} else {
-			referer = url;
-			url = url + (url.indexOf("?") > 0 ? "&" : "?") + "intl=nosplash";
-		}
-		return url;
+	protected By clickFirstBy() {
+		return By.className("us-link");
 	}
 	
 	@Override
-	protected void beforeRequest(WebRequest req) {
-		req.setAdditionalHeader(HttpHeader.REFERER, referer);
+	protected By waitBy() {
+		return By.className("priceView-price-match-guarantee");
 	}
-	
+
 	@Override
-	protected void setHtml(String html) {
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
+
+		Element titleEl = dom.selectFirst("title");
+		if (titleEl.text().toLowerCase().contains("not found") == false) {
+			return HttpStatus.OK;
+		}
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override
@@ -74,7 +69,7 @@ public class BestBuyUS extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    Element val = dom.selectFirst(".priceView-hero-price .sr-only");
+    Element val = dom.selectFirst(".priceView-price-match-guarantee + div .priceView-customer-price > span:nth-child(1)");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return new BigDecimal(cleanDigits(val.text()));
     }

@@ -1,133 +1,98 @@
 package io.inprice.parser.websites.us;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.gargoylesoftware.htmlunit.HttpHeader;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.WebResponse;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.openqa.selenium.By;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Parser for Lidl USA
  *
- * Contains standard data, all is extracted from json data gotten from a special
- * url
- *
  * @author mdpinar
  */
 public class LidlUS extends AbstractWebsite {
 
-  private final String prodUrl = "https://mobileapi.lidl.com/v1/products/";
-
-  private String sku;
-  private JSONObject json;
+	private Document dom;
 
 	@Override
-	protected WebResponse makeRequest(WebClient webClient) throws MalformedURLException, IOException {
-    final String[] urlChunks = getUrl().split("/");
-    sku = urlChunks[urlChunks.length - 1];
-
-		WebRequest req = new WebRequest(new URL(prodUrl+sku+"?storeId=US01053"), HttpMethod.GET);
-		req.setAdditionalHeader(HttpHeader.ACCEPT, "*/*");
-		req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
-		req.setAdditionalHeader("referrer", getUrl());
-		req.setAdditionalHeader("credentials", "omit");
-		req.setAdditionalHeader("mode", "cors");
-		
-		return webClient.loadWebResponse(req);
+	protected By waitBy() {
+		return By.className("product-price");
 	}
 	
 	@Override
-	protected void setHtml(String html) {
-		json = new JSONObject(html);
+	protected HttpStatus setHtml(String html) {
+		dom = Jsoup.parse(html);
+
+		Element messageH1 = dom.selectFirst(".status-message-headline");
+		if (messageH1 == null) {
+			return HttpStatus.OK;
+		}
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override
   public boolean isAvailable() {
-    if (json != null && json.has("price")) {
-      JSONObject price = json.getJSONObject("price");
-      if (price.has("baseQuantity")) {
-        return price.getJSONObject("baseQuantity").getInt("value") > 0;
-      }
-    }
-    return true;
+  	Element val = dom.selectFirst(".instock");
+    return (val != null);
   }
 
   @Override
   public String getSku() {
-    return sku;
+    String[] chunks = getUrl().split("/");
+    if (chunks.length > 0) {
+      return chunks[chunks.length-1];
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    if (json != null && json.has("name")) {
-      return json.getString("name");
+    Element val = dom.selectFirst(".product-title");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    if (json != null && json.has("price")) {
-      JSONObject price = json.getJSONObject("price");
-      if (price.has("currentPrice")) {
-        return price.getJSONObject("currentPrice").getBigDecimal("value");
-      }
+    Element val = dom.selectFirst(".product-price .price");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return new BigDecimal(cleanDigits(val.text()));
     }
     return BigDecimal.ZERO;
   }
 
   @Override
-  public String getShipment() {
-    return "In-store pickup";
-  }
-
-  @Override
   public String getBrand() {
-    if (json != null && json.has("brands")) {
-      JSONArray brands = json.getJSONArray("brands");
-      if (!brands.isEmpty() && brands.length() > 0) {
-        return brands.getString(0);
-      }
+  	String[] chunks = getName().split("®");
+    if (chunks.length > 1) {
+      return chunks[0];
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
-  public Set<LinkSpec> getSpecs() {
-  	Set<LinkSpec> specs = null;
-
-    if (json != null && json.has("longDescription")) {
-      String desc = json.getString("longDescription");
-      if (StringUtils.isNotBlank(desc)) {
-        String features = desc.replaceAll("<ul>|</ul>|<li>", "");
-        String[] featureChunks = features.split("</li>");
-        if (featureChunks.length > 0) {
-          specs = new HashSet<>();
-          for (String val : featureChunks) {
-            if (StringUtils.isNotBlank(val) && !val.startsWith("<p>") && !val.startsWith("<div>"))
-              specs.add(new LinkSpec("", val));
-          }
-        }
-      }
-
+  public String getShipment() {
+    Element val = dom.selectFirst(".stock-status-store");
+    if (val != null) {
+    	return "Available at " + val.text();
     }
+    return "Check store";
+  }
 
-    return specs;
+  @Override
+  public Set<LinkSpec> getSpecs() {
+    return getValueOnlySpecs(dom.select(".description li"));
   }
 
 }

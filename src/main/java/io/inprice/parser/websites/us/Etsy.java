@@ -13,6 +13,7 @@ import org.jsoup.select.Elements;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -27,8 +28,19 @@ public class Etsy extends AbstractWebsite {
 	private Document dom;
 
 	@Override
-	protected void setHtml(String html) {
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
+
+	@Override
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
+
+		Element notFoundMain = dom.selectFirst(".error-page-panel");
+		if (notFoundMain == null) {
+			return HttpStatus.OK;
+		}
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override

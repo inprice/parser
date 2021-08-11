@@ -96,7 +96,12 @@ public abstract class AbstractWebsite implements Website {
     		FirefoxDriver webDriver = new FirefoxDriver(capabilities);
     		try {
       		webDriver.get(getUrl());
-      		
+
+      		//some sites open a panel first to specify user preferences
+      		if (clickFirstBy() != null) {
+      			webDriver.findElement(clickFirstBy()).click();
+      		}
+
       		//some sites loads all the data after sometime, so we need to wait some extra seconds!
       		if (waitBy() != null) {
         		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(15));
@@ -423,6 +428,10 @@ public abstract class AbstractWebsite implements Website {
 			setLinkStatus(LinkStatus.NO_DATA, "HAS NO PRICE OR NAME");
 		}
 		link.setHttpStatus(404);
+	}
+
+	protected By clickFirstBy() {
+		return null;
 	}
 
 	protected By waitBy() {
