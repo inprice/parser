@@ -1,12 +1,16 @@
-package io.inprice.parser.websites.de;
+package io.inprice.parser.websites.uk;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
@@ -16,22 +20,23 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * MediaMarkt and Saturn, Germany
+ * Zavvi, United Kingdom
  * 
- * Protected by cloudflare!!!
- *
- * https://www.mediamarkt.de
- * https://www.saturn.de
+ * https://www.zavvi.com
  *
  * @author mdpinar
  */
-public class MediaMarktDE extends AbstractWebsite {
+public class ZavviUK extends AbstractWebsite {
 
-	//used by Euronics as well
-	protected Document dom;
+	private Document dom;
 
 	private JSONObject json;
   private JSONObject offers;
+
+  @Override
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
 
 	@Override
 	protected HttpStatus setHtml(String html) {
@@ -46,14 +51,15 @@ public class MediaMarktDE extends AbstractWebsite {
           if (type.equals("Product")) {
           	json = data;
             if (json.has("offers")) {
-          		offers = json.getJSONObject("offers");
-          		return HttpStatus.OK;
+            	JSONArray offersArr = json.getJSONArray("offers");
+            	offers = offersArr.getJSONObject(0);
+            	return HttpStatus.OK;
             }
           }
         }
       }
     }
-		return HttpStatus.NOT_FOUND;
+    return HttpStatus.NOT_FOUND;
 	}
 
   @Override
@@ -68,7 +74,7 @@ public class MediaMarktDE extends AbstractWebsite {
   @Override
   public String getSku() {
     if (json != null && json.has("sku")) {
-      return json.getString("sku");
+      return offers.getString("sku");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -99,12 +105,37 @@ public class MediaMarktDE extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    return "Siehe Lieferbedingungen";
+    Element val = dom.selectFirst(".productDeliveryAndReturns_message");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	return getKeyValueSpecs(dom.select("[data-test=mms-accordion-features] tr"), "td:nth-child(1)", "td:nth-child(2)");
+  	Set<LinkSpec> specs = null;
+
+  	Elements specsEl = dom.select("div.productDescription_contentWrapper");
+    if (specsEl != null && specsEl.size() > 0) {
+      specs = new HashSet<>();
+      for (Element spec : specsEl) {
+        Element key = spec.selectFirst("div.productDescription_contentPropertyName span");
+        Element value = spec.selectFirst("div.productDescription_contentPropertyValue");
+
+        String strKey = null;
+        String strValue = null;
+
+        if (key != null) {
+          strKey = key.text().replaceAll(":", "");
+        }
+        if (value != null)
+          strValue = value.text();
+
+        specs.add(new LinkSpec(strKey, strValue));
+      }
+    }
+    return specs;
   }
 
 }

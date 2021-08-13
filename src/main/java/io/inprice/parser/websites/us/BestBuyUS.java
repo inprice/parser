@@ -15,7 +15,9 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Parser for Best Buy USA!
+ * BestBuy, USA
+ * 
+ * https://www.bestbuy.com
  *
  * @author mdpinar
  */

@@ -18,9 +18,9 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Parser for BestBuy Canada
+ * BestBuy, Canada
  *
- * The page contains json data on which all data is harvested
+ * https://www.bestbuy.ca
  *
  * @author mdpinar
  */

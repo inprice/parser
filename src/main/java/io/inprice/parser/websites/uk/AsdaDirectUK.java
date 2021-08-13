@@ -1,12 +1,14 @@
-package io.inprice.parser.websites.de;
+package io.inprice.parser.websites.uk;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
@@ -16,23 +18,25 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * MediaMarkt and Saturn, Germany
- * 
- * Protected by cloudflare!!!
+ * Asda, United Kingdom
  *
- * https://www.mediamarkt.de
- * https://www.saturn.de
+ * https://global.direct.asda.com
+ * https://www.asda-photo.co.uk
  *
  * @author mdpinar
  */
-public class MediaMarktDE extends AbstractWebsite {
+public class AsdaDirectUK extends AbstractWebsite {
 
-	//used by Euronics as well
-	protected Document dom;
+	private Document dom;
 
 	private JSONObject json;
   private JSONObject offers;
 
+  @Override
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
+  
 	@Override
 	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
@@ -83,8 +87,15 @@ public class MediaMarktDE extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (offers != null && offers.has("price")) {
-      return offers.getBigDecimal("price");
+    if (offers != null) {
+    	String price = null;
+    	if (offers.has("highPrice")) price = offers.getString("highPrice");
+    	if (offers.has("price")) price = offers.getString("price");
+    	if (offers.has("lowPrice")) price = offers.getString("lowPrice");
+      
+    	if (price != null) {
+    		return new BigDecimal(cleanDigits(price));
+    	}
     }
     return BigDecimal.ZERO;
   }
@@ -99,12 +110,23 @@ public class MediaMarktDE extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    return "Siehe Lieferbedingungen";
+    return "Check delivery info";
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	return getKeyValueSpecs(dom.select("[data-test=mms-accordion-features] tr"), "td:nth-child(1)", "td:nth-child(2)");
+  	Set<LinkSpec> specs = getValueOnlySpecs(dom.select(".product-description li"));
+  	if (specs != null) return specs;
+  	
+		Element desc = dom.selectFirst("meta[name='description']");
+		if (desc != null) {
+			specs = new HashSet<>();
+			String[] chunks = desc.attr("content").split("\n");
+			for (int i = 0; i < chunks.length; i++) {
+				specs.add(new LinkSpec("", chunks[i].replaceAll("•", "")));
+			}
+		}
+  	return specs;
   }
 
 }

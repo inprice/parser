@@ -1,13 +1,17 @@
-package io.inprice.parser.websites.de;
+package io.inprice.parser.websites.fr;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -16,44 +20,45 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * MediaMarkt and Saturn, Germany
- * 
- * Protected by cloudflare!!!
+ * Laredoute, France
  *
- * https://www.mediamarkt.de
- * https://www.saturn.de
+ * https://www.laredoute.com
  *
  * @author mdpinar
  */
-public class MediaMarktDE extends AbstractWebsite {
+public class LaredouteFR extends AbstractWebsite {
 
-	//used by Euronics as well
-	protected Document dom;
+	private Document dom;
 
 	private JSONObject json;
   private JSONObject offers;
+  
+  @Override
+	protected By waitBy() {
+		return By.className("pdp-title");
+	}
 
 	@Override
 	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
     Elements dataEL = dom.select("script[type='application/ld+json']");
-    if (dataEL != null && dataEL.size() > 0) {
-    	for (DataNode dNode : dataEL.dataNodes()) {
+    if (dataEL != null) {
+      for (DataNode dNode : dataEL.dataNodes()) {
         JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
         if (data.has("@type")) {
           String type = data.getString("@type");
           if (type.equals("Product")) {
           	json = data;
-            if (json.has("offers")) {
-          		offers = json.getJSONObject("offers");
-          		return HttpStatus.OK;
-            }
+          	if (json.has("offers")) {
+            	offers = json.getJSONObject("offers");
+              return HttpStatus.OK;
+          	}
           }
         }
       }
     }
-		return HttpStatus.NOT_FOUND;
+    return HttpStatus.NOT_FOUND;
 	}
 
   @Override
@@ -92,19 +97,53 @@ public class MediaMarktDE extends AbstractWebsite {
   @Override
   public String getBrand() {
     if (json != null && json.has("brand")) {
-      return json.getJSONObject("brand").getString("name");
+      JSONObject brand = json.getJSONObject("brand");
+      if (brand.has("name")) {
+        return brand.getString("name");
+      }
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
+  public String getSeller() {
+    if (offers != null && offers.has("seller")) {
+      JSONObject seller = offers.getJSONObject("seller");
+      if (seller.has("name")) {
+        return seller.getString("name");
+      }
+    }
+    return super.getSeller();
+  }
+
+  @Override
   public String getShipment() {
-    return "Siehe Lieferbedingungen";
+    Element val = dom.selectFirst("li.delivery-info-item.delivery-info.delivery-info-content");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	return getKeyValueSpecs(dom.select("[data-test=mms-accordion-features] tr"), "td:nth-child(1)", "td:nth-child(2)");
+  	Set<LinkSpec> specs = null;
+    Element specsEl = dom.getElementsByTag("dscpdp").first();
+    if (specsEl != null) {
+      String[] specChunks;
+      if (specsEl.text().indexOf("•") > 0)
+        specChunks = specsEl.text().split("•");
+      else
+        specChunks = specsEl.text().split("\\.");
+
+      if (specChunks.length > 0) {
+        specs = new HashSet<>(specChunks.length);
+        for (String spec : specChunks) {
+          specs.add(new LinkSpec("", spec));
+        }
+      }
+    }
+    return specs;
   }
 
 }

@@ -1,4 +1,4 @@
-package io.inprice.parser.websites.de;
+package io.inprice.parser.websites.au;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -7,7 +7,9 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -16,23 +18,24 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * MediaMarkt and Saturn, Germany
+ * AppliancesOnline, Australia
  * 
- * Protected by cloudflare!!!
- *
- * https://www.mediamarkt.de
- * https://www.saturn.de
+ * https://www.appliancesonline.com
  *
  * @author mdpinar
  */
-public class MediaMarktDE extends AbstractWebsite {
+public class AppliancesOnlineAU extends AbstractWebsite {
 
-	//used by Euronics as well
-	protected Document dom;
+	private Document dom;
 
 	private JSONObject json;
   private JSONObject offers;
 
+	@Override
+	protected By waitBy() {
+		return By.className("aol-product-price");
+	}
+	
 	@Override
 	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
@@ -67,24 +70,24 @@ public class MediaMarktDE extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    if (json != null && json.has("sku")) {
-      return json.getString("sku");
-    }
-    return Consts.Words.NOT_AVAILABLE;
+  	String[] chunks = getUrl().split("-");
+    return chunks[chunks.length-1];
   }
 
   @Override
   public String getName() {
-    if (json != null && json.has("name")) {
-      return json.getString("name");
+    Element val = dom.selectFirst(".heading-is-product-title");
+    if (val != null) {
+    	return val.text();
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    if (offers != null && offers.has("price")) {
-      return offers.getBigDecimal("price");
+    Element val = dom.selectFirst(".aol-product-price");
+    if (val != null) {
+      return new BigDecimal(cleanDigits(val.text()));
     }
     return BigDecimal.ZERO;
   }
@@ -99,12 +102,12 @@ public class MediaMarktDE extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    return "Siehe Lieferbedingungen";
+    return "Check delivery and installation info";
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	return getKeyValueSpecs(dom.select("[data-test=mms-accordion-features] tr"), "td:nth-child(1)", "td:nth-child(2)");
+  	return getKeyValueSpecs(dom.select(".specification-item .attribute-row"), ".attribute-name", ".attribute-value");
   }
 
 }

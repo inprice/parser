@@ -1,12 +1,14 @@
-package io.inprice.parser.websites.de;
+package io.inprice.parser.websites.tr;
 
 import java.math.BigDecimal;
 import java.util.Set;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
@@ -16,27 +18,28 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * MediaMarkt and Saturn, Germany
- * 
- * Protected by cloudflare!!!
+ * n11, Turkiye
  *
- * https://www.mediamarkt.de
- * https://www.saturn.de
+ * https://urun.n11.com
  *
  * @author mdpinar
  */
-public class MediaMarktDE extends AbstractWebsite {
+public class N11TR extends AbstractWebsite {
 
-	//used by Euronics as well
-	protected Document dom;
+	private Document dom;
 
 	private JSONObject json;
   private JSONObject offers;
+  
+  @Override
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
 
 	@Override
 	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
-
+		
     Elements dataEL = dom.select("script[type='application/ld+json']");
     if (dataEL != null && dataEL.size() > 0) {
     	for (DataNode dNode : dataEL.dataNodes()) {
@@ -58,17 +61,18 @@ public class MediaMarktDE extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    if (offers != null && offers.has("availability")) {
-      String availability = offers.getString("availability").toLowerCase();
-      return availability.contains("instock") || availability.contains("preorder");
+    if (offers != null && offers.has("offerCount")) {
+    	String offerCount = offers.getString("offerCount");
+    	return (NumberUtils.toInt(offerCount) > 0);
     }
     return false;
   }
 
   @Override
   public String getSku() {
-    if (json != null && json.has("sku")) {
-      return json.getString("sku");
+  	Element val = dom.selectFirst("input[name='skuId']");
+    if (val != null && val.hasAttr("value")) {
+      return val.attr("value");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -83,8 +87,12 @@ public class MediaMarktDE extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (offers != null && offers.has("price")) {
-      return offers.getBigDecimal("price");
+    if (offers != null) {
+    	if (offers.has("lowPrice")) {
+    		return offers.getBigDecimal("lowPrice");
+    	} else if (offers.has("price")) {
+    		return offers.getBigDecimal("price");
+    	}
     }
     return BigDecimal.ZERO;
   }
@@ -92,19 +100,38 @@ public class MediaMarktDE extends AbstractWebsite {
   @Override
   public String getBrand() {
     if (json != null && json.has("brand")) {
-      return json.getJSONObject("brand").getString("name");
+      return json.getString("brand");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getShipment() {
-    return "Siehe Lieferbedingungen";
+  	Element val = dom.selectFirst(".cargo-price");
+    if (val != null) {
+      return val.text();
+    }
+    return "Detayları gör";
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	return getKeyValueSpecs(dom.select("[data-test=mms-accordion-features] tr"), "td:nth-child(1)", "td:nth-child(2)");
+  	Set<LinkSpec> specs = getKeyValueSpecs(dom.select("div.ProductSpecification"), "dd", "dt");
+  	if (specs != null) return specs;
+  	
+  	specs = getKeyValueSpecs(dom.select("div.tab-Specification li"), "div.meta", "div.subMeta");
+  	Set<LinkSpec> features = getValueOnlySpecs(dom.select("div.contentList li"), "div.meta");
+
+  	if (specs != null && features == null) return specs;
+  	if (features != null && specs == null) return features;
+
+  	if (specs == null) {
+  		specs = getValueOnlySpecs(dom.select("div.product-details li"));
+  		if (features == null) return specs;
+  	}
+
+  	features.addAll(specs);
+  	return features;
   }
 
 }

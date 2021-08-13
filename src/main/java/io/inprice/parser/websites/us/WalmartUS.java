@@ -15,10 +15,9 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Parser for Walmart USA
- *
- * Contains standard data. all (except for availability) is extracted by css
- * selectors
+ * Walmart, USA
+ * 
+ * https://www.walmart.com
  *
  * @author mdpinar
  */

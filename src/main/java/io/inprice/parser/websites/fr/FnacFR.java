@@ -1,12 +1,15 @@
-package io.inprice.parser.websites.de;
+package io.inprice.parser.websites.fr;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
@@ -16,27 +19,28 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * MediaMarkt and Saturn, Germany
- * 
- * Protected by cloudflare!!!
+ * Fnac, France
  *
- * https://www.mediamarkt.de
- * https://www.saturn.de
+ * https://www.fnac.com
  *
  * @author mdpinar
  */
-public class MediaMarktDE extends AbstractWebsite {
+public class FnacFR extends AbstractWebsite {
 
-	//used by Euronics as well
-	protected Document dom;
+	private Document dom;
 
 	private JSONObject json;
-  private JSONObject offers;
+	private JSONObject offers;
+
+	@Override
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
 
 	@Override
 	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
-
+		
     Elements dataEL = dom.select("script[type='application/ld+json']");
     if (dataEL != null && dataEL.size() > 0) {
     	for (DataNode dNode : dataEL.dataNodes()) {
@@ -67,8 +71,11 @@ public class MediaMarktDE extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    if (json != null && json.has("sku")) {
-      return json.getString("sku");
+    if (json != null) {
+      if (json.has("sku"))
+        return json.getString("sku");
+      if (json.has("prid"))
+        return "" + json.getInt("prid");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -92,19 +99,58 @@ public class MediaMarktDE extends AbstractWebsite {
   @Override
   public String getBrand() {
     if (json != null && json.has("brand")) {
-      return json.getJSONObject("brand").getString("name");
+      JSONObject brand = json.getJSONObject("brand");
+      if (brand.has("name")) {
+        return brand.getString("name");
+      }
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
+  public String getSeller() {
+    if (offers != null && offers.has("seller")) {
+      JSONObject seller = offers.getJSONObject("seller");
+      if (seller.has("name")) {
+        return seller.getString("name");
+      }
+    }
+    return super.getSeller();
+  }
+
+  @Override
   public String getShipment() {
-    return "Siehe Lieferbedingungen";
+    Element val = dom.selectFirst(".f-buyBox-shipping");
+    if (val == null || StringUtils.isBlank(val.text())) {
+      val = dom.selectFirst(".f-productSpecialsOffers-offerParagraphWrapper");
+    }
+
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return val.text();
+    }
+
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	return getKeyValueSpecs(dom.select("[data-test=mms-accordion-features] tr"), "td:nth-child(1)", "td:nth-child(2)");
+  	Set<LinkSpec> specs = getKeyValueSpecs(dom.select("div.characteristicsStrate__list dl"), "dt", "dd");
+  	if (specs != null && specs.size() > 0) return specs;
+
+    Elements specsEl = dom.select("table.f-productDetails-table tr");
+    if (specs != null) {
+      specs = new HashSet<>();
+      for (Element spec : specsEl) {
+        Elements pairs = spec.select("td.f-productDetails-cell");
+        if (pairs.size() == 1) {
+          specs.add(new LinkSpec("", pairs.get(0).text()));
+        } else if (pairs.size() > 1) {
+          specs.add(new LinkSpec(pairs.get(0).text(), pairs.get(1).text()));
+        }
+      }
+    }
+
+    return specs;
   }
 
 }

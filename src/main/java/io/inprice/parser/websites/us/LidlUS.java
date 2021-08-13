@@ -15,7 +15,9 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Parser for Lidl USA
+ * Lidl, USA
+ * 
+ * https://www.lidl.com
  *
  * @author mdpinar
  */

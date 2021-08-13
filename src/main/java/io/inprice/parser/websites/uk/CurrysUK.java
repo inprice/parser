@@ -1,4 +1,4 @@
-package io.inprice.parser.websites.de;
+package io.inprice.parser.websites.uk;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -16,23 +17,24 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * MediaMarkt and Saturn, Germany
+ * Currys, United Kingdom
  * 
- * Protected by cloudflare!!!
- *
- * https://www.mediamarkt.de
- * https://www.saturn.de
+ * https://www.currys.co.uk
  *
  * @author mdpinar
  */
-public class MediaMarktDE extends AbstractWebsite {
+public class CurrysUK extends AbstractWebsite {
 
-	//used by Euronics as well
-	protected Document dom;
+	private Document dom;
 
 	private JSONObject json;
   private JSONObject offers;
 
+	@Override
+	protected By waitBy() {
+		return By.className("product-page");
+	}
+	
 	@Override
 	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
@@ -75,8 +77,8 @@ public class MediaMarktDE extends AbstractWebsite {
 
   @Override
   public String getName() {
-    if (json != null && json.has("name")) {
-      return json.getString("name");
+    if (json != null && json.has("sku")) {
+    	return json.getString("name");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
@@ -92,19 +94,20 @@ public class MediaMarktDE extends AbstractWebsite {
   @Override
   public String getBrand() {
     if (json != null && json.has("brand")) {
-      return json.getJSONObject("brand").getString("name");
+    	JSONObject brand = json.getJSONObject("brand");
+    	if (brand.has("name")) return brand.getString("name");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getShipment() {
-    return "Siehe Lieferbedingungen";
+    return "Check delivery info";
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	return getKeyValueSpecs(dom.select("[data-test=mms-accordion-features] tr"), "td:nth-child(1)", "td:nth-child(2)");
+  	return getValueOnlySpecs(dom.select(".product-highlight li"));
   }
 
 }

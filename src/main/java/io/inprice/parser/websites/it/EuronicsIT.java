@@ -16,9 +16,9 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Parser for Euronics Italy
+ * Euronics, Italy
  *
- * Contains standard data, all is extracted by css selectors
+ * https://www.euronics.it
  *
  * @author mdpinar
  */

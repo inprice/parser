@@ -10,9 +10,9 @@ import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.websites.de.MediaMarktDE;
 
 /**
- * Parser for Euronics Spain
+ * Euronics, Spain
  *
- * Mostly the same with MediamarktDE class
+ * https://www.euronics.es
  *
  * @author mdpinar
  */

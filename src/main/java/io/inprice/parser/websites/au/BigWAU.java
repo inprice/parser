@@ -1,4 +1,4 @@
-package io.inprice.parser.websites.de;
+package io.inprice.parser.websites.au;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -16,19 +16,15 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * MediaMarkt and Saturn, Germany
- * 
- * Protected by cloudflare!!!
+ * Bigw, Australia
  *
- * https://www.mediamarkt.de
- * https://www.saturn.de
+ * https://www.bigw.com.au
  *
  * @author mdpinar
  */
-public class MediaMarktDE extends AbstractWebsite {
+public class BigWAU extends AbstractWebsite {
 
-	//used by Euronics as well
-	protected Document dom;
+	private Document dom;
 
 	private JSONObject json;
   private JSONObject offers;
@@ -58,11 +54,7 @@ public class MediaMarktDE extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    if (offers != null && offers.has("availability")) {
-      String availability = offers.getString("availability").toLowerCase();
-      return availability.contains("instock") || availability.contains("preorder");
-    }
-    return false;
+    return true;
   }
 
   @Override
@@ -92,19 +84,34 @@ public class MediaMarktDE extends AbstractWebsite {
   @Override
   public String getBrand() {
     if (json != null && json.has("brand")) {
-      return json.getJSONObject("brand").getString("name");
+      return json.getString("brand");
     }
     return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public String getShipment() {
-    return "Siehe Lieferbedingungen";
+    return "In-store pickup";
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	return getKeyValueSpecs(dom.select("[data-test=mms-accordion-features] tr"), "td:nth-child(1)", "td:nth-child(2)");
+  	Set<LinkSpec> specs = getKeyValueSpecs(dom.select("div.ProductSpecification"), "dd", "dt");
+  	if (specs != null) return specs;
+  	
+  	specs = getKeyValueSpecs(dom.select("div.tab-Specification li"), "div.meta", "div.subMeta");
+  	Set<LinkSpec> features = getValueOnlySpecs(dom.select("div.contentList li"), "div.meta");
+
+  	if (specs != null && features == null) return specs;
+  	if (features != null && specs == null) return features;
+
+  	if (specs == null) {
+  		specs = getValueOnlySpecs(dom.select("div.product-details li"));
+  		if (features == null) return specs;
+  	}
+
+  	features.addAll(specs);
+  	return features;
   }
 
 }

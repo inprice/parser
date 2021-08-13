@@ -29,10 +29,12 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Parser for Walmart CA!
+ * Walmart, Canada
  * 
  * This site can sense us! We must not handle urls concurrently.
- * This site's urls must be handled over singly queue! 
+ * This site's urls must be handled over singly queue!
+ * 
+ * https://www.walmart.ca
  *
  * @author mdpinar
  */

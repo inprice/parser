@@ -1,8 +1,9 @@
-package io.inprice.parser.websites.de;
+package io.inprice.parser.websites.au;
 
 import java.math.BigDecimal;
 import java.util.Set;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
@@ -16,23 +17,19 @@ import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * MediaMarkt and Saturn, Germany
- * 
- * Protected by cloudflare!!!
+ * HarveyNorman, Australia
  *
- * https://www.mediamarkt.de
- * https://www.saturn.de
+ * https://www.harveynorman.com.au
  *
  * @author mdpinar
  */
-public class MediaMarktDE extends AbstractWebsite {
+public class HarveyNormanAU extends AbstractWebsite {
 
-	//used by Euronics as well
-	protected Document dom;
+	private Document dom;
 
 	private JSONObject json;
   private JSONObject offers;
-
+	
 	@Override
 	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
@@ -46,8 +43,11 @@ public class MediaMarktDE extends AbstractWebsite {
           if (type.equals("Product")) {
           	json = data;
             if (json.has("offers")) {
-          		offers = json.getJSONObject("offers");
-          		return HttpStatus.OK;
+            	JSONArray offs = json.getJSONArray("offers");
+            	if (offs != null && offs.length() > 0) {
+            		offers = offs.getJSONObject(0);
+            		return HttpStatus.OK;
+            	}
             }
           }
         }
@@ -83,8 +83,10 @@ public class MediaMarktDE extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (offers != null && offers.has("price")) {
-      return offers.getBigDecimal("price");
+    if (isAvailable()) {
+      if (offers != null && offers.has("price")) {
+        return offers.getBigDecimal("price");
+      }
     }
     return BigDecimal.ZERO;
   }
@@ -98,13 +100,22 @@ public class MediaMarktDE extends AbstractWebsite {
   }
 
   @Override
+  public String getSeller() {
+    if (offers != null && offers.has("seller")) {
+      JSONObject seller = offers.getJSONObject("seller");
+      return seller.getString("name");
+    }
+    return super.getSeller();
+  }
+
+  @Override
   public String getShipment() {
-    return "Siehe Lieferbedingungen";
+    return "Learn how delivery works";
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	return getKeyValueSpecs(dom.select("[data-test=mms-accordion-features] tr"), "td:nth-child(1)", "td:nth-child(2)");
+  	return getKeyValueSpecs(dom.select("table#product-attribute-specs-table tr"), "th", "td");
   }
 
 }
