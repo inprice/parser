@@ -229,23 +229,4 @@ public class WalmartCA extends AbstractWebsite {
     return specs;
   }
 
-  protected void detectProblem() {
-  	String title = dom.title();
-		if (title.contains("Verify Your Identity")) {
-			setLinkStatus(LinkStatus.BLOCKED, "BLOCKED!" + (getRetry() < 3 ? " RETRYING..." : ""));
-			return;
-		}
-
-  	Elements h1s = dom.select("h1");
-  	if (h1s != null && h1s.size() > 0) {
-  		for (Element h1: h1s) {
-				if (h1.text().contains("Clean up in Aisle 404")) {
-					setLinkStatus(LinkStatus.NOT_FOUND, "NOT FOUND!");
-					return;
-				}
-			}
-  	}
-  	super.detectProblem();
-  }
-
 }

@@ -1,8 +1,6 @@
 package io.inprice.parser.websites;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.SocketTimeoutException;
@@ -56,7 +54,9 @@ public abstract class AbstractWebsite implements Website {
 	private static final Logger log = LoggerFactory.getLogger(AbstractWebsite.class);
 	
 	/**
-	 * There are two kind of html handler; a) External chrome browser, b) Internal HtmlUnit (default one)
+	 * There are two kind of html handler;
+	 *   a) External browser  (default one)
+	 *   b) Internal HtmlUnit
 	 */
 	protected static enum Renderer {
 		HTMLUNIT,
@@ -393,41 +393,12 @@ public abstract class AbstractWebsite implements Website {
 			return SqlHelper.clear(newForm);
 	}
 
-	protected void saveHtml(String html) {
-		detectProblem();
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append(System.getProperty("user.home"));
-		sb.append("/tmp/");
-		sb.append(link.getPlatform().getName().replaceAll("\\s",  ""));
-		sb.append("-");
-		sb.append(link.getId());
-		sb.append(".html");
-
-		log.warn(" - Status: {}, Pre.Status: {}, File: {}", link.getStatus().name(), oldStatus.name(), sb.toString());
-		
-		try (PrintWriter out = new PrintWriter(sb.toString())) {
-	    out.println(html);
-		} catch (FileNotFoundException e) {
-			log.error("Failed to journal the problem!", e);
-		}		
-	}
-
 	protected HttpStatus setHtml(String html) {
 		return new HttpStatus(200, null);
 	}
 
 	protected HttpStatus setExtraHtml(String html) {
 		return new HttpStatus(200, null);
-	}
-
-	protected void detectProblem() {
-		if (LinkStatus.AVAILABLE.equals(oldStatus)) {
-			setLinkStatus(LinkStatus.NOT_AVAILABLE, "AVAILABILITY PROBLEM");
-		} else {
-			setLinkStatus(LinkStatus.NO_DATA, "HAS NO PRICE OR NAME");
-		}
-		link.setHttpStatus(404);
 	}
 
 	protected By clickFirstBy() {
