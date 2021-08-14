@@ -1,7 +1,7 @@
 package io.inprice.parser.websites;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
@@ -36,6 +36,6 @@ public interface Website {
 
 	String getShipment();
 
-	List<LinkSpec> getSpecList();
+	Set<LinkSpec> getSpecs();
 
 }

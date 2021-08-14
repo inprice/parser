@@ -1,51 +1,42 @@
 package io.inprice.parser.websites;
 
-import static io.inprice.parser.helpers.Global.HTMLUNIT_POOL;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.impl.EnglishReasonPhraseCatalog;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.logging.LogEntries;
-import org.openqa.selenium.logging.LogEntry;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxDriver.Capability;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.firefox.ProfilesIni;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.HttpHeader;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 
-import io.inprice.common.config.SysProps;
 import io.inprice.common.helpers.SqlHelper;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.meta.LinkStatusGroup;
@@ -53,8 +44,8 @@ import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.models.Platform;
 import io.inprice.common.utils.NumberUtils;
-import io.inprice.parser.config.Props;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 
 /**
  * 
@@ -68,16 +59,14 @@ public abstract class AbstractWebsite implements Website {
 	 * There are two kind of html handler; a) External chrome browser, b) Internal HtmlUnit (default one)
 	 */
 	protected static enum Renderer {
-		HTMLUNIT, //internal and default one
-		CHROME,  //external and optional
-		JSOUP;  //for test
+		HTMLUNIT,
+		BROWSER,
+		JSOUP;  //for only tests
 	}
 
 	private Link link;
 	private LinkStatus oldStatus;
 	
-	private String html;
-
 	@Override
 	public void check(Link link) {
 		this.link = link;
@@ -85,169 +74,148 @@ public abstract class AbstractWebsite implements Website {
 
 		if (openPage()) read();
 	}
-	
+
 	protected Renderer getRenderer() {
-		return Renderer.HTMLUNIT;
+		return Renderer.BROWSER;
 	}
 
 	private boolean openPage() {
 		long started = System.currentTimeMillis();
-
-		String problem = null;
-		int httpStatus = 200;
+		
+		HttpStatus status = new HttpStatus(200, null);
 		
 		switch (getRenderer()) {
+			case BROWSER: {
+      	ProfilesIni profileIni = new ProfilesIni();
+      	FirefoxProfile profile = profileIni.getProfile("default");
+    
+    		FirefoxOptions capabilities = new FirefoxOptions();
+    		capabilities.setCapability(Capability.PROFILE, profile);
+    		capabilities.setAcceptInsecureCerts(false);
+    
+    		FirefoxDriver webDriver = new FirefoxDriver(capabilities);
+    		try {
+      		webDriver.get(getUrl());
 
+      		//some sites open a panel first to specify user preferences
+      		if (clickFirstBy() != null) {
+      			webDriver.findElement(clickFirstBy()).click();
+      		}
+
+      		//some sites loads all the data after sometime, so we need to wait some extra seconds!
+      		if (waitBy() != null) {
+        		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(15));
+        		wait.until(ExpectedConditions.visibilityOfElementLocated(waitBy()));
+      		}
+    
+          status = setHtml(webDriver.getPageSource());
+          if (status.getMessage() == null) {
+          	String url = getExtraUrl();
+        		if (StringUtils.isNotBlank(url)) {
+        			webDriver.get(url);
+        			status = setExtraHtml(webDriver.getPageSource());
+        		}
+          }
+    
+    		} catch (Exception e) {
+    			status.setMessage(e.getMessage());
+    		} finally {
+    			webDriver.close();
+    		}
+    		break;
+			}
+			
 			case HTMLUNIT: {
-  			WebClient webClient = null;
-  			try {
-  				webClient = HTMLUNIT_POOL.acquire();
-  				WebResponse res = makeRequest(webClient);
-
-  				if (res.getStatusCode() < 400) {
-  					httpStatus = res.getStatusCode();
-  	  			setHtml(res.getContentAsString());
-  	  			afterRequest(webClient);
-  				} else {
-  					problem = res.getStatusMessage();
-  					httpStatus = res.getStatusCode();
-  				}
-
-  	    } catch (SocketTimeoutException set) {
-  				problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
-  				httpStatus = 408;
-  				log.error("Timed out: {}", set.getMessage());
-  			} catch (IOException e) {
-  				log.error("Unexpected error!", e);
-  				problem = e.getMessage();
-  				httpStatus = 502;
-  			} finally {
-  				if (webClient != null) HTMLUNIT_POOL.release(webClient);
-  			}
-  			break;
-  		}
-
-			case CHROME: {
-	  		RemoteWebDriver webDriver = null;
-	  		try {
-	    		ChromeOptions options = new ChromeOptions();
-	      	options.addArguments(
-	      		"--disable-gpu",
-	      		"--disable-dev-shm-usage",
-	      		"--no-sandbox",
-	      		"--ignore-certificate-errors",
-	    			"--disable-blink-features=AutomationControlled"
-	  			);
-	        LoggingPreferences logPrefs = new LoggingPreferences();
-	        logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
-	        options.setCapability("goog:loggingPrefs", logPrefs);
-	      	
-	        webDriver = new RemoteWebDriver(new URL(Props.WEBDRIVER_URL), options);
-	      	webDriver.manage().timeouts().pageLoadTimeout(SysProps.HTTP_CONNECTION_TIMEOUT, TimeUnit.SECONDS);
-	    		webDriver.get(getUrl());
-	    		
-	  			LogEntries logs = webDriver.manage().logs().get(LogType.PERFORMANCE);
-	  			for (Iterator<LogEntry> it = logs.iterator(); it.hasNext();) {
-	          LogEntry entry = it.next();
-	          try {
-	            JSONObject json = new JSONObject(entry.getMessage());
-	            JSONObject message = json.getJSONObject("message");
-	            String method = message.getString("method");
-	            if (method != null && "Network.responseReceived".equals(method)) {
-	              JSONObject params = message.getJSONObject("params");
-	              JSONObject response = params.getJSONObject("response");
-	              String messageUrl = response.getString("url");
-	              if (getUrl().equals(messageUrl)) {
-	              	httpStatus = response.getInt("status");
-	                break;
-	              }
-	            }
-	          } catch (JSONException e) {
-	            e.printStackTrace();
-	          }
-	        }  			
-	    		
-	  			if (httpStatus >= 400) {
-	  				problem = EnglishReasonPhraseCatalog.INSTANCE.getReason(httpStatus, Locale.ENGLISH);
-	  			} else {
-	  				String pageSource = null;
-	  				if (isJsRendered()) {
-	  	  			String javascript = "return arguments[0].innerHTML";
-	  	  			pageSource = (String)((JavascriptExecutor)webDriver).executeScript(javascript, webDriver.findElement(By.tagName("html")));
-	  				} else {
-	  					pageSource = webDriver.getPageSource();
-	  				}
-	  				setHtml(pageSource);
-	  			}
-	  			//some websites like canadiantire needs extra http call for some data such as price and stock availability.
-	  			//renderExtra(webDriver);
-	  
-	  			webDriver.close();
-	  		} catch (TimeoutException e) {
-	  			WebElement html = webDriver.findElement(By.tagName("html"));
-	  			if (html.isDisplayed()) {
-	  				setHtml(html.getText());
-	  			} else {
-	  				problem = "TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : "");
-	    			httpStatus = 408;
-	    			log.error("Timed out: {}", e.getMessage());
-	  			}
-	  		} catch (WebDriverException e) {
-	  			problem = "ACCESS ERROR!";
-	  			httpStatus = 407;
-	  			log.error("Reaching error: {}", e.getMessage());
-	  		} catch (MalformedURLException e) {
-	  			e.printStackTrace();
-	  			problem = "MALFORMED URL!";
-	  			httpStatus = 500;
-				} finally {
-	  			if (webDriver != null) webDriver.quit();
-	  		}
-  			break;
-  		}
+    		WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+    		try {
+    			WebRequest req = new WebRequest(new URL(getUrl()));
+    			req.setAdditionalHeader(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+    			req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
+    			req.setAdditionalHeader(HttpHeader.ACCEPT_ENCODING, "gzip, deflate, br");
+    			req.setAdditionalHeader(HttpHeader.CONNECTION, "keep-alive");
+    			req.setAdditionalHeader(HttpHeader.CACHE_CONTROL, "max-age=0");
+    
+    	  	WebResponse res = webClient.loadWebResponse(req);
+    
+    			if (res.getStatusCode() < 400) {
+    				status.setCode(res.getStatusCode());
+      			setHtml(res.getContentAsString());
+    				afterRequest(webClient);
+    			} else {
+    				status.setCode(res.getStatusCode());
+    				status.setMessage(res.getStatusMessage());
+    			}
+    
+        } catch (SocketTimeoutException set) {
+    			status.setCode(408);
+    			status.setMessage("TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : ""));
+    			log.error("Timed out: {}", set.getMessage());
+    		} catch (IOException e) {
+    			log.error("Unexpected error!", e);
+    			status.setCode(502);
+    			status.setMessage(e.getMessage());
+    		} finally {
+    			webClient.close();
+    		}
+    		break;
+			}
 
 			case JSOUP: {
-				Connection.Response response = null;
+				Connection.Response res = null;
 		    try {
-		      response = Jsoup.connect(getUrl()).userAgent("Mozilla").ignoreHttpErrors(true).execute();
-		      if (response.statusCode() < 400) {
-  		      response.charset("UTF-8");
-  		      Document doc = response.parse();
+		      res = Jsoup.connect(getUrl()).userAgent("Mozilla").ignoreHttpErrors(true).execute();
+		      if (res.statusCode() < 400) {
+  		      res.charset("UTF-8");
+  		      Document doc = res.parse();
   		      setHtml(doc.html());
 		      } else {
-	  				problem = response.statusMessage();
-	  				httpStatus = response.statusCode();
+    				status.setCode(res.statusCode());
+    				status.setMessage(res.statusMessage());
 		      }
 		    } catch (IOException e) {
-		    	if (response != null && response.statusCode() >= 400) {
-	  				problem = response.statusMessage();
-	  				httpStatus = response.statusCode();
+		    	if (res != null && res.statusCode() >= 400) {
+    				status.setCode(res.statusCode());
+    				status.setMessage(res.statusMessage());
 		    	} else {
-    				problem = e.getMessage();
-    				httpStatus = 502;
+	    			status.setCode(502);
+	    			status.setMessage(e.getMessage());
 		    	}
 		    }
 				break;
 			}
-
+		
 		}
+		
+		String logPart = String.format("Platform: %s, Status: %d, Time: %dms", link.getPlatform().getDomain(), status.getCode(), (System.currentTimeMillis() - started) / 10);
 
-		String logPart = String.format("Platform: %s, Status: %d, Time: %dms", link.getPlatform().getDomain(), httpStatus, (System.currentTimeMillis() - started) / 10);
-
-		if (problem != null) {
-			problem = io.inprice.common.utils.StringUtils.clearErrorMessage(problem);
-			if (problem.toLowerCase().contains("time out") || problem.toLowerCase().contains("timed out")) {
-				setLinkStatus(LinkStatus.TIMED_OUT, problem, (httpStatus != 200 ? httpStatus : 408));
+		if (status.getMessage() != null) {
+			status.setMessage(io.inprice.common.utils.StringUtils.clearErrorMessage(status.getMessage()));
+			if (status.getMessage().toLowerCase().contains("time out") || status.getMessage().toLowerCase().contains("timed out")) {
+				setLinkStatus(LinkStatus.TIMED_OUT, status.getMessage(), (status.getCode() != 200 ? status.getCode() : 408));
 			} else {
-				setLinkStatus((httpStatus == 404 ? LinkStatus.NOT_FOUND : LinkStatus.NETWORK_ERROR), problem, (httpStatus != 200 ? httpStatus : 206));
+				LinkStatus linkStatus = LinkStatus.NETWORK_ERROR;
+				switch (status.getCode()) {
+  				case 403:
+  					linkStatus = LinkStatus.NOT_ALLOWED;
+  					break;
+					case 404:
+						linkStatus = LinkStatus.NOT_FOUND;
+						break;
+					case 503:
+						linkStatus = LinkStatus.SITE_DOWN;
+						break;
+				}
+				setLinkStatus(linkStatus, status.getMessage(), status.getCode());
 			}
-			log.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, problem, getUrl());
+			log.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, status.getMessage(), getUrl());
 		} else {
-			link.setHttpStatus(httpStatus);
-			log.info("-SUCCESSFUL- {}", logPart);
+			link.setHttpStatus(status.getCode());
+			log.info("-SUCCESSFUL- {}, URL: {}", logPart, getUrl());
 		}
 
-		return (problem == null);
+		return (status.getMessage() == null);
 	}
 
 	private void read() {
@@ -262,7 +230,8 @@ public abstract class AbstractWebsite implements Website {
 		BigDecimal price = getPrice();
 
 		if (price == null || name == null || price.compareTo(BigDecimal.ONE) < 0 || Consts.Words.NOT_AVAILABLE.equals(name)) {
-			analyseTheProblem();
+			link.setStatus(LinkStatus.NO_DATA);
+			link.setProblem("HAS NO PRICE OR NAME");
 			return;
 		}
 
@@ -276,10 +245,10 @@ public abstract class AbstractWebsite implements Website {
 		link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
 
 		// spec list editing
-		List<LinkSpec> specList = getSpecList();
-		if (specList != null && specList.size() > 0) {
-			List<LinkSpec> newList = new ArrayList<>(specList.size());
-			for (LinkSpec ls : specList) {
+		Set<LinkSpec> specs = getSpecs();
+		if (specs != null && specs.size() > 0) {
+			List<LinkSpec> newList = new ArrayList<>(specs.size());
+			for (LinkSpec ls : specs) {
 				newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY), fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
 			}
 			link.setSpecList(newList);
@@ -291,27 +260,21 @@ public abstract class AbstractWebsite implements Website {
 			setLinkStatus(LinkStatus.NOT_AVAILABLE, "INSUFFICIENT STOCK");
 		}
 	}
-	
-	protected WebResponse makeRequest(WebClient webClient) throws MalformedURLException, IOException {
-		String url = getAlternativeUrl();
-		if (StringUtils.isBlank(url)) url = getUrl();
 
-		WebRequest req = new WebRequest(new URL(url));
-		req.setAdditionalHeader(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-		req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
-		req.setAdditionalHeader(HttpHeader.ACCEPT_ENCODING, "gzip, deflate, br");
-		req.setAdditionalHeader(HttpHeader.CONNECTION, "keep-alive");
-		req.setAdditionalHeader(HttpHeader.CACHE_CONTROL, "max-age=0");
-		
-  	beforeRequest(req);
-		return webClient.loadWebResponse(req);
-	}
-
+	/**
+	 * Comes from db
+	 */
 	@Override
 	public String getUrl() {
 		return link.getUrl();
 	}
-	
+
+	/**
+	 * Used for making an extra call to the website
+	 * @return
+	 */
+	protected String getExtraUrl() { return null; }
+
 	protected int getRetry() {
 		return link.getRetry();
 	}
@@ -320,14 +283,14 @@ public abstract class AbstractWebsite implements Website {
 		return link.getPlatform();
 	}
 
-	protected List<LinkSpec> getValueOnlySpecList(Elements specs) {
-		return getValueOnlySpecList(specs, null);
+	protected Set<LinkSpec> getValueOnlySpecs(Elements specs) {
+		return getValueOnlySpecs(specs, null);
 	}
 
-	protected List<LinkSpec> getValueOnlySpecList(Elements specs, String sep) {
-		List<LinkSpec> specList = null;
+	protected Set<LinkSpec> getValueOnlySpecs(Elements specs, String sep) {
+		Set<LinkSpec> specList = null;
 		if (specs != null && specs.size() > 0) {
-			specList = new ArrayList<>();
+			specList = new HashSet<>();
 			for (Element spec : specs) {
 				LinkSpec ls = new LinkSpec("", spec.text());
 				if (StringUtils.isNotBlank(spec.text())) {
@@ -343,20 +306,39 @@ public abstract class AbstractWebsite implements Website {
 		return specList;
 	}
 
-	protected List<LinkSpec> getKeyValueSpecList(Elements specs, String keySelector, String valueSelector) {
-		List<LinkSpec> specList = null;
-		if (specs != null && specs.size() > 0) {
-			specList = new ArrayList<>();
-			for (Element spec : specs) {
+	protected Set<LinkSpec> getKeyValueSpecs(Elements specsEl, String keySelector, String valueSelector) {
+		Set<LinkSpec> specs = null;
+		if (specsEl != null && specsEl.size() > 0) {
+			specs = new HashSet<>();
+			for (Element spec : specsEl) {
 				Element key = spec.selectFirst(keySelector);
 				Element value = spec.selectFirst(valueSelector);
 				if (key != null || value != null) {
-					specList.add(
-					    new LinkSpec((key != null ? key.text().replaceAll(":", "") : ""), (value != null ? value.text() : "")));
+					specs.add(
+				    new LinkSpec((key != null ? key.text().replaceAll(":", "") : ""), (value != null ? value.text() : ""))
+			    );
 				}
 			}
 		}
-		return specList;
+		return specs;
+	}
+
+	protected Set<LinkSpec> getFlatKeyValueSpecs(Elements keysSelector, Elements valsSelector) {
+		Set<LinkSpec> specs = null;
+		if (keysSelector != null && keysSelector.size() > 0) {
+			specs = new HashSet<>();
+			
+			for (int i = 0; i < keysSelector.size(); i++) {
+				Element key = keysSelector.get(i);
+				Element value = (i < valsSelector.size() ? valsSelector.get(i) : null);
+				if (key != null || value != null) {
+					specs.add(
+				    new LinkSpec((key != null ? key.text().replaceAll(":", "") : ""), (value != null ? value.text() : ""))
+			    );
+				}
+			}
+		}
+		return specs;
 	}
 
 	protected String cleanDigits(String numString) {
@@ -404,14 +386,14 @@ public abstract class AbstractWebsite implements Website {
 	private String fixLength(String val, int limit) {
 		if (val == null) return null;
 
-		String newForm = io.inprice.common.utils.StringUtils.clearEmojies(val);
+		String newForm = StringEscapeUtils.unescapeHtml4(io.inprice.common.utils.StringUtils.clearEmojies(val));
 		if (StringUtils.isNotBlank(newForm) && newForm.length() > limit)
 			return SqlHelper.clear(newForm.substring(0, limit));
 		else
 			return SqlHelper.clear(newForm);
 	}
 
-	private void analyseTheProblem() {
+	protected void saveHtml(String html) {
 		detectProblem();
 		
 		StringBuilder sb = new StringBuilder();
@@ -425,20 +407,20 @@ public abstract class AbstractWebsite implements Website {
 		log.warn(" - Status: {}, Pre.Status: {}, File: {}", link.getStatus().name(), oldStatus.name(), sb.toString());
 		
 		try (PrintWriter out = new PrintWriter(sb.toString())) {
-	    out.println(this.html);
+	    out.println(html);
 		} catch (FileNotFoundException e) {
 			log.error("Failed to journal the problem!", e);
 		}		
 	}
-	
-	protected void setHtml(String html) {
-		this.html = html;
+
+	protected HttpStatus setHtml(String html) {
+		return new HttpStatus(200, null);
 	}
-	
-	protected String getHtml() {
-		return this.html;
+
+	protected HttpStatus setExtraHtml(String html) {
+		return new HttpStatus(200, null);
 	}
-	
+
 	protected void detectProblem() {
 		if (LinkStatus.AVAILABLE.equals(oldStatus)) {
 			setLinkStatus(LinkStatus.NOT_AVAILABLE, "AVAILABILITY PROBLEM");
@@ -447,13 +429,15 @@ public abstract class AbstractWebsite implements Website {
 		}
 		link.setHttpStatus(404);
 	}
+
+	protected By clickFirstBy() {
+		return null;
+	}
+
+	protected By waitBy() {
+		return null;
+	}
 	
-	protected void beforeRequest(WebRequest req) { }
 	protected void afterRequest(WebClient webClient) { }
-
-	protected boolean isJsRendered() { return false; }
-	protected boolean willHtmlBePulled() { return true; }
 	
-	protected String getAlternativeUrl() { return null; }
-
 }

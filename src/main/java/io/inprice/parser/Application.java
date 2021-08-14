@@ -1,10 +1,15 @@
 package io.inprice.parser;
 
+import static io.inprice.parser.helpers.Global.isApplicationRunning;
+
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.inprice.parser.config.Props;
 import io.inprice.parser.consumer.ConsumerManager;
-import static io.inprice.parser.helpers.Global.*;
 
 /**
  * Entry point of the application.
@@ -18,10 +23,21 @@ public class Application {
   private static final Logger log = LoggerFactory.getLogger(Application.class);
 
   public static void main(String[] args) {
-    new Thread(() -> {
+    System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
+    System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
+
+    Authenticator.setDefault(new Authenticator() {
+    	@Override
+      protected PasswordAuthentication getPasswordAuthentication() {
+        if (getRequestorType().equals(RequestorType.PROXY)) {
+          return new PasswordAuthentication(Props.PROXY_USERNAME, Props.PROXY_PASSWORD.toCharArray());
+        }
+        return super.getPasswordAuthentication();
+      }
+    });
+
+  	new Thread(() -> {
       isApplicationRunning = true;
-      
-      HTMLUNIT_POOL.setup();
 
       ConsumerManager.start();
 
@@ -30,9 +46,6 @@ public class Application {
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
       log.info("APPLICATION IS TERMINATING...");
       isApplicationRunning = false;
-      
-      log.info(" - HtmlUnit pool is shutting down...");
-      HTMLUNIT_POOL.shutdown();
       
       log.info(" - Thread pools are shutting down...");
       ConsumerManager.stop();

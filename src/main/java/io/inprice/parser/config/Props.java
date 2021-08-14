@@ -11,11 +11,13 @@ public class Props {
   public static final String PROXY_PASSWORD;
 
   static {
-		WEBDRIVER_URL = System.getenv().getOrDefault("WEBDRIVER_URL", "http://127.0.0.1:9515");
-  	PROXY_HOST = System.getenv().get("PROXY_HOST");
-  	PROXY_PORT = NumberUtils.toInteger(System.getenv().get("PROXY_PORT"));
-  	PROXY_USERNAME = System.getenv().get("PROXY_USERNAME");
-  	PROXY_PASSWORD = System.getenv().get("PROXY_PASSWORD");
+  	//WEBDRIVER_URL = System.getenv().getOrDefault("WEBDRIVER_URL", "http://127.0.0.1:9515");
+		WEBDRIVER_URL = System.getenv().getOrDefault("WEBDRIVER_URL", "http://127.0.0.1:4444");
+
+		PROXY_HOST = System.getenv().getOrDefault("PROXY_HOST", "proxy.packetstream.io");
+  	PROXY_PORT = NumberUtils.toInteger(System.getenv().getOrDefault("PROXY_PORT", "31112"));
+  	PROXY_USERNAME = System.getenv().getOrDefault("PROXY_USERNAME", "mdumlupinar");
+  	PROXY_PASSWORD = System.getenv().getOrDefault("PROXY_PASSWORD", "ZLLKIoebz0Xi1WVk");
   }
 
 }
