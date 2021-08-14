@@ -10,12 +10,19 @@ import org.json.JSONObject;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Zalando, Global
  *
- * https://www.zalando.com
+ * URL depends on the country
+ * DE --> https://www.zalando.de
+ * ES --> https://www.zalando.es
+ * FR --> https://www.zalando.fr
+ * IT --> https://www.zalando.it
+ * NL --> https://www.zalando.nl
+ * UK --> https://www.zalando.co.uk
  *
  * @author mdpinar
  */
@@ -24,11 +31,14 @@ public class ZalandoXX extends AbstractWebsite {
 	private JSONObject info;
 	private JSONObject price;
 	private JSONArray details;
-	
-	@Override
-	protected void setHtml(String html) {
-		super.setHtml(html);
 
+	@Override
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
+
+	@Override
+	protected HttpStatus setHtml(String html) {
 		String rawJson = findAPart(html, "![CDATA[{\"layout\"", "}]]", 1, 8);
 		if (StringUtils.isNotBlank(rawJson)) {
 			JSONObject json = new JSONObject(rawJson);
@@ -44,9 +54,11 @@ public class ZalandoXX extends AbstractWebsite {
 					if (model.has("productDetailsCluster")) {
 						details = model.getJSONArray("productDetailsCluster");
 					}
+					return HttpStatus.OK;
 				}
 			}
 		}
+		return HttpStatus.NOT_FOUND;
 	}
 	
   @Override

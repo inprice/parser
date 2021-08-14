@@ -3,12 +3,12 @@ package io.inprice.parser;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
 import io.inprice.parser.websites.Website;
-import io.inprice.parser.websites.xx.VidaXLXX;
+import io.inprice.parser.websites.xx.ZalandoXX;
 
 public class LinkTest {
 	
 	//singly   --> walmart.ca
-	//blocked  --> eprice.it
+	//blocked  --> eprice.it, mediamarkt.es
 
 	// Australia --> appliancesonline, bigw, harveynorman, kogan, thegoodguys
 	// Canada    --> bestbuy, canadiantire, walmart
@@ -20,11 +20,14 @@ public class LinkTest {
 	// Turkey    --> gittigidiyor, hepsiburada, n11, teknosa, trendyol
 	// U.Kingdom --> argos, asdadirect, asdagrocery, asos, currys, debenhams, euronics, newlook, zavvi
 	// U.States  --> bestbuy, bonanza, etsy, walmart, target
-	// Global    --> amazon, apple, bonprix, ebay, lidl, mediamarkt, vidaxl
+	// Global    --> amazon, apple, bonprix, ebay, lidl, mediamarkt, vidaxl, zalando
 
 	private static String[] urls = {
-		"https://www.vidaxl.com.au/e/vidaxl-outdoor-dog-kennel-253x133x113-cm/8718475724858.html",
-		"https://www.vidaxl.nl/e/all-ride-adblue-tankdop---%C3%B8-40-mm---ab1---2-sleutels/8711252079806.html"
+		"https://www.zalando.fr/adidas-originals-continental-80-stripes-unisex-baskets-basses-footwear-whitepulsa-aqua-ad116d14q-a11.html",
+		"https://www.zalando.it/nike-sportswear-dress-vestito-di-maglina-ni121c01u-c11.html",
+		"https://www.zalando.es/puma-wild-rider-route-unisex-zapatillas-whiteblack-pu115o0fc-a11.html",
+		"https://www.zalando.de/the-north-face-sneaker-low-tnf-black-zinc-grey-th342a06t-q11.html",
+		"https://www.zalando.co.uk/jack-wolfskin-seven-seas-3-walking-sandals-limeblue-ja443b02a-m11.html"
 	};
 
 	public static void main(String[] args) throws InterruptedException {
@@ -44,7 +47,7 @@ public class LinkTest {
 		  		link.setPlatform(platform);
 		  		link.setPlatformId(platform.getId());
 
-		  		Website website = new VidaXLXX();
+		  		Website website = new ZalandoXX();
 		  		website.check(link);
 		  		printout(link);
 				}

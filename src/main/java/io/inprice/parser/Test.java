@@ -8,9 +8,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import io.inprice.parser.helpers.Global;
-import io.inprice.parser.helpers.StringHelpers;
-
 public class Test {
 
 	public static void main1(String[] args) {
