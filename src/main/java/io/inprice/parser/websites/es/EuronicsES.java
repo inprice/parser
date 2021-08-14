@@ -7,7 +7,7 @@ import org.jsoup.nodes.Element;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.websites.de.MediaMarktDE;
+import io.inprice.parser.websites.xx.MediaMarktXX_1;
 
 /**
  * Euronics, Spain
@@ -16,7 +16,7 @@ import io.inprice.parser.websites.de.MediaMarktDE;
  *
  * @author mdpinar
  */
-public class EuronicsES extends MediaMarktDE {
+public class EuronicsES extends MediaMarktXX_1 {
 
   @Override
   public String getShipment() {

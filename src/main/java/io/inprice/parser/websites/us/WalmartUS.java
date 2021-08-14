@@ -25,12 +25,7 @@ public class WalmartUS extends AbstractWebsite {
 
 	private Document dom;
 	private boolean isAvailable;
-/*
-	@Override
-	protected Renderer getRenderer() {
-		return Renderer.HTMLUNIT;
-	}
-*/
+
 	@Override
 	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);

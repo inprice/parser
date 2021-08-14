@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
@@ -15,6 +16,7 @@ import org.jsoup.select.Elements;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -30,27 +32,39 @@ public class VidaXLXX extends AbstractWebsite {
 
 	private JSONObject json;
 	private JSONObject offers;
-	
+
 	@Override
-	protected void setHtml(String html) {
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
+
+	@Override
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
     Elements dataEL = dom.select("script[type='application/ld+json']");
-    if (dataEL != null) {
-      for (DataNode dNode : dataEL.dataNodes()) {
+    if (dataEL != null && dataEL.size() > 0) {
+    	for (DataNode dNode : dataEL.dataNodes()) {
         JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
         if (data.has("@type")) {
           String type = data.getString("@type");
           if (type.equals("Product")) {
           	json = data;
-          	if (json.has("offers")) {
-          		offers = json.getJSONObject("offers");
-          	}
-            break;
+            if (json.has("offers")) {
+            	Object offersObj = json.get("offers");
+            	if (offersObj instanceof JSONObject) {
+            		offers = json.getJSONObject("offers");
+            	} else {
+            		JSONArray offersArr = (JSONArray) offersObj;
+            		offers = offersArr.getJSONObject(0);
+            	}
+          		return HttpStatus.OK;
+            }
           }
         }
       }
     }
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override
@@ -99,6 +113,10 @@ public class VidaXLXX extends AbstractWebsite {
 
   @Override
   public String getBrand() {
+    if (json != null && json.has("brand")) {
+      return json.getJSONObject("brand").getString("name");
+    }
+
     Element val = dom.selectFirst("meta[itemprop='brand']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
@@ -108,15 +126,18 @@ public class VidaXLXX extends AbstractWebsite {
 
   @Override
   public String getSeller() {
-    if (json != null && json.has("name")) {
-      return json.getString("name");
+    Element val = dom.selectFirst(".seller-info-name");
+    if (val != null) {
+      return val.text();
     }
-    return super.getSeller();
+    return "vidaXL";
   }
 
   @Override
   public String getShipment() {
     Element val = dom.selectFirst("ul.product-details li:nth-child(2)");
+    if (val == null) val = dom.selectFirst(".row.mb-1");
+
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text().replace("checkmark", "");
     }
@@ -128,6 +149,8 @@ public class VidaXLXX extends AbstractWebsite {
   	Set<LinkSpec> specs = null;
 
   	Elements specsEL = dom.select("div.product-specifications__text li");
+  	if (specsEL == null || specsEL.size() == 0) specsEL = dom.select(".value.content li");
+  	
   	if (specsEL != null && specsEL.size() > 0) {
   		specs = new HashSet<>(specsEL.size());
   		for (int i = 0; i < specsEL.size(); i++) {

@@ -3,8 +3,7 @@ package io.inprice.parser;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
 import io.inprice.parser.websites.Website;
-import io.inprice.parser.websites.us.TargetUS;
-import io.inprice.parser.websites.xx.BonprixXX;
+import io.inprice.parser.websites.xx.VidaXLXX;
 
 public class LinkTest {
 	
@@ -13,7 +12,7 @@ public class LinkTest {
 
 	// Australia --> appliancesonline, bigw, harveynorman, kogan, thegoodguys
 	// Canada    --> bestbuy, canadiantire, walmart
-	// Germany   --> euronics, mediamarkt, notebooksbillinger, otto
+	// Germany   --> euronics, lidl, mediamarkt, notebooksbillinger, otto
 	// Spain     --> electroking, euronics, 101gigas, ulabox
 	// France    --> auchan, cdiscount, fnac, laredoute
 	// Italy     --> euronics, mediaworld
@@ -21,19 +20,18 @@ public class LinkTest {
 	// Turkey    --> gittigidiyor, hepsiburada, n11, teknosa, trendyol
 	// U.Kingdom --> argos, asdadirect, asdagrocery, asos, currys, debenhams, euronics, newlook, zavvi
 	// U.States  --> bestbuy, bonanza, etsy, walmart, target
-	// Global    --> amazon, apple, bonprix
+	// Global    --> amazon, apple, bonprix, ebay, lidl, mediamarkt, vidaxl
 
 	private static String[] urls = {
-		"https://www.bonprix.de/produkt/rieker-sneaker-dunkelblau-mandelbeige-903567/",
-		"https://www.bonprix.de/produkt/stretch-hose-rot-961267/",
-		"https://www.bonprix.de/produkt/baby-langarmshirt-sweathose-2-tlg-set-bio-baumwolle-babyblau-909472/",
-		"https://www.bonprix.de/produkt/bh-ohne-buegel-mit-bio-baumwolle-2er-pack-dunkelblau-graumelange-918312/"
+		"https://www.vidaxl.com.au/e/vidaxl-outdoor-dog-kennel-253x133x113-cm/8718475724858.html",
+		"https://www.vidaxl.nl/e/all-ride-adblue-tankdop---%C3%B8-40-mm---ab1---2-sleutels/8711252079806.html"
 	};
 
 	public static void main(String[] args) throws InterruptedException {
 		Platform platform = new Platform();
 		platform.setName("Test Site");
 		platform.setDomain("Solo Test");
+		platform.setCountry("Global");
 
 		for (String url: urls) {
 			new Thread(new Runnable() {
@@ -46,7 +44,7 @@ public class LinkTest {
 		  		link.setPlatform(platform);
 		  		link.setPlatformId(platform.getId());
 
-		  		Website website = new BonprixXX();
+		  		Website website = new VidaXLXX();
 		  		website.check(link);
 		  		printout(link);
 				}

@@ -3,10 +3,12 @@ package io.inprice.parser.websites.de;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
@@ -18,21 +20,22 @@ import io.inprice.parser.websites.AbstractWebsite;
 /**
  * MediaMarkt and Saturn, Germany
  * 
- * Protected by cloudflare!!!
- *
- * https://www.mediamarkt.de
- * https://www.saturn.de
+ * https://www.lidl.de
  *
  * @author mdpinar
  */
-public class MediaMarktDE extends AbstractWebsite {
+public class LidlDE extends AbstractWebsite {
 
-	//used by Euronics as well
 	protected Document dom;
 
 	private JSONObject json;
   private JSONObject offers;
 
+  @Override
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
+  
 	@Override
 	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
@@ -46,7 +49,13 @@ public class MediaMarktDE extends AbstractWebsite {
           if (type.equals("Product")) {
           	json = data;
             if (json.has("offers")) {
-          		offers = json.getJSONObject("offers");
+            	Object offersObj = json.get("offers");
+            	if (offersObj instanceof JSONObject) {
+            		offers = json.getJSONObject("offers");
+            	} else {
+            		JSONArray offersArr = (JSONArray) offersObj;
+            		offers = offersArr.getJSONObject(0);
+            	}
           		return HttpStatus.OK;
             }
           }
@@ -99,12 +108,20 @@ public class MediaMarktDE extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    return "Siehe Lieferbedingungen";
+  	Element val = dom.selectFirst(".delivery-info__main");
+  	if (val != null) {
+  		return val.text();
+  	}
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	return getKeyValueSpecs(dom.select("[data-test=mms-accordion-features] tr"), "td:nth-child(1)", "td:nth-child(2)");
+    if (json != null && json.has("description")) {
+      Document subDom = Jsoup.parse(json.getString("description"));
+    	return getValueOnlySpecs(subDom.select("li"));
+    }
+    return null;
   }
 
 }

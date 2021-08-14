@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
@@ -49,7 +50,13 @@ public class N11TR extends AbstractWebsite {
           if (type.equals("Product")) {
           	json = data;
             if (json.has("offers")) {
-          		offers = json.getJSONObject("offers");
+            	Object offersObj = json.get("offers");
+            	if (offersObj instanceof JSONObject) {
+            		offers = json.getJSONObject("offers");
+            	} else {
+            		JSONArray offersArr = (JSONArray) offersObj;
+            		offers = offersArr.getJSONObject(0);
+            	}
           		return HttpStatus.OK;
             }
           }

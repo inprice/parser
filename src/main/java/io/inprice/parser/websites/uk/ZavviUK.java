@@ -51,8 +51,13 @@ public class ZavviUK extends AbstractWebsite {
           if (type.equals("Product")) {
           	json = data;
             if (json.has("offers")) {
-            	JSONArray offersArr = json.getJSONArray("offers");
-            	offers = offersArr.getJSONObject(0);
+            	Object offersObj = json.get("offers");
+            	if (offersObj instanceof JSONObject) {
+            		offers = json.getJSONObject("offers");
+            	} else {
+            		JSONArray offersArr = (JSONArray) offersObj;
+            		offers = offersArr.getJSONObject(0);
+            	}
             	return HttpStatus.OK;
             }
           }

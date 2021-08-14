@@ -12,6 +12,7 @@ import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -28,12 +29,21 @@ public class EbayXX extends AbstractWebsite {
   private String brand;
   private Set<LinkSpec> specs;
 
+  @Override
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
+  
 	@Override
-	protected void setHtml(String html) {
-		super.setHtml(html);
-
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
-		buildSpecList();
+		
+		String title = dom.title();
+		if (title.toLowerCase().contains("error page") == false) {
+			buildSpecList();
+			return HttpStatus.OK;
+		}
+		return HttpStatus.NOT_FOUND;
 	}
 
   @Override
@@ -123,7 +133,11 @@ public class EbayXX extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    return brand;
+    Element val = dom.selectFirst("[itemprop='brand']");
+    if (val != null) {
+      return val.text();
+    }
+  	return brand;
   }
 
   @Override
@@ -143,8 +157,8 @@ public class EbayXX extends AbstractWebsite {
         return val.text();
       }
     }
-
-    return super.getSeller();
+    
+    return Consts.Words.NOT_AVAILABLE;
   }
 
   @Override
@@ -190,7 +204,7 @@ public class EbayXX extends AbstractWebsite {
     return specs;
   }
 
-  private final String BRAND_WORDS = "(Brand|Marca|Marke|Marque).";
+  private final String BRAND_WORDS = "(Brand|Marca|Marke|Marque)?";
 
   private void buildSpecList() {
   	brand = Consts.Words.NOT_AVAILABLE;

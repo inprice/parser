@@ -13,12 +13,16 @@ import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Lidl, Global
  *
- * https://www.lidl.com
+ * URL depends on the country
+ * UK --> https://www.lidl.co.uk
+ * ES --> https://www.lidl.es
+ * NL --> https://www.lidl.nl
  *
  * @author mdpinar
  */
@@ -26,13 +30,22 @@ public class LidlXX extends AbstractWebsite {
 
 	private Document dom;
 	private JSONObject json;
-	
+
 	@Override
-	protected void setHtml(String html) {
+	protected Renderer getRenderer() {
+		return Renderer.HTMLUNIT;
+	}
+
+	@Override
+	protected HttpStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
 		String prodData = findAPart(html, "var dynamic_tm_data = ", "};", 1);
-    if (prodData != null) json = new JSONObject(prodData);
+    if (prodData != null) {
+    	json = new JSONObject(prodData);
+    	return HttpStatus.OK;
+    }
+    return HttpStatus.NOT_FOUND;
 	}
 
   @Override

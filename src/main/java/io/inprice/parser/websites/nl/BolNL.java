@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
@@ -50,7 +51,13 @@ public class BolNL extends AbstractWebsite {
           if (type.equals("Product")) {
           	json = data;
           	if (json.has("offers")) {
-          		offers = json.getJSONObject("offers");
+            	Object offersObj = json.get("offers");
+            	if (offersObj instanceof JSONObject) {
+            		offers = json.getJSONObject("offers");
+            	} else {
+            		JSONArray offersArr = (JSONArray) offersObj;
+            		offers = offersArr.getJSONObject(0);
+            	}
           		return HttpStatus.OK;
           	}
           }

@@ -44,7 +44,10 @@ public class LidlUS extends AbstractWebsite {
   @Override
   public boolean isAvailable() {
   	Element val = dom.selectFirst(".instock");
-    return (val != null);
+    if (val != null) return true;
+
+    val = dom.selectFirst(".stock-status-stock");
+    return (val != null && val.text().toLowerCase().contains("in stock"));
   }
 
   @Override
