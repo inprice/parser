@@ -51,7 +51,7 @@ import io.inprice.parser.info.HttpStatus;
  */
 public abstract class AbstractWebsite implements Website {
 
-	private static final Logger log = LoggerFactory.getLogger(AbstractWebsite.class);
+	private static final Logger logger = LoggerFactory.getLogger(AbstractWebsite.class);
 	
 	/**
 	 * There are two kind of html handler;
@@ -151,9 +151,9 @@ public abstract class AbstractWebsite implements Website {
         } catch (SocketTimeoutException set) {
     			status.setCode(408);
     			status.setMessage("TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : ""));
-    			log.error("Timed out: {}", set.getMessage());
+    			logger.error("Timed out: {}", set.getMessage());
     		} catch (IOException e) {
-    			log.error("Unexpected error!", e);
+    			logger.error("Unexpected error!", e);
     			status.setCode(502);
     			status.setMessage(e.getMessage());
     		} finally {
@@ -209,10 +209,10 @@ public abstract class AbstractWebsite implements Website {
 				}
 				setLinkStatus(linkStatus, status.getMessage(), status.getCode());
 			}
-			log.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, status.getMessage(), getUrl());
+			logger.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, status.getMessage(), getUrl());
 		} else {
 			link.setHttpStatus(status.getCode());
-			log.info("-SUCCESSFUL- {}, URL: {}", logPart, getUrl());
+			logger.info("-SUCCESSFUL- {}, URL: {}", logPart, getUrl());
 		}
 
 		return (status.getMessage() == null);

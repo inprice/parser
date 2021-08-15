@@ -40,7 +40,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class WalmartCA extends AbstractWebsite {
 
-	private static final Logger log = LoggerFactory.getLogger(WalmartCA.class);
+	private static final Logger logger = LoggerFactory.getLogger(WalmartCA.class);
 
 	private Document dom;
 
@@ -89,7 +89,7 @@ public class WalmartCA extends AbstractWebsite {
     }
     
     if (StringUtils.isBlank(sku)) {
-			log.warn("Missing info! SKU: {}, Name: {}, Brand: {}", sku, name, brand);
+			logger.warn("Missing info! SKU: {}, Name: {}, Brand: {}", sku, name, brand);
     	return;
     }
 		
@@ -147,11 +147,11 @@ public class WalmartCA extends AbstractWebsite {
       }
 		} catch (IOException e) {
 			setLinkStatus(LinkStatus.NETWORK_ERROR, e.getMessage(), 400);
-			log.error("Failed to post data to Walmart to fetch product price!", e);
+			logger.error("Failed to post data to Walmart to fetch product price!", e);
 		}
 		
 		if (json == null || json.isEmpty()) {
-			log.warn("Missing json info!");
+			logger.warn("Missing json info!");
 		}
 	}	
 

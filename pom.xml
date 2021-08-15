@@ -1,6 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -28,6 +28,32 @@
 			<groupId>io.inprice</groupId>
 			<artifactId>common</artifactId>
 			<version>${inprice-common.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.zaxxer</groupId>
+          <artifactId>HikariCP</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.flywaydb</groupId>
+          <artifactId>flyway-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jdbi</groupId>
+          <artifactId>jdbi3-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jdbi</groupId>
+          <artifactId>jdbi3-sqlobject</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>redis.clients</groupId>
+          <artifactId>jedis</artifactId>
+        </exclusion>
+      </exclusions>
 		</dependency>
 
     <dependency>
