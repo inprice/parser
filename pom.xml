@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>io.inprice</groupId>
+	<groupId>io.inprice</groupId>
 	<artifactId>parser</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
@@ -12,15 +13,15 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <!-- Versions -->
-    <jdk.version>1.8</jdk.version>
-    <maven-compiler.version>3.8.0</maven-compiler.version>
+		<!-- Versions -->
+		<jdk.version>1.11</jdk.version>
+		<maven-compiler.version>3.8.0</maven-compiler.version>
 		<inprice-common.version>1.0.0</inprice-common.version>
 
 		<selenium.version>4.0.0-beta-4</selenium.version>
 		<htmlunit.version>2.52.0</htmlunit.version>
-    <jsoup.version>1.14.1</jsoup.version>
-    <json.version>20210307</json.version>
+		<jsoup.version>1.14.2</jsoup.version>
+		<json.version>20210307</json.version>
 	</properties>
 
 	<dependencies>
@@ -28,50 +29,54 @@
 			<groupId>io.inprice</groupId>
 			<artifactId>common</artifactId>
 			<version>${inprice-common.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>mysql</groupId>
-          <artifactId>mysql-connector-java</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.zaxxer</groupId>
-          <artifactId>HikariCP</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.flywaydb</groupId>
-          <artifactId>flyway-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jdbi</groupId>
-          <artifactId>jdbi3-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jdbi</groupId>
-          <artifactId>jdbi3-sqlobject</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>redis.clients</groupId>
-          <artifactId>jedis</artifactId>
-        </exclusion>
-      </exclusions>
+			<exclusions>
+				<exclusion>
+					<groupId>mysql</groupId>
+					<artifactId>mysql-connector-java</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.zaxxer</groupId>
+					<artifactId>HikariCP</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.flywaydb</groupId>
+					<artifactId>flyway-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jdbi</groupId>
+					<artifactId>jdbi3-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jdbi</groupId>
+					<artifactId>jdbi3-sqlobject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>redis.clients</groupId>
+					<artifactId>jedis</artifactId>
+				</exclusion>
+				<exclusion>
+		      <groupId>org.apache.commons</groupId>
+		      <artifactId>commons-collections4</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-firefox-driver</artifactId>
-      <version>${selenium.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-support</artifactId>
-      <version>${selenium.version}</version>
-    </dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-firefox-driver</artifactId>
+			<version>${selenium.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-support</artifactId>
+			<version>${selenium.version}</version>
+		</dependency>
 
-    <dependency>
-      <groupId>net.sourceforge.htmlunit</groupId>
-      <artifactId>htmlunit</artifactId>
-      <version>${htmlunit.version}</version>
-    </dependency>
+		<dependency>
+			<groupId>net.sourceforge.htmlunit</groupId>
+			<artifactId>htmlunit</artifactId>
+			<version>${htmlunit.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.jsoup</groupId>
@@ -85,43 +90,43 @@
 			<version>${json.version}</version>
 		</dependency>
 
-  </dependencies>
+	</dependencies>
 
-  <build>
-    <plugins>
+	<build>
+		<plugins>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven-compiler.version}</version>
-        <configuration>
-          <source>${jdk.version}</source>
-          <target>${jdk.version}</target>
-        </configuration>
-      </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler.version}</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
 
-      <!-- Collecting all the necessary dependencies under lib folder -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-dependencies</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/lib</outputDirectory>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>false</overWriteSnapshots>
-              <overWriteIfNewer>true</overWriteIfNewer>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+			<!-- Collecting all the necessary dependencies under lib folder -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-    </plugins>
-  </build>
+		</plugins>
+	</build>
 
 </project>
