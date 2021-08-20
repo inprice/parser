@@ -1,5 +1,7 @@
 package io.inprice.parser;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
 import io.inprice.parser.websites.Website;
@@ -69,7 +71,7 @@ public class LinkTest {
 		System.out.println("Problem: " + link.getProblem());
 		System.out.println("--------------------------");
 
-		if (link.getSpecList() != null && link.getSpecList().size() > 0) {
+		if (CollectionUtils.isNotEmpty(link.getSpecList())) {
 			System.out.println("Spec List");
 			link.getSpecList().forEach(s -> System.out.println(" - Key: " + s.getKey() + ", Value: " + s.getValue()));
 		}

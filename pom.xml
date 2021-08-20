@@ -54,10 +54,6 @@
 					<groupId>redis.clients</groupId>
 					<artifactId>jedis</artifactId>
 				</exclusion>
-				<exclusion>
-		      <groupId>org.apache.commons</groupId>
-		      <artifactId>commons-collections4</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 

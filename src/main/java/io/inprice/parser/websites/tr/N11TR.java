@@ -3,6 +3,7 @@ package io.inprice.parser.websites.tr;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,7 +43,7 @@ public class N11TR extends AbstractWebsite {
 		dom = Jsoup.parse(html);
 		
     Elements dataEL = dom.select("script[type='application/ld+json']");
-    if (dataEL != null && dataEL.size() > 0) {
+    if (CollectionUtils.isNotEmpty(dataEL)) {
     	for (DataNode dNode : dataEL.dataNodes()) {
         JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
         if (data.has("@type")) {

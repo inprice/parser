@@ -3,6 +3,7 @@ package io.inprice.parser.websites.fr;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -100,10 +101,10 @@ public class AuchanFR extends AbstractWebsite {
   @Override
   public Set<LinkSpec> getSpecs() {
   	Set<LinkSpec> specs = getKeyValueSpecs(dom.select("ul.product-aside--list"), "span.product-aside--listSubtitle", "span.product-aside--listValue");
-    if (specs != null && specs.size() > 0) return specs;
+    if (CollectionUtils.isNotEmpty(specs)) return specs;
 
     specs = getValueOnlySpecs(dom.select(".product-aside--textBlock li"));
-    if (specs != null && specs.size() > 0) return specs;
+    if (CollectionUtils.isNotEmpty(specs)) return specs;
 
     return specs;
   }

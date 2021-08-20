@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -146,7 +147,7 @@ public class BonprixXX extends AbstractWebsite {
   	Set<LinkSpec> specs = null;
 
     Elements specKeys = dom.select("div.product-attributes strong");
-    if (specKeys != null && specKeys.size() > 0) {
+    if (CollectionUtils.isNotEmpty(specKeys)) {
       specs = new HashSet<>();
       Elements specValues = dom.select("div.product-attributes span");
       for (int i = 0; i < specKeys.size(); i++) {
@@ -164,7 +165,7 @@ public class BonprixXX extends AbstractWebsite {
     if (specKeys == null)
       specKeys = dom.select("div.product-attributes strong");
 
-    if (specKeys != null && specKeys.size() > 0) {
+    if (CollectionUtils.isNotEmpty(specKeys)) {
       specs = new HashSet<>();
       for (Element key : specKeys) {
         specs.add(new LinkSpec(key.text().replaceAll(":", ""), ""));
@@ -173,7 +174,7 @@ public class BonprixXX extends AbstractWebsite {
 
     Elements specValues = dom.select("div.productFeaturesContainer span.productFeatureValue");
 
-    if (specValues != null && specValues.size() > 0) {
+    if (CollectionUtils.isNotEmpty(specValues)) {
       boolean isEmpty = false;
       if (specs == null) {
         isEmpty = true;

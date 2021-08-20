@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jsoup.Connection;
@@ -246,7 +247,7 @@ public abstract class AbstractWebsite implements Website {
 
 		// spec list editing
 		Set<LinkSpec> specs = getSpecs();
-		if (specs != null && specs.size() > 0) {
+		if (CollectionUtils.isNotEmpty(specs)) {
 			List<LinkSpec> newList = new ArrayList<>(specs.size());
 			for (LinkSpec ls : specs) {
 				newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY), fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
@@ -289,7 +290,7 @@ public abstract class AbstractWebsite implements Website {
 
 	protected Set<LinkSpec> getValueOnlySpecs(Elements specs, String sep) {
 		Set<LinkSpec> specList = null;
-		if (specs != null && specs.size() > 0) {
+		if (CollectionUtils.isNotEmpty(specs)) {
 			specList = new HashSet<>();
 			for (Element spec : specs) {
 				LinkSpec ls = new LinkSpec("", spec.text());
@@ -308,7 +309,7 @@ public abstract class AbstractWebsite implements Website {
 
 	protected Set<LinkSpec> getKeyValueSpecs(Elements specsEl, String keySelector, String valueSelector) {
 		Set<LinkSpec> specs = null;
-		if (specsEl != null && specsEl.size() > 0) {
+		if (CollectionUtils.isNotEmpty(specsEl)) {
 			specs = new HashSet<>();
 			for (Element spec : specsEl) {
 				Element key = spec.selectFirst(keySelector);
@@ -325,7 +326,7 @@ public abstract class AbstractWebsite implements Website {
 
 	protected Set<LinkSpec> getFlatKeyValueSpecs(Elements keysSelector, Elements valsSelector) {
 		Set<LinkSpec> specs = null;
-		if (keysSelector != null && keysSelector.size() > 0) {
+		if (CollectionUtils.isNotEmpty(keysSelector)) {
 			specs = new HashSet<>();
 			
 			for (int i = 0; i < keysSelector.size(); i++) {

@@ -3,6 +3,7 @@ package io.inprice.parser.consumer;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +20,8 @@ public class ConsumerManager {
 
     try {
     	List<QueueDef> activeLinksQueues = Props.getConfig().QUEUES.ACTIVE_LINKS;
-    	
-    	if (activeLinksQueues != null && activeLinksQueues.size() > 0) {
+
+    	if (CollectionUtils.isNotEmpty(activeLinksQueues)) {
     		for (QueueDef queue: activeLinksQueues) {
     			if (BooleanUtils.isTrue(queue.ACTIVE)) new ActiveLinksConsumer(queue);
     		}

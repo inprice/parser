@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -113,7 +114,7 @@ public class LidlXX extends AbstractWebsite {
   	Set<LinkSpec> specs = null;
 
     Elements specsEl = dom.select("div.product-detail-hero li");
-    if (specsEl != null && specsEl.size() > 0) {
+    if (CollectionUtils.isNotEmpty(specsEl)) {
       specs = new HashSet<>();
       for (Element spec : specsEl) {
         String value = spec.text();
@@ -127,7 +128,7 @@ public class LidlXX extends AbstractWebsite {
     if (specsEl == null || specsEl.size() == 0)
       specsEl = dom.select("div#detail-tab-0 li");
 
-    if (specsEl != null && specsEl.size() > 0) {
+    if (CollectionUtils.isNotEmpty(specsEl)) {
       specs = new HashSet<>();
       for (Element spec : specsEl) {
         String strSpec = spec.text();
@@ -148,7 +149,7 @@ public class LidlXX extends AbstractWebsite {
     if (specsEl == null || specsEl.size() == 0) specs = getValueOnlySpecs(dom.select("div#detailtabProductDescriptionTab li"));
     if (specsEl == null || specsEl.size() == 0) specs = getValueOnlySpecs(dom.select("article.textbody li"));
     
-    if (specs != null && specs.size() > 0) {
+    if (CollectionUtils.isNotEmpty(specs)) {
     	for (LinkSpec spec: specs) {
 				if (StringUtils.isBlank(spec.getKey()) && spec.getValue().indexOf(":") > 0) {
 					String[] pair = spec.getValue().split(":");

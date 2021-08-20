@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -117,8 +118,8 @@ public class WalmartUS extends AbstractWebsite {
   	
   	Set<LinkSpec> foundSpecs = getValueOnlySpecs(dom.select("div#product-about li"));
   	if (foundSpecs == null || foundSpecs.size() == 0) foundSpecs = getValueOnlySpecs(dom.select(".about-product-description li"));
-  	
-  	if (foundSpecs != null && foundSpecs.size() > 0) {
+
+  	if (CollectionUtils.isNotEmpty(foundSpecs)) {
   		specs = new HashSet<>(foundSpecs.size());
   		for (LinkSpec spec: foundSpecs) {
 				if (spec.getValue().contains(":")) {

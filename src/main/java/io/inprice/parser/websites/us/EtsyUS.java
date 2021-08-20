@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -51,7 +52,7 @@ public class EtsyUS extends AbstractWebsite {
     }
 
     Elements availabilities = dom.select("select#inventory-variation-select-quantity option");
-    return (availabilities != null && availabilities.size() > 0);
+    return (CollectionUtils.isNotEmpty(availabilities));
   }
 
   @Override

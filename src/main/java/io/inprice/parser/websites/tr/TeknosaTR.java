@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -97,7 +98,7 @@ public class TeknosaTR extends AbstractWebsite {
   	Set<LinkSpec> specs = null;
 
     Elements specKeys = dom.select("div.product-classifications tr");
-    if (specKeys != null && specKeys.size() > 0) {
+    if (CollectionUtils.isNotEmpty(specKeys)) {
       specs = new HashSet<>();
       for (Element key : specKeys) {
         Element val = key.selectFirst("td");
@@ -106,7 +107,7 @@ public class TeknosaTR extends AbstractWebsite {
     }
 
     Elements specValues = dom.select("div.product-classifications tr");
-    if (specValues != null && specValues.size() > 0) {
+    if (CollectionUtils.isNotEmpty(specValues)) {
       boolean isEmpty = false;
       if (specs == null) {
         isEmpty = true;

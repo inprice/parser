@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
@@ -117,7 +118,7 @@ public class ElectrokingES extends AbstractWebsite {
   	Set<LinkSpec> specs = null;
 
   	Elements keys = dom.select("dt.name");
-  	if (keys != null && keys.size() > 0) {
+  	if (CollectionUtils.isNotEmpty(keys)) {
   		Elements vals = dom.select("dd.value");
   		if (vals != null && vals.size() == keys.size()) {
   			specs = new HashSet<>(keys.size());

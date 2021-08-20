@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -134,7 +135,7 @@ public class TrendyolTR extends AbstractWebsite {
   	Set<LinkSpec> specs = null;
 
     Elements specsEl = dom.select("div.pr-in-dt-cn ul span li");
-    if (specsEl != null && specsEl.size() > 0) {
+    if (CollectionUtils.isNotEmpty(specsEl)) {
       specs = new HashSet<>();
       for (Element spec : specsEl) {
         String[] chunks = spec.text().split("\\.");
@@ -146,7 +147,7 @@ public class TrendyolTR extends AbstractWebsite {
 
     if (specsEl == null || specsEl.size() == 0) {
     	specsEl = dom.select("li.detail-desc-item");
-      if (specsEl != null && specsEl.size() > 0) {
+      if (CollectionUtils.isNotEmpty(specsEl)) {
         specs = new HashSet<>();
         for (Element spec : specsEl) {
           String[] chunks = spec.text().split("\\:");

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -106,7 +107,7 @@ public class EuronicsIT extends AbstractWebsite {
   	Set<LinkSpec> specs = null;
 
   	Elements specsEl = dom.select("div.product__specificationsContent .content__abstractText");
-  	if (specsEl != null && specsEl.size() > 0) {
+  	if (CollectionUtils.isNotEmpty(specsEl)) {
   		specs = new HashSet<>(specsEl.size());
   		for (int i = 0; i < specsEl.size(); i++) {
 				Element spec = specsEl.get(i);
