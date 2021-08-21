@@ -1,7 +1,5 @@
 package io.inprice.parser;
 
-import static io.inprice.parser.helpers.Global.isApplicationRunning;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +20,8 @@ public class Application {
 
   public static void main(String[] args) {
   	new Thread(() -> {
-      isApplicationRunning = true;
 
-      RabbitMQ.start(Props.getConfig().RABBIT_CONF);
+  		RabbitMQ.start(Props.getConfig().RABBIT_CONF);
       logger.info(" - RabbitMQ is started.");
 
       ConsumerManager.start();
@@ -33,7 +30,6 @@ public class Application {
 
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
       logger.info("APPLICATION IS TERMINATING...");
-      isApplicationRunning = false;
       
       logger.info(" - RabbitMQ is shutting down...");
       RabbitMQ.stop();
