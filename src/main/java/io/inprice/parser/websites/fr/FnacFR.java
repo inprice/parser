@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -43,7 +44,7 @@ public class FnacFR extends AbstractWebsite {
 		dom = Jsoup.parse(html);
 		
     Elements dataEL = dom.select("script[type='application/ld+json']");
-    if (dataEL != null && dataEL.size() > 0) {
+    if (CollectionUtils.isNotEmpty(dataEL)) {
     	for (DataNode dNode : dataEL.dataNodes()) {
         JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
         if (data.has("@type")) {
@@ -142,7 +143,7 @@ public class FnacFR extends AbstractWebsite {
   @Override
   public Set<LinkSpec> getSpecs() {
   	Set<LinkSpec> specs = getKeyValueSpecs(dom.select("div.characteristicsStrate__list dl"), "dt", "dd");
-  	if (specs != null && specs.size() > 0) return specs;
+  	if (CollectionUtils.isNotEmpty(specs)) return specs;
 
     Elements specsEl = dom.select("table.f-productDetails-table tr");
     if (specs != null) {

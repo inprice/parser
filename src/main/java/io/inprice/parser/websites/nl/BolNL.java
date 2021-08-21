@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -136,14 +137,14 @@ public class BolNL extends AbstractWebsite {
   	Set<LinkSpec> specs = null;
 
     Elements specsEl = dom.select("dl.specs__list");
-    if (specsEl != null && specsEl.size() > 0) {
+    if (CollectionUtils.isNotEmpty(specsEl)) {
       specs = new HashSet<>();
       for (Element spec : specsEl) {
 
         Elements titles = spec.select("dt.specs__title");
         Elements values = spec.select("dd.specs__value");
 
-        if (titles.size() > 0 && titles.size() == values.size()) {
+        if (CollectionUtils.isNotEmpty(titles)) {
           for (int i = 0; i < titles.size(); i++) {
             Element key = titles.get(i);
             Element value = values.get(i);

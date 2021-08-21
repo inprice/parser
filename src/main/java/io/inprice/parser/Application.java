@@ -1,13 +1,9 @@
 package io.inprice.parser;
 
-import static io.inprice.parser.helpers.Global.isApplicationRunning;
-
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.inprice.common.helpers.RabbitMQ;
 import io.inprice.parser.config.Props;
 import io.inprice.parser.consumer.ConsumerManager;
 
@@ -20,37 +16,25 @@ import io.inprice.parser.consumer.ConsumerManager;
  */
 public class Application {
 
-  private static final Logger log = LoggerFactory.getLogger(Application.class);
+  private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
   public static void main(String[] args) {
-    System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
-    System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
-
-    Authenticator.setDefault(new Authenticator() {
-    	@Override
-      protected PasswordAuthentication getPasswordAuthentication() {
-        if (getRequestorType().equals(RequestorType.PROXY)) {
-          return new PasswordAuthentication(Props.PROXY_USERNAME, Props.PROXY_PASSWORD.toCharArray());
-        }
-        return super.getPasswordAuthentication();
-      }
-    });
-
   	new Thread(() -> {
-      isApplicationRunning = true;
+
+  		RabbitMQ.start(Props.getConfig().RABBIT_CONF);
+      logger.info(" - RabbitMQ is started.");
 
       ConsumerManager.start();
 
     }, "app-starter").start();
 
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      log.info("APPLICATION IS TERMINATING...");
-      isApplicationRunning = false;
+      logger.info("APPLICATION IS TERMINATING...");
       
-      log.info(" - Thread pools are shutting down...");
-      ConsumerManager.stop();
+      logger.info(" - RabbitMQ is shutting down...");
+      RabbitMQ.stop();
 
-      log.info("ALL SERVICES IS DONE.");
+      logger.info("ALL SERVICES IS DONE.");
     }, "shutdown-hook"));
   }
 

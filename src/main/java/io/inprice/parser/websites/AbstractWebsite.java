@@ -1,8 +1,6 @@
 package io.inprice.parser.websites;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.SocketTimeoutException;
@@ -13,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jsoup.Connection;
@@ -53,10 +52,12 @@ import io.inprice.parser.info.HttpStatus;
  */
 public abstract class AbstractWebsite implements Website {
 
-	private static final Logger log = LoggerFactory.getLogger(AbstractWebsite.class);
+	private static final Logger logger = LoggerFactory.getLogger(AbstractWebsite.class);
 	
 	/**
-	 * There are two kind of html handler; a) External chrome browser, b) Internal HtmlUnit (default one)
+	 * There are two kind of html handler;
+	 *   a) External browser  (default one)
+	 *   b) Internal HtmlUnit
 	 */
 	protected static enum Renderer {
 		HTMLUNIT,
@@ -151,9 +152,9 @@ public abstract class AbstractWebsite implements Website {
         } catch (SocketTimeoutException set) {
     			status.setCode(408);
     			status.setMessage("TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : ""));
-    			log.error("Timed out: {}", set.getMessage());
+    			logger.error("Timed out: {}", set.getMessage());
     		} catch (IOException e) {
-    			log.error("Unexpected error!", e);
+    			logger.error("Unexpected error!", e);
     			status.setCode(502);
     			status.setMessage(e.getMessage());
     		} finally {
@@ -209,10 +210,10 @@ public abstract class AbstractWebsite implements Website {
 				}
 				setLinkStatus(linkStatus, status.getMessage(), status.getCode());
 			}
-			log.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, status.getMessage(), getUrl());
+			logger.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, status.getMessage(), getUrl());
 		} else {
 			link.setHttpStatus(status.getCode());
-			log.info("-SUCCESSFUL- {}, URL: {}", logPart, getUrl());
+			logger.info("-SUCCESSFUL- {}, URL: {}", logPart, getUrl());
 		}
 
 		return (status.getMessage() == null);
@@ -246,7 +247,7 @@ public abstract class AbstractWebsite implements Website {
 
 		// spec list editing
 		Set<LinkSpec> specs = getSpecs();
-		if (specs != null && specs.size() > 0) {
+		if (CollectionUtils.isNotEmpty(specs)) {
 			List<LinkSpec> newList = new ArrayList<>(specs.size());
 			for (LinkSpec ls : specs) {
 				newList.add(new LinkSpec(fixLength(ls.getKey(), Consts.Limits.SPEC_KEY), fixLength(ls.getValue(), Consts.Limits.SPEC_VALUE)));
@@ -289,7 +290,7 @@ public abstract class AbstractWebsite implements Website {
 
 	protected Set<LinkSpec> getValueOnlySpecs(Elements specs, String sep) {
 		Set<LinkSpec> specList = null;
-		if (specs != null && specs.size() > 0) {
+		if (CollectionUtils.isNotEmpty(specs)) {
 			specList = new HashSet<>();
 			for (Element spec : specs) {
 				LinkSpec ls = new LinkSpec("", spec.text());
@@ -308,7 +309,7 @@ public abstract class AbstractWebsite implements Website {
 
 	protected Set<LinkSpec> getKeyValueSpecs(Elements specsEl, String keySelector, String valueSelector) {
 		Set<LinkSpec> specs = null;
-		if (specsEl != null && specsEl.size() > 0) {
+		if (CollectionUtils.isNotEmpty(specsEl)) {
 			specs = new HashSet<>();
 			for (Element spec : specsEl) {
 				Element key = spec.selectFirst(keySelector);
@@ -325,7 +326,7 @@ public abstract class AbstractWebsite implements Website {
 
 	protected Set<LinkSpec> getFlatKeyValueSpecs(Elements keysSelector, Elements valsSelector) {
 		Set<LinkSpec> specs = null;
-		if (keysSelector != null && keysSelector.size() > 0) {
+		if (CollectionUtils.isNotEmpty(keysSelector)) {
 			specs = new HashSet<>();
 			
 			for (int i = 0; i < keysSelector.size(); i++) {
@@ -393,41 +394,12 @@ public abstract class AbstractWebsite implements Website {
 			return SqlHelper.clear(newForm);
 	}
 
-	protected void saveHtml(String html) {
-		detectProblem();
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append(System.getProperty("user.home"));
-		sb.append("/tmp/");
-		sb.append(link.getPlatform().getName().replaceAll("\\s",  ""));
-		sb.append("-");
-		sb.append(link.getId());
-		sb.append(".html");
-
-		log.warn(" - Status: {}, Pre.Status: {}, File: {}", link.getStatus().name(), oldStatus.name(), sb.toString());
-		
-		try (PrintWriter out = new PrintWriter(sb.toString())) {
-	    out.println(html);
-		} catch (FileNotFoundException e) {
-			log.error("Failed to journal the problem!", e);
-		}		
-	}
-
 	protected HttpStatus setHtml(String html) {
 		return new HttpStatus(200, null);
 	}
 
 	protected HttpStatus setExtraHtml(String html) {
 		return new HttpStatus(200, null);
-	}
-
-	protected void detectProblem() {
-		if (LinkStatus.AVAILABLE.equals(oldStatus)) {
-			setLinkStatus(LinkStatus.NOT_AVAILABLE, "AVAILABILITY PROBLEM");
-		} else {
-			setLinkStatus(LinkStatus.NO_DATA, "HAS NO PRICE OR NAME");
-		}
-		link.setHttpStatus(404);
 	}
 
 	protected By clickFirstBy() {

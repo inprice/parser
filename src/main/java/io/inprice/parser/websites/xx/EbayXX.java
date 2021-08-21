@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -210,11 +211,11 @@ public class EbayXX extends AbstractWebsite {
   	brand = Consts.Words.NOT_AVAILABLE;
 
     Elements specsEl = dom.select("div.itemAttr table[role='presentation']:not(#itmSellerDesc) tr");
-    if (specsEl != null && specsEl.size() > 0) {
+    if (CollectionUtils.isNotEmpty(specsEl)) {
       specs = new HashSet<>();
       for (Element row : specsEl) {
         Elements tds = row.select("td");
-        if (tds != null && tds.size() > 0) {
+        if (CollectionUtils.isNotEmpty(tds)) {
           String key = "";
           String value;
           for (int i = 0; i < tds.size(); i++) {
@@ -234,7 +235,7 @@ public class EbayXX extends AbstractWebsite {
       }
     } else {
       specsEl = dom.select("#ProductDetails li div");
-      if (specsEl != null && specsEl.size() > 0) {
+      if (CollectionUtils.isNotEmpty(specsEl)) {
         specs = new HashSet<>();
         for (int i = 0; i < specsEl.size(); i++) {
           String key = specsEl.get(i).text();

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -117,7 +118,7 @@ public class BonanzaUS extends AbstractWebsite {
   	Set<LinkSpec> specs = null;
 
     Elements specsEl = dom.select("table.extended_info_table tr.extended_info_row");
-    if (specsEl != null && specsEl.size() > 0) {
+    if (CollectionUtils.isNotEmpty(specsEl)) {
       specs = new HashSet<>();
       for (Element spec : specsEl) {
         String key = spec.selectFirst("th.extended_info_label").text().replaceAll(":", "");

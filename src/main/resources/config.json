@@ -1,0 +1,29 @@
+{
+	"app": {
+		"env": "dev"
+	},
+  "rabbit": {
+    "host": "127.0.0.1",
+    "port": 5672,
+    "username": "guest",
+    "password": "guest"
+  },
+  "proxy": {
+    "active": false,
+    "host": "proxy.packetstream.io",
+    "port": 31112,
+    "username": "mdumlupinar",
+    "password": "ZLLKIoebz0Xi1WVk"
+  },
+  "timeouts": {
+  	"httpConnection": 10000,
+  	"termination": 30000
+  },
+  "queues": {
+    "statusChangingLinks": { "name": "status.changing.links.queue" },
+    "activeLinks": [
+      { "name": "active.links.queue.cap1", "capacity": 1 },
+      { "name": "active.links.queue.cap3", "capacity": 3 }
+    ]
+  }
+}

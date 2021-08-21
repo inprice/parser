@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -124,7 +125,7 @@ public class KoganAU extends AbstractWebsite {
   	
   	if (specs == null || specs.size() == 0) {
   		Elements descPs = dom.select("section[itemprop='description'] ul li");
-  		if (descPs != null && descPs.size() > 0) {
+  		if (CollectionUtils.isNotEmpty(descPs)) {
   			specs = new HashSet<>();
   			for (int i = 0; i < descPs.size(); i++) {
 					String key = "";

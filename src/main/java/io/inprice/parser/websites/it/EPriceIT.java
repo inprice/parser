@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -109,7 +110,7 @@ public class EPriceIT extends AbstractWebsite {
   	Set<LinkSpec> specs = null;
 
     Elements specsEl = dom.select("#anchorCar li");
-    if (specsEl != null && specsEl.size() > 0) {
+    if (CollectionUtils.isNotEmpty(specsEl)) {
       specs = new HashSet<>();
       for (Element spec : specsEl) {
         String liHtml = spec.html();
@@ -123,7 +124,7 @@ public class EPriceIT extends AbstractWebsite {
 
     if (specs == null) {
       specsEl = dom.select("#anchorDesc p");
-      if (specsEl != null && specsEl.size() > 0) {
+      if (CollectionUtils.isNotEmpty(specsEl)) {
         specs = new HashSet<>();
         for (Element spec : specsEl) {
           String[] specChunks = spec.text().split("\\.");

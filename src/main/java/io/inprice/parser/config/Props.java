@@ -1,23 +1,59 @@
 package io.inprice.parser.config;
 
-import io.inprice.common.utils.NumberUtils;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.inprice.common.helpers.JsonConverter;
+
+/**
+ * If finds, opens config.json on root first
+ * else will search for it in classpath!
+ * 
+ * since 2021-08-18
+ * @author mdpinar
+ */
 public class Props {
 
-  public static final String WEBDRIVER_URL;
-  public static final String PROXY_HOST;
-  public static final Integer PROXY_PORT;
-  public static final String PROXY_USERNAME;
-  public static final String PROXY_PASSWORD;
+  private static final Logger logger = LoggerFactory.getLogger(Props.class);
+	
+  private static Config config;
 
-  static {
-  	//WEBDRIVER_URL = System.getenv().getOrDefault("WEBDRIVER_URL", "http://127.0.0.1:9515");
-		WEBDRIVER_URL = System.getenv().getOrDefault("WEBDRIVER_URL", "http://127.0.0.1:4444");
+  public static synchronized Config getConfig() {
+  	if (config == null) {
 
-		PROXY_HOST = System.getenv().getOrDefault("PROXY_HOST", "proxy.packetstream.io");
-  	PROXY_PORT = NumberUtils.toInteger(System.getenv().getOrDefault("PROXY_PORT", "31112"));
-  	PROXY_USERNAME = System.getenv().getOrDefault("PROXY_USERNAME", "mdumlupinar");
-  	PROXY_PASSWORD = System.getenv().getOrDefault("PROXY_PASSWORD", "ZLLKIoebz0Xi1WVk");
-  }
+  		String text = null;
+  		try {
 
+  			//checks if there is a config file on root
+  			File file = new File("./config.json");
+  			if (file.exists()) {
+  				text = new String(Files.readAllBytes(Paths.get("./config.json")));
+  			}
+
+  			//if not, then search for it in classpath!
+  			if (text == null) {
+	    		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+	    		try (InputStream is = classloader.getResourceAsStream("config.json")) {
+	    			if (is != null) text = new String(is.readAllBytes());
+	    		}
+  			}
+
+  		} catch (Exception e) {
+  			logger.error("Failed to load config file", e);
+  		}
+  		if (text != null) {
+  			config = JsonConverter.fromJson(text, Config.class);
+  		} else {
+  			logger.error("There is no config.json neither in classpath nor root!");
+  			java.lang.System.exit(-1);
+  		}
+  	}
+		return config;
+	}
+  
 }

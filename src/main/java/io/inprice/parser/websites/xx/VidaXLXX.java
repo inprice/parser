@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -43,7 +44,7 @@ public class VidaXLXX extends AbstractWebsite {
 		dom = Jsoup.parse(html);
 
     Elements dataEL = dom.select("script[type='application/ld+json']");
-    if (dataEL != null && dataEL.size() > 0) {
+    if (CollectionUtils.isNotEmpty(dataEL)) {
     	for (DataNode dNode : dataEL.dataNodes()) {
         JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
         if (data.has("@type")) {
@@ -148,13 +149,13 @@ public class VidaXLXX extends AbstractWebsite {
   public Set<LinkSpec> getSpecs() {
   	Set<LinkSpec> specs = null;
 
-  	Elements specsEL = dom.select("div.product-specifications__text li");
-  	if (specsEL == null || specsEL.size() == 0) specsEL = dom.select(".value.content li");
+  	Elements specsEl = dom.select("div.product-specifications__text li");
+  	if (specsEl == null || specsEl.size() == 0) specsEl = dom.select(".value.content li");
   	
-  	if (specsEL != null && specsEL.size() > 0) {
-  		specs = new HashSet<>(specsEL.size());
-  		for (int i = 0; i < specsEL.size(); i++) {
-				Element specEL = specsEL.get(i);
+  	if (CollectionUtils.isNotEmpty(specsEl)) {
+  		specs = new HashSet<>(specsEl.size());
+  		for (int i = 0; i < specsEl.size(); i++) {
+				Element specEL = specsEl.get(i);
 				String[] pair = specEL.text().split(":");
 				if (pair.length == 1) {
 					specs.add(new LinkSpec("", pair[0]));

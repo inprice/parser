@@ -1,43 +1,35 @@
 package io.inprice.parser.consumer;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.io.IOException;
+import java.util.List;
 
-import org.redisson.api.RTopic;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.inprice.common.config.SysProps;
-import io.inprice.common.models.Link;
-import io.inprice.parser.helpers.RedisClient;
+import io.inprice.common.config.QueueDef;
+import io.inprice.parser.config.Props;
 
 public class ConsumerManager {
 
-  private static final Logger log = LoggerFactory.getLogger(ConsumerManager.class);
-
-  private static RTopic topic;
-  private static ExecutorService tPool;
+  private static final Logger logger = LoggerFactory.getLogger(ConsumerManager.class);
 
   public static void start() {
-    log.info("Consumer manager is starting...");
+    logger.info("Consumer manager is starting...");
 
-    tPool = Executors.newFixedThreadPool(SysProps.TPOOL_LINK_CONSUMER_CAPACITY);
-    
-    topic = RedisClient.createTopic(SysProps.REDIS_ACTIVE_LINKS_TOPIC);
-    topic.addListener(Link.class, (channel, link) -> tPool.submit(new ConsumerActiveLinks(link)));
-
-    log.info("Consumer manager is started.");
-  }
-
-  public static void stop() {
     try {
-      topic.removeAllListeners();
-      tPool.shutdown();
-      tPool.awaitTermination(SysProps.WAITING_TIME_FOR_TERMINATION, TimeUnit.SECONDS);
-    } catch (InterruptedException e) {
-      log.error("Thread pool termination is interrupted.", e);
-    }
+    	List<QueueDef> activeLinksQueues = Props.getConfig().QUEUES.ACTIVE_LINKS;
+
+    	if (CollectionUtils.isNotEmpty(activeLinksQueues)) {
+    		for (QueueDef queue: activeLinksQueues) {
+    			if (BooleanUtils.isTrue(queue.ACTIVE)) new ActiveLinksConsumer(queue);
+    		}
+    	}
+			logger.info("Consumer manager is started.");
+		} catch (IOException e) {
+			logger.error("Failed to start consumer manager", e);
+		}
   }
 
 }
