@@ -33,47 +33,44 @@ class ActiveLinksConsumer {
   private static final Logger logger = LoggerFactory.getLogger(ActiveLinksConsumer.class);
   
   ActiveLinksConsumer(QueueDef queueDef) throws IOException {
-  	String forWhichConsumer = "parser-consumer: " + queueDef.NAME;
+  	String forWhichConsumer = "Parser-CON: " + queueDef.NAME;
 
-  	try (Connection conn = RabbitMQ.createConnection(forWhichConsumer, queueDef.CAPACITY);
-  			Channel channel = conn.createChannel()) {
+  	Connection conn = RabbitMQ.createConnection(forWhichConsumer, queueDef.CAPACITY);
+  	Channel channel = conn.createChannel();
 
-  		Consumer consumer = new DefaultConsumer(channel) {
-	  		@Override
-				public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-					String inMessage = new String(body, "UTF-8");
-					Link link = JsonConverter.fromJson(inMessage, Link.class);
-					
-			  	LinkStatus oldStatus = link.getStatus();
-			    BigDecimal oldPrice = link.getPrice();
-	
-			    if (link.getPlatform() != null) {
-			      try {
-			        Class<?> clazz = Class.forName("io.inprice.parser.websites." + link.getPlatform().getClassName());
-			        Website website = (Website) clazz.getConstructor().newInstance();
-			        website.check(link);
-			      } catch (Exception e) {
-			        link.setStatus(LinkStatus.INTERNAL_ERROR);
-			        link.setProblem(StringUtils.clearErrorMessage(e.getMessage()));
-			        link.setHttpStatus(500);
-			        logger.error(link.getUrl(), e);
-			      }
-			    } else {
-			      logger.warn("Website platform is null! Status: {}, Url: {} ", link.getStatus(), link.getUrl());
-			      link.setStatus(LinkStatus.TOBE_IMPLEMENTED);
-			      link.setProblem("NOT IMPLEMENTED YET");
-			    }
-	
-			    //publishes status change
-			    StatusChangingLinksPublisher.publish(new LinkStatusChange(link, oldStatus, oldPrice));
-				}
-			};
-	
-			logger.info(forWhichConsumer + " is up and running.");
-			channel.basicConsume(queueDef.NAME, true, consumer);
-  	} catch (Exception e) {
-			logger.error("Failed to connect rabbitmq server", e);
-		}
+		Consumer consumer = new DefaultConsumer(channel) {
+  		@Override
+			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+				String inMessage = new String(body, "UTF-8");
+				Link link = JsonConverter.fromJson(inMessage, Link.class);
+				
+		  	LinkStatus oldStatus = link.getStatus();
+		    BigDecimal oldPrice = link.getPrice();
+
+		    if (link.getPlatform() != null) {
+		      try {
+		        Class<?> clazz = Class.forName("io.inprice.parser.websites." + link.getPlatform().getClassName());
+		        Website website = (Website) clazz.getConstructor().newInstance();
+		        website.check(link);
+		      } catch (Exception e) {
+		        link.setStatus(LinkStatus.INTERNAL_ERROR);
+		        link.setProblem(StringUtils.clearErrorMessage(e.getMessage()));
+		        link.setHttpStatus(500);
+		        logger.error(link.getUrl(), e);
+		      }
+		    } else {
+		      logger.warn("Website platform is null! Status: {}, Url: {} ", link.getStatus(), link.getUrl());
+		      link.setStatus(LinkStatus.TOBE_IMPLEMENTED);
+		      link.setProblem("NOT IMPLEMENTED YET");
+		    }
+
+		    //publishes status change
+		    StatusChangingLinksPublisher.publish(new LinkStatusChange(link, oldStatus, oldPrice));
+			}
+		};
+
+		logger.info(forWhichConsumer + " is up and running.");
+		channel.basicConsume(queueDef.NAME, true, consumer);
   }
 
 }

@@ -1,7 +1,6 @@
 package io.inprice.parser.publisher;
 
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,17 +22,23 @@ public class StatusChangingLinksPublisher {
 
   private static final Logger logger = LoggerFactory.getLogger(StatusChangingLinksPublisher.class);
 	
-	private static final Connection conn;
+	private static Connection conn;
+	private static Channel channel;
 
 	static {
-		conn = RabbitMQ.createConnection("parser-publisher: " + Props.getConfig().QUEUES.STATUS_CHANGING_LINKS.NAME);
+		try {
+			conn = RabbitMQ.createConnection("Parser-PUB: " + Props.getConfig().QUEUES.STATUS_CHANGING_LINKS.NAME);
+			channel = conn.createChannel();
+		} catch (IOException e) {
+	    logger.error("Failed to establish RabbitMQ connection", e);
+		}
 	}
 
 	public static void publish(LinkStatusChange change) {
-  	try (Channel channel = conn.createChannel()) {
+  	try {
 	  	String outMessage = JsonConverter.toJson(change);
 	  	channel.basicPublish("", Props.getConfig().QUEUES.STATUS_CHANGING_LINKS.NAME, null, outMessage.getBytes());
-  	} catch (IOException | TimeoutException e) {
+  	} catch (IOException e) {
       logger.error("Failed to publish status changing link", e);
 		}
 	}

@@ -19,14 +19,10 @@ public class Application {
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
   public static void main(String[] args) {
-  	new Thread(() -> {
+		RabbitMQ.start(Props.getConfig().RABBIT_CONF);
+    logger.info(" - RabbitMQ is started.");
 
-  		RabbitMQ.start(Props.getConfig().RABBIT_CONF);
-      logger.info(" - RabbitMQ is started.");
-
-      ConsumerManager.start();
-
-    }, "app-starter").start();
+    ConsumerManager.start();
 
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
       logger.info("APPLICATION IS TERMINATING...");

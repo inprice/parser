@@ -1,15 +1,15 @@
 package io.inprice.parser.config;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.inprice.common.config.BaseConfig;
 
 public class Config extends BaseConfig {
 
-	@SerializedName("proxy")
+	@JsonProperty("proxy")
 	public ProxyConf PROXY;
 
-	@SerializedName("queues")
+	@JsonProperty("queues")
 	public Queues QUEUES;
 	
 }
