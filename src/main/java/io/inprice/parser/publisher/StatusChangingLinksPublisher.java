@@ -27,7 +27,7 @@ public class StatusChangingLinksPublisher {
 
 	static {
 		try {
-			conn = RabbitMQ.createConnection("Parser-PUB: " + Props.getConfig().QUEUES.STATUS_CHANGING_LINKS.NAME);
+			conn = RabbitMQ.createConnection("PAR-PUB: " + Props.getConfig().QUEUES.STATUS_CHANGING_LINKS.NAME);
 			channel = conn.createChannel();
 		} catch (IOException e) {
 	    logger.error("Failed to establish RabbitMQ connection", e);

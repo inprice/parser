@@ -205,7 +205,7 @@ public class EbayXX extends AbstractWebsite {
     return specs;
   }
 
-  private final String BRAND_WORDS = "(Brand|Marca|Marke|Marque)?";
+  private static final String BRAND_WORDS = "(Brand|Marca|Marke|Marque)?";
 
   private void buildSpecList() {
   	brand = Consts.Words.NOT_AVAILABLE;

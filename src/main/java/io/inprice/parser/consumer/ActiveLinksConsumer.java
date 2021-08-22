@@ -33,7 +33,7 @@ class ActiveLinksConsumer {
   private static final Logger logger = LoggerFactory.getLogger(ActiveLinksConsumer.class);
   
   ActiveLinksConsumer(QueueDef queueDef) throws IOException {
-  	String forWhichConsumer = "Parser-CON: " + queueDef.NAME;
+  	String forWhichConsumer = "PAR-CON: " + queueDef.NAME;
 
   	Connection conn = RabbitMQ.createConnection(forWhichConsumer, queueDef.CAPACITY);
   	Channel channel = conn.createChannel();

@@ -100,7 +100,7 @@ public class ArgosUK extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    final String staticPart = "In-store pickup";
+    String staticPart = "In-store pickup";
 
     Element val = dom.selectFirst("a.ac-propbar__slot > span.sr-only");
     if (val != null && StringUtils.isNotBlank(val.text())) {
