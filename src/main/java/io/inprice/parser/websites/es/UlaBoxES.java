@@ -8,9 +8,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -25,14 +25,14 @@ public class UlaBoxES extends AbstractWebsite {
 	private Document dom;
 	
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
 		Element notFoundImg = dom.selectFirst("img[alt$='Page not found']");
 		if (notFoundImg == null) {
-			return HttpStatus.OK;
+			return ParseStatus.PS_OK;
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -46,7 +46,7 @@ public class UlaBoxES extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
     Element val = dom.selectFirst("meta[property='og:url']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
     	String[] chunks = val.attr("content").split("/");
@@ -84,11 +84,6 @@ public class UlaBoxES extends AbstractWebsite {
     }
 
     return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
-  public String getSeller() {
-    return "Ulabox";
   }
 
   @Override

@@ -8,9 +8,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -25,14 +25,14 @@ public class AuchanFR extends AbstractWebsite {
 	private Document dom;
 	
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
 		Element notFoundDiv = dom.selectFirst(".error404");
 		if (notFoundDiv == null) {
-			return HttpStatus.OK;
+			return ParseStatus.PS_OK;
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -46,8 +46,8 @@ public class AuchanFR extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
-    String[] chunks = getUrl().split("-");
+  public String getSku(String url) {
+    String[] chunks = url.split("-");
     return chunks[chunks.length-1].toUpperCase();
   }
 
@@ -80,12 +80,12 @@ public class AuchanFR extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
+  public String getSeller(String defaultSeller) {
     Element val = dom.selectFirst(".product-price--seller");
     if (val != null) {
     	return val.text();
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return defaultSeller;
   }
 
   @Override

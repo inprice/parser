@@ -14,10 +14,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -40,7 +40,7 @@ public class VidaXLXX extends AbstractWebsite {
 	}
 
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
     Elements dataEL = dom.select("script[type='application/ld+json']");
@@ -59,13 +59,13 @@ public class VidaXLXX extends AbstractWebsite {
             		JSONArray offersArr = (JSONArray) offersObj;
             		offers = offersArr.getJSONObject(0);
             	}
-          		return HttpStatus.OK;
+          		return ParseStatus.PS_OK;
             }
           }
         }
       }
     }
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -78,7 +78,7 @@ public class VidaXLXX extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
     if (json != null) {
       if (json.has("sku"))
         return json.getString("sku");
@@ -126,12 +126,12 @@ public class VidaXLXX extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
+  public String getSeller(String defaultSeller) {
     Element val = dom.selectFirst(".seller-info-name");
     if (val != null) {
       return val.text();
     }
-    return "vidaXL";
+    return defaultSeller;
   }
 
   @Override

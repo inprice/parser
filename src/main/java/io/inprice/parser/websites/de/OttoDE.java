@@ -8,9 +8,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -25,9 +25,9 @@ public class OttoDE extends AbstractWebsite {
 	private Document dom;
 
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
-		return HttpStatus.OK;
+		return ParseStatus.PS_OK;
 	}
 
   @Override
@@ -42,7 +42,7 @@ public class OttoDE extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
     Element val = dom.selectFirst("meta[itemprop='sku']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");

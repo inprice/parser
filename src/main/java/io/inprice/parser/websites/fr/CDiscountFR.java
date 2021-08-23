@@ -9,9 +9,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.openqa.selenium.By;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -31,14 +31,14 @@ public class CDiscountFR extends AbstractWebsite {
 	}
 
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 		
 		Element notFoundImg = dom.selectFirst("img[alt='404']");
 		if (notFoundImg == null) {
-			return HttpStatus.OK;
+			return ParseStatus.PS_OK;
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -48,7 +48,7 @@ public class CDiscountFR extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
   	Element val = dom.getElementById("fpSku");
   	if (val != null) {
   		return val.text();
@@ -84,12 +84,12 @@ public class CDiscountFR extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
+  public String getSeller(String defaultSeller) {
   	Element val = dom.selectFirst("fpSellerName");
   	if (val != null) {
   		return val.text();
   	}
-  	return "CDiscount";
+  	return defaultSeller;
   }
 
   @Override
@@ -98,7 +98,6 @@ public class CDiscountFR extends AbstractWebsite {
   	if (val != null) {
   		return val.text();
   	}
-
     return "Check shipping conditions";
   }
 

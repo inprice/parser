@@ -12,9 +12,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -34,14 +34,14 @@ public class BonanzaUS extends AbstractWebsite {
 	}
 
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
 		Element titleEl = dom.selectFirst("title");
 		if (titleEl.text().toLowerCase().contains("find everything") == false) {
-			return HttpStatus.OK;
+			return ParseStatus.PS_OK;
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -55,7 +55,7 @@ public class BonanzaUS extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
     Element val = dom.selectFirst("meta[property='product:retailer_item_id']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
@@ -91,12 +91,12 @@ public class BonanzaUS extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
+  public String getSeller(String defaultSeller) {
     Element val = dom.selectFirst(".booth_title_and_feedback .booth_link a");
     if (val != null) {
       return val.text();
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return defaultSeller;
   }
 
   @Override

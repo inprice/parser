@@ -12,9 +12,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -30,23 +30,23 @@ public class BestBuyCA extends AbstractWebsite {
   private JSONObject product;
 	
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		Document dom = Jsoup.parse(html);
 
 		String title = dom.selectFirst("title").text().toLowerCase();
 		if (title.contains("site down") == true) {
-			return new HttpStatus(503, "Site is down!");
+			return new ParseStatus(503, "Site is down!");
 		} else if (title.contains("not found") == false) {
       String rawJson = findAPart(html, "}},\"product\":", ",\"productSellers\":");
       if (StringUtils.isNotBlank(rawJson)) {
         json = new JSONObject(rawJson);
         if (json != null && json.has("product")) {
         	product = json.getJSONObject("product");
-        	return HttpStatus.OK;
+        	return ParseStatus.PS_OK;
         }
       }
 		} 
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -75,7 +75,7 @@ public class BestBuyCA extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
   	if (json != null && json.has("availability")) {
     	JSONObject availability = json.getJSONObject("availability");
     	if (availability != null && availability.has("sku")) {
@@ -110,19 +110,19 @@ public class BestBuyCA extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
+  public String getSeller(String defaultSeller) {
     if (product != null && !product.isNull("seller")) {
       JSONObject seller = product.getJSONObject("seller");
       if (seller != null) {
         return seller.getString("name");
       }
     }
-    return super.getSeller();
+    return defaultSeller;
   }
 
   @Override
   public String getShipment() {
-    return "Sold and shipped by " + getSeller();
+    return "Sold and shipped by BestBuy";
   }
 
   @Override

@@ -3,6 +3,7 @@ package io.inprice.parser.websites;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 
@@ -14,17 +15,14 @@ import io.inprice.common.models.LinkSpec;
  */
 public interface Website {
 
-	// main url
-	String getUrl();
-
 	// checks link status and sets data. is implemented in AbstractWebsite
-	void check(Link link);
+	ParseStatus check(Link link);
 
 	// indicates the availability of the page
 	boolean isAvailable();
 
 	// can be used as SKU, CODE, ASIN, PRODUCT-ID, ITEM-ID...
-	String getSku();
+	String getSku(String url);
 
 	String getName();
 
@@ -32,7 +30,7 @@ public interface Website {
 
 	String getBrand();
 
-	String getSeller();
+	String getSeller(String defaultName);
 
 	String getShipment();
 

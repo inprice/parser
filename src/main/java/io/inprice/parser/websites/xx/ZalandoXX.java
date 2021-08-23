@@ -8,9 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -38,7 +38,7 @@ public class ZalandoXX extends AbstractWebsite {
 	}
 
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		String rawJson = findAPart(html, "![CDATA[{\"layout\"", "}]]", 1, 8);
 		if (StringUtils.isNotBlank(rawJson)) {
 			JSONObject json = new JSONObject(rawJson);
@@ -54,11 +54,11 @@ public class ZalandoXX extends AbstractWebsite {
 					if (model.has("productDetailsCluster")) {
 						details = model.getJSONArray("productDetailsCluster");
 					}
-					return HttpStatus.OK;
+					return ParseStatus.PS_OK;
 				}
 			}
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 	
   @Override
@@ -70,7 +70,7 @@ public class ZalandoXX extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
   	if (info != null && info.has("id")) {
   		return info.getString("id");
   	}

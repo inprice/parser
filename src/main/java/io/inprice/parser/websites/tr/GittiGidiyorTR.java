@@ -8,9 +8,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -27,17 +27,17 @@ public class GittiGidiyorTR extends AbstractWebsite {
 	private Document dom;
 
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
 		Element notFoundDiv = dom.selectFirst(".gg-404-container");
 		if (notFoundDiv == null) {
 			notFoundDiv = dom.getElementById("sp-passive-product-message");
 			if (notFoundDiv == null) {
-				return HttpStatus.OK;
+				return ParseStatus.PS_OK;
 			}
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 		
 	}
 
@@ -52,7 +52,7 @@ public class GittiGidiyorTR extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
     Element val = dom.getElementById("productId");
     if (val != null && val.hasAttr("value")) {
       return val.attr("value");
@@ -112,14 +112,14 @@ public class GittiGidiyorTR extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
+  public String getSeller(String defaultSeller) {
     Element val = dom.getElementById("sp-member-nick");
     if (val == null || StringUtils.isBlank(val.text())) val = dom.selectFirst(".member-name a strong");
     
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
-    return super.getSeller();
+    return defaultSeller;
   }
 
   @Override

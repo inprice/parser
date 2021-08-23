@@ -10,9 +10,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.openqa.selenium.By;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -33,15 +33,15 @@ public class AsosUK extends AbstractWebsite {
   }
   
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
     String prodData = findAPart(html, "config.product = ", "};", 1);
     if (StringUtils.isNotBlank(prodData)) {
     	json = new JSONObject(prodData);
-    	return HttpStatus.OK;
+    	return ParseStatus.PS_OK;
     }
-    return HttpStatus.NOT_FOUND;
+    return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -53,7 +53,7 @@ public class AsosUK extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
   	if (json != null && json.has("id")) {
   		return ""+json.getInt("id");
   	}

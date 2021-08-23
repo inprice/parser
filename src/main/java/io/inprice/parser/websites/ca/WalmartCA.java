@@ -22,10 +22,9 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 
-import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.StringHelpers;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -56,19 +55,19 @@ public class WalmartCA extends AbstractWebsite {
 	}
 
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
 		Element titleEl = dom.selectFirst("title");
 		if (titleEl.text().equals("Walmart Canada") == false) {
 			features = findAPart(html, "featuresSpecifications\":\"", "\",\"type\"");
-			return HttpStatus.OK;
+			return ParseStatus.PS_OK;
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
 	@Override
-	protected void afterRequest(WebClient webClient) {
+	protected ParseStatus afterRequest(WebClient webClient) {
     Elements dataEL = dom.select("script[type='application/ld+json']");
     if (dataEL != null) {
       for (DataNode dNode : dataEL.dataNodes()) {
@@ -87,12 +86,12 @@ public class WalmartCA extends AbstractWebsite {
         }
       }
     }
-    
+
     if (StringUtils.isBlank(sku)) {
 			logger.warn("Missing info! SKU: {}, Name: {}, Brand: {}", sku, name, brand);
-    	return;
+    	return ParseStatus.PS_NOT_FOUND;
     }
-		
+
     String html = dom.html();
     
     String ind = "\"item\":{\"id\":\"";
@@ -143,16 +142,19 @@ public class WalmartCA extends AbstractWebsite {
   	    	}
   	    }
 	    } else {
-      	setLinkStatus(LinkStatus.NETWORK_ERROR, "ACCESS PROBLEM!" + (getRetry() < 3 ? " RETRYING..." : ""), res.getStatusCode());
+      	return new ParseStatus(res.getStatusCode(), res.getStatusMessage());
       }
 		} catch (IOException e) {
-			setLinkStatus(LinkStatus.NETWORK_ERROR, e.getMessage(), 400);
 			logger.error("Failed to post data to Walmart to fetch product price!", e);
+			return new ParseStatus(502, e.getMessage());
 		}
-		
+
 		if (json == null || json.isEmpty()) {
 			logger.warn("Missing json info!");
+			return ParseStatus.PS_NOT_FOUND;
 		}
+		
+		return ParseStatus.PS_OK;
 	}	
 
   @Override
@@ -164,7 +166,7 @@ public class WalmartCA extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
     return sku;
   }
 
@@ -187,12 +189,12 @@ public class WalmartCA extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
+  public String getSeller(String defaultSeller) {
   	if (json != null && json.has("sellerInfo")) {
   		JSONObject sellerInfo = json.getJSONObject("sellerInfo");
   		return sellerInfo.getString("en");
   	}
-  	return super.getSeller();
+  	return defaultSeller;
   }
 
   @Override
@@ -207,7 +209,7 @@ public class WalmartCA extends AbstractWebsite {
       return shipment.text();
     }
 
-    return "Shipped by " + getSeller();
+    return "Shipped by Walmart Canada";
   }
 
   @Override

@@ -9,9 +9,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.openqa.selenium.By;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -31,14 +31,14 @@ public class LidlUS extends AbstractWebsite {
 	}
 	
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
 		Element messageH1 = dom.selectFirst(".status-message-headline");
 		if (messageH1 == null) {
-			return HttpStatus.OK;
+			return ParseStatus.PS_OK;
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -51,8 +51,8 @@ public class LidlUS extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
-    String[] chunks = getUrl().split("/");
+  public String getSku(String url) {
+    String[] chunks = url.split("/");
     if (chunks.length > 0) {
       return chunks[chunks.length-1];
     }

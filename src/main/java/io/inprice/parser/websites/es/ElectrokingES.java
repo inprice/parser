@@ -13,10 +13,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -35,7 +35,7 @@ public class ElectrokingES extends AbstractWebsite {
 	private JSONObject shipping;
 	
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
     Elements dataEL = dom.select("script[type='application/ld+json']");
@@ -48,11 +48,11 @@ public class ElectrokingES extends AbstractWebsite {
           
           String shipRawJson = findAPart(html, "\"shipping\":", "},", 1, 0);
           shipping = new JSONObject(shipRawJson);
-      		return HttpStatus.OK;
+      		return ParseStatus.PS_OK;
         }
       }
     }
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -65,7 +65,7 @@ public class ElectrokingES extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
   	if (prod != null && prod.has("sku")) {
   		return prod.getString("sku");
   	}
@@ -97,7 +97,7 @@ public class ElectrokingES extends AbstractWebsite {
   		JSONObject brand = prod.getJSONObject("brand");
   		return brand.getString("name");
   	}
-    return getSeller();
+    return "Electroking Espania";
   }
 
   @Override

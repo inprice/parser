@@ -25,10 +25,10 @@ public class LinkTest {
 	// Global    --> amazon, apple, bonprix, ebay, lidl, mediamarkt, vidaxl, zalando
 
 	private static String[] urls = {
-		"https://www.zalando.fr/adidas-originals-continental-80-stripes-unisex-baskets-basses-footwear-whitepulsa-aqua-ad116d14q-a11.html",
-		"https://www.zalando.it/nike-sportswear-dress-vestito-di-maglina-ni121c01u-c11.html",
-		"https://www.zalando.es/puma-wild-rider-route-unisex-zapatillas-whiteblack-pu115o0fc-a11.html",
-		"https://www.zalando.de/the-north-face-sneaker-low-tnf-black-zinc-grey-th342a06t-q11.html",
+		//"https://www.zalando.fr/adidas-originals-continental-80-stripes-unisex-baskets-basses-footwear-whitepulsa-aqua-ad116d14q-a11.html",
+		//"https://www.zalando.it/nike-sportswear-dress-vestito-di-maglina-ni121c01u-c11.html",
+		//"https://www.zalando.es/puma-wild-rider-route-unisex-zapatillas-whiteblack-pu115o0fc-a11.html",
+		//"https://www.zalando.de/the-north-face-sneaker-low-tnf-black-zinc-grey-th342a06t-q11.html",
 		"https://www.zalando.co.uk/jack-wolfskin-seven-seas-3-walking-sandals-limeblue-ja443b02a-m11.html"
 	};
 
@@ -67,8 +67,8 @@ public class LinkTest {
 
 		System.out.println("--------------------------");
 		System.out.println("Status: " + link.getStatus());
-		System.out.println("Http Status: " + link.getHttpStatus());
-		System.out.println("Problem: " + link.getProblem());
+		System.out.println("Parse Code: " + link.getParseCode());
+		System.out.println("Parse Problem: " + link.getParseProblem());
 		System.out.println("--------------------------");
 
 		if (CollectionUtils.isNotEmpty(link.getSpecList())) {

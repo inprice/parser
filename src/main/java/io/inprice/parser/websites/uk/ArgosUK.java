@@ -8,9 +8,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -33,7 +33,7 @@ public class ArgosUK extends AbstractWebsite {
 	} 
 
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
 		Element titleEl = dom.selectFirst("title");
@@ -41,9 +41,9 @@ public class ArgosUK extends AbstractWebsite {
 	    String found = findAPart(html, "\"globallyOutOfStock\":", ",");
 	    isAvailable = ("false".equalsIgnoreCase(found));
 	    brand = findAPart(html, "\"brand\":\"", "\",");
-			return HttpStatus.OK;
+			return ParseStatus.PS_OK;
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -52,7 +52,7 @@ public class ArgosUK extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
     Element val = dom.selectFirst("[itemProp='sku']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");

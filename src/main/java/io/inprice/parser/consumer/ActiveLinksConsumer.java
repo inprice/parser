@@ -17,9 +17,8 @@ import io.inprice.common.config.QueueDef;
 import io.inprice.common.helpers.JsonConverter;
 import io.inprice.common.helpers.RabbitMQ;
 import io.inprice.common.info.LinkStatusChange;
-import io.inprice.common.meta.LinkStatus;
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.Link;
-import io.inprice.common.utils.StringUtils;
 import io.inprice.parser.publisher.StatusChangingLinksPublisher;
 import io.inprice.parser.websites.Website;
 
@@ -41,31 +40,27 @@ class ActiveLinksConsumer {
 		Consumer consumer = new DefaultConsumer(channel) {
   		@Override
 			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-				String inMessage = new String(body, "UTF-8");
+				String inMessage = new String(body);
 				Link link = JsonConverter.fromJson(inMessage, Link.class);
 				
-		  	LinkStatus oldStatus = link.getStatus();
+				ParseStatus newParseStatus = ParseStatus.PS_OK;
 		    BigDecimal oldPrice = link.getPrice();
 
 		    if (link.getPlatform() != null) {
 		      try {
 		        Class<?> clazz = Class.forName("io.inprice.parser.websites." + link.getPlatform().getClassName());
 		        Website website = (Website) clazz.getConstructor().newInstance();
-		        website.check(link);
+		        newParseStatus = website.check(link);
 		      } catch (Exception e) {
-		        link.setStatus(LinkStatus.INTERNAL_ERROR);
-		        link.setProblem(StringUtils.clearErrorMessage(e.getMessage()));
-		        link.setHttpStatus(500);
+		      	newParseStatus = new ParseStatus(ParseStatus.CODE_UNEXPECTED_EXCEPTION, e.getMessage());
 		        logger.error(link.getUrl(), e);
 		      }
 		    } else {
+		    	newParseStatus = new ParseStatus(ParseStatus.CODE_NOT_IMPLEMENTED, "Link's platform is null");
 		      logger.warn("Website platform is null! Status: {}, Url: {} ", link.getStatus(), link.getUrl());
-		      link.setStatus(LinkStatus.TOBE_IMPLEMENTED);
-		      link.setProblem("NOT IMPLEMENTED YET");
 		    }
 
-		    //publishes status change
-		    StatusChangingLinksPublisher.publish(new LinkStatusChange(link, oldStatus, oldPrice));
+		    StatusChangingLinksPublisher.publish(new LinkStatusChange(link, newParseStatus, oldPrice));
 			}
 		};
 

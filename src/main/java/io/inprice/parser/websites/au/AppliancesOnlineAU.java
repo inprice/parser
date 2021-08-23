@@ -13,10 +13,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -39,7 +39,7 @@ public class AppliancesOnlineAU extends AbstractWebsite {
 	}
 	
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
     Elements dataEL = dom.select("script[type='application/ld+json']");
@@ -58,13 +58,13 @@ public class AppliancesOnlineAU extends AbstractWebsite {
             		JSONArray offersArr = (JSONArray) offersObj;
             		offers = offersArr.getJSONObject(0);
             	}
-          		return HttpStatus.OK;
+          		return ParseStatus.PS_OK;
             }
           }
         }
       }
     }
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -77,8 +77,8 @@ public class AppliancesOnlineAU extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
-  	String[] chunks = getUrl().split("-");
+  public String getSku(String url) {
+  	String[] chunks = url.split("-");
     return chunks[chunks.length-1];
   }
 

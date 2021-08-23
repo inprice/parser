@@ -8,9 +8,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -31,15 +31,15 @@ public class MediaWorldIT extends AbstractWebsite {
 	}
 	
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
 		String title = dom.title();
 		if (title.toLowerCase().contains("error 404") == false) {
   		prod = dom.selectFirst("div.product-detail-main-container");
-  		return HttpStatus.OK;
+  		return ParseStatus.PS_OK;
     }
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 	
   @Override
@@ -51,7 +51,7 @@ public class MediaWorldIT extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
     if (prod != null) {
       return prod.attr("data-pcode");
     }

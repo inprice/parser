@@ -11,9 +11,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -41,12 +41,12 @@ public class EPriceIT extends AbstractWebsite {
 	}
 
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 		seller = findAPart(html, "seller_name: \"", "\",");
 		if (StringUtils.isBlank(seller)) seller = "ePrice";
 		
-		return HttpStatus.OK;
+		return ParseStatus.PS_OK;
 	}
 
   @Override
@@ -60,7 +60,7 @@ public class EPriceIT extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
     Element val = dom.selectFirst("meta[itemprop='sku']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
@@ -96,13 +96,13 @@ public class EPriceIT extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
+  public String getSeller(String defaultSeller) {
     return seller;
   }
 
   @Override
   public String getShipment() {
-    return "Venduto e spedito da " + getSeller();
+    return "Venduto e spedito da " + seller;
   }
 
   @Override

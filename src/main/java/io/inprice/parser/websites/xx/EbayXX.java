@@ -11,9 +11,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -36,15 +36,15 @@ public class EbayXX extends AbstractWebsite {
 	}
   
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 		
 		String title = dom.title();
 		if (title.toLowerCase().contains("error page") == false) {
 			buildSpecList();
-			return HttpStatus.OK;
+			return ParseStatus.PS_OK;
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -63,7 +63,7 @@ public class EbayXX extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
     Element val = dom.getElementById("descItemNumber");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
@@ -142,7 +142,7 @@ public class EbayXX extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
+  public String getSeller(String defaultSeller) {
     Element val = dom.getElementById("mbgLink");
 
     if (val != null && StringUtils.isNotBlank(val.attr("aria-label"))) {
@@ -159,7 +159,7 @@ public class EbayXX extends AbstractWebsite {
       }
     }
     
-    return Consts.Words.NOT_AVAILABLE;
+    return defaultSeller;
   }
 
   @Override

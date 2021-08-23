@@ -8,9 +8,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -32,14 +32,14 @@ public class MediaMarktXX_2 extends AbstractWebsite {
 	}
 
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
 		Element metaUrl = dom.selectFirst("meta[property='og:url']");
 		if (metaUrl != null && metaUrl.hasAttr("content") && metaUrl.attr("content").contains("error404")) {
-			return HttpStatus.NOT_FOUND;
+			return ParseStatus.PS_NOT_FOUND;
 		}
-		return HttpStatus.OK;
+		return ParseStatus.PS_OK;
 	}
 
   @Override
@@ -54,7 +54,7 @@ public class MediaMarktXX_2 extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
     Element val = dom.selectFirst("dd span[itemprop='sku']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
@@ -87,11 +87,6 @@ public class MediaMarktXX_2 extends AbstractWebsite {
       return val.attr("content");
     }
     return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
-  public String getSeller() {
-    return "MediaMarkt " + getPlatform().getCountry();
   }
 
   @Override

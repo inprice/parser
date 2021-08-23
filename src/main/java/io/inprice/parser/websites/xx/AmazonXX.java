@@ -9,9 +9,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -30,24 +30,23 @@ public class AmazonXX extends AbstractWebsite {
 	private String storeShipping;
 	
 	@Override
-	protected HttpStatus setHtml(String html) {
+	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
 
 		Element val = dom.selectFirst("title");
 		if (val.text().toLowerCase().contains("not found") == false) {
 			val = dom.getElementById("outOfStock");
 			if (val == null) {
-				return HttpStatus.OK;
+				return ParseStatus.PS_OK;
 			}
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 	
 	@Override
-	protected String getExtraUrl() {
+	protected String getExtraUrl(String url) {
 		Element val = dom.selectFirst("#buybox-see-all-buying-choices a");
 		if (val != null) {
-  		String url = getUrl();
   		int pos = url.indexOf("/dp/")+4;
   		String asin = url.substring(pos, pos+10);
    		return "https://www.amazon.com/gp/aod/ajax/ref=dp_aod_unknown_mbc?asin="+asin;
@@ -56,7 +55,7 @@ public class AmazonXX extends AbstractWebsite {
 	}
 
 	@Override
-	protected HttpStatus setExtraHtml(String html) {
+	protected ParseStatus setExtraHtml(String html) {
 		Document subDom = Jsoup.parse(html);
 
 		Element storeEl = subDom.selectFirst("#aod-offer-shipsFrom .a-color-base");
@@ -91,7 +90,7 @@ public class AmazonXX extends AbstractWebsite {
   }
 
   @Override
-  public String getSku() {
+  public String getSku(String url) {
     Element val = dom.getElementById("ASIN");
     if (val != null && StringUtils.isNotBlank(val.val())) {
       return val.val();
@@ -227,7 +226,7 @@ public class AmazonXX extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
+  public String getSeller(String defaultSeller) {
   	if (storeName != null) return storeName;
 
   	Element val = dom.getElementById("sellerProfileTriggerId");
@@ -239,7 +238,7 @@ public class AmazonXX extends AbstractWebsite {
       return val.text();
     }
 
-    return super.getSeller();
+    return defaultSeller;
   }
 
   @Override
