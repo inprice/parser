@@ -37,7 +37,7 @@ public class TeknosaTR extends AbstractWebsite {
 		dom = Jsoup.parse(html);
 
 		addToCartBtn = dom.getElementById("addToCartButton");
-		if (addToCartBtn != null && addToCartBtn.hasAttr("disabled") == false) {
+		if (addToCartBtn != null) {
 			return ParseStatus.PS_OK;
 		}
 		return ParseStatus.PS_NOT_FOUND;

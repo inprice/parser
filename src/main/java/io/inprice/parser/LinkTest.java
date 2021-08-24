@@ -5,6 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
 import io.inprice.parser.websites.Website;
+import io.inprice.parser.websites.tr.TeknosaTR;
 import io.inprice.parser.websites.xx.ZalandoXX;
 
 public class LinkTest {
@@ -25,11 +26,7 @@ public class LinkTest {
 	// Global    --> amazon, apple, bonprix, ebay, lidl, mediamarkt, vidaxl, zalando
 
 	private static String[] urls = {
-		//"https://www.zalando.fr/adidas-originals-continental-80-stripes-unisex-baskets-basses-footwear-whitepulsa-aqua-ad116d14q-a11.html",
-		//"https://www.zalando.it/nike-sportswear-dress-vestito-di-maglina-ni121c01u-c11.html",
-		//"https://www.zalando.es/puma-wild-rider-route-unisex-zapatillas-whiteblack-pu115o0fc-a11.html",
-		//"https://www.zalando.de/the-north-face-sneaker-low-tnf-black-zinc-grey-th342a06t-q11.html",
-		"https://www.zalando.co.uk/jack-wolfskin-seven-seas-3-walking-sandals-limeblue-ja443b02a-m11.html"
+		"https://www.teknosa.com/logitech-981000593-h111-stereo-kulaklik-p-125045506"
 	};
 
 	public static void main(String[] args) throws InterruptedException {
@@ -49,7 +46,7 @@ public class LinkTest {
 		  		link.setPlatform(platform);
 		  		link.setPlatformId(platform.getId());
 
-		  		Website website = new ZalandoXX();
+		  		Website website = new TeknosaTR();
 		  		website.check(link);
 		  		printout(link);
 				}
