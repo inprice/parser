@@ -17,8 +17,10 @@ import io.inprice.common.config.QueueDef;
 import io.inprice.common.helpers.JsonConverter;
 import io.inprice.common.helpers.RabbitMQ;
 import io.inprice.common.info.LinkStatusChange;
-import io.inprice.common.info.ParseStatus;
+import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
+import io.inprice.common.utils.StringUtils;
+import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.publisher.StatusChangingLinksPublisher;
 import io.inprice.parser.websites.Website;
 
@@ -30,7 +32,7 @@ import io.inprice.parser.websites.Website;
 class ActiveLinksConsumer {
 
   private static final Logger logger = LoggerFactory.getLogger(ActiveLinksConsumer.class);
-  
+
   ActiveLinksConsumer(QueueDef queueDef) throws IOException {
   	String forWhichConsumer = "PAR-CON: " + queueDef.NAME;
 
@@ -42,10 +44,12 @@ class ActiveLinksConsumer {
 			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
 				String inMessage = new String(body);
 				Link link = JsonConverter.fromJson(inMessage, Link.class);
-				
-				ParseStatus newParseStatus = ParseStatus.PS_OK;
-		    BigDecimal oldPrice = link.getPrice();
 
+				LinkStatus oldStatus = link.getStatus();
+		    BigDecimal oldPrice = link.getPrice();
+		    int oldParseCode = link.getParseCode();
+
+		    ParseStatus newParseStatus = new ParseStatus(link.getParseCode(), link.getParseProblem());
 		    if (link.getPlatform() != null) {
 		      try {
 		        Class<?> clazz = Class.forName("io.inprice.parser.websites." + link.getPlatform().getClassName());
@@ -56,11 +60,71 @@ class ActiveLinksConsumer {
 		        logger.error(link.getUrl(), e);
 		      }
 		    } else {
-		    	newParseStatus = new ParseStatus(ParseStatus.CODE_NOT_IMPLEMENTED, "Link's platform is null");
+		    	newParseStatus = new ParseStatus(ParseStatus.CODE_NOT_IMPLEMENTED, "Link platform is null");
 		      logger.warn("Website platform is null! Status: {}, Url: {} ", link.getStatus(), link.getUrl());
 		    }
+		    
+		    if (newParseStatus.getCode() != oldParseCode) {
+			    switch (newParseStatus.getCode()) {
+			    	case ParseStatus.CODE_OK: {
+			    		link.setStatus(LinkStatus.AVAILABLE);
+			    		break;
+			    	}
+			    	case ParseStatus.CODE_NO_DATA: {
+			    		link.setStatus(LinkStatus.NO_DATA);
+			    		break;
+			    	}
+			    	case ParseStatus.CODE_NOT_AVAILABLE: {
+			    		link.setStatus(LinkStatus.NOT_AVAILABLE);
+			    		break;
+			    	}
+			    	case ParseStatus.CODE_NOT_IMPLEMENTED: {
+			    		link.setStatus(LinkStatus.TOBE_IMPLEMENTED);
+			    		break;
+			    	}
+			  		/*------------------------------------------*/
+			    	case ParseStatus.CODE_IO_EXCEPTION: {
+			    		link.setStatus(LinkStatus.NETWORK_ERROR);
+			    		break;
+			    	}
+			    	case ParseStatus.CODE_TIMEOUT_EXCEPTION: {
+			    		link.setStatus(LinkStatus.TIMED_OUT);
+			    		break;
+			    	}
+			    	case ParseStatus.CODE_UNEXPECTED_EXCEPTION: {
+			    		link.setStatus(LinkStatus.INTERNAL_ERROR);
+			    		break;
+			    	}
+			  		/*------------------------------------------*/
+						case ParseStatus.HTTP_CODE_NOT_FOUND: {
+			    		link.setStatus(LinkStatus.NOT_FOUND);
+			    		break;
+						}
+			    	case ParseStatus.HTTP_CODE_NOT_ALLOWED: {
+			    		link.setStatus(LinkStatus.NOT_ALLOWED);
+			    		break;
+			    	}
+						case ParseStatus.HTTP_CODE_UNREACHABLE_SITE: {
+			    		link.setStatus(LinkStatus.SITE_DOWN);
+			    		break;
+						}
+			  		/*------------------------------------------*/
+						default: {
+							if (link.getParseCode() >= 400) { //other http errors
+								link.setStatus(LinkStatus.NETWORK_ERROR);
+							} else if (link.getParseCode() > 0) { //unexpected errors which must not be thrown
+								logger.warn("%s has unexpected Code: %d and Problem: %s", link.getUrl(), link.getParseCode(), link.getParseProblem());
+							}
+						}
+			    }
 
-		    StatusChangingLinksPublisher.publish(new LinkStatusChange(link, newParseStatus, oldPrice));
+			    link.setParseCode(newParseStatus.getCode());
+			    link.setParseProblem(StringUtils.clearErrorMessage(newParseStatus.getMessage()));
+		    }
+
+		    if (link.getStatus().equals(oldStatus) == false || link.getPrice().equals(oldPrice) == false) {
+		    	StatusChangingLinksPublisher.publish(new LinkStatusChange(link, oldStatus, oldPrice));
+		    }
 			}
 		};
 

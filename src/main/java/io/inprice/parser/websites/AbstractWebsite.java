@@ -37,12 +37,12 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 
 import io.inprice.common.helpers.SqlHelper;
-import io.inprice.common.info.ParseStatus;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.ParseStatus;
 
 /**
  * 

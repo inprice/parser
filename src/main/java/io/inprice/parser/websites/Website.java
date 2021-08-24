@@ -3,9 +3,9 @@ package io.inprice.parser.websites;
 import java.math.BigDecimal;
 import java.util.Set;
 
-import io.inprice.common.info.ParseStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.info.ParseStatus;
 
 /**
  * A common interface for websites. So, all of them must implement this
