@@ -54,7 +54,7 @@ public class ZalandoXX extends AbstractWebsite {
 					if (model.has("productDetailsCluster")) {
 						details = model.getJSONArray("productDetailsCluster");
 					}
-					return ParseStatus.PS_OK;
+					return OK_Status();
 				}
 			}
 		}
@@ -110,7 +110,7 @@ public class ZalandoXX extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    return "Standard";
+  	return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

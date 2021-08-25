@@ -36,7 +36,7 @@ public class CDiscountFR extends AbstractWebsite {
 		
 		Element notFoundImg = dom.selectFirst("img[alt='404']");
 		if (notFoundImg == null) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}
@@ -98,7 +98,7 @@ public class CDiscountFR extends AbstractWebsite {
   	if (val != null) {
   		return val.text();
   	}
-    return "Check shipping conditions";
+  	return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

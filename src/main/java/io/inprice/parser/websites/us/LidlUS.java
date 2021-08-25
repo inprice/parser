@@ -36,7 +36,7 @@ public class LidlUS extends AbstractWebsite {
 
 		Element messageH1 = dom.selectFirst(".status-message-headline");
 		if (messageH1 == null) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}
@@ -92,7 +92,7 @@ public class LidlUS extends AbstractWebsite {
     if (val != null) {
     	return "Available at " + val.text();
     }
-    return "Check store";
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

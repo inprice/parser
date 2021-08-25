@@ -2,7 +2,10 @@ package io.inprice.parser.consumer;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +23,7 @@ import io.inprice.common.info.LinkStatusChange;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.utils.StringUtils;
+import io.inprice.parser.info.ParseCode;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.publisher.StatusChangingLinksPublisher;
 import io.inprice.parser.websites.Website;
@@ -36,100 +40,117 @@ class ActiveLinksConsumer {
   ActiveLinksConsumer(QueueDef queueDef) throws IOException {
   	String forWhichConsumer = "PAR-CON: " + queueDef.NAME;
 
-  	Connection conn = RabbitMQ.createConnection(forWhichConsumer, queueDef.CAPACITY);
+  	Connection conn = RabbitMQ.createConnection(forWhichConsumer);
   	Channel channel = conn.createChannel();
+  	ExecutorService tPool = Executors.newFixedThreadPool(queueDef.CAPACITY);
 
 		Consumer consumer = new DefaultConsumer(channel) {
   		@Override
 			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-  			try {
-					String message = new String(body);
-					Link link = JsonConverter.fromJsonWithoutJsonIgnore(message, Link.class);
+  	  	tPool.execute(() -> {
+					StopWatch watch = new StopWatch();
+					watch.start();
+
+	  			try {
+						String message = new String(body);
+						Link link = JsonConverter.fromJsonWithoutJsonIgnore(message, Link.class);
+		
+						LinkStatus oldStatus = link.getStatus();
+				    BigDecimal oldPrice = link.getPrice();
 	
-					LinkStatus oldStatus = link.getStatus();
-			    BigDecimal oldPrice = link.getPrice();
-			    int oldParseCode = link.getParseCode();
-	
-			    ParseStatus newParseStatus = new ParseStatus(link.getParseCode(), link.getParseProblem());
-			    if (link.getPlatform() != null) {
-			      try {
-			        Class<?> clazz = Class.forName("io.inprice.parser.websites." + link.getPlatform().getClassName());
-			        Website website = (Website) clazz.getConstructor().newInstance();
-			        newParseStatus = website.check(link);
-			      } catch (Exception e) {
-			      	newParseStatus = new ParseStatus(ParseStatus.CODE_UNEXPECTED_EXCEPTION, e.getMessage());
-			        logger.error(link.getUrl(), e);
-			      }
-			    } else {
-			    	newParseStatus = new ParseStatus(ParseStatus.CODE_NOT_IMPLEMENTED, "Link platform is null");
-			      logger.warn("Website platform is null! Status: {}, Url: {} ", link.getStatus(), link.getUrl());
-			    }
-			    
-			    if (newParseStatus.getCode() != oldParseCode) {
+				    ParseStatus newParseStatus = null;
+		
+				    if (link.getPlatform().getClassName() != null) {
+				      try {
+				        Class<?> clazz = Class.forName("io.inprice.parser.websites." + link.getPlatform().getClassName());
+				        Website website = (Website) clazz.getConstructor().newInstance();
+				        newParseStatus = website.check(link);
+				      } catch (Exception e) {
+				      	newParseStatus = new ParseStatus(ParseCode.OTHER_EXCEPTION, e.getMessage());
+				        logger.error(link.getUrl(), e);
+				      }
+				    } else {
+				    	newParseStatus = new ParseStatus(ParseCode.NOT_IMPLEMENTED, "Platform is null");
+				      logger.warn("Platform is null! Status: {}, Url: {} ", link.getStatus(), link.getUrl());
+				    }
+				    
 				    switch (newParseStatus.getCode()) {
-				    	case ParseStatus.CODE_OK: {
+				    	case OK: {
 				    		link.setStatus(LinkStatus.AVAILABLE);
 				    		break;
 				    	}
-				    	case ParseStatus.CODE_NO_DATA: {
+				    	case NO_DATA: {
 				    		link.setStatus(LinkStatus.NO_DATA);
 				    		break;
 				    	}
-				    	case ParseStatus.CODE_NOT_AVAILABLE: {
+				    	case NOT_AVAILABLE: {
 				    		link.setStatus(LinkStatus.NOT_AVAILABLE);
 				    		break;
 				    	}
-				    	case ParseStatus.CODE_NOT_IMPLEMENTED: {
+				    	case NOT_FOUND: {
+				    		link.setStatus(LinkStatus.NOT_FOUND);
+				    		break;
+				    	}
+				    	case NOT_IMPLEMENTED: {
 				    		link.setStatus(LinkStatus.TOBE_IMPLEMENTED);
 				    		break;
 				    	}
 				  		/*------------------------------------------*/
-				    	case ParseStatus.CODE_IO_EXCEPTION: {
+				    	case IO_EXCEPTION: {
 				    		link.setStatus(LinkStatus.NETWORK_ERROR);
 				    		break;
 				    	}
-				    	case ParseStatus.CODE_TIMEOUT_EXCEPTION: {
+				    	case TIMEOUT_EXCEPTION: {
 				    		link.setStatus(LinkStatus.TIMED_OUT);
 				    		break;
 				    	}
-				    	case ParseStatus.CODE_UNEXPECTED_EXCEPTION: {
+				    	case OTHER_EXCEPTION: {
 				    		link.setStatus(LinkStatus.INTERNAL_ERROR);
 				    		break;
 				    	}
 				  		/*------------------------------------------*/
-							case ParseStatus.HTTP_CODE_NOT_FOUND: {
+							case HTTP_NOT_FOUND: {
 				    		link.setStatus(LinkStatus.NOT_FOUND);
 				    		break;
 							}
-				    	case ParseStatus.HTTP_CODE_NOT_ALLOWED: {
+				    	case HTTP_NOT_ALLOWED: {
 				    		link.setStatus(LinkStatus.NOT_ALLOWED);
 				    		break;
 				    	}
-							case ParseStatus.HTTP_CODE_UNREACHABLE_SITE: {
+							case HTTP_UNREACHABLE_SITE: {
 				    		link.setStatus(LinkStatus.SITE_DOWN);
 				    		break;
 							}
 				  		/*------------------------------------------*/
 							default: {
-								if (link.getParseCode() >= 400) { //other http errors
-									link.setStatus(LinkStatus.NETWORK_ERROR);
-								} else if (link.getParseCode() > 0) { //unexpected errors which must not be thrown
-									logger.warn("%s has unexpected Code: %d and Problem: %s", link.getUrl(), link.getParseCode(), link.getParseProblem());
-								}
+								logger.warn("{} has unexpected problem: {}", link.getUrl(), link.getParseProblem());
 							}
 				    }
 	
-				    link.setParseCode(newParseStatus.getCode());
+				    link.setParseCode(newParseStatus.getCode().name());
 				    link.setParseProblem(StringUtils.clearErrorMessage(newParseStatus.getMessage()));
-			    }
+		
+				    if (link.getStatus().equals(oldStatus) == false || link.getPrice().equals(oldPrice) == false) {
+				    	StatusChangingLinksPublisher.publish(new LinkStatusChange(link, oldStatus, oldPrice));
+				    }
 	
-			    if (link.getStatus().equals(oldStatus) == false || link.getPrice().equals(oldPrice) == false) {
-			    	StatusChangingLinksPublisher.publish(new LinkStatusChange(link, oldStatus, oldPrice));
-			    }
-    		} catch (Exception e) {
-    			channel.basicAck(envelope.getDeliveryTag(), false);
-    			logger.error("Failed to handle active link", e);
-    		}
+						watch.stop();
+						String logPart = String.format("%s: %s, Time: %dms", newParseStatus.getCode(), link.getPlatform().getName(), watch.getTime());
+	
+						if (newParseStatus.getCode().equals(ParseCode.OK)) {
+							logger.info("{}, URL: {}", logPart, link.getUrl());
+						} else {
+							logger.warn("{}, Problem: {}, URL: {}", logPart, newParseStatus.getMessage(), link.getUrl());
+						}
+	  			} catch (Exception e) {
+	    			try {
+							channel.basicAck(envelope.getDeliveryTag(), false);
+						} catch (IOException e1) { e1.printStackTrace(); }
+	    			logger.error("Failed to handle active link", e);
+	    		} finally {
+	  				if (watch.isStopped() == false) watch.stop();
+	    		}
+  	  	});
 			}
 		};
 

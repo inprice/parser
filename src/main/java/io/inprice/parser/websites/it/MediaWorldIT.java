@@ -37,7 +37,7 @@ public class MediaWorldIT extends AbstractWebsite {
 		String title = dom.title();
 		if (title.toLowerCase().contains("error 404") == false) {
   		prod = dom.selectFirst("div.product-detail-main-container");
-  		return ParseStatus.PS_OK;
+  		return OK_Status();
     }
 		return ParseStatus.PS_NOT_FOUND;
 	}
@@ -98,7 +98,7 @@ public class MediaWorldIT extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

@@ -27,7 +27,7 @@ public class OttoDE extends AbstractWebsite {
 	@Override
 	protected ParseStatus setHtml(String html) {
 		dom = Jsoup.parse(html);
-		return ParseStatus.PS_OK;
+		return OK_Status();
 	}
 
   @Override
@@ -87,7 +87,7 @@ public class OttoDE extends AbstractWebsite {
     if (val != null) {
       return val.text();
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

@@ -28,7 +28,7 @@ public class EuronicsES extends MediaMarktXX_1 {
   	if (info != null) shipping += info.text();
   	if (text != null) shipping += " " + text.text();
   	
-    return (StringUtils.isBlank(shipping) ? Consts.Words.NOT_AVAILABLE : shipping);
+    return (StringUtils.isNotBlank(shipping) ? shipping : Consts.Words.CHECK_DELIVERY_CONDITIONS);
   }
 
   @Override

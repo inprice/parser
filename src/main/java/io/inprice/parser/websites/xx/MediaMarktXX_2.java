@@ -39,7 +39,7 @@ public class MediaMarktXX_2 extends AbstractWebsite {
 		if (metaUrl != null && metaUrl.hasAttr("content") && metaUrl.attr("content").contains("error404")) {
 			return ParseStatus.PS_NOT_FOUND;
 		}
-		return ParseStatus.PS_OK;
+		return OK_Status();
 	}
 
   @Override
@@ -107,7 +107,7 @@ public class MediaMarktXX_2 extends AbstractWebsite {
       }
     }
 
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

@@ -52,7 +52,7 @@ public class AppleXX extends AbstractWebsite {
             		JSONArray offersArr = (JSONArray) offersObj;
             		offers = offersArr.getJSONObject(0);
             	}
-          		return ParseStatus.PS_OK;
+          		return OK_Status();
             }
           }
         }
@@ -107,7 +107,7 @@ public class AppleXX extends AbstractWebsite {
     if (val != null) {
     	return val.text();
     }
-    return "Check shipping conditions";
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

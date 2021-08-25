@@ -32,7 +32,7 @@ public class TheGoodGuysAU extends AbstractWebsite {
 		if (titleEl.text().toLowerCase().contains("not found") == false) {
 			return ParseStatus.PS_NOT_FOUND;
 		}
-		return ParseStatus.PS_OK;
+		return OK_Status();
 	}
 
   @Override

@@ -36,7 +36,7 @@ public class EuronicsDE extends AbstractWebsite {
 
 		String title = dom.title();
 		if (title.toLowerCase().contains("fehler 404") == false) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}
@@ -92,7 +92,7 @@ public class EuronicsDE extends AbstractWebsite {
   	val = dom.selectFirst(".shipping--is-free");
   	if (val != null) return val.text();
   	
-    return Consts.Words.NOT_AVAILABLE;
+  	return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

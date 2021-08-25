@@ -37,7 +37,7 @@ public class AmazonXX extends AbstractWebsite {
 		if (val.text().toLowerCase().contains("not found") == false) {
 			val = dom.getElementById("outOfStock");
 			if (val == null) {
-				return ParseStatus.PS_OK;
+				return OK_Status();
 			}
 		}
 		return ParseStatus.PS_NOT_FOUND;
@@ -265,7 +265,7 @@ public class AmazonXX extends AbstractWebsite {
       return "See all offers";
     }
 
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

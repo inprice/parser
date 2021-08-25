@@ -44,7 +44,7 @@ public class LidlXX extends AbstractWebsite {
 		String prodData = findAPart(html, "var dynamic_tm_data = ", "};", 1);
     if (prodData != null) {
     	json = new JSONObject(prodData);
-    	return ParseStatus.PS_OK;
+    	return OK_Status();
     }
     return ParseStatus.PS_NOT_FOUND;
 	}

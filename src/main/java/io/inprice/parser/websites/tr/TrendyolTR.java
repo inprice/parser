@@ -38,7 +38,7 @@ public class TrendyolTR extends AbstractWebsite {
 
 		Element notFoundDiv = dom.getElementById("tydortyuzdortpage");
 		if (notFoundDiv == null) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}
@@ -125,7 +125,7 @@ public class TrendyolTR extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text().trim() + " tarafından gönderilecektir.";
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

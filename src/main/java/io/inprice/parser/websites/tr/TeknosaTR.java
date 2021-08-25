@@ -38,7 +38,7 @@ public class TeknosaTR extends AbstractWebsite {
 
 		addToCartBtn = dom.getElementById("addToCartButton");
 		if (addToCartBtn != null) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}

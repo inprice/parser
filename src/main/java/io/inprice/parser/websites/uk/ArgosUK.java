@@ -41,7 +41,7 @@ public class ArgosUK extends AbstractWebsite {
 	    String found = findAPart(html, "\"globallyOutOfStock\":", ",");
 	    isAvailable = ("false".equalsIgnoreCase(found));
 	    brand = findAPart(html, "\"brand\":\"", "\",");
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}

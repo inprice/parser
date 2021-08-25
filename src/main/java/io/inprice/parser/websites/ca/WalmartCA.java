@@ -24,6 +24,7 @@ import com.gargoylesoftware.htmlunit.WebResponse;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.StringHelpers;
+import io.inprice.parser.info.ParseCode;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -61,7 +62,7 @@ public class WalmartCA extends AbstractWebsite {
 		Element titleEl = dom.selectFirst("title");
 		if (titleEl.text().equals("Walmart Canada") == false) {
 			features = findAPart(html, "featuresSpecifications\":\"", "\",\"type\"");
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}
@@ -142,11 +143,11 @@ public class WalmartCA extends AbstractWebsite {
   	    	}
   	    }
 	    } else {
-      	return new ParseStatus(res.getStatusCode(), res.getStatusMessage());
+      	return new ParseStatus(ParseCode.HTTP_OTHER_ERROR, res.getStatusCode() + ": " + res.getStatusMessage());
       }
 		} catch (IOException e) {
 			logger.error("Failed to post data to Walmart to fetch product price!", e);
-			return new ParseStatus(502, e.getMessage());
+			return new ParseStatus(ParseCode.OTHER_EXCEPTION, e.getMessage());
 		}
 
 		if (json == null || json.isEmpty()) {
@@ -154,7 +155,7 @@ public class WalmartCA extends AbstractWebsite {
 			return ParseStatus.PS_NOT_FOUND;
 		}
 		
-		return ParseStatus.PS_OK;
+		return OK_Status();
 	}	
 
   @Override

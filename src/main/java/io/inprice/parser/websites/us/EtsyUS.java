@@ -39,7 +39,7 @@ public class EtsyUS extends AbstractWebsite {
 
 		Element notFoundMain = dom.selectFirst(".error-page-panel");
 		if (notFoundMain == null) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}
@@ -125,7 +125,7 @@ public class EtsyUS extends AbstractWebsite {
 			}
     	return String.join(". ", set);
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

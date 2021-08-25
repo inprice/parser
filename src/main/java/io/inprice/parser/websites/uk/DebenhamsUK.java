@@ -35,7 +35,7 @@ public class DebenhamsUK extends AbstractWebsite {
 
     Element notFoundDiv = dom.selectFirst("div[data-test-id='404-page-message']");
     if (notFoundDiv == null) {
-    	return ParseStatus.PS_OK;
+    	return OK_Status();
     }
     return ParseStatus.PS_NOT_FOUND;
 	}
@@ -86,7 +86,7 @@ public class DebenhamsUK extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    return "Check delivery options";
+  	return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

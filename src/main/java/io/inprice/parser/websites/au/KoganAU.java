@@ -33,7 +33,7 @@ public class KoganAU extends AbstractWebsite {
 
 		Element titleEl = dom.selectFirst("title");
 		if (titleEl.text().toLowerCase().contains("not found") == false) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}
@@ -112,11 +112,9 @@ public class KoganAU extends AbstractWebsite {
     	String text = shippingEL.text();
     	if (text.toLowerCase().contains("free shipping")) {
     		return "FREE SHIPPING";
-    	} else {
-    		return "SEE THE CONDITIONS";
     	}
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

@@ -42,7 +42,7 @@ public class DeBijenkorfNL extends AbstractWebsite {
       	json = data.getJSONObject("product");
         if (json.has("currentVariantProduct")) {
           prod = json.getJSONObject("currentVariantProduct");
-          return ParseStatus.PS_OK;
+          return OK_Status();
         }
       }
     }
@@ -100,7 +100,7 @@ public class DeBijenkorfNL extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

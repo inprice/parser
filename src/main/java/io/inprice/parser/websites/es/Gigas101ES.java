@@ -31,7 +31,7 @@ public class Gigas101ES extends AbstractWebsite {
 
 		Element titleEl = dom.selectFirst("title");
 		if (titleEl.text().contains("404") == false) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}
@@ -93,7 +93,7 @@ public class Gigas101ES extends AbstractWebsite {
         }
       }
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

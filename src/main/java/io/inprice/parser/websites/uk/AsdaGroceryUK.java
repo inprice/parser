@@ -35,7 +35,7 @@ public class AsdaGroceryUK extends AbstractWebsite {
 
 		Element titleEl = dom.selectFirst("title");
 		if (titleEl.text().toLowerCase().contains("not found") == false) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}
@@ -80,7 +80,7 @@ public class AsdaGroceryUK extends AbstractWebsite {
 
 	@Override
 	public String getShipment() {
-		return "Check delivery info";
+		return Consts.Words.CHECK_DELIVERY_CONDITIONS;
 	}
 
 	@Override

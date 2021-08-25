@@ -30,7 +30,7 @@ public class UlaBoxES extends AbstractWebsite {
 
 		Element notFoundImg = dom.selectFirst("img[alt$='Page not found']");
 		if (notFoundImg == null) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}

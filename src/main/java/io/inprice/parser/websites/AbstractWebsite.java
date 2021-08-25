@@ -22,6 +22,7 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxDriver.Capability;
+import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.ProfilesIni;
@@ -42,6 +43,7 @@ import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.NumberUtils;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.ParseCode;
 import io.inprice.parser.info.ParseStatus;
 
 /**
@@ -68,16 +70,14 @@ public abstract class AbstractWebsite implements Website {
 		LinkStatus oldStatus = link.getStatus();
 
 		ParseStatus status = openPage(link);
-		if (status.getCode() == ParseStatus.CODE_OK) {
+		if (status.getCode().equals(ParseCode.OK)) {
 			status = read(link, oldStatus);
 		}
 		return status;
 	}
 
 	private ParseStatus openPage(Link link) {
-		long started = System.currentTimeMillis();
-
-		ParseStatus status = ParseStatus.PS_OK;
+		ParseStatus status = OK_Status();
 
 		switch (getRenderer()) {
 			case BROWSER: {
@@ -85,9 +85,10 @@ public abstract class AbstractWebsite implements Website {
       	FirefoxProfile profile = profileIni.getProfile("default");
     
     		FirefoxOptions capabilities = new FirefoxOptions();
+    		capabilities.setLogLevel(FirefoxDriverLogLevel.FATAL);
     		capabilities.setCapability(Capability.PROFILE, profile);
     		capabilities.setAcceptInsecureCerts(false);
-    
+
     		FirefoxDriver webDriver = new FirefoxDriver(capabilities);
     		try {
       		webDriver.get(link.getUrl());
@@ -113,7 +114,7 @@ public abstract class AbstractWebsite implements Website {
           }
     
     		} catch (Exception e) {
-    			status = new ParseStatus(ParseStatus.CODE_UNEXPECTED_EXCEPTION, e.getMessage());
+    			status = new ParseStatus(ParseCode.OTHER_EXCEPTION, e.getMessage());
     		} finally {
     			webDriver.close();
     		}
@@ -136,18 +137,18 @@ public abstract class AbstractWebsite implements Website {
     
     			if (res.getStatusCode() < 400) {
       			status = setHtml(res.getContentAsString());
-      			if (status.getCode() == ParseStatus.CODE_OK) {
+      			if (status.getCode().equals(ParseCode.OK)) {
       				status = afterRequest(webClient);
       			}
     			} else {
-    				status = new ParseStatus(res.getStatusCode(), res.getStatusMessage());
+    				status = new ParseStatus(ParseCode.HTTP_OTHER_ERROR, res.getStatusCode() + ": " + res.getStatusMessage());
     			}
     
         } catch (SocketTimeoutException set) {
-        	status = new ParseStatus(ParseStatus.CODE_TIMEOUT_EXCEPTION, set.getMessage());
+        	status = new ParseStatus(ParseCode.TIMEOUT_EXCEPTION, set.getMessage());
     			logger.error("Timed out: {}", set.getMessage());
     		} catch (IOException e) {
-    			status = new ParseStatus(ParseStatus.CODE_IO_EXCEPTION, e.getMessage());
+    			status = new ParseStatus(ParseCode.IO_EXCEPTION, e.getMessage());
     			logger.error("Unexpected error!", e);
     		} finally {
     			webClient.close();
@@ -163,26 +164,18 @@ public abstract class AbstractWebsite implements Website {
   		      Document doc = res.parse();
   		      status = setHtml(doc.html());
 		      } else {
-	    			status = new ParseStatus(res.statusCode(), res.statusMessage());
+		      	status = new ParseStatus(ParseCode.HTTP_OTHER_ERROR, res.statusCode() + ": " + res.statusMessage());
 		      }
 		    } catch (IOException e) {
 		    	if (res != null && res.statusCode() >= 400) {
-	    			status = new ParseStatus(res.statusCode(), res.statusMessage());
+	    			status = new ParseStatus(ParseCode.HTTP_OTHER_ERROR, res.statusCode() + ": " + res.statusMessage());
 		    	} else {
-		    		status = new ParseStatus(ParseStatus.CODE_IO_EXCEPTION, e.getMessage());
+		    		status = new ParseStatus(ParseCode.IO_EXCEPTION, e.getMessage());
 		    	}
 		    }
 				break;
 			}
 		
-		}
-		
-		String logPart = String.format("Platform: %s, Status: %d, Time: %dms", link.getPlatform().getDomain(), status.getCode(), (System.currentTimeMillis() - started) / 10);
-
-		if (status.getCode() == ParseStatus.CODE_OK) {
-			logger.info("-SUCCESSFUL- {}, URL: {}", logPart, link.getUrl());
-		} else {
-			logger.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, status.getMessage(), link.getUrl());
 		}
 
 		return status;
@@ -193,7 +186,7 @@ public abstract class AbstractWebsite implements Website {
 		BigDecimal price = getPrice();
 
 		if (StringUtils.isBlank(name) || Consts.Words.NOT_AVAILABLE.equals(name) || price == null || price.compareTo(BigDecimal.ONE) < 0) {
-			return ParseStatus.PS_NO_DATA;
+			return new ParseStatus(ParseCode.NO_DATA, "No data");
 		}
 
 		// other settings
@@ -216,9 +209,9 @@ public abstract class AbstractWebsite implements Website {
 		}
 
 		if (isAvailable()) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		} else {
-			return new ParseStatus(ParseStatus.CODE_NOT_AVAILABLE, "Insufficient stock");
+			return new ParseStatus(ParseCode.NOT_AVAILABLE, "Insufficient stock");
 		}
 	}
 
@@ -271,11 +264,15 @@ public abstract class AbstractWebsite implements Website {
 	}
 
 	protected ParseStatus setHtml(String html) {
-		return new ParseStatus(200, null);
+		return OK_Status();
 	}
 
 	protected ParseStatus setExtraHtml(String html) {
-		return new ParseStatus(200, null);
+		return OK_Status();
+	}
+
+	protected ParseStatus afterRequest(WebClient webClient) {
+		return OK_Status();
 	}
 
 	protected By clickFirstBy() {
@@ -284,10 +281,6 @@ public abstract class AbstractWebsite implements Website {
 
 	protected By waitBy() {
 		return null;
-	}
-
-	protected ParseStatus afterRequest(WebClient webClient) {
-		return ParseStatus.PS_OK;
 	}
 
 	protected Set<LinkSpec> getValueOnlySpecs(Elements specs) {
@@ -347,5 +340,9 @@ public abstract class AbstractWebsite implements Website {
 		}
 		return specs;
 	}
-	
+
+	protected ParseStatus OK_Status() {
+		return new ParseStatus(ParseCode.OK, null);
+	}
+
 }

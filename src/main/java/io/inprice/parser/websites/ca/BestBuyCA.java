@@ -14,6 +14,7 @@ import org.jsoup.select.Elements;
 
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
+import io.inprice.parser.info.ParseCode;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -35,14 +36,14 @@ public class BestBuyCA extends AbstractWebsite {
 
 		String title = dom.selectFirst("title").text().toLowerCase();
 		if (title.contains("site down") == true) {
-			return new ParseStatus(503, "Site is down!");
+			return new ParseStatus(ParseCode.HTTP_UNREACHABLE_SITE, "Site is down!");
 		} else if (title.contains("not found") == false) {
       String rawJson = findAPart(html, "}},\"product\":", ",\"productSellers\":");
       if (StringUtils.isNotBlank(rawJson)) {
         json = new JSONObject(rawJson);
         if (json != null && json.has("product")) {
         	product = json.getJSONObject("product");
-        	return ParseStatus.PS_OK;
+        	return OK_Status();
         }
       }
 		} 
@@ -122,7 +123,7 @@ public class BestBuyCA extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    return "Sold and shipped by BestBuy";
+  	return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

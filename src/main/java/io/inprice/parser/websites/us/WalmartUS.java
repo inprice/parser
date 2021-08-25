@@ -33,7 +33,7 @@ public class WalmartUS extends AbstractWebsite {
 
 		isAvailable = (html.indexOf("\"availabilityStatus\":\"IN_STOCK\"") > 0);
 		if (isAvailable) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}
@@ -109,7 +109,7 @@ public class WalmartUS extends AbstractWebsite {
       return val.text();
     }
 
-    return "Check delivery and installation conditions";
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

@@ -58,7 +58,7 @@ public class AppliancesOnlineAU extends AbstractWebsite {
             		JSONArray offersArr = (JSONArray) offersObj;
             		offers = offersArr.getJSONObject(0);
             	}
-          		return ParseStatus.PS_OK;
+          		return OK_Status();
             }
           }
         }

@@ -35,7 +35,7 @@ public class CanadianTireCA extends AbstractWebsite {
 
 		Element titleEl = dom.selectFirst("title");
 		if (titleEl.text().contains("404 |") == false) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}
@@ -69,7 +69,7 @@ public class CanadianTireCA extends AbstractWebsite {
 		if (jsonEl != null && StringUtils.isNotBlank(jsonEl.text())) {
 			JSONArray rawArr = new JSONArray(jsonEl.text());
 			json = rawArr.getJSONObject(0);
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
   }

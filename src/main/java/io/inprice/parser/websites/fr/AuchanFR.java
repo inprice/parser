@@ -30,7 +30,7 @@ public class AuchanFR extends AbstractWebsite {
 
 		Element notFoundDiv = dom.selectFirst(".error404");
 		if (notFoundDiv == null) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}

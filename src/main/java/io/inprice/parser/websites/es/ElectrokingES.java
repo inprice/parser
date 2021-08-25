@@ -48,7 +48,7 @@ public class ElectrokingES extends AbstractWebsite {
           
           String shipRawJson = findAPart(html, "\"shipping\":", "},", 1, 0);
           shipping = new JSONObject(shipRawJson);
-      		return ParseStatus.PS_OK;
+      		return OK_Status();
         }
       }
     }

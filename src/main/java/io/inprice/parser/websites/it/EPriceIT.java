@@ -46,7 +46,7 @@ public class EPriceIT extends AbstractWebsite {
 		seller = findAPart(html, "seller_name: \"", "\",");
 		if (StringUtils.isBlank(seller)) seller = "ePrice";
 		
-		return ParseStatus.PS_OK;
+		return OK_Status();
 	}
 
   @Override

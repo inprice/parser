@@ -59,7 +59,7 @@ public class AsdaDirectUK extends AbstractWebsite {
             		JSONArray offersArr = (JSONArray) offersObj;
             		offers = offersArr.getJSONObject(0);
             	}
-          		return ParseStatus.PS_OK;
+          		return OK_Status();
             }
           }
         }
@@ -118,7 +118,7 @@ public class AsdaDirectUK extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-    return "Check delivery info";
+  	return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

@@ -42,7 +42,7 @@ public class EbayXX extends AbstractWebsite {
 		String title = dom.title();
 		if (title.toLowerCase().contains("error page") == false) {
 			buildSpecList();
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}
@@ -164,7 +164,7 @@ public class EbayXX extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-  	String res = Consts.Words.NOT_AVAILABLE;
+  	String res = Consts.Words.CHECK_DELIVERY_CONDITIONS;
 
     Element val = dom.getElementById("fshippingCost");
 

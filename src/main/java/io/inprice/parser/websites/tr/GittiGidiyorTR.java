@@ -34,7 +34,7 @@ public class GittiGidiyorTR extends AbstractWebsite {
 		if (notFoundDiv == null) {
 			notFoundDiv = dom.getElementById("sp-passive-product-message");
 			if (notFoundDiv == null) {
-				return ParseStatus.PS_OK;
+				return OK_Status();
 			}
 		}
 		return ParseStatus.PS_NOT_FOUND;
@@ -130,7 +130,7 @@ public class GittiGidiyorTR extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

@@ -39,7 +39,7 @@ public class AsosUK extends AbstractWebsite {
     String prodData = findAPart(html, "config.product = ", "};", 1);
     if (StringUtils.isNotBlank(prodData)) {
     	json = new JSONObject(prodData);
-    	return ParseStatus.PS_OK;
+    	return OK_Status();
     }
     return ParseStatus.PS_NOT_FOUND;
 	}
@@ -98,9 +98,8 @@ public class AsosUK extends AbstractWebsite {
     val = dom.getElementById("shippingRestrictionsLink");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
-    } else {
-      return "See delivery and returns info";
     }
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

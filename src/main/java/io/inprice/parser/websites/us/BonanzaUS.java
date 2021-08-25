@@ -39,7 +39,7 @@ public class BonanzaUS extends AbstractWebsite {
 
 		Element titleEl = dom.selectFirst("title");
 		if (titleEl.text().toLowerCase().contains("find everything") == false) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}
@@ -110,7 +110,7 @@ public class BonanzaUS extends AbstractWebsite {
 			}
     	return String.join(". ", set);
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

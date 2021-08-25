@@ -38,7 +38,7 @@ public class NotebooksBilligerDE extends AbstractWebsite {
         JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
         if (data.has("@type") && data.getString("@type").equals("Product")) {
           prod = data;
-          return ParseStatus.PS_OK;
+          return OK_Status();
         }
       }
     }

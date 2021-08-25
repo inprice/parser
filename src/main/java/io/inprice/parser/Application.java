@@ -19,6 +19,8 @@ public class Application {
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
   public static void main(String[] args) {
+		Thread.currentThread().setName("main");
+
 		RabbitMQ.start(Props.getConfig().RABBIT_CONF);
     logger.info(" - RabbitMQ is started.");
 

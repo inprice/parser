@@ -57,7 +57,7 @@ public class LidlDE extends AbstractWebsite {
             		JSONArray offersArr = (JSONArray) offersObj;
             		offers = offersArr.getJSONObject(0);
             	}
-          		return ParseStatus.PS_OK;
+          		return OK_Status();
             }
           }
         }
@@ -113,7 +113,7 @@ public class LidlDE extends AbstractWebsite {
   	if (val != null) {
   		return val.text();
   	}
-    return Consts.Words.NOT_AVAILABLE;
+  	return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

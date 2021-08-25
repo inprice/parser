@@ -38,7 +38,7 @@ public class BonprixXX extends AbstractWebsite {
 		
 		Element notFoundDiv = dom.selectFirst(".errorpage-teaser-text");
 		if (notFoundDiv == null) {
-			return ParseStatus.PS_OK;
+			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
 	}
@@ -139,7 +139,7 @@ public class BonprixXX extends AbstractWebsite {
       return val.text();
     }
 
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override
