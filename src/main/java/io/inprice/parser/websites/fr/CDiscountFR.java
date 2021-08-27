@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.openqa.selenium.By;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -24,14 +25,14 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class CDiscountFR extends AbstractWebsite {
 
 	private Document dom;
-	
+
 	@Override
 	protected By waitBy() {
 		return By.id("fpSku");
 	}
 
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 		
 		Element notFoundImg = dom.selectFirst("img[alt='404']");
@@ -48,7 +49,7 @@ public class CDiscountFR extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
   	Element val = dom.getElementById("fpSku");
   	if (val != null) {
   		return val.text();
@@ -84,12 +85,12 @@ public class CDiscountFR extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller(String defaultSeller) {
+  public String getSeller() {
   	Element val = dom.selectFirst("fpSellerName");
   	if (val != null) {
   		return val.text();
   	}
-  	return defaultSeller;
+  	return super.getSeller();
   }
 
   @Override

@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -24,16 +25,19 @@ public class HepsiBuradaTR extends AbstractWebsite {
 
 	private Document dom;
 
+	private String url;
+
 	protected Renderer getRenderer() {
 		return Renderer.HTMLUNIT;
 	}
 
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		Element titleEl = dom.selectFirst("title");
 		if (titleEl.text().toLowerCase().startsWith("404 sayfa") == false) {
+			url = link.getUrl();
 			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
@@ -50,7 +54,7 @@ public class HepsiBuradaTR extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
   	String[] chunks = url.split("-");
   	if (chunks.length > 0) {
   		return chunks[chunks.length-1];
@@ -90,12 +94,12 @@ public class HepsiBuradaTR extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller(String defaultSeller) {
+  public String getSeller() {
     Element val = dom.selectFirst("span.seller a");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
-    return defaultSeller;
+    return super.getSeller();
   }
 
   @Override

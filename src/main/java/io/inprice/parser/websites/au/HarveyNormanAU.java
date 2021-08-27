@@ -11,6 +11,7 @@ import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
@@ -30,9 +31,9 @@ public class HarveyNormanAU extends AbstractWebsite {
 
 	private JSONObject json;
   private JSONObject offers;
-	
+
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
     Elements dataEL = dom.select("script[type='application/ld+json']");
@@ -70,7 +71,7 @@ public class HarveyNormanAU extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
     if (json != null && json.has("sku")) {
       return json.getString("sku");
     }
@@ -104,12 +105,12 @@ public class HarveyNormanAU extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller(String defaultSeller) {
+  public String getSeller() {
     if (offers != null && offers.has("seller")) {
       JSONObject seller = offers.getJSONObject("seller");
       return seller.getString("name");
     }
-    return defaultSeller;
+    return super.getSeller();
   }
 
   @Override

@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.openqa.selenium.By;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -25,13 +26,15 @@ public class LidlUS extends AbstractWebsite {
 
 	private Document dom;
 
+	private String url;
+
 	@Override
 	protected By waitBy() {
 		return By.className("product-price");
 	}
 	
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		Element messageH1 = dom.selectFirst(".status-message-headline");
@@ -51,7 +54,7 @@ public class LidlUS extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
     String[] chunks = url.split("/");
     if (chunks.length > 0) {
       return chunks[chunks.length-1];

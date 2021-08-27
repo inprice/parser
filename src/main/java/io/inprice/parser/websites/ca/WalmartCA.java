@@ -22,6 +22,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.StringHelpers;
 import io.inprice.parser.info.ParseCode;
@@ -56,7 +57,7 @@ public class WalmartCA extends AbstractWebsite {
 	}
 
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		Element titleEl = dom.selectFirst("title");
@@ -167,7 +168,7 @@ public class WalmartCA extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
     return sku;
   }
 
@@ -190,12 +191,12 @@ public class WalmartCA extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller(String defaultSeller) {
+  public String getSeller() {
   	if (json != null && json.has("sellerInfo")) {
   		JSONObject sellerInfo = json.getJSONObject("sellerInfo");
   		return sellerInfo.getString("en");
   	}
-  	return defaultSeller;
+  	return super.getSeller();
   }
 
   @Override

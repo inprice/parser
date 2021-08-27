@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseCode;
@@ -29,9 +30,9 @@ public class BestBuyCA extends AbstractWebsite {
 
 	private JSONObject json;
   private JSONObject product;
-	
+
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		Document dom = Jsoup.parse(html);
 
 		String title = dom.selectFirst("title").text().toLowerCase();
@@ -76,7 +77,7 @@ public class BestBuyCA extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
   	if (json != null && json.has("availability")) {
     	JSONObject availability = json.getJSONObject("availability");
     	if (availability != null && availability.has("sku")) {
@@ -111,14 +112,14 @@ public class BestBuyCA extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller(String defaultSeller) {
+  public String getSeller() {
     if (product != null && !product.isNull("seller")) {
       JSONObject seller = product.getJSONObject("seller");
       if (seller != null) {
         return seller.getString("name");
       }
     }
-    return defaultSeller;
+    return super.getSeller();
   }
 
   @Override

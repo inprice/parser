@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -26,9 +27,9 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class KoganAU extends AbstractWebsite {
 
 	private Document dom;
-	
+
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		Element titleEl = dom.selectFirst("title");
@@ -44,7 +45,7 @@ public class KoganAU extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
     Element val = dom.selectFirst("meta[itemProp='sku']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
@@ -97,12 +98,12 @@ public class KoganAU extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller(String defaultSeller) {
+  public String getSeller() {
     Element val = dom.selectFirst("a[href$='terms-and-conditions']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
-    return defaultSeller;
+    return super.getSeller();
   }
 
   @Override

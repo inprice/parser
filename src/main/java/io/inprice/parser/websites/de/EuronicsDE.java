@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.openqa.selenium.By;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -25,17 +26,20 @@ public class EuronicsDE extends AbstractWebsite {
 
 	private Document dom;
 
+  private String url;
+
 	@Override
 	protected By waitBy() {
 		return By.id("product-price");
 	}
 	
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		String title = dom.title();
 		if (title.toLowerCase().contains("fehler 404") == false) {
+		  url = link.getUrl();
 			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
@@ -52,7 +56,7 @@ public class EuronicsDE extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
   	String[] chunks = url.split("-");
     return chunks[chunks.length-1];
   }

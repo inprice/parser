@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -27,7 +28,7 @@ public class GittiGidiyorTR extends AbstractWebsite {
 	private Document dom;
 
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		Element notFoundDiv = dom.selectFirst(".gg-404-container");
@@ -52,7 +53,7 @@ public class GittiGidiyorTR extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
     Element val = dom.getElementById("productId");
     if (val != null && val.hasAttr("value")) {
       return val.attr("value");
@@ -112,14 +113,14 @@ public class GittiGidiyorTR extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller(String defaultSeller) {
+  public String getSeller() {
     Element val = dom.getElementById("sp-member-nick");
     if (val == null || StringUtils.isBlank(val.text())) val = dom.selectFirst(".member-name a strong");
     
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
-    return defaultSeller;
+    return super.getSeller();
   }
 
   @Override

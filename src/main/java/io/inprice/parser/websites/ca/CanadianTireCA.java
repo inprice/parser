@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -28,13 +29,16 @@ public class CanadianTireCA extends AbstractWebsite {
 
 	private Document dom;
   private JSONObject json;
-	
+
+  private String url;
+
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		Element titleEl = dom.selectFirst("title");
 		if (titleEl.text().contains("404 |") == false) {
+		  url = link.getUrl();
 			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
@@ -46,7 +50,7 @@ public class CanadianTireCA extends AbstractWebsite {
 	@Override
 	protected String getExtraUrl(String url) {
     StringBuilder offerUrl = new StringBuilder("view-source:https://api-triangle.canadiantire.ca/esb/PriceAvailability?SKU=");
-    offerUrl.append(getSku(url));
+    offerUrl.append(url);
     offerUrl.append("&");
     offerUrl.append("Store=0144");
     offerUrl.append("&");
@@ -88,7 +92,7 @@ public class CanadianTireCA extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
 		int pPoint = url.indexOf("p.");
 		return url.substring(pPoint-7, pPoint);
   }

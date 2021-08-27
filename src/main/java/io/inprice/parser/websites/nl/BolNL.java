@@ -14,6 +14,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
@@ -33,14 +34,14 @@ public class BolNL extends AbstractWebsite {
 
 	private JSONObject json;
 	private JSONObject offers;
-	
+
 	@Override
 	protected Renderer getRenderer() {
 		return Renderer.HTMLUNIT;
 	}
 	
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
     Elements dataEL = dom.select("script[type='application/ld+json']");
@@ -78,7 +79,7 @@ public class BolNL extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
     if (json != null && json.has("productID")) {
       return json.getString("productID");
     }
@@ -113,14 +114,14 @@ public class BolNL extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller(String defaultSeller) {
+  public String getSeller() {
     if (offers != null && offers.has("seller")) {
       JSONObject seller = offers.getJSONObject("seller");
       if (seller.has("name")) {
         return seller.getString("name");
       }
     }
-    return defaultSeller;
+    return super.getSeller();
   }
 
   @Override

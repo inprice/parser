@@ -26,7 +26,7 @@ import io.inprice.common.utils.StringUtils;
 import io.inprice.parser.info.ParseCode;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.publisher.StatusChangingLinksPublisher;
-import io.inprice.parser.websites.Website;
+import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  *
@@ -42,7 +42,7 @@ class ActiveLinksConsumer {
 
   	Connection conn = RabbitMQ.createConnection(forWhichConsumer);
   	Channel channel = conn.createChannel();
-  	ExecutorService tPool = Executors.newFixedThreadPool(queueDef.CAPACITY);
+  	ExecutorService tPool = Executors.newFixedThreadPool(queueDef.CAPACITY >= 1 && queueDef.CAPACITY <= 20 ? queueDef.CAPACITY : 3);
 
 		Consumer consumer = new DefaultConsumer(channel) {
   		@Override
@@ -63,7 +63,7 @@ class ActiveLinksConsumer {
 				    if (link.getPlatform().getClassName() != null) {
 				      try {
 				        Class<?> clazz = Class.forName("io.inprice.parser.websites." + link.getPlatform().getClassName());
-				        Website website = (Website) clazz.getConstructor().newInstance();
+				        AbstractWebsite website = (AbstractWebsite) clazz.getConstructor().newInstance();
 				        newParseStatus = website.check(link);
 				      } catch (Exception e) {
 				      	newParseStatus = new ParseStatus(ParseCode.OTHER_EXCEPTION, e.getMessage());
@@ -126,26 +126,23 @@ class ActiveLinksConsumer {
 								logger.warn("{} has unexpected problem: {}", link.getUrl(), link.getParseProblem());
 							}
 				    }
-	
+
 				    link.setParseCode(newParseStatus.getCode().name());
 				    link.setParseProblem(StringUtils.clearErrorMessage(newParseStatus.getMessage()));
 		
 				    if (link.getStatus().equals(oldStatus) == false || link.getPrice().equals(oldPrice) == false) {
 				    	StatusChangingLinksPublisher.publish(new LinkStatusChange(link, oldStatus, oldPrice));
 				    }
-	
+
 						watch.stop();
-						String logPart = String.format("%s: %s, Time: %dms", newParseStatus.getCode(), link.getPlatform().getName(), watch.getTime());
-	
+						String logPart = String.format("%s : %dms | ", newParseStatus.getCode(), watch.getTime());
+
 						if (newParseStatus.getCode().equals(ParseCode.OK)) {
 							logger.info("{}, URL: {}", logPart, link.getUrl());
 						} else {
 							logger.warn("{}, Problem: {}, URL: {}", logPart, newParseStatus.getMessage(), link.getUrl());
 						}
 	  			} catch (Exception e) {
-	    			try {
-							channel.basicAck(envelope.getDeliveryTag(), false);
-						} catch (IOException e1) { e1.printStackTrace(); }
 	    			logger.error("Failed to handle active link", e);
 	    		} finally {
 	  				if (watch.isStopped() == false) watch.stop();

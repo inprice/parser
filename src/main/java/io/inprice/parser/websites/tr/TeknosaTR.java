@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
@@ -33,7 +34,7 @@ public class TeknosaTR extends AbstractWebsite {
 	}
 
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		addToCartBtn = dom.getElementById("addToCartButton");
@@ -49,7 +50,7 @@ public class TeknosaTR extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
   	return addToCartBtn.attr("data-product-id");
   }
 

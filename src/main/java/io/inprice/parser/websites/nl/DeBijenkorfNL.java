@@ -11,6 +11,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -31,7 +32,7 @@ public class DeBijenkorfNL extends AbstractWebsite {
   private JSONObject prod;
   
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
     String prodData = findAPart(html, "Data.product =", "};", 1);
@@ -59,7 +60,7 @@ public class DeBijenkorfNL extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
     if (json != null && json.has("code")) {
       return json.getString("code");
     }

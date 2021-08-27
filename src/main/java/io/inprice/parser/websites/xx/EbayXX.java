@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -36,7 +37,7 @@ public class EbayXX extends AbstractWebsite {
 	}
   
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 		
 		String title = dom.title();
@@ -63,7 +64,7 @@ public class EbayXX extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
     Element val = dom.getElementById("descItemNumber");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
@@ -142,7 +143,7 @@ public class EbayXX extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller(String defaultSeller) {
+  public String getSeller() {
     Element val = dom.getElementById("mbgLink");
 
     if (val != null && StringUtils.isNotBlank(val.attr("aria-label"))) {
@@ -159,7 +160,7 @@ public class EbayXX extends AbstractWebsite {
       }
     }
     
-    return defaultSeller;
+    return super.getSeller();
   }
 
   @Override

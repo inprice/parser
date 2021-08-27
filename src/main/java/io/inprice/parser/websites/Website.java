@@ -15,14 +15,11 @@ import io.inprice.parser.info.ParseStatus;
  */
 public interface Website {
 
-	// checks link status and sets data. is implemented in AbstractWebsite
-	ParseStatus check(Link link);
-
-	// indicates the availability of the page
+	ParseStatus startParsing(Link link, String html);
+	
 	boolean isAvailable();
 
-	// can be used as SKU, CODE, ASIN, PRODUCT-ID, ITEM-ID...
-	String getSku(String url);
+	String getSku();
 
 	String getName();
 
@@ -30,7 +27,7 @@ public interface Website {
 
 	String getBrand();
 
-	String getSeller(String defaultName);
+	String getSeller();
 
 	String getShipment();
 

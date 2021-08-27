@@ -4,8 +4,8 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
-import io.inprice.parser.websites.Website;
-import io.inprice.parser.websites.xx.AmazonXX;
+import io.inprice.parser.websites.AbstractWebsite;
+import io.inprice.parser.websites.tr.N11TR;
 
 public class LinkTest {
 	
@@ -25,7 +25,7 @@ public class LinkTest {
 	// Global    --> amazon, apple, bonprix, ebay, lidl, mediamarkt, vidaxl, zalando
 
 	private static String[] urls = {
-		"https://www.amazon.com.tr/Ta%C3%A7-Baby-D%C3%BCd%C3%BCkl%C3%BC-Tencere-Kirmizi/dp/B084W1N3K2?ref_=Oct_s9_apbd_orecs_hd_bw_bEkQn0h&pf_rd_r=PN0DW37HSCM8QNZP5T03&pf_rd_p=83abbddc-e87f-5da7-8627-0bc095b56370&pf_rd_s=merchandised-search-10&pf_rd_t=BROWSE&pf_rd_i=13511956031"
+			"https://urun.n11.com/okul-cantalari/polo-single-lacivert-kirmizi-baski-1900-denye-sirt-cantasi-30025-P500278585"
 	};
 
 	public static void main(String[] args) throws InterruptedException {
@@ -45,7 +45,7 @@ public class LinkTest {
 		  		link.setPlatform(platform);
 		  		link.setPlatformId(platform.getId());
 
-		  		Website website = new AmazonXX();
+		  		AbstractWebsite website = new N11TR();
 		  		website.check(link);
 		  		printout(link);
 				}

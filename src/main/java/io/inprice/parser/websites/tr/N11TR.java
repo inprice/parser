@@ -13,6 +13,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
@@ -32,14 +33,14 @@ public class N11TR extends AbstractWebsite {
 
 	private JSONObject json;
   private JSONObject offers;
-  
+
   @Override
 	protected Renderer getRenderer() {
 		return Renderer.HTMLUNIT;
 	}
 
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 		
     Elements dataEL = dom.select("script[type='application/ld+json']");
@@ -77,7 +78,7 @@ public class N11TR extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
   	Element val = dom.selectFirst("input[name='skuId']");
     if (val != null && val.hasAttr("value")) {
       return val.attr("value");

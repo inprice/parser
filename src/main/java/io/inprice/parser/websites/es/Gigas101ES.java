@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -24,9 +25,9 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class Gigas101ES extends AbstractWebsite {
 
 	private Document dom;
-	
+
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		Element titleEl = dom.selectFirst("title");
@@ -47,7 +48,7 @@ public class Gigas101ES extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
     Element val = dom.selectFirst("meta[property='product:retailer_part_no']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");

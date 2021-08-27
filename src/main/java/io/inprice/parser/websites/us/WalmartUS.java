@@ -10,6 +10,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -28,7 +29,7 @@ public class WalmartUS extends AbstractWebsite {
 	private boolean isAvailable;
 
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		isAvailable = (html.indexOf("\"availabilityStatus\":\"IN_STOCK\"") > 0);
@@ -49,7 +50,7 @@ public class WalmartUS extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
     Element val = dom.selectFirst("meta[itemprop='sku']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
@@ -85,14 +86,14 @@ public class WalmartUS extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller(String defaultSeller) {
+  public String getSeller() {
     Element val = dom.selectFirst("a[data-tl-id='ProductSellerInfo-SellerName']");
 
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
 
-    return defaultSeller;
+    return super.getSeller();
   }
 
   @Override

@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -33,7 +34,7 @@ public class TrendyolTR extends AbstractWebsite {
 	}
 	
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		Element notFoundDiv = dom.getElementById("tydortyuzdortpage");
@@ -50,7 +51,7 @@ public class TrendyolTR extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
     Element val = dom.selectFirst("link[rel='canonical']");
     if (val != null && StringUtils.isNotBlank(val.attr("href"))) {
       String[] linkChunks = val.attr("href").split("-");
@@ -95,7 +96,7 @@ public class TrendyolTR extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller(String defaultSeller) {
+  public String getSeller() {
   	Element val = dom.selectFirst("a.merchant-text");
   	if (val == null) val = dom.selectFirst("span.pr-in-dt-spn");
 
@@ -111,7 +112,7 @@ public class TrendyolTR extends AbstractWebsite {
       }
     }
 
-    return defaultSeller;
+    return super.getSeller();
   }
 
   @Override

@@ -11,6 +11,7 @@ import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
@@ -40,7 +41,7 @@ public class MediaMarktXX_1 extends AbstractWebsite {
 	private JSONObject offers;
 
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 		
 		System.out.println(html);
@@ -80,7 +81,7 @@ public class MediaMarktXX_1 extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
     if (json != null && json.has("sku")) {
       return json.getString("sku");
     }

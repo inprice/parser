@@ -10,6 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.openqa.selenium.By;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -33,7 +34,7 @@ public class AsosUK extends AbstractWebsite {
   }
   
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
     String prodData = findAPart(html, "config.product = ", "};", 1);
@@ -53,7 +54,7 @@ public class AsosUK extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
   	if (json != null && json.has("id")) {
   		return ""+json.getInt("id");
   	}

@@ -8,6 +8,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.openqa.selenium.By;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -30,7 +31,7 @@ public class DebenhamsUK extends AbstractWebsite {
   }
 
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
     Element notFoundDiv = dom.selectFirst("div[data-test-id='404-page-message']");
@@ -47,7 +48,7 @@ public class DebenhamsUK extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
     Element val = dom.selectFirst("span[data-test-id='product-sku']");
     if (val != null) {
       String[] chunks = val.text().split(":");

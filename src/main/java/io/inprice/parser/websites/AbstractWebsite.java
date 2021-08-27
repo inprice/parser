@@ -28,8 +28,6 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.ProfilesIni;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.HttpHeader;
@@ -52,8 +50,8 @@ import io.inprice.parser.info.ParseStatus;
  */
 public abstract class AbstractWebsite implements Website {
 
-	private static final Logger logger = LoggerFactory.getLogger(AbstractWebsite.class);
-	
+	private String seller;
+
 	/**
 	 * There are two kind of html handler;
 	 *   a) External browser  (default one)
@@ -65,7 +63,6 @@ public abstract class AbstractWebsite implements Website {
 		JSOUP;  //just for tests
 	}
 
-	@Override
 	public ParseStatus check(Link link) {
 		LinkStatus oldStatus = link.getStatus();
 
@@ -82,8 +79,9 @@ public abstract class AbstractWebsite implements Website {
 		switch (getRenderer()) {
 			case BROWSER: {
       	ProfilesIni profileIni = new ProfilesIni();
-      	FirefoxProfile profile = profileIni.getProfile("default");
-    
+      	FirefoxProfile profile = profileIni.getProfile(link.getPlatform().getProfile() != null ? link.getPlatform().getProfile() : "default");
+      	profile.setPreference("permissions.default.image", 2);
+
     		FirefoxOptions capabilities = new FirefoxOptions();
     		capabilities.setLogLevel(FirefoxDriverLogLevel.FATAL);
     		capabilities.setCapability(Capability.PROFILE, profile);
@@ -104,7 +102,7 @@ public abstract class AbstractWebsite implements Website {
         		wait.until(ExpectedConditions.visibilityOfElementLocated(waitBy()));
       		}
     
-          status = setHtml(webDriver.getPageSource());
+          status = startParsing(link, webDriver.getPageSource());
           if (status.getMessage() == null) {
           	String url = getExtraUrl(link.getUrl());
         		if (StringUtils.isNotBlank(url)) {
@@ -125,6 +123,7 @@ public abstract class AbstractWebsite implements Website {
     		WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setTimeout(30_000);
     		try {
     			WebRequest req = new WebRequest(new URL(link.getUrl()));
     			req.setAdditionalHeader(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
@@ -136,7 +135,7 @@ public abstract class AbstractWebsite implements Website {
     	  	WebResponse res = webClient.loadWebResponse(req);
     
     			if (res.getStatusCode() < 400) {
-      			status = setHtml(res.getContentAsString());
+      			status = startParsing(link, res.getContentAsString());
       			if (status.getCode().equals(ParseCode.OK)) {
       				status = afterRequest(webClient);
       			}
@@ -146,10 +145,8 @@ public abstract class AbstractWebsite implements Website {
     
         } catch (SocketTimeoutException set) {
         	status = new ParseStatus(ParseCode.TIMEOUT_EXCEPTION, set.getMessage());
-    			logger.error("Timed out: {}", set.getMessage());
     		} catch (IOException e) {
     			status = new ParseStatus(ParseCode.IO_EXCEPTION, e.getMessage());
-    			logger.error("Unexpected error!", e);
     		} finally {
     			webClient.close();
     		}
@@ -162,7 +159,7 @@ public abstract class AbstractWebsite implements Website {
 		      res = Jsoup.connect(link.getUrl()).userAgent("Mozilla").ignoreHttpErrors(true).execute();
 		      if (res.statusCode() < 400) {
   		      Document doc = res.parse();
-  		      status = setHtml(doc.html());
+  		      status = startParsing(link, doc.html());
 		      } else {
 		      	status = new ParseStatus(ParseCode.HTTP_OTHER_ERROR, res.statusCode() + ": " + res.statusMessage());
 		      }
@@ -182,6 +179,8 @@ public abstract class AbstractWebsite implements Website {
 	}
 
 	private ParseStatus read(Link link, LinkStatus oldStatus) {
+		seller = link.getPlatform().getName();
+
 		String name = getName();
 		BigDecimal price = getPrice();
 
@@ -190,12 +189,12 @@ public abstract class AbstractWebsite implements Website {
 		}
 
 		// other settings
-		link.setSku(fixLength(getSku(link.getUrl()), Consts.Limits.SKU));
+		link.setSku(fixLength(getSku(), Consts.Limits.SKU));
 		link.setName(fixLength(name, Consts.Limits.NAME));
 		link.setPrice(price.setScale(2, RoundingMode.HALF_UP));
 
 		link.setBrand(fixLength(getBrand(), Consts.Limits.BRAND));
-		link.setSeller(fixLength(getSeller(link.getPlatform().getName()), Consts.Limits.SELLER));
+		link.setSeller(fixLength(getSeller(), Consts.Limits.SELLER));
 		link.setShipment(fixLength(getShipment(), Consts.Limits.SHIPMENT));
 
 		// spec list editing
@@ -217,11 +216,6 @@ public abstract class AbstractWebsite implements Website {
 
 	protected Renderer getRenderer() {
 		return Renderer.BROWSER;
-	}
-
-	@Override
-	public String getSeller(String defaultSeller) {
-		return defaultSeller;
 	}
 	
 	/**
@@ -263,10 +257,6 @@ public abstract class AbstractWebsite implements Website {
 			return SqlHelper.clear(newForm);
 	}
 
-	protected ParseStatus setHtml(String html) {
-		return OK_Status();
-	}
-
 	protected ParseStatus setExtraHtml(String html) {
 		return OK_Status();
 	}
@@ -283,6 +273,11 @@ public abstract class AbstractWebsite implements Website {
 		return null;
 	}
 
+	@Override
+	public String getSeller() {
+		return seller;
+	}
+	
 	protected Set<LinkSpec> getValueOnlySpecs(Elements specs) {
 		return getValueOnlySpecs(specs, null);
 	}

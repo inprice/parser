@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -38,7 +39,7 @@ public class ZalandoXX extends AbstractWebsite {
 	}
 
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		String rawJson = findAPart(html, "![CDATA[{\"layout\"", "}]]", 1, 8);
 		if (StringUtils.isNotBlank(rawJson)) {
 			JSONObject json = new JSONObject(rawJson);
@@ -70,7 +71,7 @@ public class ZalandoXX extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
   	if (info != null && info.has("id")) {
   		return info.getString("id");
   	}

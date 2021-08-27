@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -33,6 +34,7 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class EPriceIT extends AbstractWebsite {
 
 	private Document dom;
+
 	private String seller;
 	
 	@Override
@@ -41,11 +43,11 @@ public class EPriceIT extends AbstractWebsite {
 	}
 
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 		seller = findAPart(html, "seller_name: \"", "\",");
-		if (StringUtils.isBlank(seller)) seller = "ePrice";
-		
+		if (StringUtils.isBlank(seller)) seller = super.getSeller();
+
 		return OK_Status();
 	}
 
@@ -60,7 +62,7 @@ public class EPriceIT extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
     Element val = dom.selectFirst("meta[itemprop='sku']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
@@ -96,8 +98,8 @@ public class EPriceIT extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller(String defaultSeller) {
-    return seller;
+  public String getSeller() {
+    return super.getSeller();
   }
 
   @Override

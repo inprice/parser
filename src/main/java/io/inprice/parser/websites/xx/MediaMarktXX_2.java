@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
@@ -32,7 +33,7 @@ public class MediaMarktXX_2 extends AbstractWebsite {
 	}
 
 	@Override
-	protected ParseStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		Element metaUrl = dom.selectFirst("meta[property='og:url']");
@@ -54,7 +55,7 @@ public class MediaMarktXX_2 extends AbstractWebsite {
   }
 
   @Override
-  public String getSku(String url) {
+  public String getSku() {
     Element val = dom.selectFirst("dd span[itemprop='sku']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
