@@ -36,7 +36,7 @@ public class StatusChangingLinksPublisher {
 
 	public static void publish(LinkStatusChange change) {
   	try {
-	  	String message = JsonConverter.toJsonWithoutJsonIgnore(change);
+	  	String message = JsonConverter.toJsonWithoutIgnoring(change);
 	  	channel.basicPublish("", Props.getConfig().QUEUES.STATUS_CHANGING_LINKS.NAME, null, message.getBytes());
   	} catch (IOException e) {
       logger.error("Failed to publish status changing link", e);
