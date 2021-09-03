@@ -19,7 +19,6 @@ import com.rabbitmq.client.Envelope;
 import io.inprice.common.config.QueueDef;
 import io.inprice.common.helpers.JsonConverter;
 import io.inprice.common.helpers.RabbitMQ;
-import io.inprice.common.info.LinkStatusChange;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.utils.StringUtils;
@@ -131,7 +130,7 @@ class ActiveLinksConsumer {
 				    link.setParseProblem(StringUtils.clearErrorMessage(newParseStatus.getMessage()));
 		
 				    if (link.getStatus().equals(oldStatus) == false || link.getPrice().equals(oldPrice) == false) {
-				    	StatusChangingLinksPublisher.publish(new LinkStatusChange(link, oldStatus, oldPrice));
+				    	StatusChangingLinksPublisher.publish(link);
 				    }
 
 						watch.stop();

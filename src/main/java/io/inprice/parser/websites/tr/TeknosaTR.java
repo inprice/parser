@@ -102,8 +102,14 @@ public class TeknosaTR extends AbstractWebsite {
     if (CollectionUtils.isNotEmpty(specKeys)) {
       specs = new HashSet<>();
       for (Element key : specKeys) {
-        Element val = key.selectFirst("td");
-        specs.add(new LinkSpec(val.text(), ""));
+        Elements vals = key.select("td");
+        if (vals.size() > 0) {
+        	if (vals.size() == 1) {
+        		specs.add(new LinkSpec(vals.get(0).text(), ""));
+        	} else {
+        		specs.add(new LinkSpec(vals.get(0).text(), vals.get(1).text()));
+        	}
+        }
       }
     }
 

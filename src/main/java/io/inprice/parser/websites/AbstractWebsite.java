@@ -40,6 +40,7 @@ import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.NumberUtils;
+import io.inprice.parser.config.Props;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseCode;
 import io.inprice.parser.info.ParseStatus;
@@ -72,21 +73,28 @@ public abstract class AbstractWebsite implements Website {
 		}
 		return status;
 	}
-
+	
 	private ParseStatus openPage(Link link) {
 		ParseStatus status = OK_Status();
-
+		
 		switch (getRenderer()) {
 			case BROWSER: {
-      	ProfilesIni profileIni = new ProfilesIni();
-      	FirefoxProfile profile = profileIni.getProfile(link.getPlatform().getProfile() != null ? link.getPlatform().getProfile() : "default");
-      	profile.setPreference("permissions.default.image", 2);
+				String profileName = "default";
+				if (StringUtils.isNotBlank(link.getPlatform().getProfile())) {
+					profileName = link.getPlatform().getProfile();
+				} else if (StringUtils.isNotBlank(Props.getConfig().APP.BROWSER_PROFILE)) {
+					profileName = Props.getConfig().APP.BROWSER_PROFILE;
+				}
 
-    		FirefoxOptions capabilities = new FirefoxOptions();
-    		capabilities.setLogLevel(FirefoxDriverLogLevel.FATAL);
-    		capabilities.setCapability(Capability.PROFILE, profile);
-    		capabilities.setAcceptInsecureCerts(false);
+				ProfilesIni profileIni = new ProfilesIni();
+		  	FirefoxProfile profile = profileIni.getProfile(profileName);
+		  	profile.setPreference("permissions.default.image", 2);
 
+				FirefoxOptions capabilities = new FirefoxOptions();
+				capabilities.setLogLevel(FirefoxDriverLogLevel.FATAL);
+				capabilities.setCapability(Capability.PROFILE, profile);
+				capabilities.setAcceptInsecureCerts(false);
+				
     		FirefoxDriver webDriver = new FirefoxDriver(capabilities);
     		try {
       		webDriver.get(link.getUrl());

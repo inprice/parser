@@ -6,6 +6,9 @@ import io.inprice.common.config.BaseConfig;
 
 public class Config extends BaseConfig {
 
+	@JsonProperty("app")
+	public App APP;
+
 	@JsonProperty("proxy")
 	public ProxyConf PROXY;
 

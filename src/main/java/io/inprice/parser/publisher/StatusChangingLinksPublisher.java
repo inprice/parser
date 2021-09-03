@@ -10,7 +10,7 @@ import com.rabbitmq.client.Connection;
 
 import io.inprice.common.helpers.JsonConverter;
 import io.inprice.common.helpers.RabbitMQ;
-import io.inprice.common.info.LinkStatusChange;
+import io.inprice.common.models.Link;
 import io.inprice.parser.config.Props;
 
 /**
@@ -34,9 +34,9 @@ public class StatusChangingLinksPublisher {
 		}
 	}
 
-	public static void publish(LinkStatusChange change) {
+	public static void publish(Link link) {
   	try {
-	  	String message = JsonConverter.toJsonWithoutIgnoring(change);
+	  	String message = JsonConverter.toJsonWithoutIgnoring(link);
 	  	channel.basicPublish("", Props.getConfig().QUEUES.STATUS_CHANGING_LINKS.NAME, null, message.getBytes());
   	} catch (IOException e) {
       logger.error("Failed to publish status changing link", e);
