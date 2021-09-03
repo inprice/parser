@@ -9,9 +9,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.openqa.selenium.By;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
+import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -24,21 +25,21 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class CDiscountFR extends AbstractWebsite {
 
 	private Document dom;
-	
+
 	@Override
 	protected By waitBy() {
 		return By.id("fpSku");
 	}
 
 	@Override
-	protected HttpStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 		
 		Element notFoundImg = dom.selectFirst("img[alt='404']");
 		if (notFoundImg == null) {
-			return HttpStatus.OK;
+			return OK_Status();
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -89,7 +90,7 @@ public class CDiscountFR extends AbstractWebsite {
   	if (val != null) {
   		return val.text();
   	}
-  	return "CDiscount";
+  	return super.getSeller();
   }
 
   @Override
@@ -98,8 +99,7 @@ public class CDiscountFR extends AbstractWebsite {
   	if (val != null) {
   		return val.text();
   	}
-
-    return "Check shipping conditions";
+  	return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

@@ -11,9 +11,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
+import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -31,7 +32,7 @@ public class DeBijenkorfNL extends AbstractWebsite {
   private JSONObject prod;
   
 	@Override
-	protected HttpStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
     String prodData = findAPart(html, "Data.product =", "};", 1);
@@ -42,11 +43,11 @@ public class DeBijenkorfNL extends AbstractWebsite {
       	json = data.getJSONObject("product");
         if (json.has("currentVariantProduct")) {
           prod = json.getJSONObject("currentVariantProduct");
-          return HttpStatus.OK;
+          return OK_Status();
         }
       }
     }
-    return HttpStatus.NOT_FOUND;
+    return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -100,7 +101,7 @@ public class DeBijenkorfNL extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

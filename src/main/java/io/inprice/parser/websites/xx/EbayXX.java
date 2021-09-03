@@ -11,9 +11,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
+import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -36,15 +37,15 @@ public class EbayXX extends AbstractWebsite {
 	}
   
 	@Override
-	protected HttpStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 		
 		String title = dom.title();
 		if (title.toLowerCase().contains("error page") == false) {
 			buildSpecList();
-			return HttpStatus.OK;
+			return OK_Status();
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -159,12 +160,12 @@ public class EbayXX extends AbstractWebsite {
       }
     }
     
-    return Consts.Words.NOT_AVAILABLE;
+    return super.getSeller();
   }
 
   @Override
   public String getShipment() {
-  	String res = Consts.Words.NOT_AVAILABLE;
+  	String res = Consts.Words.CHECK_DELIVERY_CONDITIONS;
 
     Element val = dom.getElementById("fshippingCost");
 
@@ -205,7 +206,7 @@ public class EbayXX extends AbstractWebsite {
     return specs;
   }
 
-  private final String BRAND_WORDS = "(Brand|Marca|Marke|Marque)?";
+  private static final String BRAND_WORDS = "(Brand|Marca|Marke|Marque)?";
 
   private void buildSpecList() {
   	brand = Consts.Words.NOT_AVAILABLE;

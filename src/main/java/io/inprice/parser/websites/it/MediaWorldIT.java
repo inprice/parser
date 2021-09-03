@@ -8,9 +8,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
+import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -24,22 +25,22 @@ public class MediaWorldIT extends AbstractWebsite {
 
 	private Document dom;
 	private Element prod;
-	
+
 	@Override
 	protected Renderer getRenderer() {
 		return Renderer.HTMLUNIT;
 	}
 	
 	@Override
-	protected HttpStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		String title = dom.title();
 		if (title.toLowerCase().contains("error 404") == false) {
   		prod = dom.selectFirst("div.product-detail-main-container");
-  		return HttpStatus.OK;
+  		return OK_Status();
     }
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 	
   @Override
@@ -98,7 +99,7 @@ public class MediaWorldIT extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

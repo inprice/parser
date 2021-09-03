@@ -12,9 +12,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
+import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -28,25 +29,28 @@ public class CanadianTireCA extends AbstractWebsite {
 
 	private Document dom;
   private JSONObject json;
-	
+
+  private String url;
+
 	@Override
-	protected HttpStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		Element titleEl = dom.selectFirst("title");
 		if (titleEl.text().contains("404 |") == false) {
-			return HttpStatus.OK;
+		  url = link.getUrl();
+			return OK_Status();
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
 	/**
 	 * waitBy() method has no effect on this website, so an extra call needed!
 	 */
 	@Override
-	protected String getExtraUrl() {
+	protected String getExtraUrl(String url) {
     StringBuilder offerUrl = new StringBuilder("view-source:https://api-triangle.canadiantire.ca/esb/PriceAvailability?SKU=");
-    offerUrl.append(getSku());
+    offerUrl.append(url);
     offerUrl.append("&");
     offerUrl.append("Store=0144");
     offerUrl.append("&");
@@ -62,16 +66,16 @@ public class CanadianTireCA extends AbstractWebsite {
 	}
 
   @Override
-	protected HttpStatus setExtraHtml(String html) {
+	protected ParseStatus setExtraHtml(String html) {
 		Document dom = Jsoup.parse(html);
 		Element jsonEl = dom.selectFirst("pre");
 
 		if (jsonEl != null && StringUtils.isNotBlank(jsonEl.text())) {
 			JSONArray rawArr = new JSONArray(jsonEl.text());
 			json = rawArr.getJSONObject(0);
-			return HttpStatus.OK;
+			return OK_Status();
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
   }
 
   @Override
@@ -89,7 +93,6 @@ public class CanadianTireCA extends AbstractWebsite {
 
   @Override
   public String getSku() {
-  	String url = getUrl();
 		int pPoint = url.indexOf("p.");
 		return url.substring(pPoint-7, pPoint);
   }

@@ -9,9 +9,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
+import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -30,24 +31,23 @@ public class AmazonXX extends AbstractWebsite {
 	private String storeShipping;
 	
 	@Override
-	protected HttpStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		Element val = dom.selectFirst("title");
 		if (val.text().toLowerCase().contains("not found") == false) {
 			val = dom.getElementById("outOfStock");
 			if (val == null) {
-				return HttpStatus.OK;
+				return OK_Status();
 			}
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 	
 	@Override
-	protected String getExtraUrl() {
+	protected String getExtraUrl(String url) {
 		Element val = dom.selectFirst("#buybox-see-all-buying-choices a");
 		if (val != null) {
-  		String url = getUrl();
   		int pos = url.indexOf("/dp/")+4;
   		String asin = url.substring(pos, pos+10);
    		return "https://www.amazon.com/gp/aod/ajax/ref=dp_aod_unknown_mbc?asin="+asin;
@@ -56,7 +56,7 @@ public class AmazonXX extends AbstractWebsite {
 	}
 
 	@Override
-	protected HttpStatus setExtraHtml(String html) {
+	protected ParseStatus setExtraHtml(String html) {
 		Document subDom = Jsoup.parse(html);
 
 		Element storeEl = subDom.selectFirst("#aod-offer-shipsFrom .a-color-base");
@@ -266,7 +266,7 @@ public class AmazonXX extends AbstractWebsite {
       return "See all offers";
     }
 
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

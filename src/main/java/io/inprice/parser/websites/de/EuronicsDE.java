@@ -9,9 +9,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.openqa.selenium.By;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
+import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -25,20 +26,23 @@ public class EuronicsDE extends AbstractWebsite {
 
 	private Document dom;
 
+  private String url;
+
 	@Override
 	protected By waitBy() {
 		return By.id("product-price");
 	}
 	
 	@Override
-	protected HttpStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		String title = dom.title();
 		if (title.toLowerCase().contains("fehler 404") == false) {
-			return HttpStatus.OK;
+		  url = link.getUrl();
+			return OK_Status();
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -53,7 +57,7 @@ public class EuronicsDE extends AbstractWebsite {
 
   @Override
   public String getSku() {
-  	String[] chunks = getUrl().split("-");
+  	String[] chunks = url.split("-");
     return chunks[chunks.length-1];
   }
 
@@ -92,7 +96,7 @@ public class EuronicsDE extends AbstractWebsite {
   	val = dom.selectFirst(".shipping--is-free");
   	if (val != null) return val.text();
   	
-    return Consts.Words.NOT_AVAILABLE;
+  	return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

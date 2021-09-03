@@ -10,9 +10,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
+import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -28,14 +29,14 @@ public class WalmartUS extends AbstractWebsite {
 	private boolean isAvailable;
 
 	@Override
-	protected HttpStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		isAvailable = (html.indexOf("\"availabilityStatus\":\"IN_STOCK\"") > 0);
 		if (isAvailable) {
-			return HttpStatus.OK;
+			return OK_Status();
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   /**
@@ -109,7 +110,7 @@ public class WalmartUS extends AbstractWebsite {
       return val.text();
     }
 
-    return "Check delivery and installation conditions";
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

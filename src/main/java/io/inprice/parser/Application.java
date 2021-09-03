@@ -1,5 +1,9 @@
 package io.inprice.parser;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,14 +23,20 @@ public class Application {
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
   public static void main(String[] args) {
-  	new Thread(() -> {
+		Thread.currentThread().setName("main");
 
-  		RabbitMQ.start(Props.getConfig().RABBIT_CONF);
-      logger.info(" - RabbitMQ is started.");
+		//will ignore system errors stemming from gecko driver!
+		System.setErr(new PrintStream(new OutputStream() {
+			@Override
+			public void write(int b) throws IOException {
+				//ignored!
+			}
+		}));
 
-      ConsumerManager.start();
+		RabbitMQ.start(Props.getConfig().RABBIT_CONF);
+    logger.info(" - RabbitMQ is started.");
 
-    }, "app-starter").start();
+    ConsumerManager.start();
 
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
       logger.info("APPLICATION IS TERMINATING...");

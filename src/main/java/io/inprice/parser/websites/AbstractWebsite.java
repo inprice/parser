@@ -22,13 +22,12 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxDriver.Capability;
+import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.ProfilesIni;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.HttpHeader;
@@ -38,13 +37,13 @@ import com.gargoylesoftware.htmlunit.WebResponse;
 
 import io.inprice.common.helpers.SqlHelper;
 import io.inprice.common.meta.LinkStatus;
-import io.inprice.common.meta.LinkStatusGroup;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
-import io.inprice.common.models.Platform;
 import io.inprice.common.utils.NumberUtils;
+import io.inprice.parser.config.Props;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
+import io.inprice.parser.info.ParseCode;
+import io.inprice.parser.info.ParseStatus;
 
 /**
  * 
@@ -52,8 +51,8 @@ import io.inprice.parser.info.HttpStatus;
  */
 public abstract class AbstractWebsite implements Website {
 
-	private static final Logger logger = LoggerFactory.getLogger(AbstractWebsite.class);
-	
+	private String seller;
+
 	/**
 	 * There are two kind of html handler;
 	 *   a) External browser  (default one)
@@ -62,41 +61,43 @@ public abstract class AbstractWebsite implements Website {
 	protected static enum Renderer {
 		HTMLUNIT,
 		BROWSER,
-		JSOUP;  //for only tests
+		JSOUP;  //just for tests
 	}
 
-	private Link link;
-	private LinkStatus oldStatus;
+	public ParseStatus check(Link link) {
+		LinkStatus oldStatus = link.getStatus();
+
+		ParseStatus status = openPage(link);
+		if (status.getCode().equals(ParseCode.OK)) {
+			status = read(link, oldStatus);
+		}
+		return status;
+	}
 	
-	@Override
-	public void check(Link link) {
-		this.link = link;
-		this.oldStatus = link.getStatus();
-
-		if (openPage()) read();
-	}
-
-	protected Renderer getRenderer() {
-		return Renderer.BROWSER;
-	}
-
-	private boolean openPage() {
-		long started = System.currentTimeMillis();
-		
-		HttpStatus status = new HttpStatus(200, null);
+	private ParseStatus openPage(Link link) {
+		ParseStatus status = OK_Status();
 		
 		switch (getRenderer()) {
 			case BROWSER: {
-      	ProfilesIni profileIni = new ProfilesIni();
-      	FirefoxProfile profile = profileIni.getProfile("default");
-    
-    		FirefoxOptions capabilities = new FirefoxOptions();
-    		capabilities.setCapability(Capability.PROFILE, profile);
-    		capabilities.setAcceptInsecureCerts(false);
-    
+				String profileName = "default";
+				if (StringUtils.isNotBlank(link.getPlatform().getProfile())) {
+					profileName = link.getPlatform().getProfile();
+				} else if (StringUtils.isNotBlank(Props.getConfig().APP.BROWSER_PROFILE)) {
+					profileName = Props.getConfig().APP.BROWSER_PROFILE;
+				}
+
+				ProfilesIni profileIni = new ProfilesIni();
+		  	FirefoxProfile profile = profileIni.getProfile(profileName);
+		  	profile.setPreference("permissions.default.image", 2);
+
+				FirefoxOptions capabilities = new FirefoxOptions();
+				capabilities.setLogLevel(FirefoxDriverLogLevel.FATAL);
+				capabilities.setCapability(Capability.PROFILE, profile);
+				capabilities.setAcceptInsecureCerts(false);
+				
     		FirefoxDriver webDriver = new FirefoxDriver(capabilities);
     		try {
-      		webDriver.get(getUrl());
+      		webDriver.get(link.getUrl());
 
       		//some sites open a panel first to specify user preferences
       		if (clickFirstBy() != null) {
@@ -109,9 +110,9 @@ public abstract class AbstractWebsite implements Website {
         		wait.until(ExpectedConditions.visibilityOfElementLocated(waitBy()));
       		}
     
-          status = setHtml(webDriver.getPageSource());
+          status = startParsing(link, webDriver.getPageSource());
           if (status.getMessage() == null) {
-          	String url = getExtraUrl();
+          	String url = getExtraUrl(link.getUrl());
         		if (StringUtils.isNotBlank(url)) {
         			webDriver.get(url);
         			status = setExtraHtml(webDriver.getPageSource());
@@ -119,7 +120,7 @@ public abstract class AbstractWebsite implements Website {
           }
     
     		} catch (Exception e) {
-    			status.setMessage(e.getMessage());
+    			status = new ParseStatus(ParseCode.OTHER_EXCEPTION, e.getMessage());
     		} finally {
     			webDriver.close();
     		}
@@ -130,8 +131,9 @@ public abstract class AbstractWebsite implements Website {
     		WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setTimeout(30_000);
     		try {
-    			WebRequest req = new WebRequest(new URL(getUrl()));
+    			WebRequest req = new WebRequest(new URL(link.getUrl()));
     			req.setAdditionalHeader(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
     			req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
     			req.setAdditionalHeader(HttpHeader.ACCEPT_ENCODING, "gzip, deflate, br");
@@ -141,22 +143,18 @@ public abstract class AbstractWebsite implements Website {
     	  	WebResponse res = webClient.loadWebResponse(req);
     
     			if (res.getStatusCode() < 400) {
-    				status.setCode(res.getStatusCode());
-      			setHtml(res.getContentAsString());
-    				afterRequest(webClient);
+      			status = startParsing(link, res.getContentAsString());
+      			if (status.getCode().equals(ParseCode.OK)) {
+      				status = afterRequest(webClient);
+      			}
     			} else {
-    				status.setCode(res.getStatusCode());
-    				status.setMessage(res.getStatusMessage());
+    				status = new ParseStatus(ParseCode.HTTP_OTHER_ERROR, res.getStatusCode() + ": " + res.getStatusMessage());
     			}
     
         } catch (SocketTimeoutException set) {
-    			status.setCode(408);
-    			status.setMessage("TIMED OUT!" + (link.getRetry() < 3 ? " RETRYING..." : ""));
-    			logger.error("Timed out: {}", set.getMessage());
+        	status = new ParseStatus(ParseCode.TIMEOUT_EXCEPTION, set.getMessage());
     		} catch (IOException e) {
-    			logger.error("Unexpected error!", e);
-    			status.setCode(502);
-    			status.setMessage(e.getMessage());
+    			status = new ParseStatus(ParseCode.IO_EXCEPTION, e.getMessage());
     		} finally {
     			webClient.close();
     		}
@@ -166,74 +164,36 @@ public abstract class AbstractWebsite implements Website {
 			case JSOUP: {
 				Connection.Response res = null;
 		    try {
-		      res = Jsoup.connect(getUrl()).userAgent("Mozilla").ignoreHttpErrors(true).execute();
+		      res = Jsoup.connect(link.getUrl()).userAgent("Mozilla").ignoreHttpErrors(true).execute();
 		      if (res.statusCode() < 400) {
-  		      res.charset("UTF-8");
   		      Document doc = res.parse();
-  		      setHtml(doc.html());
+  		      status = startParsing(link, doc.html());
 		      } else {
-    				status.setCode(res.statusCode());
-    				status.setMessage(res.statusMessage());
+		      	status = new ParseStatus(ParseCode.HTTP_OTHER_ERROR, res.statusCode() + ": " + res.statusMessage());
 		      }
 		    } catch (IOException e) {
 		    	if (res != null && res.statusCode() >= 400) {
-    				status.setCode(res.statusCode());
-    				status.setMessage(res.statusMessage());
+	    			status = new ParseStatus(ParseCode.HTTP_OTHER_ERROR, res.statusCode() + ": " + res.statusMessage());
 		    	} else {
-	    			status.setCode(502);
-	    			status.setMessage(e.getMessage());
+		    		status = new ParseStatus(ParseCode.IO_EXCEPTION, e.getMessage());
 		    	}
 		    }
 				break;
 			}
 		
 		}
-		
-		String logPart = String.format("Platform: %s, Status: %d, Time: %dms", link.getPlatform().getDomain(), status.getCode(), (System.currentTimeMillis() - started) / 10);
 
-		if (status.getMessage() != null) {
-			status.setMessage(io.inprice.common.utils.StringUtils.clearErrorMessage(status.getMessage()));
-			if (status.getMessage().toLowerCase().contains("time out") || status.getMessage().toLowerCase().contains("timed out")) {
-				setLinkStatus(LinkStatus.TIMED_OUT, status.getMessage(), (status.getCode() != 200 ? status.getCode() : 408));
-			} else {
-				LinkStatus linkStatus = LinkStatus.NETWORK_ERROR;
-				switch (status.getCode()) {
-  				case 403:
-  					linkStatus = LinkStatus.NOT_ALLOWED;
-  					break;
-					case 404:
-						linkStatus = LinkStatus.NOT_FOUND;
-						break;
-					case 503:
-						linkStatus = LinkStatus.SITE_DOWN;
-						break;
-				}
-				setLinkStatus(linkStatus, status.getMessage(), status.getCode());
-			}
-			logger.warn("---FAILED--- {}, Problem: {}, URL: {}", logPart, status.getMessage(), getUrl());
-		} else {
-			link.setHttpStatus(status.getCode());
-			logger.info("-SUCCESSFUL- {}, URL: {}", logPart, getUrl());
-		}
-
-		return (status.getMessage() == null);
+		return status;
 	}
 
-	private void read() {
-		//setHtml method may set a different group. thus, we need to check if it is so
-		//check if its old and new status are different and new status is not active!
-		if (!oldStatus.equals(link.getStatus()) && !oldStatus.equals(LinkStatus.TOBE_CLASSIFIED) && !LinkStatusGroup.ACTIVE.equals(link.getStatus().getGroup())) {
-			return;
-		}
+	private ParseStatus read(Link link, LinkStatus oldStatus) {
+		seller = link.getPlatform().getName();
 
-		// base settings
 		String name = getName();
 		BigDecimal price = getPrice();
 
-		if (price == null || name == null || price.compareTo(BigDecimal.ONE) < 0 || Consts.Words.NOT_AVAILABLE.equals(name)) {
-			link.setStatus(LinkStatus.NO_DATA);
-			link.setProblem("HAS NO PRICE OR NAME");
-			return;
+		if (StringUtils.isBlank(name) || Consts.Words.NOT_AVAILABLE.equals(name) || price == null || price.compareTo(BigDecimal.ONE) < 0) {
+			return new ParseStatus(ParseCode.NO_DATA, "No data");
 		}
 
 		// other settings
@@ -256,34 +216,76 @@ public abstract class AbstractWebsite implements Website {
 		}
 
 		if (isAvailable()) {
-			link.setStatus(LinkStatus.AVAILABLE);
+			return OK_Status();
 		} else {
-			setLinkStatus(LinkStatus.NOT_AVAILABLE, "INSUFFICIENT STOCK");
+			return new ParseStatus(ParseCode.NOT_AVAILABLE, "Insufficient stock");
 		}
 	}
 
-	/**
-	 * Comes from db
-	 */
-	@Override
-	public String getUrl() {
-		return link.getUrl();
+	protected Renderer getRenderer() {
+		return Renderer.BROWSER;
 	}
-
+	
 	/**
 	 * Used for making an extra call to the website
 	 * @return
 	 */
-	protected String getExtraUrl() { return null; }
+	protected String getExtraUrl(String url) { return null; }
 
-	protected int getRetry() {
-		return link.getRetry();
+	protected String cleanDigits(String numString) {
+		return NumberUtils.extractPrice(numString);
+	}
+
+	protected String findAPart(String html, String starting, String ending) {
+		return findAPart(html, starting, ending, 0);
+	}
+
+	protected String findAPart(String html, String starting, String ending, int plus) {
+		return findAPart(html, starting, ending, plus, 0);
 	}
 	
-	protected Platform getPlatform() {
-		return link.getPlatform();
+	protected String findAPart(String html, String starting, String ending, int plus, int startPointOffset) {
+		int start = html.indexOf(starting) + (startPointOffset <= 0 ? starting.length() : 0);
+		int end = html.indexOf(ending, start) + plus;
+
+		if (start > starting.length() && end > start) {
+			return html.substring(start + startPointOffset, end);
+		}
+
+		return null;
 	}
 
+	private String fixLength(String val, int limit) {
+		if (val == null) return null;
+
+		String newForm = StringEscapeUtils.unescapeHtml4(io.inprice.common.utils.StringUtils.clearEmojies(val));
+		if (StringUtils.isNotBlank(newForm) && newForm.length() > limit)
+			return SqlHelper.clear(newForm.substring(0, limit));
+		else
+			return SqlHelper.clear(newForm);
+	}
+
+	protected ParseStatus setExtraHtml(String html) {
+		return OK_Status();
+	}
+
+	protected ParseStatus afterRequest(WebClient webClient) {
+		return OK_Status();
+	}
+
+	protected By clickFirstBy() {
+		return null;
+	}
+
+	protected By waitBy() {
+		return null;
+	}
+
+	@Override
+	public String getSeller() {
+		return seller;
+	}
+	
 	protected Set<LinkSpec> getValueOnlySpecs(Elements specs) {
 		return getValueOnlySpecs(specs, null);
 	}
@@ -342,74 +344,8 @@ public abstract class AbstractWebsite implements Website {
 		return specs;
 	}
 
-	protected String cleanDigits(String numString) {
-		return NumberUtils.extractPrice(numString);
+	protected ParseStatus OK_Status() {
+		return new ParseStatus(ParseCode.OK, null);
 	}
 
-	protected String findAPart(String html, String starting, String ending) {
-		return findAPart(html, starting, ending, 0);
-	}
-
-	protected String findAPart(String html, String starting, String ending, int plus) {
-		return findAPart(html, starting, ending, plus, 0);
-	}
-	
-	protected String findAPart(String html, String starting, String ending, int plus, int startPointOffset) {
-		int start = html.indexOf(starting) + (startPointOffset <= 0 ? starting.length() : 0);
-		int end = html.indexOf(ending, start) + plus;
-
-		if (start > starting.length() && end > start) {
-			return html.substring(start + startPointOffset, end);
-		}
-
-		return null;
-	}
-
-	protected LinkStatus getLinkStatus() {
-		return link.getStatus();
-	}
-	
-	protected void setLinkStatus(LinkStatus status, String problem) {
-		link.setStatus(status);
-		link.setProblem(problem.toUpperCase());
-	}
-
-	protected void setLinkStatus(LinkStatus status, String problem, int httpStatus) {
-		link.setStatus(status);
-		link.setProblem(problem.toUpperCase());
-		link.setHttpStatus(httpStatus);
-	}
-	
-	public String getSeller() {
-		return getPlatform().getName();
-	}
-
-	private String fixLength(String val, int limit) {
-		if (val == null) return null;
-
-		String newForm = StringEscapeUtils.unescapeHtml4(io.inprice.common.utils.StringUtils.clearEmojies(val));
-		if (StringUtils.isNotBlank(newForm) && newForm.length() > limit)
-			return SqlHelper.clear(newForm.substring(0, limit));
-		else
-			return SqlHelper.clear(newForm);
-	}
-
-	protected HttpStatus setHtml(String html) {
-		return new HttpStatus(200, null);
-	}
-
-	protected HttpStatus setExtraHtml(String html) {
-		return new HttpStatus(200, null);
-	}
-
-	protected By clickFirstBy() {
-		return null;
-	}
-
-	protected By waitBy() {
-		return null;
-	}
-	
-	protected void afterRequest(WebClient webClient) { }
-	
 }

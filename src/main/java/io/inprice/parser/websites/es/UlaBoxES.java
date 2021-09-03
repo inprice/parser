@@ -8,9 +8,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
+import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -23,16 +24,16 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class UlaBoxES extends AbstractWebsite {
 
 	private Document dom;
-	
+
 	@Override
-	protected HttpStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		Element notFoundImg = dom.selectFirst("img[alt$='Page not found']");
 		if (notFoundImg == null) {
-			return HttpStatus.OK;
+			return OK_Status();
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -62,7 +63,6 @@ public class UlaBoxES extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
-
     return Consts.Words.NOT_AVAILABLE;
   }
 
@@ -72,7 +72,6 @@ public class UlaBoxES extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }
-
     return BigDecimal.ZERO;
   }
 
@@ -82,13 +81,7 @@ public class UlaBoxES extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.attr("title"))) {
       return val.attr("title");
     }
-
     return Consts.Words.NOT_AVAILABLE;
-  }
-
-  @Override
-  public String getSeller() {
-    return "Ulabox";
   }
 
   @Override

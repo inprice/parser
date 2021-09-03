@@ -11,8 +11,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
-import io.inprice.parser.info.HttpStatus;
+import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -33,14 +34,14 @@ public class TeknosaTR extends AbstractWebsite {
 	}
 
 	@Override
-	protected HttpStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		addToCartBtn = dom.getElementById("addToCartButton");
-		if (addToCartBtn != null && addToCartBtn.hasAttr("disabled") == false) {
-			return HttpStatus.OK;
+		if (addToCartBtn != null) {
+			return OK_Status();
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -101,8 +102,14 @@ public class TeknosaTR extends AbstractWebsite {
     if (CollectionUtils.isNotEmpty(specKeys)) {
       specs = new HashSet<>();
       for (Element key : specKeys) {
-        Element val = key.selectFirst("td");
-        specs.add(new LinkSpec(val.text(), ""));
+        Elements vals = key.select("td");
+        if (vals.size() > 0) {
+        	if (vals.size() == 1) {
+        		specs.add(new LinkSpec(vals.get(0).text(), ""));
+        	} else {
+        		specs.add(new LinkSpec(vals.get(0).text(), vals.get(1).text()));
+        	}
+        }
       }
     }
 

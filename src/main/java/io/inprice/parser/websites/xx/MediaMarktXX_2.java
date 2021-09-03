@@ -8,9 +8,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
+import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -32,14 +33,14 @@ public class MediaMarktXX_2 extends AbstractWebsite {
 	}
 
 	@Override
-	protected HttpStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		Element metaUrl = dom.selectFirst("meta[property='og:url']");
 		if (metaUrl != null && metaUrl.hasAttr("content") && metaUrl.attr("content").contains("error404")) {
-			return HttpStatus.NOT_FOUND;
+			return ParseStatus.PS_NOT_FOUND;
 		}
-		return HttpStatus.OK;
+		return OK_Status();
 	}
 
   @Override
@@ -90,11 +91,6 @@ public class MediaMarktXX_2 extends AbstractWebsite {
   }
 
   @Override
-  public String getSeller() {
-    return "MediaMarkt " + getPlatform().getCountry();
-  }
-
-  @Override
   public String getShipment() {
     Element shipment = dom.selectFirst("div.price.big");
     if (shipment != null) {
@@ -112,7 +108,7 @@ public class MediaMarktXX_2 extends AbstractWebsite {
       }
     }
 
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

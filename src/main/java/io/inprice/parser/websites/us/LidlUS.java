@@ -9,9 +9,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.openqa.selenium.By;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.info.HttpStatus;
+import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -25,20 +26,22 @@ public class LidlUS extends AbstractWebsite {
 
 	private Document dom;
 
+	private String url;
+
 	@Override
 	protected By waitBy() {
 		return By.className("product-price");
 	}
 	
 	@Override
-	protected HttpStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		Element messageH1 = dom.selectFirst(".status-message-headline");
 		if (messageH1 == null) {
-			return HttpStatus.OK;
+			return OK_Status();
 		}
-		return HttpStatus.NOT_FOUND;
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -52,7 +55,7 @@ public class LidlUS extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    String[] chunks = getUrl().split("/");
+    String[] chunks = url.split("/");
     if (chunks.length > 0) {
       return chunks[chunks.length-1];
     }
@@ -92,7 +95,7 @@ public class LidlUS extends AbstractWebsite {
     if (val != null) {
     	return "Available at " + val.text();
     }
-    return "Check store";
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

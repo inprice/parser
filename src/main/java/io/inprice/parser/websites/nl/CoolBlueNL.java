@@ -12,10 +12,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.helpers.StringHelpers;
-import io.inprice.parser.info.HttpStatus;
+import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
@@ -38,7 +39,7 @@ public class CoolBlueNL extends AbstractWebsite {
 	}
 	
 	@Override
-	protected HttpStatus setHtml(String html) {
+	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
     Elements dataEL = dom.select("script[type='application/ld+json']");
@@ -57,13 +58,13 @@ public class CoolBlueNL extends AbstractWebsite {
             		JSONArray offersArr = (JSONArray) offersObj;
             		offers = offersArr.getJSONObject(0);
             	}
-          		return HttpStatus.OK;
+          		return OK_Status();
           	}
           }
         }
       }
     }
-    return HttpStatus.NOT_FOUND;
+    return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -115,7 +116,7 @@ public class CoolBlueNL extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override

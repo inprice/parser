@@ -5,6 +5,7 @@ import java.util.Set;
 
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
+import io.inprice.parser.info.ParseStatus;
 
 /**
  * A common interface for websites. So, all of them must implement this
@@ -14,16 +15,10 @@ import io.inprice.common.models.LinkSpec;
  */
 public interface Website {
 
-	// main url
-	String getUrl();
-
-	// checks link status and sets data. is implemented in AbstractWebsite
-	void check(Link link);
-
-	// indicates the availability of the page
+	ParseStatus startParsing(Link link, String html);
+	
 	boolean isAvailable();
 
-	// can be used as SKU, CODE, ASIN, PRODUCT-ID, ITEM-ID...
 	String getSku();
 
 	String getName();
