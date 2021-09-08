@@ -196,7 +196,7 @@ public class AmazonXX extends AbstractWebsite {
         String second = cleanDigits(priceChunks[1]);
         BigDecimal low = new BigDecimal(cleanDigits(first));
         BigDecimal high = new BigDecimal(cleanDigits(second));
-        strPrice = high.add(low).divide(BigDecimal.valueOf(2)).setScale(2, RoundingMode.HALF_UP).toString();
+        strPrice = high.add(low).divide(BigDecimal.valueOf(2), 2, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).toString();
       } else {
         strPrice = price.text();
       }
