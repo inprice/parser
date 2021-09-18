@@ -56,6 +56,7 @@ class ActiveLinksConsumer {
 		
 						LinkStatus oldStatus = link.getStatus();
 				    BigDecimal oldPrice = link.getPrice();
+				    String oldParseCode = link.getParseCode();
 	
 				    ParseStatus newParseStatus = null;
 		
@@ -128,8 +129,8 @@ class ActiveLinksConsumer {
 
 				    link.setParseCode(newParseStatus.getCode().name());
 				    link.setParseProblem(StringUtils.clearErrorMessage(newParseStatus.getMessage()));
-		
-				    if (link.getStatus().equals(oldStatus) == false || link.getPrice().equals(oldPrice) == false) {
+
+				    if (link.getStatus().equals(oldStatus) == false || link.getPrice().equals(oldPrice) == false || link.getParseCode().equals(oldParseCode) == false) {
 				    	StatusChangingLinksPublisher.publish(link);
 				    }
 

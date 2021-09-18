@@ -3,10 +3,10 @@
     "env": "dev"
 	},
   "rabbit": {
-    "host": "194.163.181.188",
+    "host": "127.0.0.1",
     "port": 5672,
-    "username": "admin",
-    "password": "4x4=OnAlti"
+    "username": "guest",
+    "password": "guest"
   },
   "proxy": {
     "active": false,
