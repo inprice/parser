@@ -57,6 +57,10 @@
 					<groupId>redis.clients</groupId>
 					<artifactId>jedis</artifactId>
 				</exclusion>
+        <exclusion>
+		      <groupId>net.objecthunter</groupId>
+		      <artifactId>exp4j</artifactId>
+        </exclusion>
 			</exclusions>
 		</dependency>
 
