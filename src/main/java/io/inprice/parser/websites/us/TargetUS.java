@@ -15,8 +15,8 @@ import org.openqa.selenium.By;
 
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
+import io.inprice.common.utils.StringHelper;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.helpers.StringHelpers;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -46,7 +46,7 @@ public class TargetUS extends AbstractWebsite {
     Elements dataEL = dom.select("script[type='application/ld+json']");
     if (CollectionUtils.isNotEmpty(dataEL)) {
     	for (DataNode dNode : dataEL.dataNodes()) {
-        JSONObject dataNode = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()).replaceAll("\"description\".*(\"gtin13\":)", "$1"));
+        JSONObject dataNode = new JSONObject(StringHelper.escapeJSON(dNode.getWholeData()).replaceAll("\"description\".*(\"gtin13\":)", "$1"));
         if (dataNode.has("@graph")) {
         	JSONArray nodesArr = dataNode.getJSONArray("@graph");
         	for (int i = 0; i < nodesArr.length(); i++) {

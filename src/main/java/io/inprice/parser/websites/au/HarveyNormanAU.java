@@ -13,8 +13,8 @@ import org.jsoup.select.Elements;
 
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
+import io.inprice.common.utils.StringHelper;
 import io.inprice.parser.helpers.Consts;
-import io.inprice.parser.helpers.StringHelpers;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -39,7 +39,7 @@ public class HarveyNormanAU extends AbstractWebsite {
     Elements dataEL = dom.select("script[type='application/ld+json']");
     if (CollectionUtils.isNotEmpty(dataEL)) {
     	for (DataNode dNode : dataEL.dataNodes()) {
-        JSONObject data = new JSONObject(StringHelpers.escapeJSON(dNode.getWholeData()));
+        JSONObject data = new JSONObject(StringHelper.escapeJSON(dNode.getWholeData()));
         if (data.has("@type")) {
           String type = data.getString("@type");
           if (type.equals("Product")) {

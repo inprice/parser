@@ -39,7 +39,7 @@ import io.inprice.common.helpers.SqlHelper;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
-import io.inprice.common.utils.NumberUtils;
+import io.inprice.common.utils.NumberHelper;
 import io.inprice.parser.config.Props;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseCode;
@@ -233,7 +233,7 @@ public abstract class AbstractWebsite implements Website {
 	protected String getExtraUrl(String url) { return null; }
 
 	protected String cleanDigits(String numString) {
-		return NumberUtils.extractPrice(numString);
+		return NumberHelper.extractPrice(numString);
 	}
 
 	protected String findAPart(String html, String starting, String ending) {
@@ -258,7 +258,7 @@ public abstract class AbstractWebsite implements Website {
 	private String fixLength(String val, int limit) {
 		if (val == null) return null;
 
-		String newForm = StringEscapeUtils.unescapeHtml4(io.inprice.common.utils.StringUtils.clearEmojies(val));
+		String newForm = StringEscapeUtils.unescapeHtml4(io.inprice.common.utils.StringHelper.clearEmojies(val));
 		if (StringUtils.isNotBlank(newForm) && newForm.length() > limit)
 			return SqlHelper.clear(newForm.substring(0, limit));
 		else

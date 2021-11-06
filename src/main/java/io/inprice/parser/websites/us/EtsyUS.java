@@ -13,7 +13,7 @@ import org.jsoup.select.Elements;
 
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
-import io.inprice.common.utils.NumberUtils;
+import io.inprice.common.utils.NumberHelper;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
@@ -49,7 +49,7 @@ public class EtsyUS extends AbstractWebsite {
   public boolean isAvailable() {
     Element val = dom.selectFirst("input[name='quantity']");
     if (val != null && StringUtils.isNotBlank(val.attr("value"))) {
-      return NumberUtils.toInteger(cleanDigits(val.attr("value")), 0) > 0;
+      return NumberHelper.toInteger(cleanDigits(val.attr("value")), 0) > 0;
     }
 
     Elements availabilities = dom.select("select#inventory-variation-select-quantity option");

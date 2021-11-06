@@ -21,7 +21,7 @@ import io.inprice.common.helpers.JsonConverter;
 import io.inprice.common.helpers.RabbitMQ;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
-import io.inprice.common.utils.StringUtils;
+import io.inprice.common.utils.StringHelper;
 import io.inprice.parser.info.ParseCode;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.publisher.StatusChangingLinksPublisher;
@@ -128,7 +128,7 @@ class ActiveLinksConsumer {
 				    }
 
 				    link.setParseCode(newParseStatus.getCode().name());
-				    link.setParseProblem(StringUtils.clearErrorMessage(newParseStatus.getMessage()));
+				    link.setParseProblem(StringHelper.clearErrorMessage(newParseStatus.getMessage()));
 
 				    if (link.getStatus().equals(oldStatus) == false || link.getPrice().equals(oldPrice) == false || link.getParseCode().equals(oldParseCode) == false) {
 				    	StatusChangingLinksPublisher.publish(link);
