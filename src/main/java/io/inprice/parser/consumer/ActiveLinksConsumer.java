@@ -19,6 +19,7 @@ import com.rabbitmq.client.Envelope;
 import io.inprice.common.config.QueueDef;
 import io.inprice.common.helpers.JsonConverter;
 import io.inprice.common.helpers.RabbitMQ;
+import io.inprice.common.meta.Grup;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.utils.StringHelper;
@@ -56,7 +57,6 @@ class ActiveLinksConsumer {
 		
 						LinkStatus oldStatus = link.getStatus();
 				    BigDecimal oldPrice = link.getPrice();
-				    String oldParseCode = link.getParseCode();
 	
 				    ParseStatus newParseStatus = null;
 		
@@ -121,6 +121,10 @@ class ActiveLinksConsumer {
 				    		link.setStatus(LinkStatus.SITE_DOWN);
 				    		break;
 							}
+							case HTTP_OTHER_ERROR: {
+				    		link.setStatus(LinkStatus.NETWORK_ERROR);
+				    		break;
+							}
 				  		/*------------------------------------------*/
 							default: {
 								logger.warn("{} has unexpected problem: {}", link.getUrl(), link.getParseProblem());
@@ -130,7 +134,9 @@ class ActiveLinksConsumer {
 				    link.setParseCode(newParseStatus.getCode().name());
 				    link.setParseProblem(StringHelper.clearErrorMessage(newParseStatus.getMessage()));
 
-				    if (link.getStatus().equals(oldStatus) == false || link.getPrice().equals(oldPrice) == false || link.getParseCode().equals(oldParseCode) == false) {
+				    if (link.getGrup().equals(Grup.ACTIVE) == false 
+		    		|| link.getStatus().equals(oldStatus) == false 
+		    		|| link.getPrice().equals(oldPrice) == false) {
 				    	StatusChangingLinksPublisher.publish(link);
 				    }
 
