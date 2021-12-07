@@ -27,6 +27,7 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class TrendyolTR extends AbstractWebsite {
 
 	private Document dom;
+	private String url;
 
 	@Override
 	protected Renderer getRenderer() {
@@ -39,6 +40,7 @@ public class TrendyolTR extends AbstractWebsite {
 
 		Element notFoundDiv = dom.getElementById("tydortyuzdortpage");
 		if (notFoundDiv == null) {
+			this.url = link.getUrl();
 			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;
@@ -53,8 +55,16 @@ public class TrendyolTR extends AbstractWebsite {
   @Override
   public String getSku() {
     Element val = dom.selectFirst("link[rel='canonical']");
+
+    String subject = null;
     if (val != null && StringUtils.isNotBlank(val.attr("href"))) {
-      String[] linkChunks = val.attr("href").split("-");
+    	subject = val.attr("href");
+    } else {
+    	subject = this.url;
+    }
+
+    if (StringUtils.isNotBlank(subject)) {
+      String[] linkChunks = subject.split("-");
       if (linkChunks.length > 0) {
         return linkChunks[linkChunks.length - 1];
       }
@@ -111,7 +121,7 @@ public class TrendyolTR extends AbstractWebsite {
         return sellerChunks[sellerChunks.length - 1];
       }
     }
-
+    
     return super.getSeller();
   }
 
