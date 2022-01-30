@@ -13,10 +13,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 
+import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.StringHelper;
-import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -92,7 +92,7 @@ public class AppliancesOnlineAU extends AbstractWebsite {
     if (val != null) {
     	return val.text();
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -109,7 +109,7 @@ public class AppliancesOnlineAU extends AbstractWebsite {
     if (json != null && json.has("brand")) {
       return json.getJSONObject("brand").getString("name");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override

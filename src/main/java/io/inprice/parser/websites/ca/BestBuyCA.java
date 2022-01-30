@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -84,7 +85,7 @@ public class BestBuyCA extends AbstractWebsite {
     		return availability.getString("sku");
     	}
   	}
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -92,7 +93,7 @@ public class BestBuyCA extends AbstractWebsite {
     if (product != null && product.has("name")) {
       return product.getString("name");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -108,7 +109,7 @@ public class BestBuyCA extends AbstractWebsite {
     if (product != null && product.has("brandName")) {
       return product.getString("brandName");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override

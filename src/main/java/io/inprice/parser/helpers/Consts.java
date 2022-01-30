@@ -3,7 +3,6 @@ package io.inprice.parser.helpers;
 public class Consts {
 
   public static class Words {
-    public static String NOT_AVAILABLE = "NA";
     public static String CHECK_DELIVERY_CONDITIONS = "Check delivery conditions";
   }
 

@@ -10,6 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.openqa.selenium.By;
 
+import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -58,7 +59,7 @@ public class AsosUK extends AbstractWebsite {
   	if (json != null && json.has("id")) {
   		return ""+json.getInt("id");
   	}
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -66,7 +67,7 @@ public class AsosUK extends AbstractWebsite {
   	if (json != null && json.has("name")) {
   		return json.getString("name");
   	}
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -84,7 +85,7 @@ public class AsosUK extends AbstractWebsite {
   	if (json != null && json.has("brandName")) {
   		return json.getString("brandName");
   	}
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override

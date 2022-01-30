@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -25,6 +26,8 @@ import io.inprice.parser.websites.AbstractWebsite;
  * @author mdpinar
  */
 public class TrendyolTR extends AbstractWebsite {
+
+	private static final String P_INDICATOR = "-p-";
 
 	private Document dom;
 	private String url;
@@ -54,7 +57,15 @@ public class TrendyolTR extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = dom.selectFirst("link[rel='canonical']");
+  	int start = this.url.indexOf(P_INDICATOR);
+  	if (start > 0) {
+  		int stop = this.url.indexOf("?", start);
+	    if (stop > 0) {
+	      return this.url.substring(start+P_INDICATOR.length(), stop);
+	    }
+  	}
+  	
+  	Element val = dom.selectFirst("link[rel='canonical']");
 
     String subject = null;
     if (val != null && StringUtils.isNotBlank(val.attr("href"))) {
@@ -69,7 +80,7 @@ public class TrendyolTR extends AbstractWebsite {
         return linkChunks[linkChunks.length - 1];
       }
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -83,7 +94,7 @@ public class TrendyolTR extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override

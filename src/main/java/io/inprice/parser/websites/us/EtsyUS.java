@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.NumberHelper;
@@ -67,7 +68,7 @@ public class EtsyUS extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.attr("data-listing-id"))) {
       return val.attr("data-listing-id");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -76,7 +77,7 @@ public class EtsyUS extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -103,7 +104,7 @@ public class EtsyUS extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.attr("data-to_user_display_name"))) {
       return val.attr("data-to_user_display_name");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override

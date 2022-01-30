@@ -14,10 +14,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.StringHelper;
-import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -83,7 +83,7 @@ public class BolNL extends AbstractWebsite {
     if (json != null && json.has("productID")) {
       return json.getString("productID");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -91,7 +91,7 @@ public class BolNL extends AbstractWebsite {
     if (json != null && json.has("name")) {
       return json.getString("name");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -110,7 +110,7 @@ public class BolNL extends AbstractWebsite {
         return brand.getString("name");
       }
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override

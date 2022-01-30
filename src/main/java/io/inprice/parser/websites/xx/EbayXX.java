@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -74,7 +75,7 @@ public class EbayXX extends AbstractWebsite {
     if (val != null && StringUtils.isNotBlank(val.attr("data-itemid"))) {
       return val.attr("data-itemid");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -180,7 +181,7 @@ public class EbayXX extends AbstractWebsite {
       res = left + " " + right;
     }
 
-    if (res.equals(Consts.Words.NOT_AVAILABLE)) {
+    if (res.equals(GlobalConsts.NOT_AVAILABLE)) {
       val = dom.selectFirst("#shSummary span");
       if (val == null || StringUtils.isBlank(val.text())) val = dom.selectFirst("span.logistics-cost");
   
@@ -194,7 +195,7 @@ public class EbayXX extends AbstractWebsite {
       }
     }
 
-    if (!res.equals(Consts.Words.NOT_AVAILABLE)) {
+    if (!res.equals(GlobalConsts.NOT_AVAILABLE)) {
     	if (res.indexOf("not ship") > 0 && res.indexOf("-") > 0) res = res.split("-")[1];
     }
 
@@ -209,7 +210,7 @@ public class EbayXX extends AbstractWebsite {
   private static final String BRAND_WORDS = "(Brand|Marca|Marke|Marque)?";
 
   private void buildSpecList() {
-  	brand = Consts.Words.NOT_AVAILABLE;
+  	brand = GlobalConsts.NOT_AVAILABLE;
 
     Elements specsEl = dom.select("div.itemAttr table[role='presentation']:not(#itmSellerDesc) tr");
     if (CollectionUtils.isNotEmpty(specsEl)) {

@@ -13,10 +13,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.StringHelper;
-import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -29,10 +29,14 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class N11TR extends AbstractWebsite {
 
+	private static final String SELLER_INDICATOR = "magaza=";
+
 	private Document dom;
 
 	private JSONObject json;
   private JSONObject offers;
+
+  private String url;
 
   @Override
 	protected Renderer getRenderer() {
@@ -59,6 +63,7 @@ public class N11TR extends AbstractWebsite {
             		JSONArray offersArr = (JSONArray) offersObj;
             		offers = offersArr.getJSONObject(0);
             	}
+            	this.url = link.getUrl();
           		return OK_Status();
             }
           }
@@ -83,7 +88,7 @@ public class N11TR extends AbstractWebsite {
     if (val != null && val.hasAttr("value")) {
       return val.attr("value");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -91,7 +96,7 @@ public class N11TR extends AbstractWebsite {
     if (json != null && json.has("name")) {
       return json.getString("name");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -111,7 +116,22 @@ public class N11TR extends AbstractWebsite {
     if (json != null && json.has("brand")) {
       return json.getString("brand");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
+  }
+  
+  @Override
+  public String getSeller() {
+  	int start = this.url.indexOf(SELLER_INDICATOR);
+  	if (start > 0) {
+  		String name = this.url.substring(start+SELLER_INDICATOR.length());
+  		if (name.indexOf("&") > 0) {
+	  		String[] parts = name.split("&");
+	  		return parts[0];
+  		} else {
+  			return name;
+  		}
+  	}
+  	return super.getSeller();
   }
 
   @Override

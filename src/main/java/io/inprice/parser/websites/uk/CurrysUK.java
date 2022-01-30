@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 
+import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.common.utils.StringHelper;
@@ -81,7 +82,7 @@ public class CurrysUK extends AbstractWebsite {
     if (json != null && json.has("sku")) {
       return json.getString("sku");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -89,7 +90,7 @@ public class CurrysUK extends AbstractWebsite {
     if (json != null && json.has("sku")) {
     	return json.getString("name");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -106,7 +107,7 @@ public class CurrysUK extends AbstractWebsite {
     	JSONObject brand = json.getJSONObject("brand");
     	if (brand.has("name")) return brand.getString("name");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override

@@ -35,6 +35,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 
+import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.helpers.SqlHelper;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
@@ -192,7 +193,7 @@ public abstract class AbstractWebsite implements Website {
 		String name = getName();
 		BigDecimal price = getPrice();
 
-		if (StringUtils.isBlank(name) || Consts.Words.NOT_AVAILABLE.equals(name) || price == null || price.compareTo(BigDecimal.ONE) < 0) {
+		if (StringUtils.isBlank(name) || GlobalConsts.NOT_AVAILABLE.equals(name) || price == null || price.compareTo(BigDecimal.ONE) < 0) {
 			return new ParseStatus(ParseCode.NO_DATA, "No data");
 		}
 

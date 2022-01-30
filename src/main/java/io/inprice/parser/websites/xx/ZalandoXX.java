@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -75,7 +76,7 @@ public class ZalandoXX extends AbstractWebsite {
   	if (info != null && info.has("id")) {
   		return info.getString("id");
   	}
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -83,7 +84,7 @@ public class ZalandoXX extends AbstractWebsite {
   	if (info != null && info.has("name")) {
   		return info.getString("name");
   	}
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -106,7 +107,7 @@ public class ZalandoXX extends AbstractWebsite {
   			return brand.getString("name");
   		}
   	}
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override

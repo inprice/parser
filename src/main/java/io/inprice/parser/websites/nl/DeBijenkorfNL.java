@@ -11,6 +11,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -64,7 +65,7 @@ public class DeBijenkorfNL extends AbstractWebsite {
     if (json != null && json.has("code")) {
       return json.getString("code");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -72,7 +73,7 @@ public class DeBijenkorfNL extends AbstractWebsite {
     if (json != null && json.has("displayName")) {
       return json.getString("displayName");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -92,7 +93,7 @@ public class DeBijenkorfNL extends AbstractWebsite {
         return brand.getString("name");
       }
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override

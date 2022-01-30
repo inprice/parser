@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
 import io.inprice.parser.helpers.Consts;
@@ -57,7 +58,7 @@ public class EuronicsIT extends AbstractWebsite {
     if (prod != null) {
       return prod.attr("productId");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -65,7 +66,7 @@ public class EuronicsIT extends AbstractWebsite {
     if (prod != null) {
       return prod.attr("productName");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
@@ -81,7 +82,7 @@ public class EuronicsIT extends AbstractWebsite {
     if (prod != null) {
       return prod.attr("brand");
     }
-    return Consts.Words.NOT_AVAILABLE;
+    return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
