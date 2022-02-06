@@ -188,7 +188,7 @@ public abstract class AbstractWebsite implements Website {
 	}
 
 	private ParseStatus read(Link link, LinkStatus oldStatus) {
-		seller = link.getPlatform().getName();
+		seller = link.getPlatform().getDomain();
 
 		String name = getName();
 		BigDecimal price = getPrice();

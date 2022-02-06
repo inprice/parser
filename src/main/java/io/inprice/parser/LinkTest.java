@@ -30,7 +30,6 @@ public class LinkTest {
 
 	public static void main(String[] args) throws InterruptedException {
 		Platform platform = new Platform();
-		platform.setName("Test Site");
 		platform.setDomain("Solo Test");
 		platform.setCountry("Global");
 

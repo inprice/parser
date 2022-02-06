@@ -57,7 +57,7 @@ public class HepsiBuradaTR extends AbstractWebsite {
   public String getSku() {
   	String[] chunks = url.split("-");
   	if (chunks.length > 0) {
-  		return chunks[chunks.length-1];
+  		return chunks[chunks.length-1].split("?")[0];
   	}
     return GlobalConsts.NOT_AVAILABLE;
   }
