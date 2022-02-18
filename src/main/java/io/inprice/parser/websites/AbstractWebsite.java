@@ -14,6 +14,7 @@ import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -60,6 +61,8 @@ public abstract class AbstractWebsite implements Website {
 	 *   b) Internal HtmlUnit
 	 */
 	protected static enum Renderer {
+		NODE_FETCH,
+		NODE_PUPET,
 		HTMLUNIT,
 		BROWSER,
 		JSOUP;  //just for tests
@@ -79,12 +82,51 @@ public abstract class AbstractWebsite implements Website {
 		ParseStatus status = OK_Status();
 		
 		switch (getRenderer()) {
+
+			case NODE_FETCH:
+			case NODE_PUPET: {
+				Connection.Response res = null;
+		    try {
+
+		    	JSONObject body = new JSONObject();
+		    	body.put("useProxy", true);
+		    	body.put("country", link.getPlatform().getCountry().replaceAll(" ", ""));
+		    	if (StringUtils.isNotBlank(getUrlPostfix()) && link.getUrl().indexOf(getUrlPostfix()) < 0) { //look at BestBuyUS!!!
+	    			body.put("url", link.getUrl() + (link.getUrl().indexOf('?') > 0 ? "&" : "?") + getUrlPostfix());
+		    	} else {
+		    		body.put("url", link.getUrl());
+		    	}
+		    	if (getWaitForSelector() != null) body.put("waitForSelector", getWaitForSelector());
+
+		    	String postfix = (Renderer.NODE_FETCH.equals(getRenderer()) ? "/fetch" : "/pupet");
+
+		    	res = Jsoup.connect(Props.getConfig().SERVICE_URLS.FETCHER + postfix)
+		    			.method(Connection.Method.POST)
+		    			.header("Content-Type", "application/json")
+		    			.requestBody(body.toString())
+		    			.timeout(60*1000)
+		    			.execute();
+
+		      if (res.statusCode() < 400) {
+			      Document doc = res.parse();
+			      status = startParsing(link, doc.html());
+		      } else {
+		      	status = new ParseStatus(ParseCode.HTTP_OTHER_ERROR, res.statusCode() + ": " + res.statusMessage());
+		      }
+		    } catch (IOException e) {
+		    	if (res != null && res.statusCode() >= 400) {
+	    			status = new ParseStatus(ParseCode.HTTP_OTHER_ERROR, res.statusCode() + ": " + res.statusMessage());
+		    	} else {
+		    		status = new ParseStatus(ParseCode.IO_EXCEPTION, e.getMessage());
+		    	}
+		    }
+				break;
+			}
+
 			case BROWSER: {
 				String profileName = "default";
 				if (StringUtils.isNotBlank(link.getPlatform().getProfile())) {
 					profileName = link.getPlatform().getProfile();
-				} else if (StringUtils.isNotBlank(Props.getConfig().APP.BROWSER_PROFILE)) {
-					profileName = Props.getConfig().APP.BROWSER_PROFILE;
 				}
 
 				ProfilesIni profileIni = new ProfilesIni();
@@ -100,14 +142,9 @@ public abstract class AbstractWebsite implements Website {
     		try {
       		webDriver.get(link.getUrl());
 
-      		//some sites open a panel first to specify user preferences
-      		if (clickFirstBy() != null) {
-      			webDriver.findElement(clickFirstBy()).click();
-      		}
-
       		//some sites loads all the data after sometime, so we need to wait some extra seconds!
       		if (waitBy() != null) {
-        		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(15));
+        		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(25));
         		wait.until(ExpectedConditions.visibilityOfElementLocated(waitBy()));
       		}
     
@@ -274,7 +311,11 @@ public abstract class AbstractWebsite implements Website {
 		return OK_Status();
 	}
 
-	protected By clickFirstBy() {
+	protected String getUrlPostfix() {
+		return "";
+	}
+
+	protected String getWaitForSelector() {
 		return null;
 	}
 
@@ -347,6 +388,24 @@ public abstract class AbstractWebsite implements Website {
 
 	protected ParseStatus OK_Status() {
 		return new ParseStatus(ParseCode.OK, null);
+	}
+
+	protected JSONObject getJSONObject(JSONObject parent, String path) {
+		JSONObject result = null;
+		
+		if (parent != null && StringUtils.isNotBlank(path)) {
+			String[] nodes = path.split("\\.");
+			if (parent.has(nodes[0])) {
+				result = parent.getJSONObject(nodes[0]);
+				if (nodes.length > 1) {
+					for (int i = 1; i < nodes.length; i++) {
+						result = result.getJSONObject(nodes[i]);
+					}
+				}
+			}
+		}
+		
+		return result;
 	}
 
 }

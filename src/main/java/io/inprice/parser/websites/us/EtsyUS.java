@@ -32,7 +32,7 @@ public class EtsyUS extends AbstractWebsite {
 
 	@Override
 	protected Renderer getRenderer() {
-		return Renderer.HTMLUNIT;
+		return Renderer.NODE_FETCH;
 	}
 
 	@Override

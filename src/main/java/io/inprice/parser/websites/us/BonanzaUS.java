@@ -32,13 +32,13 @@ public class BonanzaUS extends AbstractWebsite {
 
 	@Override
 	protected Renderer getRenderer() {
-		return Renderer.HTMLUNIT;
+		return Renderer.NODE_FETCH;
 	}
 
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
-
+		
 		Element titleEl = dom.selectFirst("title");
 		if (titleEl.text().toLowerCase().contains("find everything") == false) {
 			return OK_Status();
@@ -48,46 +48,37 @@ public class BonanzaUS extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element val = dom.selectFirst("meta[property='product:availability']");
-    if (val == null) val = dom.selectFirst("meta[property='og:availability']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content").contains("in_stock") || val.attr("content").contains("instock");
-    }
-    return false;
+    return (dom.getElementById("add_to_cart") != null);
   }
 
   @Override
   public String getSku() {
-    Element val = dom.selectFirst("meta[property='product:retailer_item_id']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content");
+    Element cartBtn = dom.getElementById("add_to_cart");
+    if (cartBtn != null && StringUtils.isNotBlank(cartBtn.attr("data-item-id"))) {
+      return cartBtn.attr("data-item-id");
     }
     return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-  	Element val = dom.selectFirst("meta[property='og:title']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content");
-    }
-    return GlobalConsts.NOT_AVAILABLE;
+  	return dom.title();
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element val = dom.selectFirst("meta[property='product:price:amount']");
-    if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return new BigDecimal(cleanDigits(val.attr("content")));
+    Element val = dom.selectFirst(".item_status_and_price_content .item_price");
+    if (val != null && StringUtils.isNotBlank(val.text())) {
+      return new BigDecimal(cleanDigits(val.text()));
     }
     return BigDecimal.ZERO;
   }
   
   @Override
   public String getBrand() {
-  	Element val = dom.selectFirst("meta[property='product:brand']");
-  	if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-  		return val.attr("content");
+  	Element val = dom.selectFirst("span[itemprop='brand']");
+  	if (val != null && StringUtils.isNotBlank(val.text())) {
+  		return val.text();
   	}
   	return GlobalConsts.NOT_AVAILABLE;
   }

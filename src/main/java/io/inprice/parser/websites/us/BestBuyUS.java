@@ -3,15 +3,18 @@ package io.inprice.parser.websites.us;
 import java.math.BigDecimal;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.openqa.selenium.By;
+import org.jsoup.select.Elements;
 
 import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
+import io.inprice.common.utils.StringHelper;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
@@ -27,83 +30,108 @@ public class BestBuyUS extends AbstractWebsite {
 
 	private Document dom;
 
-	@Override
-	protected By clickFirstBy() {
-		return By.className("us-link");
+	private JSONObject json;
+  private JSONObject offers;
+
+  @Override
+	protected Renderer getRenderer() {
+		return Renderer.NODE_FETCH;
 	}
-	
-	@Override
-	protected By waitBy() {
-		return By.className("priceView-price-match-guarantee");
+
+  @Override
+  protected String getUrlPostfix() {
+		return "intl=nosplash";
 	}
 
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
-
-		Element titleEl = dom.selectFirst("title");
-		if (titleEl.text().toLowerCase().contains("not found") == false) {
-			return OK_Status();
-		}
+		
+    Elements dataEL = dom.select("script[type='application/ld+json']");
+    if (CollectionUtils.isNotEmpty(dataEL)) {
+    	for (DataNode dNode : dataEL.dataNodes()) {
+    		try {
+	        JSONObject data = new JSONObject(StringHelper.escapeJSON(dNode.getWholeData()));
+	        if (data.has("@type")) {
+	          String type = data.getString("@type");
+	          if (type.equals("Product")) {
+	          	json = data;
+	            if (json.has("offers")) {
+	            	Object offersObj = json.get("offers");
+	            	if (offersObj instanceof JSONObject) {
+	            		offers = json.getJSONObject("offers");
+	            	} else {
+	            		JSONArray offersArr = (JSONArray) offersObj;
+	            		offers = offersArr.getJSONObject(0);
+	            	}
+	          		return OK_Status();
+	            }
+		        }
+	        }
+    		} catch (Exception e) { }
+      }
+    }
 		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
   public boolean isAvailable() {
-    return (dom.selectFirst(".inactive-product-message") == null);
+    if (offers != null && offers.has("offers")) {
+    	JSONArray subOffers = offers.getJSONArray("offers");
+    	if (subOffers != null && subOffers.length() > 0) {
+        String availability = subOffers.getJSONObject(0).getString("availability").toLowerCase();
+        return availability.contains("instock") || availability.contains("preorder");
+    	}
+    }
+    if (offers != null && offers.has("offercount")) {
+    	return offers.getInt("offercount") > 0;
+    }
+    return false;
   }
 
   @Override
   public String getSku() {
-    Element val = dom.selectFirst(".sku .product-data-value");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
+    if (json != null && json.has("sku")) {
+      return json.getString("sku");
     }
     return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element val = dom.selectFirst(".sku-title h1");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
+    if (json != null && json.has("name")) {
+      return json.getString("name");
     }
     return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    Element val = dom.selectFirst(".priceView-price-match-guarantee + div .priceView-customer-price > span:nth-child(1)");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return new BigDecimal(cleanDigits(val.text()));
+    if (offers != null && offers.has("offers")) {
+    	JSONArray subOffers = offers.getJSONArray("offers");
+    	if (subOffers != null && subOffers.length() > 0) {
+    		return new BigDecimal(cleanDigits(subOffers.getJSONObject(0).getString("price")));
+    	}
     }
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getBrand() {
-    Element val = dom.selectFirst("a.btn-brand-link");
-    if (val != null && StringUtils.isNotBlank(val.text())) {
-      return val.text();
+    if (json != null && json.has("brand")) {
+    	return json.getJSONObject("brand").getString("name");
     }
     return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
   public String getShipment() {
-    Element shippingEL = dom.selectFirst("h5[itemProp='price']");
-    if (shippingEL != null) {
-    	String text = shippingEL.text();
-    	if (text.toLowerCase().contains("free shipping")) {
-    		return "FREE SHIPPING";
-    	}
-    }
     return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-    return getKeyValueSpecs(dom.select(".specs-table ul"), "li .row-title", "li .row-value");
+    return null; //getKeyValueSpecs(dom.select(".specs-table ul"), "li .row-title", "li .row-value");
   }
 
 }

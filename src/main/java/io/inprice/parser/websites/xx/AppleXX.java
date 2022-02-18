@@ -33,7 +33,12 @@ public class AppleXX extends AbstractWebsite {
 
 	private JSONObject json;
   private JSONObject offers;
-  
+
+  @Override
+	protected Renderer getRenderer() {
+		return Renderer.NODE_FETCH;
+	}
+
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);

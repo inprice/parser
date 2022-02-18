@@ -8,12 +8,8 @@
     "username": "guest",
     "password": "guest"
   },
-  "proxy": {
-    "active": false,
-    "host": "proxy.packetstream.io",
-    "port": 31112,
-    "username": "mdumlupinar",
-    "password": "ZLLKIoebz0Xi1WVk"
+  "serviceUrls": {
+    "fetcher": "http://localhost:7070"
   },
   "timeouts": {
     "httpConnection": 10000,

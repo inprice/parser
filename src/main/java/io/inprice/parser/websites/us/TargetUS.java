@@ -11,7 +11,6 @@ import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
 
 import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
@@ -36,9 +35,14 @@ public class TargetUS extends AbstractWebsite {
   private JSONObject offers;
 
   @Override
-  protected By waitBy() {
-  	return By.cssSelector("div[data-test='product-price']");
-  }
+	protected Renderer getRenderer() {
+		return Renderer.NODE_PUPET;
+	}
+  
+  @Override
+	protected String getWaitForSelector() {
+		return "[data-test='product-price']";
+	}
 
 	@Override
 	public ParseStatus startParsing(Link link, String html) {

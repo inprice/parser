@@ -34,7 +34,7 @@ public class EbayXX extends AbstractWebsite {
 
   @Override
 	protected Renderer getRenderer() {
-		return Renderer.HTMLUNIT;
+		return Renderer.NODE_FETCH;
 	}
   
 	@Override
@@ -210,8 +210,6 @@ public class EbayXX extends AbstractWebsite {
   private static final String BRAND_WORDS = "(Brand|Marca|Marke|Marque)?";
 
   private void buildSpecList() {
-  	brand = GlobalConsts.NOT_AVAILABLE;
-
     Elements specsEl = dom.select("div.itemAttr table[role='presentation']:not(#itmSellerDesc) tr");
     if (CollectionUtils.isNotEmpty(specsEl)) {
       specs = new HashSet<>();
@@ -226,9 +224,6 @@ public class EbayXX extends AbstractWebsite {
             } else {
               value = tds.get(i).text();
               specs.add(new LinkSpec(key, value));
-              if (key.matches(BRAND_WORDS)) {
-                brand = value;
-              }
               key = "";
               value = "";
             }
@@ -245,12 +240,20 @@ public class EbayXX extends AbstractWebsite {
           if (i < specsEl.size() - 1) {
             value = specsEl.get(++i).text();
           }
-          if (key.matches(BRAND_WORDS)) {
-            brand = value;
-          }
           specs.add(new LinkSpec(key, value));
         }
+      } else {
+      	specs = getKeyValueSpecs(dom.select(".x-about-this-item"), ".ux-layout-section__row span", ".ux-labels-values__values span");
       }
+    }
+
+  	brand = GlobalConsts.NOT_AVAILABLE;
+    if (CollectionUtils.isNotEmpty(specs)) {
+    	specs.forEach(spec -> {
+  	    if (spec.getKey().matches(BRAND_WORDS)) {
+  	      brand = spec.getValue();
+  	    }
+    	});
     }
   }
 

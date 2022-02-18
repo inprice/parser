@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.openqa.selenium.By;
 
 import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
@@ -26,20 +25,25 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class LidlUS extends AbstractWebsite {
 
 	private Document dom;
-
 	private String url;
 
 	@Override
-	protected By waitBy() {
-		return By.className("product-price");
+	protected Renderer getRenderer() {
+		return Renderer.NODE_PUPET;
 	}
-	
+
+	@Override
+	protected String getWaitForSelector() {
+		return ".product-price";
+	}
+
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
 		Element messageH1 = dom.selectFirst(".status-message-headline");
 		if (messageH1 == null) {
+			this.url = link.getUrl();
 			return OK_Status();
 		}
 		return ParseStatus.PS_NOT_FOUND;

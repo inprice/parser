@@ -9,8 +9,8 @@ public class Config extends BaseConfig {
 	@JsonProperty("app")
 	public App APP;
 
-	@JsonProperty("proxy")
-	public ProxyConf PROXY;
+	@JsonProperty("serviceUrls")
+	public ServiceUrls SERVICE_URLS;
 
 	@JsonProperty("queues")
 	public Queues QUEUES;
