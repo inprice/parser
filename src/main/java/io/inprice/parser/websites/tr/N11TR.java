@@ -38,11 +38,6 @@ public class N11TR extends AbstractWebsite {
 
   private String url;
 
-  @Override
-	protected Renderer getRenderer() {
-		return Renderer.NODE_FETCH;
-	}
-
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);

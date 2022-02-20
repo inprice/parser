@@ -26,11 +26,7 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class AmazonXX extends AbstractWebsite {
 
 	private Document dom;
-
-	protected Renderer getRenderer() {
-		return Renderer.NODE_PUPET;
-	}
-
+	
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);

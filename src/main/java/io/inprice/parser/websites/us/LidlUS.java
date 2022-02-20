@@ -28,11 +28,6 @@ public class LidlUS extends AbstractWebsite {
 	private String url;
 
 	@Override
-	protected Renderer getRenderer() {
-		return Renderer.NODE_PUPET;
-	}
-
-	@Override
 	protected String getWaitForSelector() {
 		return ".product-price";
 	}

@@ -2,6 +2,7 @@ package io.inprice.parser.consumer;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -23,6 +24,7 @@ import io.inprice.common.meta.Grup;
 import io.inprice.common.meta.LinkStatus;
 import io.inprice.common.models.Link;
 import io.inprice.common.utils.StringHelper;
+import io.inprice.parser.info.AlternativeParser;
 import io.inprice.parser.info.ParseCode;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.publisher.StatusChangingLinksPublisher;
@@ -37,6 +39,10 @@ class ActiveLinksConsumer {
 
   private static final Logger logger = LoggerFactory.getLogger(ActiveLinksConsumer.class);
 
+  private static final Map<String, AlternativeParser> alternativeParserMap = Map.of(
+  		"xx.WalmartXX", new AlternativeParser("/PRD", "xx.WalmartXX_ALT")
+  	);
+  
   ActiveLinksConsumer(QueueDef queueDef) throws IOException {
   	String forWhichConsumer = "PAR-CON: " + queueDef.NAME;
 
@@ -60,9 +66,17 @@ class ActiveLinksConsumer {
 	
 				    ParseStatus newParseStatus = null;
 		
-				    if (link.getPlatform().getClassName() != null) {
+				    String className = link.getPlatform().getClassName();
+				    if (className != null) {
 				      try {
-				        Class<?> clazz = Class.forName("io.inprice.parser.websites." + link.getPlatform().getClassName());
+
+				      	//checks class name and a word in the url to determine if an alternative class must be used!
+				      	AlternativeParser altPar = alternativeParserMap.get(className);
+				      	if (altPar != null && link.getUrl().indexOf(altPar.getWordInUrl()) > 0) {
+				      		className = altPar.getClassName();
+				      	}
+
+				      	Class<?> clazz = Class.forName("io.inprice.parser.websites." + className);
 				        AbstractWebsite website = (AbstractWebsite) clazz.getConstructor().newInstance();
 				        newParseStatus = website.check(link);
 				      } catch (Exception e) {

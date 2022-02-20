@@ -29,14 +29,9 @@ public class ArgosUK extends AbstractWebsite {
 	private String brand;
 
 	@Override
-	protected Renderer getRenderer() {
-		return Renderer.HTMLUNIT;
-	} 
-
-	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
-
+		
 		Element titleEl = dom.selectFirst("title");
 		if (titleEl.text().toLowerCase().contains("went wrong") == false) {
 	    String found = findAPart(html, "\"globallyOutOfStock\":", ",");

@@ -33,14 +33,15 @@ public class BestBuyUS extends AbstractWebsite {
 	private JSONObject json;
   private JSONObject offers;
 
+  private final String URL_POSTFIX = "intl=nosplash";
+  
   @Override
-	protected Renderer getRenderer() {
-		return Renderer.NODE_FETCH;
-	}
-
-  @Override
-  protected String getUrlPostfix() {
-		return "intl=nosplash";
+  protected String getUrl(String url) {
+  	if (url.indexOf(URL_POSTFIX) < 0) {
+			return url + (url.indexOf('?') > 0 ? "&" : "?") + URL_POSTFIX;
+  	} else {
+  		return url;
+  	}
 	}
 
 	@Override

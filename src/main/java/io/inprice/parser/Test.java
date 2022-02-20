@@ -3,25 +3,19 @@ package io.inprice.parser;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-
-import io.inprice.parser.info.ParseCode;
+import org.apache.commons.lang3.RandomStringUtils;
 
 public class Test {
 
-	public static void main(String[] args) {
-		String name = null;
-		ParseCode code = ParseCode.NO_DATA;
+	public static void main2(String[] args) {
+		String url = "https://www.asos.com/collusion/collusion-argyl-tank-cardigan-co-ord-multi/grp/68617?colourWayId=200613121&cid=120291";
+		String newUrl = url.replaceAll("cid\\=\\d+", "cid=" +  RandomStringUtils.randomNumeric(5));
 
-		if (code.name().equals(name) == false) {
-			System.out.println("oldu");
-		} else {
-			System.out.println("olmadı");
-		}
-		
+		System.out.println(url);
+		System.out.println(newUrl);
 	}
 	
 	public static void main1(String[] args) {
@@ -34,30 +28,46 @@ public class Test {
 		System.out.println(prodUrl);
 	}
 	
-	public static void main2(String[] args) {
+	public static void main(String[] args) {
 		String html = "";
 		try {
-			html = new String(Files.readAllBytes(Paths.get("/home/mdpinar/tmp/TestSite-1.html")));
-			Document dom = Jsoup.parse(html);
-			
-	    Element val = dom.selectFirst(".row.mb-1");
-	    System.out.println(val.text());
+			html = new String(Files.readAllBytes(Paths.get("/home/mdpinar/zalando.html")));
+
+			List<String> attributes = findAttributes(html);
+	    for (String attrs: attributes) {
+	    	System.out.println(attrs);
+	    }
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
-/*
-	private static String findAPart(String html, String starting, String ending, int plus, int startPointOffset) {
-		int start = html.indexOf(starting) + (startPointOffset <= 0 ? starting.length() : 0);
-		int end = html.indexOf(ending, start) + plus;
 
-		if (start > starting.length() && end > start) {
-			return html.substring(start + startPointOffset, end);
+	private static List<String> findAttributes(String html) {
+  	List<String> attrList = new ArrayList<>();
+
+  	String starting = "\"attributes\":";
+  	String ending = "\"}]";
+
+  	int prePosition = html.indexOf(starting);
+  	while (prePosition != -1) {
+	  	String attrs = findAPart(html, starting, ending, prePosition, true);
+	  	attrList.add(attrs);
+	  	prePosition = html.indexOf(starting, prePosition+1);
+  	}
+
+  	return attrList;
+	}
+	
+	private static String findAPart(String html, String starting, String ending, int startPointOffset, boolean isEndingIncluded) {
+		int start = html.indexOf(starting, startPointOffset) + starting.length();
+		int end = html.indexOf(ending, start) + (isEndingIncluded ? ending.length() : 0);
+
+		if (start > -1 && start < end) {
+			return html.substring(start, end);
 		}
-
 		return null;
 	}
-*/
+
 }

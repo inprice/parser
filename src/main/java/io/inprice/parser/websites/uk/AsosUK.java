@@ -3,12 +3,12 @@ package io.inprice.parser.websites.uk;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.openqa.selenium.By;
 
 import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
@@ -19,7 +19,7 @@ import io.inprice.parser.websites.AbstractWebsite;
 
 /**
  * Asos, United Kingdom
- *
+ * 
  * https://www.asos.com
  *
  * @author mdpinar
@@ -28,12 +28,17 @@ public class AsosUK extends AbstractWebsite {
 
 	private Document dom;
   private JSONObject json;
-	
+
   @Override
-  protected By waitBy() {
-  	return By.className("current-price");
-  }
-  
+	protected String getWaitForSelector() {
+		return ".current-price";
+	}
+
+  @Override
+	protected String getUrl(String url) {
+		return url.replaceAll("cid\\=\\d+", "cid=" +  RandomStringUtils.randomNumeric(5));
+	}
+
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);

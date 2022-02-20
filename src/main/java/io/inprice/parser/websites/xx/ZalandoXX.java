@@ -1,16 +1,20 @@
 package io.inprice.parser.websites.xx;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.DataNode;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
+import io.inprice.common.utils.StringHelper;
 import io.inprice.parser.helpers.Consts;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
@@ -30,83 +34,79 @@ import io.inprice.parser.websites.AbstractWebsite;
  */
 public class ZalandoXX extends AbstractWebsite {
 
-	private JSONObject info;
-	private JSONObject price;
-	private JSONArray details;
+	private Document dom;
 
-	@Override
-	protected Renderer getRenderer() {
-		return Renderer.HTMLUNIT;
-	}
+	private JSONObject json;
+  private JSONObject offers;
+  private boolean isAvailable;
 
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
-		String rawJson = findAPart(html, "![CDATA[{\"layout\"", "}]]", 1, 8);
-		if (StringUtils.isNotBlank(rawJson)) {
-			JSONObject json = new JSONObject(rawJson);
-			if (json != null && json.has("model")) {
-				JSONObject model = json.getJSONObject("model");
-				if (model != null) {
-					if (model.has("articleInfo")) {
-						info = model.getJSONObject("articleInfo");
-					}
-					if (model.has("displayPrice")) {
-						price = model.getJSONObject("displayPrice");
-					}
-					if (model.has("productDetailsCluster")) {
-						details = model.getJSONArray("productDetailsCluster");
-					}
-					return OK_Status();
-				}
-			}
-		}
+		dom = Jsoup.parse(html);
+		
+    Elements dataEL = dom.select("script[type='application/ld+json']");
+    if (CollectionUtils.isNotEmpty(dataEL)) {
+    	for (DataNode dNode : dataEL.dataNodes()) {
+    		String edited = dNode.getWholeData().replaceAll("&quot;", "\"");
+        JSONObject data = new JSONObject(StringHelper.escapeJSON(edited));
+        if (data.has("@type")) {
+          String type = data.getString("@type");
+          if (type.equals("Product")) {
+          	json = data;
+            if (json.has("offers")) {
+          		JSONArray offersArr = json.getJSONArray("offers");
+          		for (int i = 0; i < offersArr.length(); i++) {
+          			offers = offersArr.getJSONObject(i);
+                String availability = offers.getString("availability").toLowerCase();
+                if (availability.contains("instock") || availability.contains("preorder")) {
+                	isAvailable = true;
+                	break;
+                }
+            	}
+          		return OK_Status();
+            }
+          }
+        }
+      }
+    }
 		return ParseStatus.PS_NOT_FOUND;
 	}
-	
+
   @Override
   public boolean isAvailable() {
-  	if (info != null && info.has("available")) {
-  		return info.getBoolean("available");
-  	}
-    return false;
+    return isAvailable;
   }
 
   @Override
   public String getSku() {
-  	if (info != null && info.has("id")) {
-  		return info.getString("id");
-  	}
+    if (json != null && json.has("sku")) {
+      return json.getString("sku");
+    }
     return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-  	if (info != null && info.has("name")) {
-  		return info.getString("name");
-  	}
+    if (json != null && json.has("name")) {
+    	return json.getString("name");
+    }
     return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-  	if (price != null && price.has("price")) {
-  		JSONObject _price = price.getJSONObject("price");
-  		if (_price == null) _price = price.getJSONObject("originalPrice");
-  		if (_price != null && _price.has("value")) {
-  			return _price.getBigDecimal("value");
-  		}
-  	}
+    if (offers != null && offers.has("price")) {
+      return new BigDecimal(offers.getString("price"));
+    }
     return BigDecimal.ZERO;
   }
 
   @Override
   public String getBrand() {
-  	if (info != null && info.has("brand")) {
-  		JSONObject brand = info.getJSONObject("brand");
-  		if (brand != null && brand.has("name")) {
-  			return brand.getString("name");
-  		}
-  	}
+    if (json != null && json.has("brand")) {
+    	JSONObject brand = json.getJSONObject("brand");
+    	if (brand.has("name")) return brand.getString("name");
+    }
     return GlobalConsts.NOT_AVAILABLE;
   }
 
@@ -117,32 +117,24 @@ public class ZalandoXX extends AbstractWebsite {
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	Set<LinkSpec> specs = null;
+  	return getKeyValueSpecs(dom.select("div[data-testid^='pdp-accordion'] .b3yJDY"), "span:nth-child(1)", "span:nth-child(2)");
+  	/*
+  	List<String> attrs = findParts(dom.html(), "\"attributes\":", "\"}]");
 
-  	if (details != null && details.length() > 0) {
-  		specs = new HashSet<>();
-  		for (int i = 0; i < details.length(); i++) {
-				JSONObject attr = details.getJSONObject(i);
-				if (attr != null && attr.has("data")) {
-					JSONArray data = attr.getJSONArray("data");
-					if (data != null && data.length() > 0) {
-						for (int j = 0; j < data.length(); j++) {
-							JSONObject keyVal = data.getJSONObject(j);
-							if (keyVal != null && keyVal.has("name") && keyVal.has("values")) {
-								String key = keyVal.getString("name");
-								String val = keyVal.getString("values");
-								
-								if (StringUtils.isNotBlank(key) && key.indexOf("_") > 0) continue;
-								if (StringUtils.isNotBlank(key) || StringUtils.isNotBlank(val))
-				          specs.add(new LinkSpec(key, val));
-							}
-						}
-					}
-				}
-			}
-  	}
-
-    return specs;
+  	System.out.println("---");
+    for (String attr: attrs) {
+    	System.out.println(attr);
+    }
+  	System.out.println("---");
+  	
+  	Set<LinkSpec> specs = new HashSet<>();
+  	attrs.forEach(attr -> {
+  		JSONObject attj = new JSONObject(attr);
+  		specs.add(new LinkSpec(attj.getString("key"), attj.getString("value")));
+  	});
+  	
+  	return specs;
+	 */
   }
   
 }

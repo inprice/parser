@@ -1,6 +1,7 @@
-package io.inprice.parser.websites.uk;
+package io.inprice.parser.websites.xx;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -9,6 +10,7 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.helpers.GlobalConsts;
@@ -20,13 +22,11 @@ import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Currys, United Kingdom
+ * Walmart alternative, Canada
  * 
- * https://www.currys.co.uk
- *
  * @author mdpinar
  */
-public class CurrysUK extends AbstractWebsite {
+public class WalmartXX_ALT extends AbstractWebsite {
 
 	private Document dom;
 
@@ -34,9 +34,14 @@ public class CurrysUK extends AbstractWebsite {
   private JSONObject offers;
 
 	@Override
+	protected String getWaitForSelector() {
+		return "span[data-automation='buybox-price']";
+	}
+
+	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
-		
+
     Elements dataEL = dom.select("script[type='application/ld+json']");
     if (CollectionUtils.isNotEmpty(dataEL)) {
     	for (DataNode dNode : dataEL.dataNodes()) {
@@ -82,15 +87,17 @@ public class CurrysUK extends AbstractWebsite {
   @Override
   public String getName() {
     if (json != null && json.has("name")) {
-    	return json.getString("name");
+      return json.getString("name");
     }
     return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
   public BigDecimal getPrice() {
-    if (offers != null && offers.has("price")) {
-      return offers.getBigDecimal("price");
+    if (isAvailable()) {
+      if (offers != null && offers.has("price")) {
+        return offers.getBigDecimal("price");
+      }
     }
     return BigDecimal.ZERO;
   }
@@ -98,20 +105,43 @@ public class CurrysUK extends AbstractWebsite {
   @Override
   public String getBrand() {
     if (json != null && json.has("brand")) {
-    	JSONObject brand = json.getJSONObject("brand");
-    	if (brand.has("name")) return brand.getString("name");
+      return json.getJSONObject("brand").getString("name");
     }
     return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
+  public String getSeller() {
+    if (offers != null && offers.has("seller")) {
+      JSONObject seller = offers.getJSONObject("seller");
+      return seller.getString("name");
+    }
+    return super.getSeller();
+  }
+
+  @Override
   public String getShipment() {
-  	return Consts.Words.CHECK_DELIVERY_CONDITIONS;
+  	Element val = dom.selectFirst("[data-automation='fulfillment-options-shipping']");
+  	if (val != null) {
+  		val.text();
+  	}
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	return getValueOnlySpecs(dom.select(".product-highlight li"));
+    if (json != null && json.has("description")) {
+    	String longDesc = json.getString("description");
+    	String[] descs = longDesc.split("<br>");
+    	if (descs.length > 0) {
+    		Set<LinkSpec> specs = new HashSet<>(descs.length);
+    		for (String desc: descs) {
+    			specs.add(new LinkSpec("", desc));
+    		}
+    		return specs;
+    	}
+    }
+  	return getKeyValueSpecs(dom.select("table#product-attribute-specs-table tr"), "th", "td");
   }
 
 }

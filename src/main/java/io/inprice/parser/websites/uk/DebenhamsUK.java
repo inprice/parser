@@ -1,12 +1,12 @@
 package io.inprice.parser.websites.uk;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.openqa.selenium.By;
 
 import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
@@ -25,11 +25,6 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class DebenhamsUK extends AbstractWebsite {
 
 	private Document dom;
-
-  @Override
-  protected By waitBy() {
-  	return By.cssSelector("span[itemprop='name'], div[data-test-id='404-page-message']");
-  }
 
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
@@ -93,7 +88,23 @@ public class DebenhamsUK extends AbstractWebsite {
 
   @Override
   public Set<LinkSpec> getSpecs() {
-    return getValueOnlySpecs(dom.select("[data-test-id='details-and-care']"));
+  	Set<LinkSpec> specs = null;
+  	Element val = dom.selectFirst("[data-test-id='details-and-care']");
+  	
+  	if (val != null) {
+  		String allFeatures = val.text();
+  		String[] features = allFeatures.split("\\|");
+  		specs = new HashSet<>();
+  		for (String feature: features) {
+  			String[] pair = feature.split("\\:");
+  			if (pair.length == 1) {
+  				specs.add(new LinkSpec("", pair[0].trim()));
+  			} else {
+  				specs.add(new LinkSpec(pair[0].trim(), pair[1].trim()));
+  			}
+  		}
+  	}
+  	return specs;
   }
 
 }

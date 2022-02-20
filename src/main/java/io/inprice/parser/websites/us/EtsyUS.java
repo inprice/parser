@@ -31,11 +31,6 @@ public class EtsyUS extends AbstractWebsite {
 	private Document dom;
 
 	@Override
-	protected Renderer getRenderer() {
-		return Renderer.NODE_FETCH;
-	}
-
-	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 

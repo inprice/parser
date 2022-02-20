@@ -31,11 +31,6 @@ public class EbayXX extends AbstractWebsite {
 	
   private String brand;
   private Set<LinkSpec> specs;
-
-  @Override
-	protected Renderer getRenderer() {
-		return Renderer.NODE_FETCH;
-	}
   
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
@@ -243,7 +238,7 @@ public class EbayXX extends AbstractWebsite {
           specs.add(new LinkSpec(key, value));
         }
       } else {
-      	specs = getKeyValueSpecs(dom.select(".x-about-this-item"), ".ux-layout-section__row span", ".ux-labels-values__values span");
+      	specs = getMultipleKeyValueSpecs(dom.select(".ux-layout-section--features .ux-layout-section__row"), "ux-labels-values__labels", "ux-labels-values__values");
       }
     }
 

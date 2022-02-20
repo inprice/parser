@@ -30,11 +30,6 @@ public class BonprixXX extends AbstractWebsite {
 	private Document dom;
 
 	@Override
-	protected Renderer getRenderer() {
-		return Renderer.HTMLUNIT;
-	}
-
-	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 		
@@ -146,8 +141,9 @@ public class BonprixXX extends AbstractWebsite {
 
   @Override
   public Set<LinkSpec> getSpecs() {
-  	Set<LinkSpec> specs = null;
-
+  	Set<LinkSpec> specs = getKeyValueSpecs(dom.select(".productFeaturesContainer p"), ".productFeatureName", ".productFeatureValue");
+  	if (CollectionUtils.isNotEmpty(specs)) return specs;
+  	
     Elements specKeys = dom.select("div.product-attributes strong");
     if (CollectionUtils.isNotEmpty(specKeys)) {
       specs = new HashSet<>();

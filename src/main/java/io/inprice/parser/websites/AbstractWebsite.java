@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,14 +20,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxDriver.Capability;
-import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.firefox.ProfilesIni;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.HttpHeader;
@@ -63,11 +54,23 @@ public abstract class AbstractWebsite implements Website {
 	protected static enum Renderer {
 		NODE_FETCH,
 		NODE_PUPET,
-		HTMLUNIT,
-		BROWSER,
-		JSOUP;  //just for tests
+		HTMLUNIT;
 	}
 
+	protected Renderer getRenderer() {
+		return Renderer.NODE_PUPET;
+	}
+
+	/**
+	 * This can be used to alter url before starting! See AsosUK and BestBuyUS
+	 *  
+	 * @param url
+	 * @return url
+	 */
+	protected String getUrl(String url) {
+		return url;
+	}
+	
 	public ParseStatus check(Link link) {
 		LinkStatus oldStatus = link.getStatus();
 
@@ -91,11 +94,7 @@ public abstract class AbstractWebsite implements Website {
 		    	JSONObject body = new JSONObject();
 		    	body.put("useProxy", true);
 		    	body.put("country", link.getPlatform().getCountry().replaceAll(" ", ""));
-		    	if (StringUtils.isNotBlank(getUrlPostfix()) && link.getUrl().indexOf(getUrlPostfix()) < 0) { //look at BestBuyUS!!!
-	    			body.put("url", link.getUrl() + (link.getUrl().indexOf('?') > 0 ? "&" : "?") + getUrlPostfix());
-		    	} else {
-		    		body.put("url", link.getUrl());
-		    	}
+	    		body.put("url", getUrl(link.getUrl()));
 		    	if (getWaitForSelector() != null) body.put("waitForSelector", getWaitForSelector());
 
 		    	String postfix = (Renderer.NODE_FETCH.equals(getRenderer()) ? "/fetch" : "/pupet");
@@ -123,55 +122,13 @@ public abstract class AbstractWebsite implements Website {
 				break;
 			}
 
-			case BROWSER: {
-				String profileName = "default";
-				if (StringUtils.isNotBlank(link.getPlatform().getProfile())) {
-					profileName = link.getPlatform().getProfile();
-				}
-
-				ProfilesIni profileIni = new ProfilesIni();
-		  	FirefoxProfile profile = profileIni.getProfile(profileName);
-		  	profile.setPreference("permissions.default.image", 2);
-
-				FirefoxOptions capabilities = new FirefoxOptions();
-				capabilities.setLogLevel(FirefoxDriverLogLevel.FATAL);
-				capabilities.setCapability(Capability.PROFILE, profile);
-				capabilities.setAcceptInsecureCerts(false);
-				
-    		FirefoxDriver webDriver = new FirefoxDriver(capabilities);
-    		try {
-      		webDriver.get(link.getUrl());
-
-      		//some sites loads all the data after sometime, so we need to wait some extra seconds!
-      		if (waitBy() != null) {
-        		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(25));
-        		wait.until(ExpectedConditions.visibilityOfElementLocated(waitBy()));
-      		}
-    
-          status = startParsing(link, webDriver.getPageSource());
-          if (status.getMessage() == null) {
-          	String url = getExtraUrl(link.getUrl());
-        		if (StringUtils.isNotBlank(url)) {
-        			webDriver.get(url);
-        			status = setExtraHtml(webDriver.getPageSource());
-        		}
-          }
-    
-    		} catch (Exception e) {
-    			status = new ParseStatus(ParseCode.OTHER_EXCEPTION, e.getMessage());
-    		} finally {
-    			webDriver.close();
-    		}
-    		break;
-			}
-			
 			case HTMLUNIT: {
     		WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setTimeout(30_000);
     		try {
-    			WebRequest req = new WebRequest(new URL(link.getUrl()));
+    			WebRequest req = new WebRequest(new URL(getUrl(link.getUrl())));
     			req.setAdditionalHeader(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
     			req.setAdditionalHeader(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
     			req.setAdditionalHeader(HttpHeader.ACCEPT_ENCODING, "gzip, deflate, br");
@@ -197,26 +154,6 @@ public abstract class AbstractWebsite implements Website {
     			webClient.close();
     		}
     		break;
-			}
-
-			case JSOUP: {
-				Connection.Response res = null;
-		    try {
-		      res = Jsoup.connect(link.getUrl()).userAgent("Mozilla").ignoreHttpErrors(true).execute();
-		      if (res.statusCode() < 400) {
-  		      Document doc = res.parse();
-  		      status = startParsing(link, doc.html());
-		      } else {
-		      	status = new ParseStatus(ParseCode.HTTP_OTHER_ERROR, res.statusCode() + ": " + res.statusMessage());
-		      }
-		    } catch (IOException e) {
-		    	if (res != null && res.statusCode() >= 400) {
-	    			status = new ParseStatus(ParseCode.HTTP_OTHER_ERROR, res.statusCode() + ": " + res.statusMessage());
-		    	} else {
-		    		status = new ParseStatus(ParseCode.IO_EXCEPTION, e.getMessage());
-		    	}
-		    }
-				break;
 			}
 		
 		}
@@ -259,10 +196,6 @@ public abstract class AbstractWebsite implements Website {
 			return new ParseStatus(ParseCode.NOT_AVAILABLE, "Insufficient stock");
 		}
 	}
-
-	protected Renderer getRenderer() {
-		return Renderer.BROWSER;
-	}
 	
 	/**
 	 * Used for making an extra call to the website
@@ -293,6 +226,33 @@ public abstract class AbstractWebsite implements Website {
 		return null;
 	}
 
+	protected List<String> findParts(String html, String starting, String ending) {
+  	List<String> attrList = new ArrayList<>();
+
+  	int prePosition = html.indexOf(starting);
+  	while (prePosition != -1) {
+	  	String attrs = findAPart(html, starting, ending, prePosition, true);
+	  	if (attrs != null) {
+		  	attrList.add(attrs);
+		  	prePosition = html.indexOf(starting, prePosition+1);
+	  	} else {
+	  		prePosition = -1;
+	  	}
+  	}
+
+  	return attrList;
+	}
+	
+	private String findAPart(String html, String starting, String ending, int startPointOffset, boolean isEndingIncluded) {
+		int start = html.indexOf(starting, startPointOffset) + starting.length();
+		int end = html.indexOf(ending, start) + (isEndingIncluded ? ending.length() : 0);
+
+		if (start > -1 && start < end) {
+			return html.substring(start, end);
+		}
+		return null;
+	}
+
 	private String fixLength(String val, int limit) {
 		if (val == null) return null;
 
@@ -309,10 +269,6 @@ public abstract class AbstractWebsite implements Website {
 
 	protected ParseStatus afterRequest(WebClient webClient) {
 		return OK_Status();
-	}
-
-	protected String getUrlPostfix() {
-		return "";
 	}
 
 	protected String getWaitForSelector() {
@@ -368,6 +324,28 @@ public abstract class AbstractWebsite implements Website {
 		return specs;
 	}
 
+	protected Set<LinkSpec> getMultipleKeyValueSpecs(Elements specsEl, String keySelector, String valueSelector) {
+		Set<LinkSpec> specs = null;
+		if (CollectionUtils.isNotEmpty(specsEl)) {
+			specs = new HashSet<>();
+			for (Element spec : specsEl) {
+				Elements keyVals = spec.getAllElements();
+				
+				Element key = null;
+				for (Element kv : keyVals) {
+					if (key == null && kv.hasClass(keySelector)) key = kv;
+					if (key != null && kv.hasClass(valueSelector)) {
+						specs.add(
+					    new LinkSpec(key.text().replaceAll(":", ""), kv.text())
+				    );
+						key = null;
+					}
+				}
+			}
+		}
+		return specs;
+	}
+
 	protected Set<LinkSpec> getFlatKeyValueSpecs(Elements keysSelector, Elements valsSelector) {
 		Set<LinkSpec> specs = null;
 		if (CollectionUtils.isNotEmpty(keysSelector)) {
@@ -407,5 +385,42 @@ public abstract class AbstractWebsite implements Website {
 		
 		return result;
 	}
+/*
+	protected JSONObject fetchJson(Link link, String url) {
+		JSONObject result = new JSONObject();
 
+		Connection.Response res = null;
+    try {
+    	JSONObject body = new JSONObject();
+    	body.put("useProxy", true);
+    	body.put("country", link.getPlatform().getCountry().replaceAll(" ", ""));
+  		body.put("url", url);
+
+    	res = Jsoup.connect(Props.getConfig().SERVICE_URLS.FETCHER + "/json")
+    			.method(Connection.Method.POST)
+    			.header("Content-Type", "application/json")
+    			.requestBody(body.toString())
+    			.timeout(20*1000)
+    			.execute();
+
+      if (res.statusCode() < 400) {
+	      Document doc = res.parse();
+      	result.put("status", 200);
+      	result.put("body", doc.html());
+      } else {
+      	result.put("status", res.statusCode());
+      	result.put("body", res.statusMessage());
+      }
+    } catch (IOException e) {
+    	if (res != null && res.statusCode() >= 400) {
+      	result.put("status", res.statusCode());
+      	result.put("body", res.statusMessage());
+    	} else {
+      	result.put("status", 500);
+      	result.put("body", e.getMessage());
+    	}
+    }
+    return result;
+	}
+*/
 }

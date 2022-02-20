@@ -33,11 +33,6 @@ public class TargetUS extends AbstractWebsite {
 
 	private JSONObject json;
   private JSONObject offers;
-
-  @Override
-	protected Renderer getRenderer() {
-		return Renderer.NODE_PUPET;
-	}
   
   @Override
 	protected String getWaitForSelector() {

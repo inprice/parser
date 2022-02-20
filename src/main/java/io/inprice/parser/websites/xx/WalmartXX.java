@@ -30,12 +30,7 @@ public class WalmartXX extends AbstractWebsite {
 	private JSONObject json;
 	private JSONObject product;
 	private JSONObject context;
-
-	@Override
-	protected Renderer getRenderer() {
-		return Renderer.NODE_FETCH;
-	}
-
+	
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		Document dom = Jsoup.parse(html);
