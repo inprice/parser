@@ -1,4 +1,4 @@
-package io.inprice.parser.websites.xx;
+package io.inprice.parser.websites.alt;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -26,7 +26,7 @@ import io.inprice.parser.websites.AbstractWebsite;
  * 
  * @author mdpinar
  */
-public class WalmartXX_ALT extends AbstractWebsite {
+public class WalmartALT extends AbstractWebsite {
 
 	private Document dom;
 

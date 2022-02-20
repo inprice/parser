@@ -28,12 +28,12 @@ public class TheGoodGuysAU extends AbstractWebsite {
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
-
+		
 		Element titleEl = dom.selectFirst("title");
 		if (titleEl.text().toLowerCase().contains("not found") == false) {
-			return ParseStatus.PS_NOT_FOUND;
+			return OK_Status();
 		}
-		return OK_Status();
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override

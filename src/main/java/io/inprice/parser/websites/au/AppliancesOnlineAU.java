@@ -3,20 +3,13 @@ package io.inprice.parser.websites.au;
 import java.math.BigDecimal;
 import java.util.Set;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
 
 import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
 import io.inprice.common.models.LinkSpec;
-import io.inprice.common.utils.StringHelper;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
@@ -30,60 +23,35 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class AppliancesOnlineAU extends AbstractWebsite {
 
 	private Document dom;
-
-	private JSONObject json;
-  private JSONObject offers;
-  
   private String url;
 
-	@Override
-	protected By waitBy() {
-		return By.className("aol-product-price");
-	}
+  @Override
+  protected String getWaitForSelector() {
+  	return "aol-product-specifications-attribute-row";
+  	//return ".aol-product-price";
+  }
 
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
-
-    Elements dataEL = dom.select("script[type='application/ld+json']");
-    if (CollectionUtils.isNotEmpty(dataEL)) {
-    	for (DataNode dNode : dataEL.dataNodes()) {
-        JSONObject data = new JSONObject(StringHelper.escapeJSON(dNode.getWholeData()));
-        if (data.has("@type")) {
-          String type = data.getString("@type");
-          if (type.equals("Product")) {
-          	json = data;
-            if (json.has("offers")) {
-            	Object offersObj = json.get("offers");
-            	if (offersObj instanceof JSONObject) {
-            		offers = json.getJSONObject("offers");
-            	} else {
-            		JSONArray offersArr = (JSONArray) offersObj;
-            		offers = offersArr.getJSONObject(0);
-            	}
-            	url = link.getUrl();
-          		return OK_Status();
-            }
-          }
-        }
-      }
+		
+		String title = dom.title();
+    if (title.startsWith("Page Not Found") == false) {
+    	this.url = link.getUrl();
+  		return OK_Status();
     }
 		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
   public boolean isAvailable() {
-    if (offers != null && offers.has("availability")) {
-      String availability = offers.getString("availability").toLowerCase();
-      return availability.contains("instock") || availability.contains("preorder");
-    }
-    return false;
+  	return (dom.selectFirst(".add-to-cart-button") != null);
   }
 
   @Override
   public String getSku() {
   	String[] chunks = url.split("-");
-    return chunks[chunks.length-1];
+    return chunks[chunks.length-1].toUpperCase();
   }
 
   @Override
@@ -106,8 +74,9 @@ public class AppliancesOnlineAU extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    if (json != null && json.has("brand")) {
-      return json.getJSONObject("brand").getString("name");
+  	String name = getName();
+    if (name != null) {
+      return name.split("\\s")[0];
     }
     return GlobalConsts.NOT_AVAILABLE;
   }

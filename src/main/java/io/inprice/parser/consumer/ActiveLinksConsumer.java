@@ -40,7 +40,7 @@ class ActiveLinksConsumer {
   private static final Logger logger = LoggerFactory.getLogger(ActiveLinksConsumer.class);
 
   private static final Map<String, AlternativeParser> alternativeParserMap = Map.of(
-  		"xx.WalmartXX", new AlternativeParser("/PRD", "xx.WalmartXX_ALT")
+  		"xx.WalmartXX", new AlternativeParser("/PRD", "alt.WalmartALT")
   	);
   
   ActiveLinksConsumer(QueueDef queueDef) throws IOException {

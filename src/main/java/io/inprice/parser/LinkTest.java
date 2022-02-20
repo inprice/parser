@@ -6,7 +6,7 @@ import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
-import io.inprice.parser.websites.xx.WalmartXX_ALT;
+import io.inprice.parser.websites.au.TheGoodGuysAU;
 
 public class LinkTest {
 	
@@ -29,25 +29,27 @@ public class LinkTest {
 	// U.Kingdom --> AmazonXX, EbayXX, AppleXX, ArgosUK, AsdaDirectUK, AsosUK, BonprixXX, CurrysUK, DebenhamsUK, EuronicsUK, LidlXX, NewLookUK, ZavviUK, ZalandoXX
 
 	// Canada    --> AmazonXX, EbayXX, AppleXX, BestBuyCA, CanadianTireCA, WalmartXX_ALT
+	
+	// Australia --> AmazonXX, EbayXX, AppleXX, AppliancesOnlineAU, BigW, HarveyNormanAU, KoganAU, TheGoodGuysAU, VidaXLXX
 
 	// Germany   --> AmazonXX
 
 	/*
   private static final Map<String, AlternativeParser> alternativeParserMap = Map.of(
-  		"xx.WalmartXX", new AlternativeParser("/PRD", "xx.WalmartXX_ALT")
+  		"xx.WalmartXX", new AlternativeParser("/PRD", "alt.WalmartALT")
   	);
 	*/
 
 	private static String[] urls = {
-		//"https://www.walmart.ca/en/ip/Costway-12-Amp-14-Inch-Electric-Push-Lawn-Corded-Mower-With-Grass-Bag-Green/PRD2QUNYMN8LBHS"
+		"https://www.thegoodguys.com.au/lg-65-inches-a1-4k-uhd-self-lit-oled-smart-tv-oled65a1pta"
 	};
 	
-	private static final AbstractWebsite website = new WalmartXX_ALT();
+	private static final AbstractWebsite website = new TheGoodGuysAU();
 
 	public static void main(String[] args) throws InterruptedException {
 		Platform platform = new Platform();
 		platform.setDomain("Solo Test");
-		platform.setCountry("Canada");
+		platform.setCountry("Australia");
 
 		for (String url: urls) {
 			new Thread(new Runnable() {
@@ -129,5 +131,17 @@ public class LinkTest {
 	//"https://www.canadiantire.ca/en/pdp/petco-orthopedic-peaceful-nester-dog-bed-grey-40-in-x-30-in-1423900p.html#srp"
 	//"https://www.walmart.ca/en/ip/mass-effect-legendary-edition-xbox-one/6000202521168"
 	//"https://www.walmart.ca/en/ip/Costway-12-Amp-14-Inch-Electric-Push-Lawn-Corded-Mower-With-Grass-Bag-Green/PRD2QUNYMN8LBHS"
-	
+
+	//Australia
+	//"https://www.amazon.com.au/Nylabone-Dura-Chew-Bone-Large/dp/B01H508536?ref_=Oct_DLandingS_D_20fba2bc_62&smid=A3JCEYBC5L8UJ8"
+	//"https://www.ebay.com.au/itm/302643647485?_trkparms=pageci%3A7dbdcf02-9246-11ec-90a5-6648f2ef027f%7Cparentrq%3A170cf55317f0a6466e033f1ffffec78a%7Ciid%3A1"
+	//"https://www.apple.com/au/shop/buy-mac/macbook-pro/14-inch-space-grey-10-core-cpu-16-core-gpu-1tb"
+	//"https://www.appliancesonline.com.au/andoo/product/ostro-tickera-accent-chair-dark-greyu5041320bcsxdyx"
+	//"https://www.appliancesonline.com.au/andoo/product/remington-ipl6500au-ilight-pro-face-and-body-ipl-hair-removal"
+	//"https://www.bigw.com.au/product/dymples-easy-stroller-lite-black/p/123523"
+	//"https://www.harveynorman.com.au/lg-83-inch-c1-cinema-series-4k-uhd-oled-ai-thinq-smart-tv.html"
+	//"https://www.kogan.com/au/buy/kogan-smarterhometm-5w-cool-warm-white-smart-bulb-e14-wifi-pack-of-2-kogan/?ssid=201.0a3a1c44-3e00-4e62-af1a-09f75941ed2e"
+	//"https://www.vidaxl.com.au/e/vidaxl-outdoor-dog-kennel-253x133x116-cm/8718475724858.html"
+	//"https://www.thegoodguys.com.au/lg-65-inches-a1-4k-uhd-self-lit-oled-smart-tv-oled65a1pta"
+
 }
