@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.openqa.selenium.By;
 
 import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
@@ -26,14 +25,13 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class EuronicsDE extends AbstractWebsite {
 
 	private Document dom;
-
   private String url;
 
-	@Override
-	protected By waitBy() {
-		return By.id("product-price");
+  @Override
+	protected String getWaitForSelector() {
+		return "#product-price";
 	}
-	
+  
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);

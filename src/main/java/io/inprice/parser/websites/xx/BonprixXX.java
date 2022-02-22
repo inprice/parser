@@ -32,7 +32,7 @@ public class BonprixXX extends AbstractWebsite {
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
-		
+
 		Element notFoundDiv = dom.selectFirst(".errorpage-teaser-text");
 		if (notFoundDiv == null) {
 			return OK_Status();
@@ -42,7 +42,10 @@ public class BonprixXX extends AbstractWebsite {
 
   @Override
   public boolean isAvailable() {
-    Element val = dom.selectFirst("meta[property='og:availability']");
+    Element val = dom.selectFirst("button.product__cart-button--available");
+    if (val != null) return true;
+
+    val = dom.selectFirst("meta[property='og:availability']");
     if (val == null) val = dom.selectFirst("meta[content='https://schema.org/InStock']");
 
     if (val != null && val.hasAttr("content")) {
@@ -71,7 +74,9 @@ public class BonprixXX extends AbstractWebsite {
 
   @Override
   public String getName() {
-    Element val = dom.selectFirst("h1.product-name span[itemprop='name']");
+    Element val = dom.selectFirst("h1.product__name");
+    if (val == null) val = dom.selectFirst("h1.product-name span[itemprop='name']");
+
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -92,6 +97,8 @@ public class BonprixXX extends AbstractWebsite {
     }
 
     val = dom.selectFirst("span[itemprop='price']");
+    if (val == null) val = dom.selectFirst(".product__price");
+
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return new BigDecimal(cleanDigits(val.text()));
     }
@@ -114,6 +121,11 @@ public class BonprixXX extends AbstractWebsite {
 
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
+    }
+
+    val = dom.selectFirst(".product-information__brand");
+    if (val != null) {
+      return val.text();
     }
 
     return GlobalConsts.NOT_AVAILABLE;
@@ -142,6 +154,9 @@ public class BonprixXX extends AbstractWebsite {
   @Override
   public Set<LinkSpec> getSpecs() {
   	Set<LinkSpec> specs = getKeyValueSpecs(dom.select(".productFeaturesContainer p"), ".productFeatureName", ".productFeatureValue");
+  	if (CollectionUtils.isNotEmpty(specs)) return specs;
+
+  	specs = getKeyValueSpecs(dom.select("ul.product-information__details li"), ".product-information__name", ".product-information__value");
   	if (CollectionUtils.isNotEmpty(specs)) return specs;
   	
     Elements specKeys = dom.select("div.product-attributes strong");

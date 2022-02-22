@@ -28,10 +28,15 @@ public class AmazonXX extends AbstractWebsite {
 	private Document dom;
 	
 	@Override
+	protected Renderer getRenderer() {
+		return Renderer.NODE_FETCH;
+	}
+	
+	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
-		
-		Element titleEL = dom.getElementById("title");
+
+		Element titleEL = dom.selectFirst("script");
 		if (titleEL != null) {
 			return OK_Status();
 		}
@@ -82,7 +87,7 @@ public class AmazonXX extends AbstractWebsite {
 
   @Override
   public String getName() {
-  	Element val = dom.getElementById("title");
+  	Element val = dom.selectFirst("title");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
@@ -104,29 +109,30 @@ public class AmazonXX extends AbstractWebsite {
     String strPrice = null;
     
     Element price = dom.getElementById("attach-base-product-price");
-    if (price == null) price = dom.getElementById("twister-plus-price-data-price");
-
     if (price != null) {
     	strPrice = price.attr("value");
     }
 
     if (price == null) {
-	    price = dom.getElementById("priceblock_dealprice");
+    	price = dom.getElementById("sns-base-price");
 	    if (price == null) {
-	      price = dom.getElementById("priceblock_ourprice");
-	      if (price != null) {
-	      	price = dom.getElementById("price_inside_buybox");
-	      	if (price != null) {
-	          Element integer = price.selectFirst("span.price-large");
-	          if (integer != null) {
-	            Element decimal = integer.nextElementSibling();
-	            if (decimal != null) {
-	              strPrice = integer.text().trim() + "." + decimal.text().trim();
-	              return new BigDecimal(cleanDigits(strPrice));
-	            }
-	          }
-	        }
-	      }
+		    price = dom.getElementById("priceblock_dealprice");
+		    if (price == null) {
+		      price = dom.getElementById("priceblock_ourprice");
+		      if (price != null) {
+		      	price = dom.getElementById("price_inside_buybox");
+		      	if (price != null) {
+		          Element integer = price.selectFirst("span.price-large");
+		          if (integer != null) {
+		            Element decimal = integer.nextElementSibling();
+		            if (decimal != null) {
+		              strPrice = integer.text().trim() + "." + decimal.text().trim();
+		              return new BigDecimal(cleanDigits(strPrice));
+		            }
+		          }
+		        }
+		      }
+		    }
 	    }
     }
 

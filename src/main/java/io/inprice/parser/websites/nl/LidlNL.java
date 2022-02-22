@@ -1,4 +1,4 @@
-package io.inprice.parser.websites.de;
+package io.inprice.parser.websites.nl;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -9,7 +9,6 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import io.inprice.common.helpers.GlobalConsts;
@@ -21,19 +20,17 @@ import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Lidl, Germany
- * 
- * https://www.lidl.de
+ * Lidl, NL, https://www.lidl.nl
  *
  * @author mdpinar
  */
-public class LidlDE extends AbstractWebsite {
+public class LidlNL extends AbstractWebsite {
 
-	protected Document dom;
+	private Document dom;
 
 	private JSONObject json;
   private JSONObject offers;
-  
+
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
@@ -90,8 +87,10 @@ public class LidlDE extends AbstractWebsite {
 
   @Override
   public BigDecimal getPrice() {
-    if (offers != null && offers.has("price")) {
-      return offers.getBigDecimal("price");
+    if (isAvailable()) {
+      if (offers != null && offers.has("price")) {
+        return offers.getBigDecimal("price");
+      }
     }
     return BigDecimal.ZERO;
   }
@@ -106,20 +105,12 @@ public class LidlDE extends AbstractWebsite {
 
   @Override
   public String getShipment() {
-  	Element val = dom.selectFirst(".delivery-info__main");
-  	if (val != null) {
-  		return val.text();
-  	}
-  	return Consts.Words.CHECK_DELIVERY_CONDITIONS;
+    return Consts.Words.CHECK_DELIVERY_CONDITIONS;
   }
 
   @Override
   public Set<LinkSpec> getSpecs() {
-    if (json != null && json.has("description")) {
-      Document subDom = Jsoup.parse(json.getString("description"));
-    	return getValueOnlySpecs(subDom.select("li"));
-    }
-    return null;
+  	return null;
   }
 
 }

@@ -47,15 +47,11 @@ public class EbayXX extends AbstractWebsite {
   @Override
   public boolean isAvailable() {
     Element val = dom.getElementById("vi-quantity__select-box");
-    if (val != null) return true;
+    if (val == null) val = dom.getElementById("qtyTextBox");
+    if (val == null) val = dom.selectFirst("#qtySubTxt span");
+    if (val == null) val = dom.selectFirst("a[data-action-name='BUY_IT_NOW']");
+    if (val == null) val = dom.selectFirst("span[itemprop='availableAtOrFrom']");
 
-    val = dom.selectFirst("#qtySubTxt span");
-    if (val != null) return true;
-
-    val = dom.selectFirst("a[data-action-name='BUY_IT_NOW']");
-    if (val != null) return true;
-
-    val = dom.selectFirst("span[itemprop='availableAtOrFrom']");
     return (val != null);
   }
 

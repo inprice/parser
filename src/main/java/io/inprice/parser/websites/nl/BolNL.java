@@ -34,11 +34,6 @@ public class BolNL extends AbstractWebsite {
 
 	private JSONObject json;
 	private JSONObject offers;
-
-	@Override
-	protected Renderer getRenderer() {
-		return Renderer.HTMLUNIT;
-	}
 	
 	@Override
 	public ParseStatus startParsing(Link link, String html) {

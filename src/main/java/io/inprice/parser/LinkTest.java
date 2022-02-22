@@ -6,7 +6,7 @@ import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
-import io.inprice.parser.websites.au.TheGoodGuysAU;
+import io.inprice.parser.websites.xx.ZalandoXX;
 
 public class LinkTest {
 	
@@ -27,13 +27,11 @@ public class LinkTest {
 
 	// U.States  --> AmazonXX, EbayXX, AppleXX, BestBuyUS, BonanzaUS, EtsyUS, LidlUS, TargetUS, VidaXLXX, WalmartXX
 	// U.Kingdom --> AmazonXX, EbayXX, AppleXX, ArgosUK, AsdaDirectUK, AsosUK, BonprixXX, CurrysUK, DebenhamsUK, EuronicsUK, LidlXX, NewLookUK, ZavviUK, ZalandoXX
-
 	// Canada    --> AmazonXX, EbayXX, AppleXX, BestBuyCA, CanadianTireCA, WalmartXX_ALT
-	
 	// Australia --> AmazonXX, EbayXX, AppleXX, AppliancesOnlineAU, BigW, HarveyNormanAU, KoganAU, TheGoodGuysAU, VidaXLXX
-
-	// Germany   --> AmazonXX
-
+	// Germany   --> AmazonXX, EbayXX, AppleXX, BonprixXX, EuronicsDE, LidlDE, MediaMarktXX_1, NotebooksBilligerDE, OttoDE, ZalandoXX
+	// Netherlands-> AmazonXX, EbayXX, AppleXX, BolNL, BonprixXX, CoolBlueNL, DeBijenkorfNL, LidlNL, MediaMarktXX_2, VidaXLXX, WehkampNL, ZalandoXX
+	
 	/*
   private static final Map<String, AlternativeParser> alternativeParserMap = Map.of(
   		"xx.WalmartXX", new AlternativeParser("/PRD", "alt.WalmartALT")
@@ -41,15 +39,15 @@ public class LinkTest {
 	*/
 
 	private static String[] urls = {
-		"https://www.thegoodguys.com.au/lg-65-inches-a1-4k-uhd-self-lit-oled-smart-tv-oled65a1pta"
+			
 	};
 	
-	private static final AbstractWebsite website = new TheGoodGuysAU();
+	private static final AbstractWebsite website = new ZalandoXX();
 
 	public static void main(String[] args) throws InterruptedException {
 		Platform platform = new Platform();
 		platform.setDomain("Solo Test");
-		platform.setCountry("Australia");
+		platform.setCountry("Netherlands");
 
 		for (String url: urls) {
 			new Thread(new Runnable() {
@@ -99,6 +97,7 @@ public class LinkTest {
 	}
 
 	//United States
+	//"https://www.amazon.com/Samsung-970-EVO-Plus-MZ-V7S2T0B/dp/B07MFZXR1B/?pf_rd_r=5C4RSM4KE4NS6R9J75SQ&pf_rd_p=a424a707-7b70-4cc8-8e86-14651aa9290f&pd_rd_r=d06e9a1b-b1f1-4787-98d9-b5b27f5fb647&pd_rd_w=rDSld&pd_rd_wg=qjTj9&ref_=pd_gw_exports_top_sellers_unrec"
 	//"https://www.apple.com/shop/buy-mac/macbook-pro/14-inch-space-gray-10-core-cpu-16-core-gpu-1tb"
 	//"https://www.bestbuy.com/site/samsung-galaxy-s22-ultra-128gb-unlocked-burgundy/6494426.p?skuId=6494426&intl=nosplash"
 	//"https://www.bonanza.com/items/like/599307266/nikon-digital-camera"
@@ -143,5 +142,32 @@ public class LinkTest {
 	//"https://www.kogan.com/au/buy/kogan-smarterhometm-5w-cool-warm-white-smart-bulb-e14-wifi-pack-of-2-kogan/?ssid=201.0a3a1c44-3e00-4e62-af1a-09f75941ed2e"
 	//"https://www.vidaxl.com.au/e/vidaxl-outdoor-dog-kennel-253x133x116-cm/8718475724858.html"
 	//"https://www.thegoodguys.com.au/lg-65-inches-a1-4k-uhd-self-lit-oled-smart-tv-oled65a1pta"
+
+	//Germany
+	//"https://www.amazon.de/Amazon-Basics-cable-stereo-audio-black/dp/B00NO73MUQ?ref_=ast_sto_dp&th=1&psc=1"
+	//"https://www.ebay.de/itm/114146333948?_trkparms=pageci%3A51c08294-92fb-11ec-b596-f274680d3ab1%7Cparentrq%3A1bae08ad17f0aaecf1553305fffb4a0c%7Ciid%3A1"
+	//"https://www.apple.com/de/shop/buy-watch/apple-watch/41mm-gps-gr%C3%BCn-aluminium-klee-solo-loop-size-1"
+	//"https://www.bonprix.de/produkt/langarmshirt-schwarz-974795/?shopId=16437&assetId=22007718"
+	//"https://www.euronics.de/tv-und-audio/dvd-blu-ray-video/dvd-player/dvd-s500eg-k-dvd-player-schwarz-4051168877689"
+	//"https://www.mediamarkt.de/de/product/_apple-airpods-pro-in-ear-kopfhorer-bluetooth-weiss-2771284.html"
+	//"https://www.notebooksbilliger.de/haushaltsgeraete/raumklima/trotec+luftreiniger+airgoclean+10+e+371571"
+	//"https://www.otto.de/p/nintendo-switch-oled-modell-inkl-pokemon-legenden-arceus-1581067389/#variationId=1581067390"
+	//"https://www.saturn.de/de/product/_apple-pencil-2-generation-2495773.html"
+	//"https://www.lidl.de/p/crivit-campinglampe/p100342613"
+	//"https://www.zalando.de/polo-ralph-lauren-short-sleeve-poloshirt-elite-blueliberty-po222p0if-k11.html"
+
+	//Netherlands
+	//"https://www.amazon.nl/Braun-Elektrisch-Scheerapparaat-Vervangende-scheerkop/dp/B008LQZP5K/?_encoding=UTF8&pd_rd_w=DVXHA&pf_rd_p=55c2ce67-4925-4bd3-9246-79532184b67e&pf_rd_r=BF2G0KNKY1DJW1B5S878&pd_rd_r=25acd4f3-f41a-49d2-82ea-965eaafa0f21&pd_rd_wg=uCfoP&ref_=pd_gw_trq_ed_l79jikzo"
+	//"https://www.ebay.nl/itm/262367265830?hash=item3d164ec426%3Ag%3A1nUAAOSw10NZxpPH&LH_BIN=1&LH_ItemCondition=1000"
+	//"https://www.apple.com/nl/shop/product/ML5Q3ZM/A/gevlochten-solobandje-mais-45-mm-maat-7?fnode=1e70d946fd712999bed2e09c0c48243e919165f54ce5b1cd9e85e5d9e617d9b64e30504c04741c4df1f738b39f53e8d250df1ac4b230674ecf998dd8f4b154fad90515d05cc57a3cbaa200d5f0b2d08d61aa561d05981c8f3921a237c7f23ad7"
+	//"https://www.bol.com/nl/nl/p/zelftest-covid-19-corona-test-corona-covid-sneltest-flow-flex-20-stuks/9300000034540398/?promo=main_802_POPE_B3_product_5_&bltgh=vHTi-WgQlhyMeFxBJDhAKQ.49_lbYhTPuCZMLZ10QQprBFHw_0_1_2.8.ProductImage"
+	//"https://www.bonprix.nl/product/zelfophoudende-kousen-zwart-936780/"
+	//"https://www.coolblue.nl/product/761432/tp-link-deco-m5-mesh-wifi-3-pack.html"
+	//"https://www.debijenkorf.nl/donsje-amsterdam-wadudu-lining-donkey-laarsje-van-leer-9393060009-939306000959240"
+	//"https://www.lidl.nl/p/parkside-montage-rolplank-en-werkplaatskruk/p100338177"
+	//"https://www.mediamarkt.nl/nl/product/_samsung-rb36t600dsa-1672474.html"
+	//"https://www.vidaxl.nl/e/vidaxl-32-st-zwenkwielen-75-mm/8719883716329.html"
+	//"https://www.wehkamp.nl/zwitsal-original-deodorant-6x100-ml-zacht-voor-de-huid-compressed-16375413/?ref=%7B%22slug%22%3A%22verzorging-lichaamsverzorging%22%7D"
+	//"https://www.zalando.nl/nike-performance-blade-sportshirt-obsidianwhite-n1242d3rh-k12.html"
 
 }

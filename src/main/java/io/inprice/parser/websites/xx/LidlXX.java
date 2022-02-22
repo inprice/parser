@@ -34,14 +34,9 @@ public class LidlXX extends AbstractWebsite {
 	private JSONObject json;
 
 	@Override
-	protected Renderer getRenderer() {
-		return Renderer.HTMLUNIT;
-	}
-
-	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
-
+		
 		String prodData = findAPart(html, "var dynamic_tm_data = ", "};", 1);
     if (prodData != null) {
     	json = new JSONObject(prodData);

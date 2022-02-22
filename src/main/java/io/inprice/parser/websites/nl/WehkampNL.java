@@ -37,11 +37,6 @@ public class WehkampNL extends AbstractWebsite {
   private JSONObject offers;
   private JSONArray properties;
 
-  @Override
-	protected Renderer getRenderer() {
-		return Renderer.HTMLUNIT;
-	}
-
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);

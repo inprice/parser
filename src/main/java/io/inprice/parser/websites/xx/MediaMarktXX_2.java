@@ -29,19 +29,14 @@ public class MediaMarktXX_2 extends AbstractWebsite {
 	private Document dom;
 
 	@Override
-	protected Renderer getRenderer() {
-		return Renderer.HTMLUNIT;
-	}
-
-	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
-		Element metaUrl = dom.selectFirst("meta[property='og:url']");
-		if (metaUrl != null && metaUrl.hasAttr("content") && metaUrl.attr("content").contains("error404")) {
-			return ParseStatus.PS_NOT_FOUND;
+		Element pageType = dom.selectFirst("meta[property='pageTypeId']");
+		if (pageType != null && pageType.hasAttr("content") && pageType.attr("content").contains("generic") == false) {
+			return OK_Status();
 		}
-		return OK_Status();
+		return ParseStatus.PS_NOT_FOUND;
 	}
 
   @Override
@@ -57,25 +52,38 @@ public class MediaMarktXX_2 extends AbstractWebsite {
 
   @Override
   public String getSku() {
-    Element val = dom.selectFirst("dd span[itemprop='sku']");
+    Element val = dom.selectFirst("meta[property='sku']");
     if (val != null && StringUtils.isNotBlank(val.text())) {
       return val.text();
     }
+
+    if (val == null) val = dom.selectFirst("span[itemprop='sku']");
+    if (val != null && val.hasAttr("content")) {
+      return val.attr("content").replaceAll("sku:", "");
+    }
+    
     return GlobalConsts.NOT_AVAILABLE;
   }
 
   @Override
   public String getName() {
-    Element val = dom.selectFirst("meta[property='og:title']");
+    Element val = dom.selectFirst("h1[itemprop='name']");
+    if (val != null) {
+      return val.text();
+    }
+
+    val = dom.selectFirst("meta[property='og:title']");
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
-      return val.attr("content");
+    	return val.attr("content");
     }
     return GlobalConsts.NOT_AVAILABLE;
   }
-
+	
   @Override
   public BigDecimal getPrice() {
-    Element val = dom.selectFirst("meta[property='product:price:amount']");
+    Element val = dom.selectFirst("meta[property='price']");
+    if (val == null) val = dom.selectFirst("meta[property='product:price:amount']");
+
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return new BigDecimal(cleanDigits(val.attr("content")));
     }
@@ -84,7 +92,10 @@ public class MediaMarktXX_2 extends AbstractWebsite {
 
   @Override
   public String getBrand() {
-    Element val = dom.selectFirst("meta[property='product:brand']");
+    Element val = dom.selectFirst("meta[itemprop='brand']");
+    if (val == null) val = dom.selectFirst("meta[property='brand']");
+    if (val == null) val = dom.selectFirst("meta[property='product:brand']");
+
     if (val != null && StringUtils.isNotBlank(val.attr("content"))) {
       return val.attr("content");
     }
@@ -95,18 +106,22 @@ public class MediaMarktXX_2 extends AbstractWebsite {
   public String getShipment() {
     Element shipment = dom.selectFirst("div.price.big");
     if (shipment != null) {
-      Element val = shipment.nextElementSibling().selectFirst("small");
-      if (val != null && StringUtils.isNotBlank(val.text())) {
-        return val.text();
-      }
+    	try {
+	      Element val = shipment.nextElementSibling().selectFirst("small");
+	      if (val != null && StringUtils.isNotBlank(val.text())) {
+	        return val.text();
+	      }
+			} catch (Exception e) { }
     }
 
     shipment = dom.selectFirst("div.old-price-block");
     if (shipment != null) {
-      Element val = shipment.nextElementSibling().selectFirst("small");
-      if (val != null && StringUtils.isNotBlank(val.text())) {
-        return val.text();
-      }
+    	try {
+	      Element val = shipment.nextElementSibling().selectFirst("small");
+	      if (val != null && StringUtils.isNotBlank(val.text())) {
+	        return val.text();
+	      }
+			} catch (Exception e) { }
     }
 
     return Consts.Words.CHECK_DELIVERY_CONDITIONS;
