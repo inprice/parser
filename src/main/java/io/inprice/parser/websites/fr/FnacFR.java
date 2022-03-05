@@ -23,7 +23,7 @@ import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Fnac, France
+ * Fnac, France BLOCKED!!!
  *
  * https://www.fnac.com
  *
@@ -35,11 +35,6 @@ public class FnacFR extends AbstractWebsite {
 
 	private JSONObject json;
 	private JSONObject offers;
-
-	@Override
-	protected Renderer getRenderer() {
-		return Renderer.HTMLUNIT;
-	}
 
 	@Override
 	public ParseStatus startParsing(Link link, String html) {

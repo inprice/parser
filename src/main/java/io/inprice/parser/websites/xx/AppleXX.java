@@ -37,8 +37,6 @@ public class AppleXX extends AbstractWebsite {
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
-
-		System.out.println(html);
 		
     Elements dataEL = dom.select("script[type='application/ld+json']");
     if (CollectionUtils.isNotEmpty(dataEL)) {

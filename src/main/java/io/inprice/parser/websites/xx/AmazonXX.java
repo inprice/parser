@@ -137,6 +137,10 @@ public class AmazonXX extends AbstractWebsite {
     }
 
     if (price == null) {
+      price = dom.selectFirst("span.unified-price");
+    }
+
+    if (price == null) {
       price = dom.selectFirst("div#buybox span.a-color-price");
     }
 

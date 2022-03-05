@@ -1,12 +1,17 @@
 package io.inprice.parser;
 
+import java.net.Authenticator;
+import java.net.Authenticator.RequestorType;
+import java.net.PasswordAuthentication;
+
 import org.apache.commons.collections4.CollectionUtils;
 
 import io.inprice.common.models.Link;
 import io.inprice.common.models.Platform;
 import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
-import io.inprice.parser.websites.xx.ZalandoXX;
+import io.inprice.parser.websites.fr.LaredouteFR;
+import io.inprice.parser.websites.zz.IfConfigZZ;
 
 public class LinkTest {
 	
@@ -31,6 +36,7 @@ public class LinkTest {
 	// Australia --> AmazonXX, EbayXX, AppleXX, AppliancesOnlineAU, BigW, HarveyNormanAU, KoganAU, TheGoodGuysAU, VidaXLXX
 	// Germany   --> AmazonXX, EbayXX, AppleXX, BonprixXX, EuronicsDE, LidlDE, MediaMarktXX_1, NotebooksBilligerDE, OttoDE, ZalandoXX
 	// Netherlands-> AmazonXX, EbayXX, AppleXX, BolNL, BonprixXX, CoolBlueNL, DeBijenkorfNL, LidlNL, MediaMarktXX_2, VidaXLXX, WehkampNL, ZalandoXX
+	// France    --> AmazonXX, EbayXX, AppleXX, AuchanFR, BonprixXX, LidlXX, ZalandoXX
 	
 	/*
   private static final Map<String, AlternativeParser> alternativeParserMap = Map.of(
@@ -39,15 +45,17 @@ public class LinkTest {
 	*/
 
 	private static String[] urls = {
-			
+		"https://www.laredoute.fr/ppdp/prod-542343290.aspx"
 	};
 	
-	private static final AbstractWebsite website = new ZalandoXX();
+	private static final AbstractWebsite website = new LaredouteFR();
 
 	public static void main(String[] args) throws InterruptedException {
 		Platform platform = new Platform();
 		platform.setDomain("Solo Test");
-		platform.setCountry("Netherlands");
+		platform.setCountry("France");
+		
+		applyProxy("France");
 
 		for (String url: urls) {
 			new Thread(new Runnable() {
@@ -94,6 +102,27 @@ public class LinkTest {
 			System.out.println("Spec List");
 			link.getSpecList().forEach(s -> System.out.println(" - Key: " + s.getKey() + ", Value: " + s.getValue()));
 		}
+	}
+	
+	private static void applyProxy(String country) {
+    final String authUser = "mdumlupinar";
+    final String authPassword = "ZLLKIoebz0Xi1WVk";
+    final String proxyHost = "proxy.packetstream.io";
+    final int proxyPort = 31112;
+    final String destURL = "https://ipv4.icanhazip.com";
+
+    System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
+    System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
+
+    Authenticator.setDefault(new Authenticator() {@Override
+      protected PasswordAuthentication getPasswordAuthentication() {
+        if (getRequestorType().equals(RequestorType.PROXY)) {
+          return new PasswordAuthentication(authUser, authPassword.toCharArray());
+        }
+        return super.getPasswordAuthentication();
+      }
+    });
+		
 	}
 
 	//United States
@@ -169,5 +198,12 @@ public class LinkTest {
 	//"https://www.vidaxl.nl/e/vidaxl-32-st-zwenkwielen-75-mm/8719883716329.html"
 	//"https://www.wehkamp.nl/zwitsal-original-deodorant-6x100-ml-zacht-voor-de-huid-compressed-16375413/?ref=%7B%22slug%22%3A%22verzorging-lichaamsverzorging%22%7D"
 	//"https://www.zalando.nl/nike-performance-blade-sportshirt-obsidianwhite-n1242d3rh-k12.html"
+
+	//France
+	//"https://www.amazon.fr/Pack-Cartouches-Compatible-Officejet-Expedition/dp/B0869RSVC6/ref=sr_1_1?pf_rd_i=21766165031&pf_rd_m=A1X6FK5RDHNB96&pf_rd_p=af7fddaa-9ddb-412a-8206-e82a6ba06e83&pf_rd_r=XP3RDDKA3MZBRFB35HN2&pf_rd_s=merchandised-search-5&pf_rd_t=101&qid=1645520895&s=officeproduct&sr=1-1&srs=21766165031"
+	//"https://www.ebay.fr/itm/151577745628?_trkparms=%26rpp_cid%3D61c9d7007e4cb8d76b5e35ad%26rpp_icid%3D61c9d7007e4cb8d76b5e35ac&_trkparms=pageci%3Adcccc08a-93c1-11ec-9eda-fe5ecaf6dcf8%7Cparentrq%3A20c334b717f0aaec86887ba6fff97146%7Ciid%3A1"
+	//"https://www.auchan.fr/mattel-uno-deluxe/pr-C801598"
+	//"https://www.bonprix.fr/produit/t-shirt-a-dentelle-bleu-fonce-935860/"
+	//"https://www.zalando.fr/adidas-originals-continental-80-stripes-unisex-baskets-basses-footwear-whitepulsa-aqua-ad116d14q-a11.html"
 
 }

@@ -12,7 +12,6 @@ import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
 
 import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
@@ -23,7 +22,7 @@ import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * Laredoute, France
+ * Laredoute, France BLOCKED!!!
  *
  * https://www.laredoute.com
  *
@@ -37,14 +36,21 @@ public class LaredouteFR extends AbstractWebsite {
   private JSONObject offers;
 
   @Override
-	protected By waitBy() {
-		return By.className("pdp-title");
+	protected Renderer getRenderer() {
+		return Renderer.SCRAPPING_BOT;
+	}
+  
+  @Override
+	protected String getWaitForSelector() {
+		return ".pdp-title";
 	}
 
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
 
+		System.out.println(html);
+		
     Elements dataEL = dom.select("script[type='application/ld+json']");
     if (dataEL != null) {
       for (DataNode dNode : dataEL.dataNodes()) {

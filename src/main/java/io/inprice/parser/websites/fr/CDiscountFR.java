@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.openqa.selenium.By;
 
 import io.inprice.common.helpers.GlobalConsts;
 import io.inprice.common.models.Link;
@@ -17,7 +16,7 @@ import io.inprice.parser.info.ParseStatus;
 import io.inprice.parser.websites.AbstractWebsite;
 
 /**
- * CDiscount, France
+ * CDiscount, France BLOCKED!!!!
  *
  * https://www.cdiscount.com
  *
@@ -26,16 +25,18 @@ import io.inprice.parser.websites.AbstractWebsite;
 public class CDiscountFR extends AbstractWebsite {
 
 	private Document dom;
-
+	
 	@Override
-	protected By waitBy() {
-		return By.id("fpSku");
+	protected String getWaitForSelector() {
+		return "span[itemprop='price']";
 	}
 
 	@Override
 	public ParseStatus startParsing(Link link, String html) {
 		dom = Jsoup.parse(html);
-		
+
+		System.out.println(html);
+
 		Element notFoundImg = dom.selectFirst("img[alt='404']");
 		if (notFoundImg == null) {
 			return OK_Status();

@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONObject;
 import org.jsoup.Connection;
+import org.jsoup.Connection.Method;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,6 +24,7 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
 import com.gargoylesoftware.htmlunit.HttpHeader;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
@@ -54,7 +57,8 @@ public abstract class AbstractWebsite implements Website {
 	protected static enum Renderer {
 		NODE_FETCH,
 		NODE_PUPET,
-		HTMLUNIT;
+		HTMLUNIT,
+		SCRAPPING_BOT;
 	}
 
 	protected Renderer getRenderer() {
@@ -80,12 +84,54 @@ public abstract class AbstractWebsite implements Website {
 		}
 		return status;
 	}
-	
+
 	private ParseStatus openPage(Link link) {
 		ParseStatus status = OK_Status();
 		
 		switch (getRenderer()) {
 
+			case SCRAPPING_BOT: {
+        String username = "mdpinar";
+        String apiKey = "VBLRI5BPy55N2YuDbwHtwFOvg";
+        String originalInput = username + ":" + apiKey;
+        String encodedString = "Basic " + Base64.getEncoder().encodeToString(originalInput.getBytes());
+
+        JSONObject opt = new JSONObject();
+        opt.put("useChrome", false);
+        opt.put("premiumProxy", false);
+        opt.put("proxyCountry", "FR");
+        opt.put("waitForNetworkRequests", false);
+        
+        JSONObject req = new JSONObject();
+        req.put("url", getUrl(link.getUrl()));
+        req.put("options", opt);
+        
+  			Connection.Response res = null;
+  	    try {
+  	      res = Jsoup
+  	      			.connect("http://api.scraping-bot.io/scrape/raw-html")
+  	      			.method(Method.POST)
+  	      			.header("Content-Type", "application/json; charset=UTF-8")
+  	      			.header("Authorization", encodedString)
+  	      			.requestBody(req.toString())
+  	      			.execute();
+  	      if (res.statusCode() < 400) {
+  		      Document doc = res.parse();
+  		      status = startParsing(link, doc.html());
+  	      } else {
+  	      	status = new ParseStatus(ParseCode.HTTP_OTHER_ERROR, res.statusCode() + ": " + res.statusMessage());
+  	      }
+  	    } catch (IOException e) {
+  	    	if (res != null && res.statusCode() >= 400) {
+      			status = new ParseStatus(ParseCode.HTTP_OTHER_ERROR, res.statusCode() + ": " + res.statusMessage());
+  	    	} else {
+  	    		status = new ParseStatus(ParseCode.IO_EXCEPTION, e.getMessage());
+  	    	}
+  	    }
+        
+				break;
+			}
+		
 			case NODE_FETCH:
 			case NODE_PUPET: {
 				Connection.Response res = null;
@@ -127,6 +173,10 @@ public abstract class AbstractWebsite implements Website {
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setTimeout(30_000);
+
+        final DefaultCredentialsProvider credentialsProvider = (DefaultCredentialsProvider) webClient.getCredentialsProvider();
+        credentialsProvider.addCredentials("mdumlupinar", "ZLLKIoebz0Xi1WVk", "proxy.packetstream.io", 31112, null);
+
     		try {
     			WebRequest req = new WebRequest(new URL(getUrl(link.getUrl())));
     			req.setAdditionalHeader(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
